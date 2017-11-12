@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsersDto {
-    private Long userId;
+    private String userId;
 
     private String email;
 
@@ -24,11 +24,12 @@ public class UsersDto {
 
     private Long idCardFileId;
 
-	public Long getUserId() {
+
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 

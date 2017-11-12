@@ -14,38 +14,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ninelives.insurance.api.exception.NotAuthorizedException;
+import com.ninelives.insurance.api.exception.NotFoundException;
+import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.Users;
+import com.ninelives.insurance.api.service.AuthService;
 import com.ninelives.insurance.api.service.UsersService;
 
 @Controller
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
-	@Autowired UsersService usersService;
+	@Autowired AuthService authService;
 	
 	@RequestMapping(value="/login",
 			method=RequestMethod.POST)	
 	@ResponseBody
-	public Map<String, String> login( @RequestBody Map<String, String> loginData, HttpServletResponse response){
+	public Map<String, String> login( @RequestBody Map<String, String> loginData, HttpServletResponse response) throws NotAuthorizedException{
 		
-		Users user = usersService.loginByEmail(loginData.get("email"), 
+		AuthToken authToken = authService.loginByEmail(loginData.get("email"), 
 				loginData.get("password"), 
-				loginData.get("googleFcmRegId"));		
+				loginData.get("fcmToken"));
 		
 		Map<String, String> result = null;
 		
-		if(user==null){
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		}else{
+		if(authToken!=null){
 			result = new HashMap<>();
-			result.put("accessToken", String.valueOf(System.currentTimeMillis()));
+			result.put("accessToken", authToken.getTokenId());
 		}
 		
-		logger.debug("Terima /login POST");
-		if( loginData!=null&&loginData.size()>0 ){
-			loginData.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+		if(logger.isDebugEnabled()){
+			logger.debug("Terima /login POST");
+			if( loginData!=null&&loginData.size()>0 ){
+				loginData.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+			}
+			logger.debug("---");
 		}
-		logger.debug("---");
 		
 		return result;
 	}

@@ -11,7 +11,7 @@ import com.ninelives.insurance.api.model.Coverage;
 @Mapper
 public interface CoverageMapper {
 	
-	@Select({"select coverage_id, coverage_group, name, recommendation, description, ",
+	@Select({"select coverage_id, coverage_category_id, name, recommendation, description, ",
 		"has_beneficiary, max_limit, created_date, update_date ",
 		"from ",
 		"public.coverage"

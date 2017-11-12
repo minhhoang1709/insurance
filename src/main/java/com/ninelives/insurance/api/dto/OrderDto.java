@@ -10,6 +10,10 @@ public class OrderDto {
 	private String orderId;
 
     private String orderDate;
+    
+    private String title;
+    
+    private String imgUrl;
 
     private String policyNumber;
 
@@ -19,7 +23,7 @@ public class OrderDto {
 
     private Integer totalPremi;
 
-    private String hasBeneficiary;
+    private Boolean hasBeneficiary;
 
     private Integer productCount;
 
@@ -97,11 +101,11 @@ public class OrderDto {
 		this.totalPremi = totalPremi;
 	}
 
-	public String getHasBeneficiary() {
+	public Boolean getHasBeneficiary() {
 		return hasBeneficiary;
 	}
 
-	public void setHasBeneficiary(String hasBeneficiary) {
+	public void setHasBeneficiary(Boolean hasBeneficiary) {
 		this.hasBeneficiary = hasBeneficiary;
 	}
 
@@ -135,6 +139,22 @@ public class OrderDto {
 
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
 	}
 
     

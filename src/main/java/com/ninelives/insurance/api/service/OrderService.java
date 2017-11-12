@@ -59,6 +59,8 @@ public class OrderService {
 			order.setProductCount(po.getProductCount());
 			order.setStatus(po.getStatus());
 			order.setCreatedDate(dfTime.format(po.getCreatedDate()));
+			order.setTitle("Asuransi kecelakaan");
+			order.setImgUrl("");
 
 			List<OrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
 			for (OrderProduct op : productList) {
@@ -117,6 +119,8 @@ public class OrderService {
 			order.setProductCount(po.getProductCount());
 			order.setStatus(po.getStatus());
 			order.setCreatedDate(dfTime.format(po.getCreatedDate()));
+			order.setTitle("Asuransi kecelakaan");
+			order.setImgUrl("https://i.imgur.com/f3h2z7k.jpg");
 			
 			List<OrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
 			for(OrderProduct op: productList){

@@ -12,7 +12,7 @@ public class CoverageDto {
 
     private String description;
 
-    private String hasBeneficiary;
+    private Boolean hasBeneficiary;
     
     private Long maxLimit;
 
@@ -57,11 +57,11 @@ public class CoverageDto {
 		this.description = description;
 	}
 
-	public String getHasBeneficiary() {
+	public Boolean getHasBeneficiary() {
 		return hasBeneficiary;
 	}
 
-	public void setHasBeneficiary(String hasBeneficiary) {
+	public void setHasBeneficiary(Boolean hasBeneficiary) {
 		this.hasBeneficiary = hasBeneficiary;
 	}
 

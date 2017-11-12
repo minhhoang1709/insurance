@@ -19,15 +19,19 @@ public class PurchaseOrder {
 
     private Integer totalPremi;
 
-    private String hasBeneficiary;
-
     private Integer productCount;
 
+    private Boolean hasBeneficiary;
+
+    private Integer coverageCategoryId;
+    
     private String status;
 
     private Date createdDate;
 
     private Date updateDate;
+
+
 
     public String getOrderId() {
         return orderId;
@@ -93,14 +97,6 @@ public class PurchaseOrder {
         this.totalPremi = totalPremi;
     }
 
-    public String getHasBeneficiary() {
-        return hasBeneficiary;
-    }
-
-    public void setHasBeneficiary(String hasBeneficiary) {
-        this.hasBeneficiary = hasBeneficiary;
-    }
-
     public Integer getProductCount() {
         return productCount;
     }
@@ -131,5 +127,21 @@ public class PurchaseOrder {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Boolean getHasBeneficiary() {
+        return hasBeneficiary;
+    }
+
+    public void setHasBeneficiary(Boolean hasBeneficiary) {
+        this.hasBeneficiary = hasBeneficiary;
+    }
+
+    public Integer getCoverageCategoryId() {
+        return coverageCategoryId;
+    }
+
+    public void setCoverageCategoryId(Integer coverageCategoryId) {
+        this.coverageCategoryId = coverageCategoryId;
     }
 }
