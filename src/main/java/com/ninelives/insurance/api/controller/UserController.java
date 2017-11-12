@@ -42,7 +42,7 @@ public class UserController {
 		
 		logger.debug("Terima /users POST");
 		if( registerData!=null&&registerData.size()>0 ){
-			registerData.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+			registerData.forEach((k,v)->logger.debug("Param : " + k + " | Value : " + v));
 		}
 		logger.debug("---");
 		

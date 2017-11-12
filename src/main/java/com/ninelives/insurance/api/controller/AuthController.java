@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.ninelives.insurance.api.exception.NotAuthorizedException;
 import com.ninelives.insurance.api.exception.NotFoundException;
@@ -22,6 +24,7 @@ import com.ninelives.insurance.api.service.AuthService;
 import com.ninelives.insurance.api.service.UsersService;
 
 @Controller
+@SessionAttributes("authUserId")
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
@@ -46,7 +49,7 @@ public class AuthController {
 		if(logger.isDebugEnabled()){
 			logger.debug("Terima /login POST");
 			if( loginData!=null&&loginData.size()>0 ){
-				loginData.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+				loginData.forEach((k,v)->logger.debug("Param : " + k + " | Value : " + v));
 			}
 			logger.debug("---");
 		}
@@ -56,13 +59,11 @@ public class AuthController {
 	
 	@RequestMapping(value="/logout")	
 	@ResponseBody
-	public void logout( @RequestBody(required=false) Map<String, String> loginData, HttpServletResponse response){
-		
-		logger.debug("Terima /logout GET");
-		if( loginData!=null&&loginData.size()>0 ){
-			loginData.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
-		}
-		logger.debug("---");
+	public void logout(@RequestHeader("Authorization") String tokenId,
+			HttpServletResponse response){
+		logger.info("tokenid is {}", tokenId);
+
+		authService.logout(tokenId);
 				
 	}
 }

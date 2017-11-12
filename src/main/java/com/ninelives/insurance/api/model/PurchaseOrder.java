@@ -7,7 +7,11 @@ public class PurchaseOrder {
 
     private Date orderDate;
 
-    private Integer userId;
+    private Boolean hasBeneficiary;
+
+    private Integer coverageCategoryId;
+
+    private String userId;
 
     private String policyNumber;
 
@@ -21,16 +25,11 @@ public class PurchaseOrder {
 
     private Integer productCount;
 
-    private Boolean hasBeneficiary;
-
-    private Integer coverageCategoryId;
-    
     private String status;
 
     private Date createdDate;
 
     private Date updateDate;
-
 
 
     public String getOrderId() {
@@ -47,14 +46,6 @@ public class PurchaseOrder {
 
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getPolicyNumber() {
@@ -143,5 +134,13 @@ public class PurchaseOrder {
 
     public void setCoverageCategoryId(Integer coverageCategoryId) {
         this.coverageCategoryId = coverageCategoryId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

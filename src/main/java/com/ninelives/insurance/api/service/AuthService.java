@@ -5,11 +5,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.exception.NotAuthorizedException;
+import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.Users;
 import com.ninelives.insurance.api.mybatis.mapper.UsersMapper;
@@ -18,6 +21,10 @@ import com.ninelives.insurance.api.ref.ErrorCode;
 
 @Service
 public class AuthService {
+	private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+	
+	public static final String AUTH_USER_ID = "authUserId";
+	
 	@Autowired UsersMapper userMapper;
 	@Autowired RedisService redisService;
 	
@@ -27,15 +34,20 @@ public class AuthService {
 		AuthToken token = null;
 		
 		if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)||StringUtils.isEmpty(fcmToken)){
-			throw new NotAuthorizedException(ErrorCode.ERR2001_NOT_AUTHORIZED, "Wrong email or password");
+			throw new NotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
 		
 		Users user = userMapper.selectByEmail(email);
 		if(!user.getPassword().equals(DigestUtils.sha1Hex(password))){
-			throw new NotAuthorizedException(ErrorCode.ERR2001_NOT_AUTHORIZED, "Wrong email or password");
+			throw new NotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}else{
-			token = generateAuthToken(String.valueOf(user.getUserId()));			
-			redisService.saveAuthToken(token);
+			token = generateAuthToken();
+			
+			ApiSessionData sessionData = new ApiSessionData();
+			sessionData.setUserId(user.getUserId());
+			sessionData.setTokenCreatedDateTimeStr(token.getCreatedDateTimeStr());
+			
+			redisService.saveAuthToken(token, sessionData);
 			//test
 			//redisService.touchAuthToken(token.getTokenId());
 			if(!StringUtils.isEmpty(fcmToken) && !fcmToken.equals(user.getFcmToken())){
@@ -46,10 +58,25 @@ public class AuthService {
 		return token;
 	}
 	
-	private AuthToken generateAuthToken(String userId){
+	public ApiSessionData validateAuthToken(String tokenId) throws NotAuthorizedException{		
+		if(StringUtils.isEmpty(tokenId)){
+			throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+		}
+		
+		ApiSessionData sessionData = redisService.getApiSessionData(tokenId);
+		if(sessionData==null || StringUtils.isEmpty(sessionData.getUserId())){
+			throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+		}
+		return sessionData;
+	}
+	
+	public void logout(String tokenId) {
+		redisService.deleteAuthToken(tokenId);
+	}
+	
+	private AuthToken generateAuthToken(){
 		AuthToken token = new AuthToken();
 		token.setTokenId(generateTokenId());
-		token.setUserId(userId);
 		token.setCreatedDateTimeStr(LocalDateTime.now().format(formatter));		
 		
 		return token;
@@ -58,4 +85,6 @@ public class AuthService {
 	private String generateTokenId(){
 		return UUID.randomUUID().toString().replace("-", "");
 	}
+
+	
 }

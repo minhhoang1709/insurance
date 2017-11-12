@@ -6,7 +6,7 @@ import java.util.Date;
 public class AuthToken {
 	
 	String tokenId;
-	String userId;
+	Integer expiry;
 	String createdDateTimeStr;
 	
 	public String getTokenId() {
@@ -14,12 +14,12 @@ public class AuthToken {
 	}
 	public void setTokenId(String tokenId) {
 		this.tokenId = tokenId;
+	}	
+	public Integer getExpiry() {
+		return expiry;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setExpiry(Integer expiry) {
+		this.expiry = expiry;
 	}
 	public String getCreatedDateTimeStr() {
 		return createdDateTimeStr;

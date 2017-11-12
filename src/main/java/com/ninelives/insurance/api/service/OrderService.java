@@ -88,7 +88,7 @@ public class OrderService {
 		return order;
 	}
 	
-	public List<OrderDto> fetchOrderListByUserId(int userId){
+	public List<OrderDto> fetchOrderListByUserId(String userId){
 		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		

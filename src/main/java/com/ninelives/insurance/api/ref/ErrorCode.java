@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ErrorCode {
 	ERR1001_GENERIC_ERROR("ERR1001"),
-	ERR2001_NOT_AUTHORIZED("ERR2001")
+	ERR2001_LOGIN_FAILURE("ERR2001"),
+	ERR2002_NOT_AUTHORIZED("ERR2002")
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

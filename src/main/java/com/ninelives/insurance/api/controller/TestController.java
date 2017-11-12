@@ -18,7 +18,7 @@ public class TestController {
 	@RequestMapping("/test/error/login")
 	public String errorLogin() throws NotFoundException{
 		
-		throw new NotFoundException(ErrorCode.ERR2001_NOT_AUTHORIZED,"olalala login gagal");		
+		throw new NotFoundException(ErrorCode.ERR2001_LOGIN_FAILURE,"olalala login gagal");		
 		//return "ok";
 	}	
 }
