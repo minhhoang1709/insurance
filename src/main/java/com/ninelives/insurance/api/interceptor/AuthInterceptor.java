@@ -1,5 +1,8 @@
 package com.ninelives.insurance.api.interceptor;
 
+import java.util.Enumeration;
+import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,13 +30,22 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		logger.debug("cek interceptor {}", request.getRequestURL());
+		logger.debug("cek interceptor {} {} {}", request.getRequestURL(), request.getMethod(), request.getRequestURI());
+		if(logger.isDebugEnabled()){
+			Enumeration<String> e = request.getHeaderNames();
+			while(e.hasMoreElements()){
+				String header = e.nextElement();
+				logger.debug("Header {}: {}", header, request.getHeader(header));
+				
+			}
+		}
+		logger.debug("--- interceptor");
 		
 		String tokenId = request.getHeader(HEADER_AUTHENTICATION);
 
 		if(StringUtils.isEmpty(tokenId)){
 			//allow POST to user without authentication
-			if(request.getRequestURI().equals("/users") && request.getMethod().equals(HttpMethod.POST)){
+			if(request.getRequestURI().equals("/users") && request.getMethod().equals(HttpMethod.POST.toString())){
 				return true;
 			}else{
 				throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
@@ -41,12 +53,13 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 		}else{
 			ApiSessionData sessionData = authService.validateAuthToken(tokenId);
 			if(sessionData!=null){
-				logger.debug("sessionData {}",sessionData);
-				request.getSession().setAttribute(AuthService.AUTH_USER_ID, sessionData.getUserId());
+				logger.debug("sessionData {}", sessionData);
+				request.setAttribute(AuthService.AUTH_USER_ID, sessionData.getUserId());
 			}else{
 				return false;
 			}
 		}
+		
 		return true;
 		
 	}

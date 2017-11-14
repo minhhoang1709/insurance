@@ -8,7 +8,6 @@ public class NotAuthorizedException extends ApiException {
 
 	public NotAuthorizedException(ErrorCode code, String message) {
 		super(code, message);
-		// TODO Auto-generated constructor stub
 	}
 
 

@@ -1,13 +1,17 @@
 package com.ninelives.insurance.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
+import com.ninelives.insurance.api.provider.storage.StorageProperties;
+import com.ninelives.insurance.api.service.StorageService;
 
 @Configuration
+@EnableConfigurationProperties(StorageProperties.class)
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@Autowired AuthInterceptor authInterceptor;
 		
@@ -16,8 +20,10 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 		registry.addInterceptor(authInterceptor).excludePathPatterns(
 				"/login",
 				"/configs",
-				"/products");
+				"/products",
+				"/error");
 	}
+	
 //	@Autowired RedisConnectionFactory redisConnectionFactory; 
 //	
 //	@Bean

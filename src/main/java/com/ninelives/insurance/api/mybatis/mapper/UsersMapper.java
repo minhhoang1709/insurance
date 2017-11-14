@@ -42,6 +42,16 @@ public interface UsersMapper {
     	"where email=#{email,jdbcType=VARCHAR} "
 		})
 	Users selectByEmail(@Param("email") String email);
+    
+    @Select({
+        "select",
+        "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
+        "fcm_token, device_id, name, gender, birth_date, birth_place, phone, address, ",
+        "id_card_file_id, status, created_date, update_date",
+        "from public.users",
+    	"where user_id=#{userId,jdbcType=VARCHAR} "
+		})
+	Users selectByUserId(@Param("userId") String userId);
 	
     @Update({
         "update public.users ",

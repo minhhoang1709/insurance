@@ -68,6 +68,7 @@ public class OrderService {
 				dto.setProductId(op.getProductId());
 				dto.setName(op.getCoverageName());
 				dto.setPremi(op.getPremi());
+				dto.setPeriod(perMap.get(op.getPeriodId()));
 
 				CoverageDto covDto = new CoverageDto();
 				covDto.setCoverageId(op.getCoverageId());
@@ -82,7 +83,7 @@ public class OrderService {
 				order.setProductList(productDtos);
 			}
 
-			order.setPeriod(perMap.get(po.getPeriod()));
+			//order.setPeriod(perMap.get(po.getPeriod()));
 		}		
 		
 		return order;
@@ -128,6 +129,7 @@ public class OrderService {
 				dto.setProductId(op.getProductId());
 				dto.setName(op.getCoverageName());
 				dto.setPremi(op.getPremi());
+				dto.setPeriod(perMap.get(op.getPeriodId()));
 				
 				CoverageDto covDto = new CoverageDto();
 				covDto.setCoverageId(op.getCoverageId());
@@ -142,7 +144,7 @@ public class OrderService {
 				order.setProductList(productDtos);
 			}
 			
-			order.setPeriod(perMap.get(po.getPeriod()));
+			//order.setPeriod(perMap.get(po.getPeriod()));
 			
 			orders.add(order);			
 		}		

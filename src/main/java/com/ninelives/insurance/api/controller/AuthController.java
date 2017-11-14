@@ -24,7 +24,6 @@ import com.ninelives.insurance.api.service.AuthService;
 import com.ninelives.insurance.api.service.UsersService;
 
 @Controller
-@SessionAttributes("authUserId")
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
@@ -33,7 +32,7 @@ public class AuthController {
 	@RequestMapping(value="/login",
 			method=RequestMethod.POST)	
 	@ResponseBody
-	public Map<String, String> login( @RequestBody Map<String, String> loginData, HttpServletResponse response) throws NotAuthorizedException{
+	public Map<String, String> login( @RequestBody Map<String, String> loginData) throws NotAuthorizedException{
 		
 		AuthToken authToken = authService.loginByEmail(loginData.get("email"), 
 				loginData.get("password"), 
@@ -63,7 +62,6 @@ public class AuthController {
 			HttpServletResponse response){
 		logger.info("tokenid is {}", tokenId);
 
-		authService.logout(tokenId);
-				
+		authService.logout(tokenId);				
 	}
 }

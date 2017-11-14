@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.dto;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -24,6 +25,7 @@ public class UsersDto {
 
     private Long idCardFileId;
 
+    private Map<String, Object> config;
 
 	public String getUserId() {
 		return userId;
@@ -97,5 +99,20 @@ public class UsersDto {
 		this.idCardFileId = idCardFileId;
 	}
 
+	public Map<String, Object> getConfig() {
+		return config;
+	}
+
+	public void setConfig(Map<String, Object> config) {
+		this.config = config;
+	}
+
+	@Override
+	public String toString() {
+		return "UsersDto [userId=" + userId + ", email=" + email + ", name=" + name + ", gender=" + gender
+				+ ", birthDate=" + birthDate + ", birthPlace=" + birthPlace + ", phone=" + phone + ", address="
+				+ address + ", idCardFileId=" + idCardFileId + ", config=" + config + "]";
+	}
+	
     
 }
