@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UsersDto {
+	public static final String CONFIG_KEY_IS_SYNC_GMAIL_ENABLED = "isSyncGmailEnabled";
+	public static final String CONFIG_KEY_IS_NOTIFICATION_ENABLED = "isNotificationEnabled";
+	
     private String userId;
 
     private String email;

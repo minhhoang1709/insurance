@@ -61,12 +61,11 @@ public class AuthService {
 	public ApiSessionData validateAuthToken(String tokenId) throws NotAuthorizedException{		
 		if(StringUtils.isEmpty(tokenId)){
 			throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
-		}
-		
+		}		
 		ApiSessionData sessionData = redisService.getApiSessionData(tokenId);
 		if(sessionData==null || StringUtils.isEmpty(sessionData.getUserId())){
 			throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
-		}
+		}		
 		return sessionData;
 	}
 	

@@ -11,33 +11,11 @@ import com.ninelives.insurance.api.model.Users;
 @Mapper
 public interface UsersMapper {
 	
-    @Insert({
-        "insert into public.users (user_id, password, ",
-        "email, google_refresh_token, ",
-        "google_auth_code, google_access_token, ",
-        "fcm_token, device_id, ",
-        "name, gender, birth_date, ",
-        "birth_place, phone, ",
-        "address, id_card_file_id, ",
-        "status, created_date, ",
-        "update_date)",
-        "values (#{userId,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, ",
-        "#{email,jdbcType=VARCHAR}, #{googleRefreshToken,jdbcType=VARCHAR}, ",
-        "#{googleAuthCode,jdbcType=VARCHAR}, #{googleAccessToken,jdbcType=VARCHAR}, ",
-        "#{fcmToken,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, ",
-        "#{name,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{birthDate,jdbcType=DATE}, ",
-        "#{birthPlace,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, ",
-        "#{address,jdbcType=VARCHAR}, #{idCardFileId,jdbcType=BIGINT}, ",
-        "#{status,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP}, ",
-        "#{updateDate,jdbcType=TIMESTAMP})"
-    })
-    int insert(Users record);
-	
     @Select({
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
-        "fcm_token, device_id, name, gender, birth_date, birth_place, phone, address, ",
-        "id_card_file_id, status, created_date, update_date",
+        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, ",
+        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled",
         "from public.users",
     	"where email=#{email,jdbcType=VARCHAR} "
 		})
@@ -46,11 +24,11 @@ public interface UsersMapper {
     @Select({
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
-        "fcm_token, device_id, name, gender, birth_date, birth_place, phone, address, ",
-        "id_card_file_id, status, created_date, update_date",
+        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, ",
+        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled",
         "from public.users",
-    	"where user_id=#{userId,jdbcType=VARCHAR} "
-		})
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
 	Users selectByUserId(@Param("userId") String userId);
 	
     @Update({
@@ -59,5 +37,15 @@ public interface UsersMapper {
         	"update_date = now() ",
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
-    int updateFcmTokenByUserId(@Param("userId") String userId, @Param("fcmToken") String fcmToken);    
+    int updateFcmTokenByUserId(@Param("userId") String userId, @Param("fcmToken") String fcmToken);
+    
+    @Update({
+        "update public.users ",
+        "set is_sync_gmail_enabled = #{isSyncGmailEnabled,jdbcType=BIT}, ",
+        	"update_date = now() ",
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
+    int updateSyncGmailEnabledByUserId(Users record);
+    
+    int insertSelective(Users record);
 }

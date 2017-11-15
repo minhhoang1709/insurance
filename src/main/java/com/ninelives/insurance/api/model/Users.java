@@ -2,6 +2,8 @@ package com.ninelives.insurance.api.model;
 
 import java.util.Date;
 
+import com.ninelives.insurance.api.ref.UserStatus;
+
 public class Users {
     private String userId;
 
@@ -15,9 +17,9 @@ public class Users {
 
     private String googleAccessToken;
 
-    private String fcmToken;
+    private String googleUserId;    
 
-    private String deviceId;
+    private String fcmToken;
 
     private String name;
 
@@ -33,7 +35,11 @@ public class Users {
 
     private Long idCardFileId;
 
-    private String status;
+    private UserStatus status;
+
+    private Boolean isSyncGmailEnabled;
+
+    private Boolean isNotificationEnabled;
 
     private Date createdDate;
 
@@ -95,14 +101,6 @@ public class Users {
         this.fcmToken = fcmToken;
     }
 
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
     public String getName() {
         return name;
     }
@@ -159,15 +157,15 @@ public class Users {
         this.idCardFileId = idCardFileId;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public UserStatus getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(UserStatus status) {
+		this.status = status;
+	}
 
-    public Date getCreatedDate() {
+	public Date getCreatedDate() {
         return createdDate;
     }
 
@@ -182,4 +180,31 @@ public class Users {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    public String getGoogleUserId() {
+        return googleUserId;
+    }
+
+    public void setGoogleUserId(String googleUserId) {
+        this.googleUserId = googleUserId;
+    }
+
+	public Boolean getIsSyncGmailEnabled() {
+		return isSyncGmailEnabled;
+	}
+
+	public void setIsSyncGmailEnabled(Boolean isSyncGmailEnabled) {
+		this.isSyncGmailEnabled = isSyncGmailEnabled;
+	}
+
+	public Boolean getIsNotificationEnabled() {
+		return isNotificationEnabled;
+	}
+
+	public void setIsNotificationEnabled(Boolean isNotificationEnabled) {
+		this.isNotificationEnabled = isNotificationEnabled;
+	}
+
+
+    
 }

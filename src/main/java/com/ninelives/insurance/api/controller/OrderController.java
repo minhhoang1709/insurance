@@ -29,7 +29,6 @@ import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.StorageService;
 
 @Controller
-//@SessionAttributes("authUserId")
 public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 			
@@ -87,7 +86,7 @@ public class OrderController {
 	@RequestMapping(value="/orders/{orderId}/policy",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public ResponseEntity downloadPolicy(@RequestAttribute("authUserId") String authUserId,
+	public ResponseEntity<Resource> downloadPolicy(@RequestAttribute("authUserId") String authUserId,
 			@RequestBody(required=false) Map<String, String> requestData, 
 			HttpServletResponse response){
 		

@@ -2,25 +2,34 @@ package com.ninelives.insurance.api.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UsersDto;
 import com.ninelives.insurance.api.exception.NotAuthorizedException;
 import com.ninelives.insurance.api.exception.NotFoundException;
+import com.ninelives.insurance.api.exception.BadRequestException;
 import com.ninelives.insurance.api.model.AuthToken;
+import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.Users;
 import com.ninelives.insurance.api.mybatis.mapper.UsersMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.api.ref.ErrorCode;
+import com.ninelives.insurance.api.ref.UserStatus;
 
 @Service
 public class UsersService {
+	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = false;
+	
 	@Autowired UsersMapper userMapper;
 	@Autowired RedisService redisService;
 	
@@ -41,42 +50,74 @@ public class UsersService {
 	 * @return
 	 * @throws NotAuthorizedException
 	 */
-	public Users registerUserByGoogleAccount(String googleEmail, String googleId, String googleAuthCode,
-			String googleIdToken, String name, String password) throws NotAuthorizedException {
+	public RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws BadRequestException {
 		
 		/**
 		 * TODO: verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
+		 * TODO: get access token and refresh token incase the isSyncGmailEnabled is true
 		 */
+			
+		boolean isNew;
 		
-		Users user = userMapper.selectByEmail(googleEmail);
-
+		Users user = userMapper.selectByEmail(registrationDto.getGoogleEmail());
+		
 		if(user!=null){
-			/**
-			 * TODO: whether to verify password or to replace, update the exception
-			 */
-			if(!user.getPassword().equals(DigestUtils.sha1Hex(password))){
-				throw new NotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+			if(!user.getPassword().equals(DigestUtils.sha1Hex(registrationDto.getPassword()))){
+				throw new BadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
 			}
+			if(user.getIsSyncGmailEnabled()!=registrationDto.getIsSyncGmailEnabled()){
+				user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
+				userMapper.updateSyncGmailEnabledByUserId(user);
+			}
+			isNew = false;
+			
 		}else{
-			Users newUser = new Users();
-			newUser.setUserId(generateUserId());
-			newUser.setEmail(googleEmail);
-			newUser.setPassword(DigestUtils.sha1Hex(password));
-			newUser.setName(name);
-			newUser.setGoogleAuthCode(googleAuthCode);
-			newUser.setStatus("ACTIVE");
-			// user.setGoogle
-			userMapper.insert(newUser);
+			//validate field is valid
+			if(StringUtils.isEmpty(registrationDto.getGoogleEmail())
+					|| StringUtils.isEmpty(registrationDto.getGoogleId())
+					|| StringUtils.isEmpty(registrationDto.getPassword())
+					){
+				throw new BadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
+			}
 			
 			user = new Users();
-			user.setUserId(newUser.getUserId());
-			user.setEmail(newUser.getEmail());
+			user.setUserId(generateUserId());
+			user.setEmail(registrationDto.getGoogleEmail());
+			user.setPassword(DigestUtils.sha1Hex(registrationDto.getPassword()));
+			user.setName(registrationDto.getGoogleName());
+			user.setGoogleAuthCode(registrationDto.getGoogleServerAuth());
+			user.setGoogleUserId(registrationDto.getGoogleId());
+			user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
+			user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
+			user.setStatus(UserStatus.ACTIVE);
+
+			userMapper.insertSelective(user);
+
+			isNew = true;
 		}
 		
-		/**
-		 * TODO: insert selective
-		 */
-		return user;
+		UsersDto usersDto = new UsersDto();
+		usersDto.setUserId(user.getUserId());
+		usersDto.setName(user.getName());
+		usersDto.setBirthDate(user.getBirthDate());
+		usersDto.setBirthPlace(user.getBirthPlace());
+		usersDto.setEmail(user.getEmail());
+		usersDto.setGender(user.getGender());
+		usersDto.setIdCardFileId(user.getIdCardFileId());
+		usersDto.setPhone(user.getPhone());
+		usersDto.setAddress(user.getAddress());
+		
+		Map<String, Object> configMap = new HashMap<>();
+		configMap.put(UsersDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED, user.getIsNotificationEnabled());
+		configMap.put(UsersDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED, user.getIsSyncGmailEnabled());
+		usersDto.setConfig(configMap);
+		
+		RegisterUsersResult registerResult = new RegisterUsersResult();
+		registerResult.setIsNew(isNew);
+		registerResult.setUserDto(usersDto);
+		
+		
+		return registerResult;
 	}
 	
 	public UsersDto getUserDto(String userId) {

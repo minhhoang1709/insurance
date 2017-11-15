@@ -23,8 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UsersDto;
+import com.ninelives.insurance.api.exception.BadRequestException;
 import com.ninelives.insurance.api.exception.NotAuthorizedException;
+import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.Users;
 import com.ninelives.insurance.api.service.StorageService;
 import com.ninelives.insurance.api.service.UsersService;
@@ -40,46 +43,48 @@ public class UserController {
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public UsersDto registerUser( @RequestBody Map<String, String> registerData, HttpServletResponse response ) throws NotAuthorizedException{
+	public UsersDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws BadRequestException{
 		
+		//String registerSource = registerData.get("source");		
 		//check jika users empty maka this is new, 
-		Users user = usersService.registerUserByGoogleAccount(registerData.get("googleEmail"), 
-				registerData.get("googleId"),
-				registerData.get("googleServerAuth"),
-				registerData.get("googleToken"),
-				registerData.get("googleName"),
-				registerData.get("password"));
+		logger.debug("register with {}", registrationDto);
 		
-		UsersDto result = new UsersDto();
-		//TODO some logic to check to if conflict case happen
-		if(!StringUtils.isEmpty(user.getStatus())){
-			result.setUserId(user.getUserId());
-			result.setEmail(user.getEmail());
-			result.setName(user.getName());
-			result.setPhone(user.getPhone());
+		RegisterUsersResult registerResult = usersService.registerUserByGoogleAccount(registrationDto);
+		
+		if(!registerResult.getIsNew()){
 			response.setStatus(HttpStatus.CONFLICT.value());
-		}else{
-			//result = new UsersDto();
-			result.setEmail(user.getEmail());
-			result.setUserId(user.getUserId());			
-		}
+		}		
 		
+//		UsersDto result = new UsersDto();
+//		//TODO some logic to check to if conflict case happen
+//		if(!StringUtils.isEmpty(user.getStatus())){
+//			result.setUserId(user.getUserId());
+//			result.setEmail(user.getEmail());
+//			result.setName(user.getName());
+//			result.setPhone(user.getPhone());
+//			
+//		}else{
+//			//result = new UsersDto();
+//			result.setEmail(user.getEmail());
+//			result.setUserId(user.getUserId());			
+//		}
+//		
+//		
+//		Map<String, Object> userConfig = new HashMap<>();
+//		userConfig.put("isNotificationEnabled", new Boolean(true));
+//		userConfig.put("isSyncGmailEnabled", new Boolean(true));
+//		userConfig.put("string", "testvalue");
+//		userConfig.put("number", new Integer(54));
+//		
+//		result.setConfig(userConfig);
+//		
+//		logger.debug("Terima /users POST");
+//		if( registerData!=null&&registerData.size()>0 ){
+//			registerData.forEach((k,v)->logger.debug("Param : " + k + " | Value : " + v));
+//		}
+//		logger.debug("---");
 		
-		Map<String, Object> userConfig = new HashMap<>();
-		userConfig.put("isNotificationEnabled", new Boolean(true));
-		userConfig.put("isSyncGmailEnabled", new Boolean(true));
-		userConfig.put("string", "testvalue");
-		userConfig.put("number", new Integer(54));
-		
-		result.setConfig(userConfig);
-		
-		logger.debug("Terima /users POST");
-		if( registerData!=null&&registerData.size()>0 ){
-			registerData.forEach((k,v)->logger.debug("Param : " + k + " | Value : " + v));
-		}
-		logger.debug("---");
-		
-		return result;
+		return registerResult.getUserDto();
 	}
 	
 	@RequestMapping(value="/users/{userId}",

@@ -5,25 +5,21 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ErrorCode {
-	ERR1001_GENERIC_ERROR("ERR1001"),
-	ERR2001_LOGIN_FAILURE("ERR2001"),
-	ERR2002_NOT_AUTHORIZED("ERR2002"),
-	ERR3001_REGISTER_GOOGLE_FAIL("ERR3001"),
-	ERR3002_REGISTER_PASSWORD_CONFLICT("ERR3002"),
-	ERR3003_REGISTER_MISSING_PARAMETER("ERR3003")
+public enum UserStatus {
+	ACTIVE("ACTIVE"),
+	DEACT("DEACT")
 	;
 	
-	static final Map<String, ErrorCode> lookup = new HashMap<>();
+	static final Map<String, UserStatus> lookup = new HashMap<>();
 	static {
-		for (ErrorCode c:ErrorCode.values()){
+		for (UserStatus c:UserStatus.values()){
 			lookup.put(c.toString(), c);
 		}
 	}
 	
 	private final String stringValue;
 
-    private ErrorCode(final String newValue) {
+    private UserStatus(final String newValue) {
         stringValue = newValue;
     }
 
@@ -36,8 +32,8 @@ public enum ErrorCode {
     	return stringValue;
     }
     
-    public static ErrorCode toEnum(String value){
-    	ErrorCode result = lookup.get(value);
+    public static UserStatus toEnum(String value){
+    	UserStatus result = lookup.get(value);
     	if (result != null){
     		return result;
     	}
