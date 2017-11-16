@@ -10,7 +10,9 @@ import com.ninelives.insurance.api.model.Period;
 public interface PeriodMapper {
 	@Select({"select period_id, name, value, unit, created_date, update_date ",
 		"from ",
-		"public.period"
+		"public.period ",
+		"where status='A' ",
+		"order by period_id"
 		})	
-	List<Period> selectAll();
+	List<Period> selectByStatusActive();
 }

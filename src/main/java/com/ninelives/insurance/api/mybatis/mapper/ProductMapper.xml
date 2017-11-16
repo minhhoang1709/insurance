@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.ProductMapper">
+  <resultMap id="AssociatedProductResultMap" type="com.ninelives.insurance.api.model.Product">
+    <id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
+    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="premi" jdbcType="INTEGER" property="premi" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <association property="period" resultMap="PeriodResultMap" />
+    <association property="coverage" resultMap="CoverageResultMap" />
+  </resultMap>
+  <resultMap id="PeriodResultMap" type="com.ninelives.insurance.api.model.Period">
+    <id column="period_period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="period_name" jdbcType="VARCHAR" property="name" />
+    <result column="period_value" jdbcType="INTEGER" property="value" />
+    <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+  </resultMap>
+  <resultMap id="CoverageResultMap" type="com.ninelives.insurance.api.model.Coverage">
+    <id column="coverage_coverage_id" jdbcType="VARCHAR" property="coverageId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="coverage_name" jdbcType="VARCHAR" property="name" />
+    <result column="coverage_recommendation" jdbcType="VARCHAR" property="recommendation" />
+    <result column="coverage_description" jdbcType="VARCHAR" property="description" />
+    <result column="coverage_max_limit" jdbcType="BIGINT" property="maxLimit" />
+    <result column="coverage_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+  </resultMap>
+
+  <select id="selectByStatusActive" resultMap="AssociatedProductResultMap">
+  	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
+  		b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
+  		c.coverage_id as coverage_coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
+  		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary
+  	from public.product a, public.period b, public.coverage c
+  	where a.status='A' and b.period_id=a.period_id and c.coverage_id=a.coverage_id
+  	order by a.product_id
+  </select>
+  
+</mapper>

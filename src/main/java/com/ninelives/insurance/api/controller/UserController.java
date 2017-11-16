@@ -48,6 +48,7 @@ public class UserController {
 		//String registerSource = registerData.get("source");		
 		//check jika users empty maka this is new, 
 		logger.debug("register with {}", registrationDto);
+				
 		
 		RegisterUsersResult registerResult = usersService.registerUserByGoogleAccount(registrationDto);
 		

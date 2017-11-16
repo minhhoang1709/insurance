@@ -17,13 +17,13 @@ public class OrderProduct {
 
     private Long coverageMaxLimit;
 
+    private Boolean coverageHasBeneficiary;
+
     private Integer premi;
 
     private Date createdDate;
 
     private Date updateDate;
-
-    private Boolean coverageHasBeneficiary;
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -81,6 +81,14 @@ public class OrderProduct {
         this.coverageMaxLimit = coverageMaxLimit;
     }
 
+    public Boolean getCoverageHasBeneficiary() {
+        return coverageHasBeneficiary;
+    }
+
+    public void setCoverageHasBeneficiary(Boolean coverageHasBeneficiary) {
+        this.coverageHasBeneficiary = coverageHasBeneficiary;
+    }
+
     public Integer getPremi() {
         return premi;
     }
@@ -103,13 +111,5 @@ public class OrderProduct {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
-    }
-
-    public Boolean getCoverageHasBeneficiary() {
-        return coverageHasBeneficiary;
-    }
-
-    public void setCoverageHasBeneficiary(Boolean coverageHasBeneficiary) {
-        this.coverageHasBeneficiary = coverageHasBeneficiary;
     }
 }

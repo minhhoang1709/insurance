@@ -10,9 +10,6 @@ import com.ninelives.insurance.api.model.Product;
 
 @Mapper
 public interface ProductMapper {
-	@Select({"select product_id, coverage_id, period_id, name, premi, status, created_date, update_date ",
-		"from ",
-		"public.product"
-		})	
-	List<Product> selectAll();
+		
+	List<Product> selectByStatusActive();
 }

@@ -1,8 +1,5 @@
 package com.ninelives.insurance.api.model;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
 public class AuthToken {
 	
 	String tokenId;

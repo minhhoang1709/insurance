@@ -13,13 +13,15 @@ public class Coverage {
 
     private String description;
 
+    private Long maxLimit;
+
     private Boolean hasBeneficiary;
 
     private Date createdDate;
 
     private Date updateDate;
 
-    private Long maxLimit;
+    private String status;
 
     public String getCoverageId() {
         return coverageId;
@@ -61,6 +63,14 @@ public class Coverage {
         this.description = description;
     }
 
+    public Long getMaxLimit() {
+        return maxLimit;
+    }
+
+    public void setMaxLimit(Long maxLimit) {
+        this.maxLimit = maxLimit;
+    }
+
     public Boolean getHasBeneficiary() {
         return hasBeneficiary;
     }
@@ -85,11 +95,11 @@ public class Coverage {
         this.updateDate = updateDate;
     }
 
-    public Long getMaxLimit() {
-        return maxLimit;
+    public String getStatus() {
+        return status;
     }
 
-    public void setMaxLimit(Long maxLimit) {
-        this.maxLimit = maxLimit;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

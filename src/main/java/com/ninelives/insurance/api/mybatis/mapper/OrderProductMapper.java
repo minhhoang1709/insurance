@@ -12,21 +12,6 @@ import com.ninelives.insurance.api.model.PurchaseOrder;
 
 @Mapper
 public interface OrderProductMapper {
-	@Insert({
-        "insert into public.order_product (order_product_id, order_id, ",
-        "coverage_id, period_id, ",
-        "product_id, coverage_name, ",
-        "coverage_max_limit, premi, ",
-        "created_date, update_date, ",
-        "coverage_has_beneficiary)",
-        "values (#{orderProductId,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, ",
-        "#{coverageId,jdbcType=VARCHAR}, #{periodId,jdbcType=VARCHAR}, ",
-        "#{productId,jdbcType=VARCHAR}, #{coverageName,jdbcType=VARCHAR}, ",
-        "#{coverageMaxLimit,jdbcType=BIGINT}, #{premi,jdbcType=INTEGER}, ",
-        "#{createdDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, ",
-        "#{coverageHasBeneficiary,jdbcType=BIT})"
-    })
-    int insert(OrderProduct record);
 	
 	@Select({
         "select",

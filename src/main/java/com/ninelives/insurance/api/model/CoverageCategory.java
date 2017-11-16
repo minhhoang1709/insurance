@@ -3,7 +3,7 @@ package com.ninelives.insurance.api.model;
 import java.util.Date;
 
 public class CoverageCategory {
-    private Integer coverageCategoryId;
+    private String coverageCategoryId;
 
     private String name;
 
@@ -13,11 +13,11 @@ public class CoverageCategory {
 
     private Date updateDate;
 
-    public Integer getCoverageCategoryId() {
+    public String getCoverageCategoryId() {
         return coverageCategoryId;
     }
 
-    public void setCoverageCategoryId(Integer coverageCategoryId) {
+    public void setCoverageCategoryId(String coverageCategoryId) {
         this.coverageCategoryId = coverageCategoryId;
     }
 

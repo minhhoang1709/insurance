@@ -15,6 +15,7 @@ import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
+import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.model.OrderProduct;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PurchaseOrder;
@@ -27,6 +28,25 @@ public class OrderService {
 	@Autowired ProductService productService;
 	@Autowired PurchaseOrderMapper purchaseOrderMapper;
 	@Autowired OrderProductMapper orderProductMapper;
+	
+	
+	public OrderDto submitOrder(SubmitOrderDto submitOrderDto){
+		//validate field
+		  //convert policystartdate to date
+		  //convert totalpremi
+		  //fetch product
+	    
+		//validate allowed purchase
+		  //if user has 3 APPROVED purchase with same period (that will active at the same time), and same coverage
+		  //if policy start-date > today
+				
+		//insert with status submitted
+		
+		//TODO: submit order to ASWATA
+				
+		return null;
+	}
+	
 	
 	public OrderDto fetchOrderByOrderId(String orderId){
 		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
