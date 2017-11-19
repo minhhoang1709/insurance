@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.SubmitOrderDto;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.StorageService;
 
@@ -63,13 +65,14 @@ public class OrderController {
 	@RequestMapping(value="/orders",
 			method=RequestMethod.POST)	
 	@ResponseBody
-	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId,
+	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId, 
 			@RequestBody(required=false) SubmitOrderDto submitOrder, 
-			HttpServletResponse response){
+			HttpServletResponse response) throws ApiException{
 		
 		logger.debug("POST submitOrder with request {}", submitOrder);
+		//return orderService.fetchOrderByOrderId("02d40b53-c918-4770-b324-df7d1b0230dc");
 		
-		return orderService.fetchOrderByOrderId("02d40b53-c918-4770-b324-df7d1b0230dc");
+		return orderService.submitOrder(authUserId, submitOrder);
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/beneficiary",

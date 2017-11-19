@@ -16,7 +16,7 @@ public interface OrderProductMapper {
 	@Select({
         "select",
         "order_product_id, order_id, coverage_id, period_id, product_id, coverage_name, ",
-        "coverage_has_beneficiary, coverage_max_limit, premi, created_date, update_date",
+        "coverage_has_beneficiary, coverage_max_limit, premi",
         "from public.policy_order_product",
         "where order_id = #{orderId,jdbcType=VARCHAR}"
     })

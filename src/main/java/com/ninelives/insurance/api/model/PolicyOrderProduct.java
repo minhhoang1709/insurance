@@ -18,6 +18,8 @@ public class PolicyOrderProduct {
     private Boolean coverageHasBeneficiary;
 
     private Integer premi;
+    
+    private Period period;
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -90,4 +92,13 @@ public class PolicyOrderProduct {
     public void setPremi(Integer premi) {
         this.premi = premi;
     }
+
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+    
 }

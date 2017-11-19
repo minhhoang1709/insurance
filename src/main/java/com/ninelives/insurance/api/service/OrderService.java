@@ -66,6 +66,14 @@ public class OrderService {
 	@Value("${ninelives.order.policy-conflict-period-limit:3}")
 	int policyConflictPeriodLimit;
 	
+	@Value("${ninelives.order.policy-title}")
+	String policyTitle;
+	
+	@Value("${ninelives.order.policy-imgUrl}")
+	String policyImgUrl;
+	
+	//TODO: Replace hardcoded policytitles and imgurl
+	
 	public OrderDto submitOrder(String userId, final SubmitOrderDto submitOrderDto) throws ApiBadRequestException{
 		logger.debug("Process order for {} with order {}", userId, submitOrderDto);
 		
@@ -134,6 +142,8 @@ public class OrderService {
 		}
 		
 		//TODO: submit order to ASWATA
+		
+		
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setOrderId(generateOrderId());
 		policyOrder.setOrderDate(LocalDate.now());
@@ -174,16 +184,66 @@ public class OrderService {
 			pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
 			pop.setPremi(p.getPremi());
 			pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
+			pop.setPeriod(p.getPeriod());
 			policyOrderProducts.add(pop);
 		}
 		
 		policyOrder.setPolicyOrderProducts(policyOrderProducts);
 		
 		policyOrderTrxService.registerPolicyOrder(policyOrder);
+		
+		OrderDto orderDto = policyOrderToOrderDto(policyOrder);
 
-		return null;
+		return orderDto;
 	}
 	
+	private OrderDto policyOrderToOrderDto(PolicyOrder policyOrder){
+		OrderDto orderDto = new OrderDto();
+
+		if(policyOrder!=null){
+			
+			orderDto.setOrderId(policyOrder.getOrderId());
+			orderDto.setOrderDate(policyOrder.getOrderDate());
+			orderDto.setPolicyNumber(policyOrder.getPolicyNumber());
+			orderDto.setPolicyStartDate(policyOrder.getPolicyStartDate());
+			orderDto.setPolicyEndDate(policyOrder.getPolicyEndDate());
+			orderDto.setTotalPremi(policyOrder.getTotalPremi());
+			orderDto.setHasBeneficiary(policyOrder.getHasBeneficiary());
+			orderDto.setProductCount(policyOrder.getProductCount());
+			orderDto.setStatus(policyOrder.getStatus());
+			orderDto.setCreatedDate(policyOrder.getCreatedDate());
+			orderDto.setTitle(this.policyTitle);
+			orderDto.setImgUrl(this.policyImgUrl);
+			
+			List<ProductDto> productDtos = new ArrayList<>();
+			for(PolicyOrderProduct p: policyOrder.getPolicyOrderProducts()){
+				ProductDto dto = new ProductDto();
+				dto.setProductId(p.getProductId());
+				dto.setName(p.getCoverageName());
+				dto.setPremi(p.getPremi());
+				
+				PeriodDto periodDto = new PeriodDto();
+				periodDto.setName(p.getPeriod().getName());
+				periodDto.setPeriodId(p.getPeriodId());
+				periodDto.setUnit(p.getPeriod().getUnit());
+				periodDto.setValue(p.getPeriod().getValue());
+				dto.setPeriod(periodDto);
+
+				CoverageDto covDto = new CoverageDto();
+				covDto.setCoverageId(p.getCoverageId());
+				covDto.setName(p.getCoverageName());
+				covDto.setMaxLimit(p.getCoverageMaxLimit());
+				covDto.setHasBeneficiary(p.getCoverageHasBeneficiary());
+				dto.setCoverage(covDto);
+
+				productDtos.add(dto);
+			}
+			orderDto.setProductList(productDtos);
+		}
+		
+		return orderDto;
+		
+	}
 	
 	public OrderDto fetchOrderByOrderId(String orderId){
 		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -207,15 +267,15 @@ public class OrderService {
 			List<ProductDto> productDtos = new ArrayList<>();
 
 			order.setOrderId(po.getOrderId());
-			order.setOrderDate(formatter.format(po.getOrderDate()));
+			order.setOrderDate(po.getOrderDate());
 			order.setPolicyNumber(po.getPolicyNumber());
-			order.setPolicyStartDate(po.getPolicyStartDate().format(formatter));
-			order.setPolicyEndDate(formatter.format(po.getPolicyEndDate()));
+			order.setPolicyStartDate(po.getPolicyStartDate());
+			order.setPolicyEndDate(po.getPolicyEndDate());
 			order.setTotalPremi(po.getTotalPremi());
 			order.setHasBeneficiary(po.getHasBeneficiary());
 			order.setProductCount(po.getProductCount());
 			order.setStatus(po.getStatus());
-			order.setCreatedDate(dfTime.format(po.getCreatedDate()));
+			order.setCreatedDate(po.getCreatedDate());
 			order.setTitle("Asuransi kecelakaan");
 			order.setImgUrl("");
 
@@ -268,15 +328,15 @@ public class OrderService {
 			List<ProductDto> productDtos = new ArrayList<>();
 			
 			order.setOrderId(po.getOrderId());
-			order.setOrderDate(dfDate.format(po.getOrderDate()));
+			order.setOrderDate(po.getOrderDate());
 			order.setPolicyNumber(po.getPolicyNumber());
-			order.setPolicyStartDate(po.getPolicyStartDate().format(formatter));
-			order.setPolicyEndDate(formatter.format(po.getPolicyEndDate()));
+			order.setPolicyStartDate(po.getPolicyStartDate());
+			order.setPolicyEndDate(po.getPolicyEndDate());
 			order.setTotalPremi(po.getTotalPremi());
 			order.setHasBeneficiary(po.getHasBeneficiary());
 			order.setProductCount(po.getProductCount());
 			order.setStatus(po.getStatus());
-			order.setCreatedDate(dfTime.format(po.getCreatedDate()));
+			order.setCreatedDate(po.getCreatedDate());
 			order.setTitle("Asuransi kecelakaan");
 			order.setImgUrl("https://i.imgur.com/f3h2z7k.jpg");
 			

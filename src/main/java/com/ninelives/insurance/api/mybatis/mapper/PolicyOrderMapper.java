@@ -19,7 +19,7 @@ public interface PolicyOrderMapper {
         "select",
         "order_id, order_date, user_id, policy_number, policy_start_date, policy_end_date, ",
         "period, total_premi, has_beneficiary, product_count, status, created_date, update_date",
-        "from public.purchase_order",
+        "from public.policy_order",
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
 	List<PolicyOrder> selectByUserId(String userId);
@@ -28,7 +28,7 @@ public interface PolicyOrderMapper {
         "select",
         "order_id, order_date, user_id, policy_number, policy_start_date, policy_end_date, ",
         "period, total_premi, has_beneficiary, product_count, status, created_date, update_date",
-        "from public.purchase_order",
+        "from public.policy_order",
         "where order_id = #{orderId,jdbcType=VARCHAR}"
     })
 	PolicyOrder selectByOrderId(String orderId);
