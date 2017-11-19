@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.ninelives.insurance.api.exception.NotAuthorizedException;
-import com.ninelives.insurance.api.exception.NotFoundException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.Users;
 import com.ninelives.insurance.api.service.AuthService;
@@ -32,7 +32,7 @@ public class AuthController {
 	@RequestMapping(value="/login",
 			method=RequestMethod.POST)	
 	@ResponseBody
-	public Map<String, String> login( @RequestBody Map<String, String> loginData) throws NotAuthorizedException{
+	public Map<String, String> login( @RequestBody Map<String, String> loginData) throws ApiNotAuthorizedException{
 		
 		AuthToken authToken = authService.loginByEmail(loginData.get("email"), 
 				loginData.get("password"), 

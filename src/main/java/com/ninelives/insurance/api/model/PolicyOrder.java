@@ -1,0 +1,170 @@
+package com.ninelives.insurance.api.model;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import com.ninelives.insurance.api.ref.PolicyStatus;
+
+public class PolicyOrder {
+    private String orderId;
+
+    private LocalDate orderDate;
+
+    private String userId;
+
+    private String coverageCategoryId;
+
+    private Boolean hasBeneficiary;
+
+    private String period;
+
+    private String policyNumber;
+
+    private LocalDate policyStartDate;
+
+    private LocalDate policyEndDate;
+
+    private Integer totalPremi;
+
+    private Integer productCount;
+
+    private PolicyStatus status;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updateDate;
+    
+    private PolicyOrderUsers policyOrderUsers;
+    
+    private List<PolicyOrderProduct> policyOrderProducts;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getCoverageCategoryId() {
+		return coverageCategoryId;
+	}
+
+	public void setCoverageCategoryId(String coverageCategoryId) {
+		this.coverageCategoryId = coverageCategoryId;
+	}
+
+	public Boolean getHasBeneficiary() {
+        return hasBeneficiary;
+    }
+
+    public void setHasBeneficiary(Boolean hasBeneficiary) {
+        this.hasBeneficiary = hasBeneficiary;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public String getPolicyNumber() {
+        return policyNumber;
+    }
+
+    public void setPolicyNumber(String policyNumber) {
+        this.policyNumber = policyNumber;
+    }
+
+    public LocalDate getPolicyStartDate() {
+        return policyStartDate;
+    }
+
+    public void setPolicyStartDate(LocalDate policyStartDate) {
+        this.policyStartDate = policyStartDate;
+    }
+
+    public LocalDate getPolicyEndDate() {
+        return policyEndDate;
+    }
+
+    public void setPolicyEndDate(LocalDate policyEndDate) {
+        this.policyEndDate = policyEndDate;
+    }
+
+    public Integer getTotalPremi() {
+        return totalPremi;
+    }
+
+    public void setTotalPremi(Integer totalPremi) {
+        this.totalPremi = totalPremi;
+    }
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
+    }
+
+    public PolicyStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PolicyStatus status) {
+		this.status = status;
+	}
+
+	public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(LocalDateTime updateDate) {
+        this.updateDate = updateDate;
+    }
+
+	public PolicyOrderUsers getPolicyOrderUsers() {
+		return policyOrderUsers;
+	}
+
+	public void setPolicyOrderUsers(PolicyOrderUsers policyOrderUsers) {
+		this.policyOrderUsers = policyOrderUsers;
+	}
+
+	public List<PolicyOrderProduct> getPolicyOrderProducts() {
+		return policyOrderProducts;
+	}
+
+	public void setPolicyOrderProducts(List<PolicyOrderProduct> policyOrderProducts) {
+		this.policyOrderProducts = policyOrderProducts;
+	}
+    
+}

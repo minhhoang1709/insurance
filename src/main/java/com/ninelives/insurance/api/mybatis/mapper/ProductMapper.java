@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.mybatis.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.ninelives.insurance.api.model.Period;
@@ -12,4 +13,5 @@ import com.ninelives.insurance.api.model.Product;
 public interface ProductMapper {
 		
 	List<Product> selectByStatusActive();
+	List<Product> selectByProductIds(@Param("productIds") List<String> productIds);
 }

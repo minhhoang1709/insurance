@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.ninelives.insurance.api.exception.NotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.Users;
@@ -30,16 +30,16 @@ public class AuthService {
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 		
-	public AuthToken loginByEmail(String email, String password, String fcmToken) throws NotAuthorizedException{
+	public AuthToken loginByEmail(String email, String password, String fcmToken) throws ApiNotAuthorizedException{
 		AuthToken token = null;
 		
 		if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)||StringUtils.isEmpty(fcmToken)){
-			throw new NotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
 		
 		Users user = userMapper.selectByEmail(email);
-		if(!user.getPassword().equals(DigestUtils.sha1Hex(password))){
-			throw new NotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+		if(user==null || !user.getPassword().equals(DigestUtils.sha1Hex(password))){
+			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}else{
 			token = generateAuthToken();
 			
@@ -58,13 +58,13 @@ public class AuthService {
 		return token;
 	}
 	
-	public ApiSessionData validateAuthToken(String tokenId) throws NotAuthorizedException{		
+	public ApiSessionData validateAuthToken(String tokenId) throws ApiNotAuthorizedException{		
 		if(StringUtils.isEmpty(tokenId)){
-			throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+			throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 		}		
 		ApiSessionData sessionData = redisService.getApiSessionData(tokenId);
 		if(sessionData==null || StringUtils.isEmpty(sessionData.getUserId())){
-			throw new NotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+			throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 		}		
 		return sessionData;
 	}

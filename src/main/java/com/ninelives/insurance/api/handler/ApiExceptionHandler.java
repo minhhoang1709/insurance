@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.ninelives.insurance.api.dto.ErrorDto;
 import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.BadRequestException;
-import com.ninelives.insurance.api.exception.NotAuthorizedException;
-import com.ninelives.insurance.api.exception.NotFoundException;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.ref.ErrorCode;;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
 //public class ApiExceptionHandler{
 	
-	@ExceptionHandler(NotFoundException.class)
+	@ExceptionHandler(ApiNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public Map<String, ErrorDto> handleUserNotFoundException(HttpServletRequest request, Exception ex){
@@ -33,7 +33,7 @@ public class ApiExceptionHandler {
 		return errorDtoResp;
 	}
 	
-	@ExceptionHandler(NotAuthorizedException.class)
+	@ExceptionHandler(ApiNotAuthorizedException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ResponseBody
 	public Map<String, ErrorDto> handleNotAuthorizedException(HttpServletRequest request, Exception ex){
@@ -44,7 +44,7 @@ public class ApiExceptionHandler {
 		return errorDtoResp;
 	}
 	
-	@ExceptionHandler(BadRequestException.class)
+	@ExceptionHandler(ApiBadRequestException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public Map<String, ErrorDto> handleBadRequestException(HttpServletRequest request, Exception ex){

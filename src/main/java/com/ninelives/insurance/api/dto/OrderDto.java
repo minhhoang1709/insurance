@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.api.ref.PolicyStatus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDto {
@@ -27,7 +28,7 @@ public class OrderDto {
 
     private Integer productCount;
 
-    private String status;
+    private PolicyStatus status;
 
     private String createdDate;
 
@@ -117,11 +118,11 @@ public class OrderDto {
 		this.productCount = productCount;
 	}
 
-	public String getStatus() {
+	public PolicyStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(PolicyStatus status) {
 		this.status = status;
 	}
 

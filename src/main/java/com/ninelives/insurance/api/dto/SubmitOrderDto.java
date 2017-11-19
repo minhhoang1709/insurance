@@ -1,11 +1,16 @@
 package com.ninelives.insurance.api.dto;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class SubmitOrderDto {
 	List<String> products;
 	int totalPremi;
-	String policyStartDate;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	LocalDate policyStartDate;
 	
 	public List<String> getProducts() {
 		return products;
@@ -19,11 +24,17 @@ public class SubmitOrderDto {
 	public void setTotalPremi(int totalPremi) {
 		this.totalPremi = totalPremi;
 	}
-	public String getPolicyStartDate() {
+	public LocalDate getPolicyStartDate() {
 		return policyStartDate;
 	}
-	public void setPolicyStartDate(String policyStartDate) {
+	public void setPolicyStartDate(LocalDate policyStartDate) {
 		this.policyStartDate = policyStartDate;
 	}
+	@Override
+	public String toString() {
+		return "SubmitOrderDto [products=" + products + ", totalPremi=" + totalPremi + ", policyStartDate="
+				+ policyStartDate + "]";
+	}
+	
 	
 }

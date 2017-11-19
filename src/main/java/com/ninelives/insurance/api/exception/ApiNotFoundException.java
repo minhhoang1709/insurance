@@ -2,9 +2,9 @@ package com.ninelives.insurance.api.exception;
 
 import com.ninelives.insurance.api.ref.ErrorCode;
 
-public class NotFoundException extends ApiException {
+public class ApiNotFoundException extends ApiException {
 
-	public NotFoundException(ErrorCode code, String message) {
+	public ApiNotFoundException(ErrorCode code, String message) {
 		super(code, message);
 	}
 

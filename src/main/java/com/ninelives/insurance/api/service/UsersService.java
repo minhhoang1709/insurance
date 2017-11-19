@@ -15,9 +15,9 @@ import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UsersDto;
-import com.ninelives.insurance.api.exception.NotAuthorizedException;
-import com.ninelives.insurance.api.exception.NotFoundException;
-import com.ninelives.insurance.api.exception.BadRequestException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.Users;
@@ -48,9 +48,9 @@ public class UsersService {
 	 * @param name
 	 * @param password
 	 * @return
-	 * @throws NotAuthorizedException
+	 * @throws ApiNotAuthorizedException
 	 */
-	public RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws BadRequestException {
+	public RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws ApiBadRequestException {
 		
 		/**
 		 * TODO: verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
@@ -63,7 +63,7 @@ public class UsersService {
 		
 		if(user!=null){
 			if(!user.getPassword().equals(DigestUtils.sha1Hex(registrationDto.getPassword()))){
-				throw new BadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
+				throw new ApiBadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
 			}
 			if(user.getIsSyncGmailEnabled()!=registrationDto.getIsSyncGmailEnabled()){
 				user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
@@ -77,7 +77,7 @@ public class UsersService {
 					|| StringUtils.isEmpty(registrationDto.getGoogleId())
 					|| StringUtils.isEmpty(registrationDto.getPassword())
 					){
-				throw new BadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
+				throw new ApiBadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
 			}
 			
 			user = new Users();
@@ -118,6 +118,10 @@ public class UsersService {
 		
 		
 		return registerResult;
+	}
+	
+	public Users fetchUser(String userId){
+		return userMapper.selectByUserId(userId);
 	}
 	
 	public UsersDto getUserDto(String userId) {

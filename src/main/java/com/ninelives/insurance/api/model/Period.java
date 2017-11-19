@@ -2,6 +2,8 @@ package com.ninelives.insurance.api.model;
 
 import java.util.Date;
 
+import com.ninelives.insurance.api.ref.PeriodUnit;
+
 public class Period {
     private String periodId;
 
@@ -9,7 +11,7 @@ public class Period {
 
     private Integer value;
 
-    private String unit;
+    private PeriodUnit unit;
 
     private Date createdDate;
 
@@ -41,15 +43,16 @@ public class Period {
         this.value = value;
     }
 
-    public String getUnit() {
-        return unit;
-    }
+    
+    public PeriodUnit getUnit() {
+		return unit;
+	}
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
+	public void setUnit(PeriodUnit unit) {
+		this.unit = unit;
+	}
 
-    public Date getCreatedDate() {
+	public Date getCreatedDate() {
         return createdDate;
     }
 

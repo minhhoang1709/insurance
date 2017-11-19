@@ -41,8 +41,13 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-cache')
 	compile('net.sf.ehcache:ehcache:2.10.4')
 	
-	compile('com.google.code.gson:gson:2.8.2')	
+	//json
+	compile('com.google.code.gson:gson:2.8.2')
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.2')
+		
 	compile('commons-codec:commons-codec:1.11')
+	compile('org.apache.commons:commons-collections4:4.1')
+	
 	runtime('org.postgresql:postgresql')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')

@@ -1,8 +1,6 @@
 package com.ninelives.insurance.api.model;
 
-import java.util.Date;
-
-public class OrderProduct {
+public class PolicyOrderProduct {
     private Long orderProductId;
 
     private String orderId;
@@ -20,10 +18,6 @@ public class OrderProduct {
     private Boolean coverageHasBeneficiary;
 
     private Integer premi;
-
-    private Date createdDate;
-
-    private Date updateDate;
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -95,21 +89,5 @@ public class OrderProduct {
 
     public void setPremi(Integer premi) {
         this.premi = premi;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
     }
 }

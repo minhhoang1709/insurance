@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.dto;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.api.ref.PeriodUnit;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PeriodDto {
@@ -12,7 +13,7 @@ public class PeriodDto {
 
     private Integer value;
 
-    private String unit;
+    private PeriodUnit unit;
 
 	public String getPeriodId() {
 		return periodId;
@@ -38,11 +39,11 @@ public class PeriodDto {
 		this.value = value;
 	}
 
-	public String getUnit() {
+	public PeriodUnit getUnit() {
 		return unit;
 	}
 
-	public void setUnit(String unit) {
+	public void setUnit(PeriodUnit unit) {
 		this.unit = unit;
 	}
 

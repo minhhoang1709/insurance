@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.ninelives.insurance.api.ref.UserStatus;
@@ -25,7 +26,7 @@ public class Users {
 
     private String gender;
 
-    private Date birthDate;
+    private LocalDate birthDate;
 
     private String birthPlace;
 
@@ -117,15 +118,15 @@ public class Users {
         this.gender = gender;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
+    public LocalDate getBirthDate() {
+		return birthDate;
+	}
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
+	}
 
-    public String getBirthPlace() {
+	public String getBirthPlace() {
         return birthPlace;
     }
 

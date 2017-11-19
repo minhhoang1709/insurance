@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.api.model.PolicyOrder">
+    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_date" jdbcType="DATE" property="orderDate" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="period" jdbcType="VARCHAR" property="period" />
+    <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
+    <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
+    <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
+    <result column="product_count" jdbcType="INTEGER" property="productCount" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    order_id, order_date, user_id, coverage_category_id, has_beneficiary, period, policy_number, 
+    policy_start_date, policy_end_date, total_premi, product_count, status, created_date, 
+    update_date
+  </sql>
+
+  <select id="selectCoverageWithConflictedPolicyDate" resultType="com.ninelives.insurance.api.model.PolicyOrderCoverage">
+  	select a.order_id, b.coverage_id, b.coverage_name, a.order_date, a.policy_start_date, a.policy_end_date
+  	from public.policy_order as a, public.policy_order_product as b 
+  	where a.user_id=#{userId,jdbcType=VARCHAR} 
+  		and
+	    (
+  		  (#{policyStartDate,jdbcType=DATE} between a.policy_start_date and a.policy_end_date) or
+		  (#{policyEndDate,jdbcType=DATE} between a.policy_start_date and a.policy_end_date)
+		) 
+		and a.order_date &gt;= #{dueOrderDate,jdbcType=DATE}
+		and a.status != 'TERMINATED' 
+        and b.order_id=a.order_id
+        and b.coverage_id in
+        <foreach item="item" index="index" collection="coverageIds"
+      		open="(" separator="," close=")">#{item}
+        </foreach>
+  </select>
+
+
+</mapper>

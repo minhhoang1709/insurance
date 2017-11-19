@@ -25,8 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UsersDto;
-import com.ninelives.insurance.api.exception.BadRequestException;
-import com.ninelives.insurance.api.exception.NotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.Users;
 import com.ninelives.insurance.api.service.StorageService;
@@ -43,7 +43,7 @@ public class UserController {
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public UsersDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws BadRequestException{
+	public UsersDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{
 		
 		//String registerSource = registerData.get("source");		
 		//check jika users empty maka this is new, 

@@ -25,11 +25,17 @@ public class ProductService {
 	@Autowired ProductMapper productMapper;
 	
 	public List<Product> fetchAllProduct(){
+		//test
 		return productMapper.selectByStatusActive();
 	}
 	
 	public List<Coverage> fetchAllCoverage(){
+		//test
 		return coverageMapper.selectByStatusActive();
+	}
+	
+	public List<Product> fetchProductByProductIds(List<String> productIds){
+		return productMapper.selectByProductIds(productIds);
 	}
 	
 	@Cacheable("ProductDtosAll")

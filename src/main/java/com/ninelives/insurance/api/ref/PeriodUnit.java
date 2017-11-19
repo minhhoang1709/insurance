@@ -5,27 +5,20 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum OrderStatus {
-	SUBMITTED("SUBMITTED"),
-	INPAYMENT("INPAYMENT"),
-	OVERDUE("OVERDUE"),
-	PAID("PAID"),
-	APPROVED("APPROVED"),
-	ACTIVE("ACTIVE"),
-	EXPIRED("EXPIRED"),
-	TERMINATED("TERMINATED")
+public enum PeriodUnit {
+	DAILY("DAILY")
 	;
 	
-	static final Map<String, OrderStatus> lookup = new HashMap<>();
+	static final Map<String, PeriodUnit> lookup = new HashMap<>();
 	static {
-		for (OrderStatus c:OrderStatus.values()){
+		for (PeriodUnit c:PeriodUnit.values()){
 			lookup.put(c.toString(), c);
 		}
 	}
 	
 	private final String stringValue;
 
-    private OrderStatus(final String newValue) {
+    private PeriodUnit(final String newValue) {
         stringValue = newValue;
     }
 
@@ -38,8 +31,8 @@ public enum OrderStatus {
     	return stringValue;
     }
     
-    public static OrderStatus toEnum(String value){
-    	OrderStatus result = lookup.get(value);
+    public static PeriodUnit toEnum(String value){
+    	PeriodUnit result = lookup.get(value);
     	if (result != null){
     		return result;
     	}

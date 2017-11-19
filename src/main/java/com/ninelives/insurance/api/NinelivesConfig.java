@@ -1,7 +1,13 @@
 package com.ninelives.insurance.api;
 
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -13,7 +19,12 @@ import com.ninelives.insurance.api.service.StorageService;
 @Configuration
 @EnableConfigurationProperties(StorageProperties.class)
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
+	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
+			
 	@Autowired AuthInterceptor authInterceptor;
+	
+	@Autowired DataSource dataSource;
+	//@Autowired TransactionManager trxManager;
 		
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -22,6 +33,13 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 				"/configs",
 				"/products",
 				"/error");
+	}
+	
+	//test
+	@PostConstruct
+	public void configInfo() {
+		logger.info("Auto configuration, Datasource is {}", dataSource);
+		//logger.info("Auto configuration, TransactionManagement is {}", dataSource);
 	}
 	
 //	@Autowired RedisConnectionFactory redisConnectionFactory; 
