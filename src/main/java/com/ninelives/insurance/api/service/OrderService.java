@@ -245,7 +245,13 @@ public class OrderService {
 			orderDto.setCreatedDate(policyOrder.getCreatedDate());
 			orderDto.setTitle(this.policyTitle);
 			orderDto.setImgUrl(this.policyImgUrl);
-			
+
+			PeriodDto periodDto = new PeriodDto();
+			periodDto.setName(policyOrder.getPeriod().getName());
+			periodDto.setPeriodId(policyOrder.getPeriodId());
+			periodDto.setUnit(policyOrder.getPeriod().getUnit());
+			periodDto.setValue(policyOrder.getPeriod().getValue());
+
 			List<ProductDto> productDtos = new ArrayList<>();
 			for(PolicyOrderProduct p: policyOrder.getPolicyOrderProducts()){
 				ProductDto dto = new ProductDto();
@@ -253,7 +259,7 @@ public class OrderService {
 				dto.setName(p.getCoverageName());
 				dto.setPremi(p.getPremi());
 				
-				//dto.setPeriod(periodDto);
+				dto.setPeriod(periodDto);
 
 				CoverageDto covDto = new CoverageDto();
 				covDto.setCoverageId(p.getCoverageId());
@@ -266,11 +272,6 @@ public class OrderService {
 			}
 			orderDto.setProducts(productDtos);
 			
-			PeriodDto periodDto = new PeriodDto();
-			periodDto.setName(policyOrder.getPeriod().getName());
-			periodDto.setPeriodId(policyOrder.getPeriodId());
-			periodDto.setUnit(policyOrder.getPeriod().getUnit());
-			periodDto.setValue(policyOrder.getPeriod().getValue());
 
 			orderDto.setPeriod(periodDto);
 		}
