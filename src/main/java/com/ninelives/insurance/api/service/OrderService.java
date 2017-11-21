@@ -13,15 +13,18 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.ibatis.reflection.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
+import com.ninelives.insurance.api.dto.OrderFilterDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.SubmitOrderDto;
@@ -38,6 +41,7 @@ import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
 import com.ninelives.insurance.api.ref.ErrorCode;
+import com.ninelives.insurance.api.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.api.ref.PolicyStatus;
 import com.ninelives.insurance.api.service.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.api.ref.PeriodUnit;
@@ -66,15 +70,39 @@ public class OrderService {
 	@Value("${ninelives.order.policy-conflict-period-limit:3}")
 	int policyConflictPeriodLimit;
 	
+	//TODO: Replace hardcoded policytitles and imgurl
+	
 	@Value("${ninelives.order.policy-title}")
 	String policyTitle;
 	
 	@Value("${ninelives.order.policy-imgUrl}")
 	String policyImgUrl;
 	
-	//TODO: Replace hardcoded policytitles and imgurl
+	@Value("${ninelives.order.filter-limit:100}")
+	int defaultOrdersFilterLimit;
 	
-	public OrderDto submitOrder(String userId, final SubmitOrderDto submitOrderDto) throws ApiBadRequestException{
+	@Value("${ninelives.order.filter-max-limit:100}")
+	int maxOrdersFilterLimit;
+	
+	@Value("${ninelives.order.filter-offset:0}")
+	int defaultOrdersFilterOffset;
+	
+	public OrderDto submitOrder(final String userId, final OrderDto orderDto) throws ApiBadRequestException{
+		SubmitOrderDto submitOrderDto = new SubmitOrderDto();
+		if(orderDto != null){
+			submitOrderDto.setPolicyStartDate(orderDto.getPolicyStartDate());
+			submitOrderDto.setTotalPremi(orderDto.getTotalPremi());
+			if(!CollectionUtils.isEmpty(orderDto.getProducts())){
+				List<String> productIds = new ArrayList<>();
+				for(ProductDto p: orderDto.getProducts()){
+					productIds.add(p.getProductId());
+				}
+				submitOrderDto.setProducts(productIds);
+			}			
+		}
+		return submitOrder(userId, submitOrderDto);
+	}
+	public OrderDto submitOrder(final String userId, final SubmitOrderDto submitOrderDto) throws ApiBadRequestException{
 		logger.debug("Process order for {} with order {}", userId, submitOrderDto);
 		
 		if(CollectionUtils.isEmpty(submitOrderDto.getProducts())){
@@ -84,7 +112,17 @@ public class OrderService {
 		if(submitOrderDto.getProducts().size()!= (new HashSet<>(submitOrderDto.getProducts())).size()){
 			logger.debug("Process order for {} with order {} with result: exception duplicate product", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4002_ORDER_PRODUCT_DUPLICATE, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
-		}		
+		}
+		
+		LocalDate limitPolicyStartDate = LocalDate.now().plusDays(this.policyStartDatePeriod);
+		if(limitPolicyStartDate.isBefore(submitOrderDto.getPolicyStartDate())){
+			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, this.policyStartDatePeriod);
+			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
+					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi tidak lebih dari tanggal "
+							+ limitPolicyStartDate.format(formatter));
+			
+		}
+		
 		List<Product> products = productService.fetchProductByProductIds(submitOrderDto.getProducts());
 		if(products.isEmpty() || products.size()!=submitOrderDto.getProducts().size()){
 			logger.debug("Process order for {} with order {} with result: exception product not found", userId, submitOrderDto);
@@ -114,14 +152,7 @@ public class OrderService {
 			throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
 		}
 		
-		LocalDate limitPolicyStartDate = LocalDate.now().plusDays(this.policyStartDatePeriod);
-		if(limitPolicyStartDate.isBefore(submitOrderDto.getPolicyStartDate())){
-			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, this.policyStartDatePeriod);
-			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi tidak lebih dari tanggal "
-							+ limitPolicyStartDate.format(formatter));
-			
-		}
+		
 		
 		Period period = products.get(0).getPeriod();
 		if(!period.getUnit().equals(PeriodUnit.DAILY)){
@@ -143,18 +174,18 @@ public class OrderService {
 		
 		//TODO: submit order to ASWATA
 		
-		
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setOrderId(generateOrderId());
 		policyOrder.setOrderDate(LocalDate.now());
 		policyOrder.setUserId(userId);
 		policyOrder.setCoverageCategoryId(coverageCategoryId);
 		policyOrder.setHasBeneficiary(hasBeneficiary);
-		policyOrder.setPeriod(periodId);
+		policyOrder.setPeriodId(periodId);
 		policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate());
 		policyOrder.setPolicyEndDate(policyEndDate);
 		policyOrder.setTotalPremi(calculatedTotalPremi);
 		policyOrder.setProductCount(products.size());
+		policyOrder.setPeriod(period);
 		policyOrder.setStatus(PolicyStatus.SUBMITTED);
 		
 		//Set user info		
@@ -198,10 +229,10 @@ public class OrderService {
 	}
 	
 	private OrderDto policyOrderToOrderDto(PolicyOrder policyOrder){
-		OrderDto orderDto = new OrderDto();
+		OrderDto orderDto = null;
 
 		if(policyOrder!=null){
-			
+			orderDto = new OrderDto();
 			orderDto.setOrderId(policyOrder.getOrderId());
 			orderDto.setOrderDate(policyOrder.getOrderDate());
 			orderDto.setPolicyNumber(policyOrder.getPolicyNumber());
@@ -222,12 +253,7 @@ public class OrderService {
 				dto.setName(p.getCoverageName());
 				dto.setPremi(p.getPremi());
 				
-				PeriodDto periodDto = new PeriodDto();
-				periodDto.setName(p.getPeriod().getName());
-				periodDto.setPeriodId(p.getPeriodId());
-				periodDto.setUnit(p.getPeriod().getUnit());
-				periodDto.setValue(p.getPeriod().getValue());
-				dto.setPeriod(periodDto);
+				//dto.setPeriod(periodDto);
 
 				CoverageDto covDto = new CoverageDto();
 				covDto.setCoverageId(p.getCoverageId());
@@ -238,135 +264,225 @@ public class OrderService {
 
 				productDtos.add(dto);
 			}
-			orderDto.setProductList(productDtos);
+			orderDto.setProducts(productDtos);
+			
+			PeriodDto periodDto = new PeriodDto();
+			periodDto.setName(policyOrder.getPeriod().getName());
+			periodDto.setPeriodId(policyOrder.getPeriodId());
+			periodDto.setUnit(policyOrder.getPeriod().getUnit());
+			periodDto.setValue(policyOrder.getPeriod().getValue());
+
+			orderDto.setPeriod(periodDto);
 		}
+		
 		
 		return orderDto;
 		
 	}
 	
-	public OrderDto fetchOrderByOrderId(String orderId){
-		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
-		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		
-		List<Period> periods = productService.fetchAllPeriod();
-		Map<String,PeriodDto> perMap = new HashMap<>();
-		for(Period c: periods) {
-			PeriodDto dto = new PeriodDto();
-			dto.setPeriodId(c.getPeriodId());
-			dto.setName(c.getName());
-			dto.setValue(c.getValue());
-			dto.setUnit(c.getUnit());
-			perMap.put(c.getPeriodId(), dto);
+	public List<OrderDto> fetchOrderDtos(final String userId, final OrderFilterDto filter){
+		int offset = this.defaultOrdersFilterOffset;
+		int limit = this.defaultOrdersFilterLimit;
+		String[] filterStatus = null;
+		if(filter!=null){
+			offset = filter.getOffset();
+			if(filter.getLimit() > this.maxOrdersFilterLimit){
+				limit = this.maxOrdersFilterLimit;
+			}else{
+				limit = filter.getLimit();
+			}
+			filterStatus = filter.getStatus();
+		}
+		OrderDtoFilterStatus filterType = getFilterType(filterStatus);
+		List<PolicyOrder> orders = null;
+		if(filterType.equals(OrderDtoFilterStatus.ALL)){
+			orders = policyOrderMapper.selectByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.ACTIVE)){
+			orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.APPROVED)){
+			orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.EXPIRED)){
+			orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.UNPAID)){
+			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
 		}
 		
-		PolicyOrder po = policyOrderMapper.selectByOrderId(orderId);
-		OrderDto order = null;
-		if(po!=null){
-			order = new OrderDto();
-			List<ProductDto> productDtos = new ArrayList<>();
-
-			order.setOrderId(po.getOrderId());
-			order.setOrderDate(po.getOrderDate());
-			order.setPolicyNumber(po.getPolicyNumber());
-			order.setPolicyStartDate(po.getPolicyStartDate());
-			order.setPolicyEndDate(po.getPolicyEndDate());
-			order.setTotalPremi(po.getTotalPremi());
-			order.setHasBeneficiary(po.getHasBeneficiary());
-			order.setProductCount(po.getProductCount());
-			order.setStatus(po.getStatus());
-			order.setCreatedDate(po.getCreatedDate());
-			order.setTitle("Asuransi kecelakaan");
-			order.setImgUrl("");
-
-			List<PolicyOrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
-			for (PolicyOrderProduct op : productList) {
-				ProductDto dto = new ProductDto();
-				dto.setProductId(op.getProductId());
-				dto.setName(op.getCoverageName());
-				dto.setPremi(op.getPremi());
-				dto.setPeriod(perMap.get(op.getPeriodId()));
-
-				CoverageDto covDto = new CoverageDto();
-				covDto.setCoverageId(op.getCoverageId());
-				covDto.setName(op.getCoverageName());
-				covDto.setMaxLimit(op.getCoverageMaxLimit());
-				covDto.setHasBeneficiary(op.getCoverageHasBeneficiary());
-				dto.setCoverage(covDto);
-
-				productDtos.add(dto);
+		LocalDate today = LocalDate.now();
+		ArrayList<OrderDto> orderDtos = new ArrayList<>();
+		if(orders!=null){
+			for(PolicyOrder po: orders){
+				mapPolicyOrderStatus(po,today);
+				orderDtos.add(policyOrderToOrderDto(po));
 			}
-			if (!productList.isEmpty()) {
-				order.setProductList(productDtos);
-			}
-
-			//order.setPeriod(perMap.get(po.getPeriod()));
-		}		
+		}
 		
-		return order;
+		return orderDtos;
 	}
 	
-	public List<OrderDto> fetchOrderListByUserId(String userId){
-		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
-		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		
-		List<Period> periods = productService.fetchAllPeriod();
-		Map<String,PeriodDto> perMap = new HashMap<>();
-		for(Period c: periods) {
-			PeriodDto dto = new PeriodDto();
-			dto.setPeriodId(c.getPeriodId());
-			dto.setName(c.getName());
-			dto.setValue(c.getValue());
-			dto.setUnit(c.getUnit());
-			perMap.put(c.getPeriodId(), dto);
-		}
-		
-		List<PolicyOrder> pos = policyOrderMapper.selectByUserId(userId);
-		List<OrderDto> orders = new ArrayList<>();
-		for(PolicyOrder po:pos){
-			OrderDto order = new OrderDto();
-			List<ProductDto> productDtos = new ArrayList<>();
-			
-			order.setOrderId(po.getOrderId());
-			order.setOrderDate(po.getOrderDate());
-			order.setPolicyNumber(po.getPolicyNumber());
-			order.setPolicyStartDate(po.getPolicyStartDate());
-			order.setPolicyEndDate(po.getPolicyEndDate());
-			order.setTotalPremi(po.getTotalPremi());
-			order.setHasBeneficiary(po.getHasBeneficiary());
-			order.setProductCount(po.getProductCount());
-			order.setStatus(po.getStatus());
-			order.setCreatedDate(po.getCreatedDate());
-			order.setTitle("Asuransi kecelakaan");
-			order.setImgUrl("https://i.imgur.com/f3h2z7k.jpg");
-			
-			List<PolicyOrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
-			for(PolicyOrderProduct op: productList){
-				ProductDto dto = new ProductDto();
-				dto.setProductId(op.getProductId());
-				dto.setName(op.getCoverageName());
-				dto.setPremi(op.getPremi());
-				dto.setPeriod(perMap.get(op.getPeriodId()));
-				
-				CoverageDto covDto = new CoverageDto();
-				covDto.setCoverageId(op.getCoverageId());
-				covDto.setName(op.getCoverageName());
-				covDto.setMaxLimit(op.getCoverageMaxLimit());
-				covDto.setHasBeneficiary(op.getCoverageHasBeneficiary());				
-				dto.setCoverage(covDto);
-				
-				productDtos.add(dto);
-			}
-			if(!productList.isEmpty()){
-				order.setProductList(productDtos);
-			}
-			
-			//order.setPeriod(perMap.get(po.getPeriod()));
-			
-			orders.add(order);			
-		}		
-		return orders;
+	public OrderDto fetchOrderDtosByOrderId(final String userId, final String orderId){
+		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
+		return policyOrderToOrderDto(policyOrder);
 	}
+	
+	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
+		if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
+			if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
+				policyOrder.setStatus(PolicyStatus.OVERDUE);
+			}
+		}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
+			if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
+				policyOrder.setStatus(PolicyStatus.ACTIVE);
+			}else if(policyOrder.getPolicyEndDate().isBefore(today)){
+				policyOrder.setStatus(PolicyStatus.EXPIRED);
+			}
+		}
+	}
+	
+	protected OrderDtoFilterStatus getFilterType(String[] status){
+		OrderDtoFilterStatus filterType = OrderDtoFilterStatus.ALL;
+		if(status!=null && status.length > 0){
+			if(!StringUtils.isEmpty(status[0])){
+				if(status.length==1 && status[0].equals(PolicyStatus.ACTIVE.toStr())){
+					filterType = OrderDtoFilterStatus.ACTIVE;
+				}else if(status.length==1 && status[0].equals(PolicyStatus.APPROVED.toStr())){
+					filterType = OrderDtoFilterStatus.APPROVED;
+				}else if(status.length>=2 
+						&& (status[0].equals(PolicyStatus.EXPIRED.toStr()) 
+								||status[1].equals(PolicyStatus.EXPIRED.toStr()))
+						){
+					filterType = OrderDtoFilterStatus.EXPIRED;
+				}else{
+					filterType = OrderDtoFilterStatus.UNPAID;
+				}				
+			}
+		}
+		return filterType;
+	}
+	
+//	public OrderDto fetchOrderByOrderId(String orderId){
+//		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
+//		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//		
+//		List<Period> periods = productService.fetchAllPeriod();
+//		Map<String,PeriodDto> perMap = new HashMap<>();
+//		for(Period c: periods) {
+//			PeriodDto dto = new PeriodDto();
+//			dto.setPeriodId(c.getPeriodId());
+//			dto.setName(c.getName());
+//			dto.setValue(c.getValue());
+//			dto.setUnit(c.getUnit());
+//			perMap.put(c.getPeriodId(), dto);
+//		}
+//		
+//		PolicyOrder po = policyOrderMapper.selectByOrderId(orderId);
+//		OrderDto order = null;
+//		if(po!=null){
+//			order = new OrderDto();
+//			List<ProductDto> productDtos = new ArrayList<>();
+//
+//			order.setOrderId(po.getOrderId());
+//			order.setOrderDate(po.getOrderDate());
+//			order.setPolicyNumber(po.getPolicyNumber());
+//			order.setPolicyStartDate(po.getPolicyStartDate());
+//			order.setPolicyEndDate(po.getPolicyEndDate());
+//			order.setTotalPremi(po.getTotalPremi());
+//			order.setHasBeneficiary(po.getHasBeneficiary());
+//			order.setProductCount(po.getProductCount());
+//			order.setStatus(po.getStatus());
+//			order.setCreatedDate(po.getCreatedDate());
+//			order.setTitle("Asuransi kecelakaan");
+//			order.setImgUrl("");
+//
+//			List<PolicyOrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
+//			for (PolicyOrderProduct op : productList) {
+//				ProductDto dto = new ProductDto();
+//				dto.setProductId(op.getProductId());
+//				dto.setName(op.getCoverageName());
+//				dto.setPremi(op.getPremi());
+//				//dto.setPeriod(perMap.get(op.getPeriodId()));
+//
+//				CoverageDto covDto = new CoverageDto();
+//				covDto.setCoverageId(op.getCoverageId());
+//				covDto.setName(op.getCoverageName());
+//				covDto.setMaxLimit(op.getCoverageMaxLimit());
+//				covDto.setHasBeneficiary(op.getCoverageHasBeneficiary());
+//				dto.setCoverage(covDto);
+//
+//				productDtos.add(dto);
+//			}
+//			if (!productList.isEmpty()) {
+//				order.setProducts(productDtos);
+//			}
+//
+//			order.setPeriod(perMap.get(po.getPeriodId()));
+//		}		
+//		
+//		return order;
+//	}
+	
+	
+	//test
+//	public List<OrderDto> testfetchOrderListByUserId(String userId){
+//		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
+//		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//		
+//		List<Period> periods = productService.fetchAllPeriod();
+//		Map<String,PeriodDto> perMap = new HashMap<>();
+//		for(Period c: periods) {
+//			PeriodDto dto = new PeriodDto();
+//			dto.setPeriodId(c.getPeriodId());
+//			dto.setName(c.getName());
+//			dto.setValue(c.getValue());
+//			dto.setUnit(c.getUnit());
+//			perMap.put(c.getPeriodId(), dto);
+//		}
+//		
+//		List<PolicyOrder> pos = policyOrderMapper.selectByUserId(userId,100,0);
+//		List<OrderDto> orders = new ArrayList<>();
+//		for(PolicyOrder po:pos){
+//			OrderDto order = new OrderDto();
+//			List<ProductDto> productDtos = new ArrayList<>();
+//			
+//			order.setOrderId(po.getOrderId());
+//			order.setOrderDate(po.getOrderDate());
+//			order.setPolicyNumber(po.getPolicyNumber());
+//			order.setPolicyStartDate(po.getPolicyStartDate());
+//			order.setPolicyEndDate(po.getPolicyEndDate());
+//			order.setTotalPremi(po.getTotalPremi());
+//			order.setHasBeneficiary(po.getHasBeneficiary());
+//			order.setProductCount(po.getProductCount());
+//			order.setStatus(po.getStatus());
+//			order.setCreatedDate(po.getCreatedDate());
+//			order.setTitle("Asuransi kecelakaan");
+//			order.setImgUrl("https://i.imgur.com/f3h2z7k.jpg");
+//			
+//			List<PolicyOrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
+//			for(PolicyOrderProduct op: productList){
+//				ProductDto dto = new ProductDto();
+//				dto.setProductId(op.getProductId());
+//				dto.setName(op.getCoverageName());
+//				dto.setPremi(op.getPremi());
+//				//dto.setPeriod(perMap.get(op.getPeriodId()));
+//				
+//				CoverageDto covDto = new CoverageDto();
+//				covDto.setCoverageId(op.getCoverageId());
+//				covDto.setName(op.getCoverageName());
+//				covDto.setMaxLimit(op.getCoverageMaxLimit());
+//				covDto.setHasBeneficiary(op.getCoverageHasBeneficiary());				
+//				dto.setCoverage(covDto);
+//				
+//				productDtos.add(dto);
+//			}
+//			if(!productList.isEmpty()){
+//				order.setProducts(productDtos);
+//			}
+//			
+//			order.setPeriod(perMap.get(po.getPeriodId()));
+//			
+//			orders.add(order);			
+//		}		
+//		return orders;
+//	}
 	
 	//test
 	public List<PolicyOrderCoverage> testConflict(String userId, final SubmitOrderDto submitOrderDto){
@@ -386,6 +502,46 @@ public class OrderService {
 			logger.debug("Test item {}", item);
 		}
 		return checklist;
+	}
+	//test
+	public List<PolicyOrder> tesFetch(String userId, final OrderFilterDto filter){
+		int offset = this.defaultOrdersFilterOffset;
+		int limit = this.defaultOrdersFilterLimit;
+		String[] filterStatus = null;
+		if(filter!=null){
+			offset = filter.getOffset();
+			if(filter.getLimit() > this.maxOrdersFilterLimit){
+				limit = this.maxOrdersFilterLimit;
+			}else{
+				limit = filter.getLimit();
+			}
+			filterStatus = filter.getStatus();
+		}
+		OrderDtoFilterStatus filterType = getFilterType(filterStatus);
+		List<PolicyOrder> orders = null;
+		if(filterType.equals(OrderDtoFilterStatus.ALL)){
+			orders = policyOrderMapper.selectByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.ACTIVE)){
+			orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.APPROVED)){
+			orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.EXPIRED)){
+			orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.UNPAID)){
+			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
+		}		
+		
+		//TODO: safety check here? in the loop, throw exception if the request ACTIVE doesnt return ACTIVE, etc
+		LocalDate today = LocalDate.now();
+		if(orders!=null){
+			for(PolicyOrder po: orders){
+				mapPolicyOrderStatus(po,today);
+			}
+		}
+		
+		logger.debug("call testfetch with filter {} and filterType {} and result-size {}", filter, filterType,
+				orders == null ? "0" : String.valueOf(orders.size()));
+		return orders;
 	}
 	private String generateOrderId(){
 		return UUID.randomUUID().toString();

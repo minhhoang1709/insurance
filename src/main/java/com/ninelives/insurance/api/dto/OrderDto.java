@@ -39,7 +39,7 @@ public class OrderDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
 
-    private List<ProductDto> productList;
+    private List<ProductDto> products;
 
     private PeriodDto period;
 
@@ -139,12 +139,12 @@ public class OrderDto {
 		this.createdDate = createdDate;
 	}
 
-	public List<ProductDto> getProductList() {
-		return productList;
+	public List<ProductDto> getProducts() {
+		return products;
 	}
 
-	public void setProductList(List<ProductDto> productList) {
-		this.productList = productList;
+	public void setProducts(List<ProductDto> products) {
+		this.products = products;
 	}
 
 	public PeriodDto getPeriod() {

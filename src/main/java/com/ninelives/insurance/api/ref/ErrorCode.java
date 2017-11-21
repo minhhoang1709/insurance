@@ -20,7 +20,8 @@ public enum ErrorCode {
 	ERR4006_ORDER_COVERAGE_MISMATCH("ERR4006"), // only one coverage category is allowed
 	ERR4007_ORDER_STARTDATE_INVALID("ERR4007"), //policy start-date is not valid
 	ERR4008_ORDER_PRODUCT_UNSUPPORTED("ERR4008"), //only day-based product is supported
-	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009") //only limited number of same coverage can be active at the same time  
+	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009"), //only limited number of same coverage can be active at the same time
+	ERR5001_ORDER_NOT_FOUND("ERR5001")
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

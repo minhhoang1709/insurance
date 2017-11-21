@@ -53,11 +53,13 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
+war {   
+   from('src/main/java') {
+   	include '**/*.xml'
+   	into 'WEB-INF/classes'
+   }
+}
+
 bootRun {
-	//systemProperties['spring.profiles.active'] = project.gradle.startParameter.systemPropertiesArgs['spring.profiles.active'];
-    //String activeProfile =  System.properties['spring.profiles.active']
-    //String confLoc = System.properties['spring.config.location']
-    //systemProperty "spring.profiles.active", activeProfile
-    //systemProperty "spring.config.location", "file:$confLoc"
     systemProperties = System.properties
 }

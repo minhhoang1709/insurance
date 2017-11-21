@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +20,22 @@ import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.Product;
+import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
+import com.ninelives.insurance.api.util.GsonUtil;
 
 @Controller
 public class TestController {
 	
-	@Autowired public ProductService productService;
-	@Autowired public OrderService orderService;
+	@Autowired ProductService productService;
+	@Autowired OrderService orderService;
 	@Autowired ProductMapper productMapper;
+	@Autowired PolicyOrderMapper policyOrderMapper;
 	
 	@Value("${ninelives.order.list-limmit:50}")
 	int defaultFilterLimit;
@@ -72,19 +77,61 @@ public class TestController {
 	
 	@RequestMapping(value="/test/order", method=RequestMethod.POST)
 	@ResponseBody
-	public OrderDto order(@RequestAttribute("authUserId") String authUserId, @RequestBody(required=false) SubmitOrderDto submitOrder) throws ApiException{	
+	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
+			@RequestBody(required=false) SubmitOrderDto submitOrderDto) throws ApiException{	
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-		return orderService.submitOrder(authUserId, submitOrder);
+		return orderService.submitOrder(authUserId, submitOrderDto);
 	}
 	
-//	@RequestMapping(value="/test/order", method=RequestMethod.GET)
-//	@ResponseBody
-//	public List<OrderDto> getOrder(@RequestAttribute("authUserId") String authUserId, 
-//			@RequestParam(required=false) OrderFilterDto orderFilter) throws ApiException{
-//		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-//		
-//		return orderService.submitOrder(authUserId, submitOrder);
-//	}
+	@RequestMapping(value="/test/fullorder", method=RequestMethod.POST)
+	@ResponseBody
+	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
+			@RequestBody(required=false) OrderDto orderDto) throws ApiException{	
+		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+		return orderService.submitOrder(authUserId, orderDto);
+	}
+	
+	@RequestMapping(value="/test/testfetchorder", method=RequestMethod.GET)
+	@ResponseBody
+	public List<PolicyOrder> getTestFetchOrder(@RequestAttribute("authUserId") String authUserId, 
+			@RequestParam(value="filter",required=false) String filter) throws ApiException{
+		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+		
+		//return orderService.submitOrder(authUserId, submitOrder);
+		//policyOrderMapper.selectByUserId(authUserId, 100, 0);
+		//orderFilter = new OrderFilterDto();
+		//orderFilter.setLimit(limit);
+		
+		OrderFilterDto orderFilter = GsonUtil.gson.fromJson(filter, OrderFilterDto.class);
+		
+		return orderService.tesFetch(authUserId, orderFilter); 
+	}
+	
+	@RequestMapping(value="/test/order", method=RequestMethod.GET)
+	@ResponseBody
+	public List<OrderDto> getOrder(@RequestAttribute("authUserId") String authUserId, 
+			@RequestParam(value="filter",required=false) String filter) throws ApiException{
+		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+		
+		//return orderService.submitOrder(authUserId, submitOrder);
+		//policyOrderMapper.selectByUserId(authUserId, 100, 0);
+		//orderFilter = new OrderFilterDto();
+		//orderFilter.setLimit(limit);
+		
+		OrderFilterDto orderFilter = GsonUtil.gson.fromJson(filter, OrderFilterDto.class);
+		
+		return orderService.fetchOrderDtos(authUserId, orderFilter);
+	}
+	
+	@RequestMapping(value="/test/order/{orderId}", method=RequestMethod.GET)
+	@ResponseBody
+	public PolicyOrder getOrderDetail(@RequestAttribute("authUserId") String authUserId,
+			@PathVariable("orderId") String orderId) throws ApiException{
+		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+		
+		//return orderService.submitOrder(authUserId, submitOrder);
+		return policyOrderMapper.selectByUserIdAndOrderId(authUserId, orderId);
+	}
 	
 	@RequestMapping("/test/conflictorder")
 	@ResponseBody

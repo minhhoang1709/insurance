@@ -25,11 +25,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.ninelives.insurance.api.dto.OrderDto;
+import com.ninelives.insurance.api.dto.OrderFilterDto;
 import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.StorageService;
+import com.ninelives.insurance.api.util.GsonUtil;
 
 @Controller
 public class OrderController {
@@ -41,11 +45,16 @@ public class OrderController {
 	@RequestMapping(value="/orders/{orderId}",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public OrderDto getOrderWithId( @PathVariable("orderId") String orderId, @RequestBody(required=false) Map<String, String> requestData, HttpServletResponse response){
-		OrderDto orderDto = orderService.fetchOrderByOrderId(orderId);
+	public OrderDto getOrderByOrderId(@RequestAttribute("authUserId") String authUserId, 
+			@PathVariable("orderId") String orderId) throws ApiNotFoundException{
+		
+		logger.debug("GET getOrders userid is {} with orderid {}", authUserId, orderId);
+		
+		OrderDto orderDto = orderService.fetchOrderDtosByOrderId(authUserId, orderId);
 		if(orderDto==null){
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			throw new ApiNotFoundException(ErrorCode.ERR5001_ORDER_NOT_FOUND,"Transaksi tidak ditemukan");
 		}
+		
 		return orderDto;
 	}
 	
@@ -53,24 +62,23 @@ public class OrderController {
 			method=RequestMethod.GET)	
 	@ResponseBody
 	public List<OrderDto> getOrders(@RequestAttribute("authUserId") String authUserId,
-			@RequestBody(required=false) Map<String, String> requestData, 
-			@RequestParam(value="filter", required=false) String filter, 
-			HttpServletResponse response){
+			@RequestParam(value="filter",required=false) String filter){
 		
-		logger.debug("GET getOrders userid is {} with filter", authUserId, filter);
+		logger.debug("GET getOrders userid is {} with filter {}", authUserId, filter);
 		
-		return orderService.fetchOrderListByUserId("b4bc66a0f04a4a628b45d8604b3426e1");
+		OrderFilterDto orderFilter = GsonUtil.gson.fromJson(filter, OrderFilterDto.class);
+		
+		return orderService.fetchOrderDtos(authUserId, orderFilter);
 	}
 	
 	@RequestMapping(value="/orders",
 			method=RequestMethod.POST)	
 	@ResponseBody
 	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId, 
-			@RequestBody(required=false) SubmitOrderDto submitOrder, 
+			@RequestBody(required=false) OrderDto submitOrder, 
 			HttpServletResponse response) throws ApiException{
 		
 		logger.debug("POST submitOrder with request {}", submitOrder);
-		//return orderService.fetchOrderByOrderId("02d40b53-c918-4770-b324-df7d1b0230dc");
 		
 		return orderService.submitOrder(authUserId, submitOrder);
 	}

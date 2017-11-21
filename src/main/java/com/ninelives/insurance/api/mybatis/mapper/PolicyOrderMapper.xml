@@ -7,7 +7,7 @@
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
-    <result column="period" jdbcType="VARCHAR" property="period" />
+    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
     <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
     <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
     <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
@@ -17,12 +17,139 @@
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
+  
+  <resultMap id="NestedPolicyOrderResultMap" type="com.ninelives.insurance.api.model.PolicyOrder">
+    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_date" jdbcType="DATE" property="orderDate" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
+    <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
+    <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
+    <result column="product_count" jdbcType="INTEGER" property="productCount" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <association property="period" resultMap="PeriodResultMap" />
+    <collection property="policyOrderProducts" ofType="com.ninelives.insurance.api.model.PolicyOrderProduct">
+    	<id column="order_product_id" jdbcType="BIGINT" property="orderProductId" />
+	    <result column="order_product_coverage_id" jdbcType="VARCHAR" property="coverageId" />
+	    <result column="order_product_period_id" jdbcType="VARCHAR" property="periodId" />
+	    <result column="order_product_product_id" jdbcType="VARCHAR" property="productId" />
+	    <result column="order_product_coverage_name" jdbcType="VARCHAR" property="coverageName" />
+	    <result column="order_product_coverage_max_limit" jdbcType="BIGINT" property="coverageMaxLimit" />
+	    <result column="order_product_coverage_has_beneficiary" jdbcType="BIT" property="coverageHasBeneficiary" />
+	    <result column="order_product_premi" jdbcType="INTEGER" property="premi" />
+    </collection>    
+  </resultMap>
+  
+  <resultMap id="PeriodResultMap" type="com.ninelives.insurance.api.model.Period">
+    <id column="period_period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="period_name" jdbcType="VARCHAR" property="name" />
+    <result column="period_value" jdbcType="INTEGER" property="value" />
+    <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+  </resultMap>
+  
   <sql id="Base_Column_List">
-    order_id, order_date, user_id, coverage_category_id, has_beneficiary, period, policy_number, 
+    order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
     policy_start_date, policy_end_date, total_premi, product_count, status, created_date, 
     update_date
   </sql>
-
+  
+  <sql id="NestedPolicyOrderColumnList">
+    a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
+   	a.policy_start_date, a.policy_end_date, a.total_premi, a.product_count, a.status, a.created_date,
+   	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
+   	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 
+   	b.coverage_max_limit as order_product_coverage_max_limit, 
+   	b.coverage_has_beneficiary as order_product_coverage_has_beneficiary, 
+   	b.premi as order_product_premi,
+   	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit
+  </sql>
+  
+  <select id="selectByUserIdAndOrderId" resultMap="NestedPolicyOrderResultMap">
+  	select
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a, public.policy_order_product as b, public.period c
+    where b.order_id=a.order_id and c.period_id=a.period_id
+    	and a.order_id=#{orderId,jdbcType=VARCHAR}
+    	and a.user_id=#{userId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByUserId" resultMap="NestedPolicyOrderResultMap">
+  	select 
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a, public.policy_order_product as b, public.period c
+    where b.order_id=a.order_id and c.period_id=a.period_id
+    	and a.user_id=#{userId,jdbcType=VARCHAR}
+    order by a.created_date desc
+    limit #{limit,jdbcType=INTEGER}
+    offset #{offset,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectWhereStatusActiveByUserId" resultMap="NestedPolicyOrderResultMap">
+  	select 
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a, public.policy_order_product as b, public.period c
+    where b.order_id=a.order_id and c.period_id=a.period_id
+    	and a.user_id=#{userId,jdbcType=VARCHAR}
+    	and a.status='APPROVED'
+    	and current_date between a.policy_start_date and a.policy_end_date
+    order by a.created_date desc
+    limit #{limit,jdbcType=INTEGER}
+    offset #{offset,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectWhereStatusApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
+  	select 
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a, public.policy_order_product as b, public.period c
+    where b.order_id=a.order_id and c.period_id=a.period_id
+    	and a.user_id=#{userId,jdbcType=VARCHAR}
+    	and a.status='APPROVED'
+    	and current_date &lt; a.policy_start_date
+    order by a.created_date desc
+    limit #{limit,jdbcType=INTEGER}
+    offset #{offset,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectWhereStatusExpiredOrTerminatedByUserId" resultMap="NestedPolicyOrderResultMap">
+  	select 
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a, public.policy_order_product as b, public.period c
+    where b.order_id=a.order_id and c.period_id=a.period_id
+    	and a.user_id=#{userId,jdbcType=VARCHAR}
+    	and (
+	    	( a.status='APPROVED' and current_date &gt; a.policy_end_date )
+	    	or
+	    	( a.status='TERMINATED')
+    	)     	
+    order by a.created_date desc
+    limit #{limit,jdbcType=INTEGER}
+    offset #{offset,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectWhereStatusBeforeApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
+  	select 
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a, public.policy_order_product as b, public.period c
+    where b.order_id=a.order_id and c.period_id=a.period_id
+    	and a.user_id=#{userId,jdbcType=VARCHAR}
+    	and a.status in ('SUBMITTED','INPAYMENT','PAID')    	
+    order by a.created_date desc
+    limit #{limit,jdbcType=INTEGER}
+    offset #{offset,jdbcType=INTEGER}
+  </select>
+  
   <select id="selectCoverageWithConflictedPolicyDate" resultType="com.ninelives.insurance.api.model.PolicyOrderCoverage">
   	select a.order_id, b.coverage_id, b.coverage_name, a.order_date, a.policy_start_date, a.policy_end_date
   	from public.policy_order as a, public.policy_order_product as b 

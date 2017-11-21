@@ -17,7 +17,7 @@ public class PolicyOrder {
 
     private Boolean hasBeneficiary;
 
-    private String period;
+    private String periodId;
 
     private String policyNumber;
 
@@ -38,32 +38,34 @@ public class PolicyOrder {
     private PolicyOrderUsers policyOrderUsers;
     
     private List<PolicyOrderProduct> policyOrderProducts;
+    
+    private Period period;
 
-    public String getOrderId() {
-        return orderId;
-    }
+	public String getOrderId() {
+		return orderId;
+	}
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
 
-    public LocalDate getOrderDate() {
-        return orderDate;
-    }
+	public LocalDate getOrderDate() {
+		return orderDate;
+	}
 
-    public void setOrderDate(LocalDate orderDate) {
-        this.orderDate = orderDate;
-    }
+	public void setOrderDate(LocalDate orderDate) {
+		this.orderDate = orderDate;
+	}
 
-    public String getUserId() {
-        return userId;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getCoverageCategoryId() {
+	public String getCoverageCategoryId() {
 		return coverageCategoryId;
 	}
 
@@ -72,62 +74,62 @@ public class PolicyOrder {
 	}
 
 	public Boolean getHasBeneficiary() {
-        return hasBeneficiary;
-    }
+		return hasBeneficiary;
+	}
 
-    public void setHasBeneficiary(Boolean hasBeneficiary) {
-        this.hasBeneficiary = hasBeneficiary;
-    }
+	public void setHasBeneficiary(Boolean hasBeneficiary) {
+		this.hasBeneficiary = hasBeneficiary;
+	}
 
-    public String getPeriod() {
-        return period;
-    }
+	public String getPeriodId() {
+		return periodId;
+	}
 
-    public void setPeriod(String period) {
-        this.period = period;
-    }
+	public void setPeriodId(String periodId) {
+		this.periodId = periodId;
+	}
 
-    public String getPolicyNumber() {
-        return policyNumber;
-    }
+	public String getPolicyNumber() {
+		return policyNumber;
+	}
 
-    public void setPolicyNumber(String policyNumber) {
-        this.policyNumber = policyNumber;
-    }
+	public void setPolicyNumber(String policyNumber) {
+		this.policyNumber = policyNumber;
+	}
 
-    public LocalDate getPolicyStartDate() {
-        return policyStartDate;
-    }
+	public LocalDate getPolicyStartDate() {
+		return policyStartDate;
+	}
 
-    public void setPolicyStartDate(LocalDate policyStartDate) {
-        this.policyStartDate = policyStartDate;
-    }
+	public void setPolicyStartDate(LocalDate policyStartDate) {
+		this.policyStartDate = policyStartDate;
+	}
 
-    public LocalDate getPolicyEndDate() {
-        return policyEndDate;
-    }
+	public LocalDate getPolicyEndDate() {
+		return policyEndDate;
+	}
 
-    public void setPolicyEndDate(LocalDate policyEndDate) {
-        this.policyEndDate = policyEndDate;
-    }
+	public void setPolicyEndDate(LocalDate policyEndDate) {
+		this.policyEndDate = policyEndDate;
+	}
 
-    public Integer getTotalPremi() {
-        return totalPremi;
-    }
+	public Integer getTotalPremi() {
+		return totalPremi;
+	}
 
-    public void setTotalPremi(Integer totalPremi) {
-        this.totalPremi = totalPremi;
-    }
+	public void setTotalPremi(Integer totalPremi) {
+		this.totalPremi = totalPremi;
+	}
 
-    public Integer getProductCount() {
-        return productCount;
-    }
+	public Integer getProductCount() {
+		return productCount;
+	}
 
-    public void setProductCount(Integer productCount) {
-        this.productCount = productCount;
-    }
+	public void setProductCount(Integer productCount) {
+		this.productCount = productCount;
+	}
 
-    public PolicyStatus getStatus() {
+	public PolicyStatus getStatus() {
 		return status;
 	}
 
@@ -136,20 +138,20 @@ public class PolicyOrder {
 	}
 
 	public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
+		return createdDate;
+	}
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public LocalDateTime getUpdateDate() {
-        return updateDate;
-    }
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
 
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.updateDate = updateDate;
+	}
 
 	public PolicyOrderUsers getPolicyOrderUsers() {
 		return policyOrderUsers;
@@ -166,5 +168,14 @@ public class PolicyOrder {
 	public void setPolicyOrderProducts(List<PolicyOrderProduct> policyOrderProducts) {
 		this.policyOrderProducts = policyOrderProducts;
 	}
-    
+
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+
 }
