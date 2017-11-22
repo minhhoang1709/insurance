@@ -16,6 +16,7 @@ public class CoverageDto {
     
     private Long maxLimit;
 
+    private Boolean isRecommended;
     
 	public Long getMaxLimit() {
 		return maxLimit;
@@ -65,5 +66,12 @@ public class CoverageDto {
 		this.hasBeneficiary = hasBeneficiary;
 	}
 
+	public Boolean getIsRecommended() {
+		return isRecommended;
+	}
+
+	public void setIsRecommended(Boolean isRecommended) {
+		this.isRecommended = isRecommended;
+	}
 
 }

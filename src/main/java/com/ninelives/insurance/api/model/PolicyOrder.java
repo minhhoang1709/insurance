@@ -34,7 +34,7 @@ public class PolicyOrder {
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
-    
+        
     private PolicyOrderUsers policyOrderUsers;
     
     private List<PolicyOrderProduct> policyOrderProducts;
@@ -159,7 +159,7 @@ public class PolicyOrder {
 
 	public void setPolicyOrderUsers(PolicyOrderUsers policyOrderUsers) {
 		this.policyOrderUsers = policyOrderUsers;
-	}
+	}		
 
 	public List<PolicyOrderProduct> getPolicyOrderProducts() {
 		return policyOrderProducts;

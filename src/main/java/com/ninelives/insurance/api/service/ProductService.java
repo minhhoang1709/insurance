@@ -2,6 +2,7 @@ package com.ninelives.insurance.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,7 +35,7 @@ public class ProductService {
 		return coverageMapper.selectByStatusActive();
 	}
 	
-	public List<Product> fetchProductByProductIds(List<String> productIds){
+	public List<Product> fetchProductByProductIds(Set<String> productIds){
 		return productMapper.selectByProductIds(productIds);
 	}
 	
@@ -54,6 +55,7 @@ public class ProductService {
 				coverageDto.setCoverageId(p.getCoverageId());
 				coverageDto.setName(p.getCoverage().getName());
 				coverageDto.setRecommendation(p.getCoverage().getRecommendation());
+				coverageDto.setIsRecommended(p.getCoverage().getIsRecommended());
 				coverageDto.setHasBeneficiary(p.getCoverage().getHasBeneficiary());
 				coverageDto.setMaxLimit(p.getCoverage().getMaxLimit());				
 				productDto.setCoverage(coverageDto);
@@ -82,6 +84,7 @@ public class ProductService {
 			dto.setCoverageId(c.getCoverageId());
 			dto.setName(c.getName());
 			dto.setRecommendation(c.getRecommendation());
+			dto.setIsRecommended(c.getIsRecommended());
 			dto.setHasBeneficiary(c.getHasBeneficiary());
 			dto.setMaxLimit(c.getMaxLimit());
 			dtoList.add(dto);

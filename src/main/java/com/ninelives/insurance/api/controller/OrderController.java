@@ -50,7 +50,7 @@ public class OrderController {
 		
 		logger.debug("GET getOrders userid is {} with orderid {}", authUserId, orderId);
 		
-		OrderDto orderDto = orderService.fetchOrderDtosByOrderId(authUserId, orderId);
+		OrderDto orderDto = orderService.fetchOrderDtoByOrderId(authUserId, orderId);
 		if(orderDto==null){
 			throw new ApiNotFoundException(ErrorCode.ERR5001_ORDER_NOT_FOUND,"Transaksi tidak ditemukan");
 		}

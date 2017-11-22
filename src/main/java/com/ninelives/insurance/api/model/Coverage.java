@@ -22,6 +22,10 @@ public class Coverage {
     private Date updateDate;
 
     private String status;
+    
+    private int displayRank;
+    
+    private Boolean isRecommended;
 
     public String getCoverageId() {
         return coverageId;
@@ -102,4 +106,21 @@ public class Coverage {
     public void setStatus(String status) {
         this.status = status;
     }
+
+	public int getDisplayRank() {
+		return displayRank;
+	}
+
+	public void setDisplayRank(int displayRank) {
+		this.displayRank = displayRank;
+	}
+
+	public Boolean getIsRecommended() {
+		return isRecommended;
+	}
+
+	public void setIsRecommended(Boolean isRecommended) {
+		this.isRecommended = isRecommended;
+	}
+    
 }

@@ -17,27 +17,27 @@ public class OrderServiceFilterTypeTest {
 		OrderService orderService = new OrderService();
 		
 		String[] statusActive = {"ACTIVE"};		
-		OrderDtoFilterStatus filterType = orderService.getFilterType(statusActive);		
+		OrderDtoFilterStatus filterType = orderService.getFetchOrderFilterType(statusActive);		
 		assertEquals(OrderDtoFilterStatus.ACTIVE, filterType);
 		
 		String[] statusApproved = {"APPROVED"};
-		filterType = orderService.getFilterType(statusApproved);		
+		filterType = orderService.getFetchOrderFilterType(statusApproved);		
 		assertEquals(OrderDtoFilterStatus.APPROVED, filterType);
 		
 		String[] statusExpired = {"EXPIRED", "TERMINATED"};
-		filterType = orderService.getFilterType(statusExpired);
+		filterType = orderService.getFetchOrderFilterType(statusExpired);
 		assertEquals(OrderDtoFilterStatus.EXPIRED, filterType);
 		
 		String[] statusUnpaid = {"SUBMITTED", "OFFEREXPIRED", "INPAYMENT", "PAID"};
-		filterType = orderService.getFilterType(statusUnpaid);
+		filterType = orderService.getFetchOrderFilterType(statusUnpaid);
 		assertEquals(OrderDtoFilterStatus.UNPAID, filterType);
 		
 		String[] statusAll = null;
-		filterType = orderService.getFilterType(statusAll);
+		filterType = orderService.getFetchOrderFilterType(statusAll);
 		assertEquals(OrderDtoFilterStatus.ALL, filterType);
 		
 		String[] statusAll2 = {""};
-		filterType = orderService.getFilterType(statusAll2);
+		filterType = orderService.getFetchOrderFilterType(statusAll2);
 		assertEquals(OrderDtoFilterStatus.ALL, filterType);
 	}
 }

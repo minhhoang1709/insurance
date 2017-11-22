@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.reflection.ArrayUtil;
@@ -88,42 +90,82 @@ public class OrderService {
 	int defaultOrdersFilterOffset;
 	
 	public OrderDto submitOrder(final String userId, final OrderDto orderDto) throws ApiBadRequestException{
-		SubmitOrderDto submitOrderDto = new SubmitOrderDto();
-		if(orderDto != null){
-			submitOrderDto.setPolicyStartDate(orderDto.getPolicyStartDate());
-			submitOrderDto.setTotalPremi(orderDto.getTotalPremi());
-			if(!CollectionUtils.isEmpty(orderDto.getProducts())){
-				List<String> productIds = new ArrayList<>();
-				for(ProductDto p: orderDto.getProducts()){
-					productIds.add(p.getProductId());
-				}
-				submitOrderDto.setProducts(productIds);
-			}			
-		}
-		return submitOrder(userId, submitOrderDto);
+//		SubmitOrderDto submitOrderDto = new SubmitOrderDto();
+//		if(orderDto != null){
+//			submitOrderDto.setPolicyStartDate(orderDto.getPolicyStartDate());
+//			submitOrderDto.setTotalPremi(orderDto.getTotalPremi());
+//			if(!CollectionUtils.isEmpty(orderDto.getProducts())){
+//				List<String> productIds = new ArrayList<>();
+//				for(ProductDto p: orderDto.getProducts()){
+//					productIds.add(p.getProductId());
+//				}
+//				submitOrderDto.setProducts(productIds);
+//			}			
+//		}
+		PolicyOrder policyOrder = registerOrder(userId, orderDto);
+		return policyOrderToOrderDto(policyOrder);
 	}
-	public OrderDto submitOrder(final String userId, final SubmitOrderDto submitOrderDto) throws ApiBadRequestException{
+//	public OrderDto submitOrder(final String userId, final SubmitOrderDto submitOrderDto)  throws ApiBadRequestException{
+//		PolicyOrder policyOrder = registerOrder(userId, submitOrderDto);  
+//		return policyOrderToOrderDto(policyOrder);
+//	}
+
+	public OrderDto fetchOrderDtoByOrderId(final String userId, final String orderId){
+		PolicyOrder policyOrder = fetchOrderByOrderId(userId, orderId);
+		return policyOrderToOrderDto(policyOrder);
+	}
+	
+	public List<OrderDto> fetchOrderDtos(final String userId, final OrderFilterDto filter){
+		ArrayList<OrderDto> orderDtos = new ArrayList<>();
+		List<PolicyOrder> orders = fetchOrder(userId, filter);
+		if(orders!=null){
+			for(PolicyOrder po: orders){
+				orderDtos.add(policyOrderToOrderDto(po));
+			}
+		}
+		return orderDtos;		
+	}
+	
+	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto) throws ApiBadRequestException{
 		logger.debug("Process order for {} with order {}", userId, submitOrderDto);
 		
-		if(CollectionUtils.isEmpty(submitOrderDto.getProducts())){
+		LocalDate today = LocalDate.now();
+		
+		if (submitOrderDto == null || submitOrderDto.getProducts() == null
+				|| submitOrderDto.getPolicyStartDate() == null || submitOrderDto.getTotalPremi() == null) {
+			logger.debug("Process order for {} with order {} with result: exception empty order or product", userId,
+					submitOrderDto);
+			throw new ApiBadRequestException(ErrorCode.ERR4000_ORDER_INVALID,
+					"Permintaan tidak dapat diproses, silahkan cek kembali pesanan");
+		}
+		
+		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
+		
+		if(CollectionUtils.isEmpty(productIdSet)){
 			logger.debug("Process order for {} with order {} with result: exception empty product", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4001_ORDER_PRODUCT_EMPTY, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
 		}
-		if(submitOrderDto.getProducts().size()!= (new HashSet<>(submitOrderDto.getProducts())).size()){
+		if(submitOrderDto.getProducts().size()!= productIdSet.size()){
 			logger.debug("Process order for {} with order {} with result: exception duplicate product", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4002_ORDER_PRODUCT_DUPLICATE, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
 		}
 		
-		LocalDate limitPolicyStartDate = LocalDate.now().plusDays(this.policyStartDatePeriod);
-		if(limitPolicyStartDate.isBefore(submitOrderDto.getPolicyStartDate())){
+		LocalDate limitPolicyStartDate = today.plusDays(this.policyStartDatePeriod);
+		if(submitOrderDto.getPolicyStartDate().isAfter(limitPolicyStartDate)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, this.policyStartDatePeriod);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi tidak lebih dari tanggal "
+					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
+							+ limitPolicyStartDate.format(formatter));			
+		}
+		if(submitOrderDto.getPolicyStartDate().isBefore(today)){
+			logger.debug("Process order for {} with order {} with result: exception policy start-date before today {}", userId, submitOrderDto, this.policyStartDatePeriod);
+			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
+					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
 							+ limitPolicyStartDate.format(formatter));
 			
 		}
 		
-		List<Product> products = productService.fetchProductByProductIds(submitOrderDto.getProducts());
+		List<Product> products = productService.fetchProductByProductIds(productIdSet);
 		if(products.isEmpty() || products.size()!=submitOrderDto.getProducts().size()){
 			logger.debug("Process order for {} with order {} with result: exception product not found", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4003_ORDER_PRODUCT_NOTFOUND, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
@@ -137,7 +179,7 @@ public class OrderService {
 		for(Product p: products){
 			if(!periodId.equals(p.getPeriodId())){
 				logger.debug("Process order for {} with order {} with result: exception period mismatch", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4004_ORDER_PERIOD_MISMATCH, "Permintaan tidak dapat diproses, silahkan cek kembali tanggal");
+				throw new ApiBadRequestException(ErrorCode.ERR4004_ORDER_PERIOD_MISMATCH, "Permintaan tidak dapat diproses, silahkan cek kembali periode asuransi");
 			}
 			if(!coverageCategoryId.equals(p.getCoverage().getCoverageCategoryId())){
 				logger.debug("Process order for {} with order {} with result: exception coverage mismatch", userId, submitOrderDto);
@@ -151,8 +193,7 @@ public class OrderService {
 			logger.debug("Process order for {} with order {} with result: exception calculatd premi {} ", userId, submitOrderDto, calculatedTotalPremi);
 			throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
 		}
-		
-		
+				
 		
 		Period period = products.get(0).getPeriod();
 		if(!period.getUnit().equals(PeriodUnit.DAILY)){
@@ -161,7 +202,7 @@ public class OrderService {
 		}
 		
 		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().plusDays(products.get(0).getPeriod().getValue()-1);
-		LocalDate dueOrderDate = LocalDate.now().minusDays(policyDueDatePeriod);
+		LocalDate dueOrderDate = today.minusDays(policyDueDatePeriod);
 		
 		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
 				submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
@@ -169,14 +210,14 @@ public class OrderService {
 		if(conflictList.size()>=policyConflictPeriodLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage {}", userId, submitOrderDto, conflictList);
 			throw new ApiBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
-					"Permintaan tidak dapat diproses, anda telah memiliki 3 asuransi yang aktif pada waktu yang sama");
+					"Permintaan tidak dapat diproses, anda telah memiliki 3 asuransi yang akan atau telah aktif pada waktu yang sama");
 		}
 		
 		//TODO: submit order to ASWATA
 		
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setOrderId(generateOrderId());
-		policyOrder.setOrderDate(LocalDate.now());
+		policyOrder.setOrderDate(today);
 		policyOrder.setUserId(userId);
 		policyOrder.setCoverageCategoryId(coverageCategoryId);
 		policyOrder.setHasBeneficiary(hasBeneficiary);
@@ -222,13 +263,87 @@ public class OrderService {
 		policyOrder.setPolicyOrderProducts(policyOrderProducts);
 		
 		policyOrderTrxService.registerPolicyOrder(policyOrder);
-		
-		OrderDto orderDto = policyOrderToOrderDto(policyOrder);
 
-		return orderDto;
+		return policyOrder;
+	}
+	protected PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
+		return policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);		
 	}
 	
-	private OrderDto policyOrderToOrderDto(PolicyOrder policyOrder){
+	protected List<PolicyOrder> fetchOrder(final String userId, final OrderFilterDto filter){
+		int offset = this.defaultOrdersFilterOffset;
+		int limit = this.defaultOrdersFilterLimit;
+		String[] filterStatus = null;
+		if(filter!=null){
+			offset = filter.getOffset();
+			if(filter.getLimit() > this.maxOrdersFilterLimit){
+				limit = this.maxOrdersFilterLimit;
+			}else{
+				limit = filter.getLimit();
+			}
+			filterStatus = filter.getStatus();
+		}
+		OrderDtoFilterStatus filterType = getFetchOrderFilterType(filterStatus);
+		List<PolicyOrder> orders = null;
+		if(filterType.equals(OrderDtoFilterStatus.ALL)){
+			orders = policyOrderMapper.selectByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.ACTIVE)){
+			orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.APPROVED)){
+			orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.EXPIRED)){
+			orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
+		}else if (filterType.equals(OrderDtoFilterStatus.UNPAID)){
+			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
+		}
+		
+		LocalDate today = LocalDate.now();		
+		if(orders!=null){
+			for(PolicyOrder po: orders){
+				mapPolicyOrderStatus(po,today);
+				
+			}
+		}
+		
+		return orders;
+	}
+	
+	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
+		if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
+			if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
+				policyOrder.setStatus(PolicyStatus.OVERDUE);
+			}
+		}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
+			if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
+				policyOrder.setStatus(PolicyStatus.ACTIVE);
+			}else if(policyOrder.getPolicyEndDate().isBefore(today)){
+				policyOrder.setStatus(PolicyStatus.EXPIRED);
+			}
+		}
+	}
+	
+	protected OrderDtoFilterStatus getFetchOrderFilterType(String[] status){
+		OrderDtoFilterStatus filterType = OrderDtoFilterStatus.ALL;
+		if(status!=null && status.length > 0){
+			if(!StringUtils.isEmpty(status[0])){
+				if(status.length==1 && status[0].equals(PolicyStatus.ACTIVE.toStr())){
+					filterType = OrderDtoFilterStatus.ACTIVE;
+				}else if(status.length==1 && status[0].equals(PolicyStatus.APPROVED.toStr())){
+					filterType = OrderDtoFilterStatus.APPROVED;
+				}else if(status.length>=2 
+						&& (status[0].equals(PolicyStatus.EXPIRED.toStr()) 
+								||status[1].equals(PolicyStatus.EXPIRED.toStr()))
+						){
+					filterType = OrderDtoFilterStatus.EXPIRED;
+				}else{
+					filterType = OrderDtoFilterStatus.UNPAID;
+				}				
+			}
+		}
+		return filterType;
+	}
+	
+	protected OrderDto policyOrderToOrderDto(final PolicyOrder policyOrder){
 		OrderDto orderDto = null;
 
 		if(policyOrder!=null){
@@ -252,6 +367,7 @@ public class OrderService {
 			periodDto.setUnit(policyOrder.getPeriod().getUnit());
 			periodDto.setValue(policyOrder.getPeriod().getValue());
 
+			int rank = 99;
 			List<ProductDto> productDtos = new ArrayList<>();
 			for(PolicyOrderProduct p: policyOrder.getPolicyOrderProducts()){
 				ProductDto dto = new ProductDto();
@@ -269,95 +385,20 @@ public class OrderService {
 				dto.setCoverage(covDto);
 
 				productDtos.add(dto);
+				
+				if(p.getCoverageDisplayRank() < rank){
+					orderDto.setSubtitle(p.getCoverageName());
+					rank = p.getCoverageDisplayRank();
+				}
 			}
 			orderDto.setProducts(productDtos);
 			
 
 			orderDto.setPeriod(periodDto);
 		}
-		
-		
+
 		return orderDto;
 		
-	}
-	
-	public List<OrderDto> fetchOrderDtos(final String userId, final OrderFilterDto filter){
-		int offset = this.defaultOrdersFilterOffset;
-		int limit = this.defaultOrdersFilterLimit;
-		String[] filterStatus = null;
-		if(filter!=null){
-			offset = filter.getOffset();
-			if(filter.getLimit() > this.maxOrdersFilterLimit){
-				limit = this.maxOrdersFilterLimit;
-			}else{
-				limit = filter.getLimit();
-			}
-			filterStatus = filter.getStatus();
-		}
-		OrderDtoFilterStatus filterType = getFilterType(filterStatus);
-		List<PolicyOrder> orders = null;
-		if(filterType.equals(OrderDtoFilterStatus.ALL)){
-			orders = policyOrderMapper.selectByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.ACTIVE)){
-			orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.APPROVED)){
-			orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.EXPIRED)){
-			orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.UNPAID)){
-			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
-		}
-		
-		LocalDate today = LocalDate.now();
-		ArrayList<OrderDto> orderDtos = new ArrayList<>();
-		if(orders!=null){
-			for(PolicyOrder po: orders){
-				mapPolicyOrderStatus(po,today);
-				orderDtos.add(policyOrderToOrderDto(po));
-			}
-		}
-		
-		return orderDtos;
-	}
-	
-	public OrderDto fetchOrderDtosByOrderId(final String userId, final String orderId){
-		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
-		return policyOrderToOrderDto(policyOrder);
-	}
-	
-	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
-		if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
-			if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
-				policyOrder.setStatus(PolicyStatus.OVERDUE);
-			}
-		}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
-			if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
-				policyOrder.setStatus(PolicyStatus.ACTIVE);
-			}else if(policyOrder.getPolicyEndDate().isBefore(today)){
-				policyOrder.setStatus(PolicyStatus.EXPIRED);
-			}
-		}
-	}
-	
-	protected OrderDtoFilterStatus getFilterType(String[] status){
-		OrderDtoFilterStatus filterType = OrderDtoFilterStatus.ALL;
-		if(status!=null && status.length > 0){
-			if(!StringUtils.isEmpty(status[0])){
-				if(status.length==1 && status[0].equals(PolicyStatus.ACTIVE.toStr())){
-					filterType = OrderDtoFilterStatus.ACTIVE;
-				}else if(status.length==1 && status[0].equals(PolicyStatus.APPROVED.toStr())){
-					filterType = OrderDtoFilterStatus.APPROVED;
-				}else if(status.length>=2 
-						&& (status[0].equals(PolicyStatus.EXPIRED.toStr()) 
-								||status[1].equals(PolicyStatus.EXPIRED.toStr()))
-						){
-					filterType = OrderDtoFilterStatus.EXPIRED;
-				}else{
-					filterType = OrderDtoFilterStatus.UNPAID;
-				}				
-			}
-		}
-		return filterType;
 	}
 	
 //	public OrderDto fetchOrderByOrderId(String orderId){
@@ -486,8 +527,9 @@ public class OrderService {
 //	}
 	
 	//test
-	public List<PolicyOrderCoverage> testConflict(String userId, final SubmitOrderDto submitOrderDto){
-		List<Product> products = productService.fetchProductByProductIds(submitOrderDto.getProducts());
+	public List<PolicyOrderCoverage> testConflict(String userId, final OrderDto submitOrderDto){
+		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
+		List<Product> products = productService.fetchProductByProductIds(productIdSet);
 		List<String> coverageIds = new ArrayList<>();
 		for(Product p: products){			
 			coverageIds.add(p.getCoverageId());
@@ -518,7 +560,7 @@ public class OrderService {
 			}
 			filterStatus = filter.getStatus();
 		}
-		OrderDtoFilterStatus filterType = getFilterType(filterStatus);
+		OrderDtoFilterStatus filterType = getFetchOrderFilterType(filterStatus);
 		List<PolicyOrder> orders = null;
 		if(filterType.equals(OrderDtoFilterStatus.ALL)){
 			orders = policyOrderMapper.selectByUserId(userId, limit, offset);

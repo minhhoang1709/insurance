@@ -2,7 +2,6 @@ package com.ninelives.insurance.api.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,6 +16,8 @@ public class OrderDto {
     private LocalDate orderDate;
     
     private String title;
+    
+    private String subtitle;
     
     private String imgUrl;
 
@@ -42,6 +43,8 @@ public class OrderDto {
     private List<ProductDto> products;
 
     private PeriodDto period;
+    
+    private UsersDto user;
 
 	public String getOrderId() {
 		return orderId;
@@ -65,6 +68,14 @@ public class OrderDto {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	public String getSubtitle() {
+		return subtitle;
+	}
+
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
 	}
 
 	public String getImgUrl() {
@@ -153,6 +164,33 @@ public class OrderDto {
 
 	public void setPeriod(PeriodDto period) {
 		this.period = period;
+	}
+
+	public UsersDto getUser() {
+		return user;
+	}
+
+	public void setUser(UsersDto user) {
+		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "OrderDto [" + (orderId != null ? "orderId=" + orderId + ", " : "")
+				+ (orderDate != null ? "orderDate=" + orderDate + ", " : "")
+				+ (title != null ? "title=" + title + ", " : "")
+				+ (subtitle != null ? "subtitle=" + subtitle + ", " : "")
+				+ (imgUrl != null ? "imgUrl=" + imgUrl + ", " : "")
+				+ (policyNumber != null ? "policyNumber=" + policyNumber + ", " : "")
+				+ (policyStartDate != null ? "policyStartDate=" + policyStartDate + ", " : "")
+				+ (policyEndDate != null ? "policyEndDate=" + policyEndDate + ", " : "")
+				+ (totalPremi != null ? "totalPremi=" + totalPremi + ", " : "")
+				+ (hasBeneficiary != null ? "hasBeneficiary=" + hasBeneficiary + ", " : "")
+				+ (productCount != null ? "productCount=" + productCount + ", " : "")
+				+ (status != null ? "status=" + status + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (products != null ? "products=" + products + ", " : "")
+				+ (period != null ? "period=" + period + ", " : "") + (user != null ? "user=" + user : "") + "]";
 	}
 
     

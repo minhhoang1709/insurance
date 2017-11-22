@@ -1,7 +1,6 @@
 package com.ninelives.insurance.api.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

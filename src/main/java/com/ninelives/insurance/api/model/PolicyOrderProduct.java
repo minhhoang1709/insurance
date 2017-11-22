@@ -20,6 +20,9 @@ public class PolicyOrderProduct {
     private Integer premi;
     
     private Period period;
+    
+    //not-persisted
+    private int coverageDisplayRank;
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -99,6 +102,14 @@ public class PolicyOrderProduct {
 
 	public void setPeriod(Period period) {
 		this.period = period;
+	}
+
+	public int getCoverageDisplayRank() {
+		return coverageDisplayRank;
+	}
+
+	public void setCoverageDisplayRank(int coverageDisplayRank) {
+		this.coverageDisplayRank = coverageDisplayRank;
 	}
     
 }

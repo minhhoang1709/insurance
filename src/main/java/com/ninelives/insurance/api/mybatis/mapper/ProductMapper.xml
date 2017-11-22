@@ -27,13 +27,15 @@
     <result column="coverage_description" jdbcType="VARCHAR" property="description" />
     <result column="coverage_max_limit" jdbcType="BIGINT" property="maxLimit" />
     <result column="coverage_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="coverage_is_recommended" jdbcType="BIT" property="isRecommended" />
   </resultMap>
 
   <select id="selectByStatusActive" resultMap="NestedProductResultMap">
   	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
   		b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
   		c.coverage_id as coverage_coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
-  		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary
+  		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
+  		c.is_recommended as coverage_is_recommended
   	from public.product a, public.period b, public.coverage c
   	where a.status='A' and b.period_id=a.period_id and c.coverage_id=a.coverage_id
   	order by a.product_id
@@ -43,7 +45,8 @@
   	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
   		b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
   		c.coverage_id as coverage_coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
-  		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary
+  		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
+  		c.is_recommended as coverage_is_recommended
   	from public.product a, public.period b, public.coverage c
   	where a.status='A' and b.period_id=a.period_id and c.coverage_id=a.coverage_id
 		and a.product_id in

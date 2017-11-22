@@ -1,7 +1,5 @@
 package com.ninelives.insurance.api.dto;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.api.ref.PeriodUnit;
 

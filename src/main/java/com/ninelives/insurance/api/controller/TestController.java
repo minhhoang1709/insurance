@@ -63,26 +63,26 @@ public class TestController {
 		return null;
 	}
 	
-	@RequestMapping("/test/product/bylist")
-	@ResponseBody
-	public List<Product> getproductByList(){	
-		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-		List<String> productIds = Arrays.asList("P10");
-		List<Product> products = productService.fetchProductByProductIds(productIds);
-		if(products==null){
-			System.out.println("NULL productlist");
-		}
-		return products;
-	}
+//	@RequestMapping("/test/product/bylist")
+//	@ResponseBody
+//	public List<Product> getproductByList(){	
+//		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+//		List<String> productIds = Arrays.asList("P10");
+//		List<Product> products = productService.fetchProductByProductIds(productIds);
+//		if(products==null){
+//			System.out.println("NULL productlist");
+//		}
+//		return products;
+//	}
 	
-	@RequestMapping(value="/test/order", method=RequestMethod.POST)
-	@ResponseBody
-	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
-			@RequestBody(required=false) SubmitOrderDto submitOrderDto) throws ApiException{	
-		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-		return orderService.submitOrder(authUserId, submitOrderDto);
-	}
-	
+//	@RequestMapping(value="/test/order", method=RequestMethod.POST)
+//	@ResponseBody
+//	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
+//			@RequestBody(required=false) SubmitOrderDto submitOrderDto) throws ApiException{	
+//		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+//		return orderService.submitOrder(authUserId, submitOrderDto);
+//	}
+//	
 	@RequestMapping(value="/test/fullorder", method=RequestMethod.POST)
 	@ResponseBody
 	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
@@ -135,7 +135,7 @@ public class TestController {
 	
 	@RequestMapping("/test/conflictorder")
 	@ResponseBody
-	public List conflictOrder(@RequestAttribute("authUserId") String authUserId, @RequestBody(required=false) SubmitOrderDto submitOrder) throws ApiException{	
+	public List conflictOrder(@RequestAttribute("authUserId") String authUserId, @RequestBody(required=false) OrderDto submitOrder) throws ApiException{	
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
 		return orderService.testConflict(authUserId, submitOrder);
 	}
