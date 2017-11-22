@@ -22,8 +22,10 @@ import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.Product;
+import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
+import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
@@ -36,6 +38,8 @@ public class TestController {
 	@Autowired OrderService orderService;
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
+	
+	@Autowired UserMapper userMapper;
 	
 	@Value("${ninelives.order.list-limmit:50}")
 	int defaultFilterLimit;
@@ -138,5 +142,11 @@ public class TestController {
 	public List conflictOrder(@RequestAttribute("authUserId") String authUserId, @RequestBody(required=false) OrderDto submitOrder) throws ApiException{	
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
 		return orderService.testConflict(authUserId, submitOrder);
+	}
+	
+	@RequestMapping(value="test/user/{userId}", method=RequestMethod.GET)
+	@ResponseBody
+	public User getUser(@PathVariable("userId") String userId){
+		return userMapper.selectByUserId(userId);
 	}
 }

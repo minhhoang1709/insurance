@@ -24,84 +24,56 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.RegistrationDto;
-import com.ninelives.insurance.api.dto.UsersDto;
+import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
-import com.ninelives.insurance.api.model.Users;
+import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.service.StorageService;
-import com.ninelives.insurance.api.service.UsersService;
+import com.ninelives.insurance.api.service.UserService;
 
 @Controller
 @Produces({ MediaType.APPLICATION_JSON })
 public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
-	@Autowired UsersService usersService;
+	@Autowired UserService userService;
 	@Autowired StorageService storageService;
 	
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public UsersDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{
+	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{
 		
 		//String registerSource = registerData.get("source");		
 		//check jika users empty maka this is new, 
 		logger.debug("register with {}", registrationDto);
 				
 		
-		RegisterUsersResult registerResult = usersService.registerUserByGoogleAccount(registrationDto);
+		RegisterUsersResult registerResult = userService.registerUserByGoogleAccount(registrationDto);
 		
 		if(!registerResult.getIsNew()){
 			response.setStatus(HttpStatus.CONFLICT.value());
 		}		
 		
-//		UsersDto result = new UsersDto();
-//		//TODO some logic to check to if conflict case happen
-//		if(!StringUtils.isEmpty(user.getStatus())){
-//			result.setUserId(user.getUserId());
-//			result.setEmail(user.getEmail());
-//			result.setName(user.getName());
-//			result.setPhone(user.getPhone());
-//			
-//		}else{
-//			//result = new UsersDto();
-//			result.setEmail(user.getEmail());
-//			result.setUserId(user.getUserId());			
-//		}
-//		
-//		
-//		Map<String, Object> userConfig = new HashMap<>();
-//		userConfig.put("isNotificationEnabled", new Boolean(true));
-//		userConfig.put("isSyncGmailEnabled", new Boolean(true));
-//		userConfig.put("string", "testvalue");
-//		userConfig.put("number", new Integer(54));
-//		
-//		result.setConfig(userConfig);
-//		
-//		logger.debug("Terima /users POST");
-//		if( registerData!=null&&registerData.size()>0 ){
-//			registerData.forEach((k,v)->logger.debug("Param : " + k + " | Value : " + v));
-//		}
-//		logger.debug("---");
-		
 		return registerResult.getUserDto();
 	}
-	
+	//dummy
 	@RequestMapping(value="/users/{userId}",
 			method={ RequestMethod.PATCH, RequestMethod.PUT })
 	@ResponseBody
-	public UsersDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UsersDto usersDto){
+	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto){
 		logger.debug("Terima /users PUT untuk authuser {} and user {}", authUserId, userId);
 		logger.debug("put data: {}", usersDto);
 		logger.debug("---");
-		UsersDto result = usersService.getUserDto(authUserId);
+		UserDto result = userService.getUserDto(authUserId);
 		if(result==null){
 			result = usersDto;
 		}
 		return result;
 	}
 	
+	//dummy
 	@RequestMapping(value="/users/{userId}/idCardFiles",
 			method=RequestMethod.PUT)
 	@ResponseBody

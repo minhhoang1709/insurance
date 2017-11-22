@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.AuthToken;
-import com.ninelives.insurance.api.model.Users;
+import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.service.AuthService;
-import com.ninelives.insurance.api.service.UsersService;
+import com.ninelives.insurance.api.service.UserService;
 
 @Controller
 public class AuthController {

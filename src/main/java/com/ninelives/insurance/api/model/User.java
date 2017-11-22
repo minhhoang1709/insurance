@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.ninelives.insurance.api.ref.UserStatus;
 
-public class Users {
+public class User {
     private String userId;
 
     private String password;

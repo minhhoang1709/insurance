@@ -14,23 +14,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.dto.RegistrationDto;
-import com.ninelives.insurance.api.dto.UsersDto;
+import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
-import com.ninelives.insurance.api.model.Users;
-import com.ninelives.insurance.api.mybatis.mapper.UsersMapper;
+import com.ninelives.insurance.api.model.User;
+import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.ref.UserStatus;
 
 @Service
-public class UsersService {
+public class UserService {
 	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = false;
 	
-	@Autowired UsersMapper userMapper;
+	@Autowired UserMapper userMapper;
 	@Autowired RedisService redisService;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -59,7 +59,7 @@ public class UsersService {
 			
 		boolean isNew;
 		
-		Users user = userMapper.selectByEmail(registrationDto.getGoogleEmail());
+		User user = userMapper.selectByEmail(registrationDto.getGoogleEmail());
 		
 		if(user!=null){
 			if(!user.getPassword().equals(DigestUtils.sha1Hex(registrationDto.getPassword()))){
@@ -80,7 +80,7 @@ public class UsersService {
 				throw new ApiBadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
 			}
 			
-			user = new Users();
+			user = new User();
 			user.setUserId(generateUserId());
 			user.setEmail(registrationDto.getGoogleEmail());
 			user.setPassword(DigestUtils.sha1Hex(registrationDto.getPassword()));
@@ -96,42 +96,43 @@ public class UsersService {
 			isNew = true;
 		}
 		
-		UsersDto usersDto = new UsersDto();
-		usersDto.setUserId(user.getUserId());
-		usersDto.setName(user.getName());
-		usersDto.setBirthDate(user.getBirthDate());
-		usersDto.setBirthPlace(user.getBirthPlace());
-		usersDto.setEmail(user.getEmail());
-		usersDto.setGender(user.getGender());
-		usersDto.setIdCardFileId(user.getIdCardFileId());
-		usersDto.setPhone(user.getPhone());
-		usersDto.setAddress(user.getAddress());
+		UserDto userDto = new UserDto();
+		userDto.setUserId(user.getUserId());
+		userDto.setName(user.getName());
+		userDto.setBirthDate(user.getBirthDate());
+		userDto.setBirthPlace(user.getBirthPlace());
+		userDto.setEmail(user.getEmail());
+		userDto.setGender(user.getGender());
+		userDto.setIdCardFileId(user.getIdCardFileId());
+		userDto.setPhone(user.getPhone());
+		userDto.setAddress(user.getAddress());
 		
 		Map<String, Object> configMap = new HashMap<>();
-		configMap.put(UsersDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED, user.getIsNotificationEnabled());
-		configMap.put(UsersDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED, user.getIsSyncGmailEnabled());
-		usersDto.setConfig(configMap);
+		configMap.put(UserDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED, user.getIsNotificationEnabled());
+		configMap.put(UserDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED, user.getIsSyncGmailEnabled());
+		userDto.setConfig(configMap);
 		
 		RegisterUsersResult registerResult = new RegisterUsersResult();
 		registerResult.setIsNew(isNew);
-		registerResult.setUserDto(usersDto);
+		registerResult.setUserDto(userDto);
 		
 		
 		return registerResult;
 	}
 	
-	public Users fetchUser(String userId){
+	public User fetchUserByUserId(String userId){
 		return userMapper.selectByUserId(userId);
 	}
 	
-	public UsersDto getUserDto(String userId) {
-		Users users = userMapper.selectByUserId(userId);
-		UsersDto usersDto = new UsersDto();
-		usersDto.setUserId(users.getUserId());
-		usersDto.setEmail(users.getEmail());
-		usersDto.setName(users.getName());
+	//test
+	public UserDto getUserDto(String userId) {
+		User users = userMapper.selectByUserId(userId);
+		UserDto userDto = new UserDto();
+		userDto.setUserId(users.getUserId());
+		userDto.setEmail(users.getEmail());
+		userDto.setName(users.getName());
 		
-		return usersDto;
+		return userDto;
 	}
 	
 	private String generateUserId(){

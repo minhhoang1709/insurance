@@ -1,15 +1,15 @@
 package com.ninelives.insurance.api.model;
 
-import com.ninelives.insurance.api.dto.UsersDto;
+import com.ninelives.insurance.api.dto.UserDto;
 
 public class RegisterUsersResult {
-	UsersDto userDto;
+	UserDto userDto;
 	Boolean isNew;
 	
-	public UsersDto getUserDto() {
+	public UserDto getUserDto() {
 		return userDto;
 	}
-	public void setUserDto(UsersDto userDto) {
+	public void setUserDto(UserDto userDto) {
 		this.userDto = userDto;
 	}
 	public Boolean getIsNew() {

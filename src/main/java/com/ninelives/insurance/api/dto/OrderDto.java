@@ -44,7 +44,7 @@ public class OrderDto {
 
     private PeriodDto period;
     
-    private UsersDto user;
+    private UserDto user;
 
 	public String getOrderId() {
 		return orderId;
@@ -166,11 +166,11 @@ public class OrderDto {
 		this.period = period;
 	}
 
-	public UsersDto getUser() {
+	public UserDto getUser() {
 		return user;
 	}
 
-	public void setUser(UsersDto user) {
+	public void setUser(UserDto user) {
 		this.user = user;
 	}
 

@@ -22,7 +22,7 @@ import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.model.Coverage;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.Product;
-import com.ninelives.insurance.api.model.Users;
+import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.service.ProductService;
 
 @Controller

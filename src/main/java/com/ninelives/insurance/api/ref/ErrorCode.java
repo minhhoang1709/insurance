@@ -22,6 +22,7 @@ public enum ErrorCode {
 	ERR4007_ORDER_STARTDATE_INVALID("ERR4007"), //policy start-date is not valid
 	ERR4008_ORDER_PRODUCT_UNSUPPORTED("ERR4008"), //only day-based product is supported
 	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009"), //only limited number of same coverage can be active at the same time
+	ERR4010_ORDER_PROFILE_INVALID("ERR4010"), //empty or incomplete profile
 	ERR5001_ORDER_NOT_FOUND("ERR5001")
 	;
 	

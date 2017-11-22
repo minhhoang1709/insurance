@@ -6,10 +6,10 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.ninelives.insurance.api.model.Users;
+import com.ninelives.insurance.api.model.User;
 
 @Mapper
-public interface UsersMapper {
+public interface UserMapper {
 	
     @Select({
         "select",
@@ -19,7 +19,7 @@ public interface UsersMapper {
         "from public.users",
     	"where email=#{email,jdbcType=VARCHAR} "
 		})
-	Users selectByEmail(@Param("email") String email);
+	User selectByEmail(@Param("email") String email);
     
     @Select({
         "select",
@@ -29,7 +29,7 @@ public interface UsersMapper {
         "from public.users",
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
-	Users selectByUserId(@Param("userId") String userId);
+	User selectByUserId(@Param("userId") String userId);
 	
     @Update({
         "update public.users ",
@@ -45,7 +45,7 @@ public interface UsersMapper {
         	"update_date = now() ",
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
-    int updateSyncGmailEnabledByUserId(Users record);
+    int updateSyncGmailEnabledByUserId(User record);
     
-    int insertSelective(Users record);
+    int insertSelective(User record);
 }

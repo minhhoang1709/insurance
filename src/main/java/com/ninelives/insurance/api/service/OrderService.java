@@ -33,7 +33,7 @@ import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.Product;
-import com.ninelives.insurance.api.model.Users;
+import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderCoverage;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
@@ -55,7 +55,7 @@ public class OrderService {
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	@Autowired ProductService productService;
-	@Autowired UsersService userService;
+	@Autowired UserService userService;
 	@Autowired PolicyOrderTrxService policyOrderTrxService;
 	
 	@Autowired PolicyOrderMapper policyOrderMapper;
@@ -90,26 +90,10 @@ public class OrderService {
 	int defaultOrdersFilterOffset;
 	
 	public OrderDto submitOrder(final String userId, final OrderDto orderDto) throws ApiBadRequestException{
-//		SubmitOrderDto submitOrderDto = new SubmitOrderDto();
-//		if(orderDto != null){
-//			submitOrderDto.setPolicyStartDate(orderDto.getPolicyStartDate());
-//			submitOrderDto.setTotalPremi(orderDto.getTotalPremi());
-//			if(!CollectionUtils.isEmpty(orderDto.getProducts())){
-//				List<String> productIds = new ArrayList<>();
-//				for(ProductDto p: orderDto.getProducts()){
-//					productIds.add(p.getProductId());
-//				}
-//				submitOrderDto.setProducts(productIds);
-//			}			
-//		}
 		PolicyOrder policyOrder = registerOrder(userId, orderDto);
 		return policyOrderToOrderDto(policyOrder);
 	}
-//	public OrderDto submitOrder(final String userId, final SubmitOrderDto submitOrderDto)  throws ApiBadRequestException{
-//		PolicyOrder policyOrder = registerOrder(userId, submitOrderDto);  
-//		return policyOrderToOrderDto(policyOrder);
-//	}
-
+	
 	public OrderDto fetchOrderDtoByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = fetchOrderByOrderId(userId, orderId);
 		return policyOrderToOrderDto(policyOrder);
@@ -229,8 +213,39 @@ public class OrderService {
 		policyOrder.setPeriod(period);
 		policyOrder.setStatus(PolicyStatus.SUBMITTED);
 		
-		//Set user info		
-		final Users user = userService.fetchUser(userId);		
+		//v fetch user from db
+		//v method isProfileForOrderExists
+		// v check jika di user ada gender atau birthdate atau birtplace atau phone 
+		//jika profile tidak exists
+		//bikin newuser buat update, check with isprofilefororderexists
+		//run update userinfo
+		//jika profile exists
+		//check jika phone berubah, jika iya
+		//run update phonenumber
+		
+		//bikin objectpolicyorder user based on whether profile eixsts or not
+		
+		//create new user for insert or update 
+		//pertama kali, yang boleh diupdate adalah nama dan semua other field
+		//next time, yang boleh diupdate adalah phone only
+		//so, object user buat update
+		//iterate, check jika perlu update, if this is new update
+		//		
+		
+		
+		final User user = userService.fetchUserByUserId(userId);
+		boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(user);
+		
+		if(!isUserProfileCompleteForOrder){
+			if(submitOrderDto.getUser()==null){
+				logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
+				throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
+						"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
+			}
+			User newUsersProfile = new User();
+		}
+		
+		//Set user info
 		PolicyOrderUsers policyOrderUser = new PolicyOrderUsers();
 		policyOrderUser.setOrderId(policyOrder.getOrderId());
 		policyOrderUser.setName(user.getName());
@@ -242,7 +257,7 @@ public class OrderService {
 		policyOrderUser.setAddress(user.getAddress());
 		policyOrderUser.setIdCardFileId(user.getIdCardFileId());
 		
-		policyOrder.setPolicyOrderUsers(policyOrderUser);
+		policyOrder.setPolicyOrderUsers(policyOrderUser);		
 		
 		//Set for policy product
 		List<PolicyOrderProduct> policyOrderProducts = new ArrayList<>();
@@ -266,6 +281,21 @@ public class OrderService {
 
 		return policyOrder;
 	}
+	
+	protected Boolean isUserProfileCompleteForOrder(User user){
+		boolean result = true;
+		if(user == null 
+				|| StringUtils.isEmpty(user.getName()) 
+				|| StringUtils.isEmpty(user.getGender())
+				|| StringUtils.isEmpty(user.getBirthDate())
+				|| StringUtils.isEmpty(user.getBirthPlace())
+				|| StringUtils.isEmpty(user.getPhone())				
+				){
+			result = false;
+		}
+		return result;
+	}
+	
 	protected PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
 		return policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);		
 	}

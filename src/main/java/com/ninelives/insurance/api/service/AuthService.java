@@ -14,8 +14,8 @@ import org.springframework.util.StringUtils;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
-import com.ninelives.insurance.api.model.Users;
-import com.ninelives.insurance.api.mybatis.mapper.UsersMapper;
+import com.ninelives.insurance.api.model.User;
+import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.api.ref.ErrorCode;
 
@@ -25,7 +25,7 @@ public class AuthService {
 	
 	public static final String AUTH_USER_ID = "authUserId";
 	
-	@Autowired UsersMapper userMapper;
+	@Autowired UserMapper userMapper;
 	@Autowired RedisService redisService;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -37,7 +37,7 @@ public class AuthService {
 			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
 		
-		Users user = userMapper.selectByEmail(email);
+		User user = userMapper.selectByEmail(email);
 		if(user==null || !user.getPassword().equals(DigestUtils.sha1Hex(password))){
 			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}else{
