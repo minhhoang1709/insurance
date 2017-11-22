@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.UsersMapper">
-  <resultMap id="BaseResultMap" type="com.ninelives.insurance.api.model.Users">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.api.model.User">
     <id column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -28,7 +28,7 @@
     fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, 
     status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled
   </sql>
-<insert id="insertSelective" parameterType="com.ninelives.insurance.api.model.Users">
+<insert id="insertSelective" parameterType="com.ninelives.insurance.api.model.User">
     insert into public.users
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="userId != null">

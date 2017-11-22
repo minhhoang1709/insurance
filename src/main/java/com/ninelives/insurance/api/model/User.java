@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.model;
 import java.time.LocalDate;
 import java.util.Date;
 
+import com.ninelives.insurance.api.ref.Gender;
 import com.ninelives.insurance.api.ref.UserStatus;
 
 public class User {
@@ -24,7 +25,7 @@ public class User {
 
     private String name;
 
-    private String gender;
+    private Gender gender;
 
     private LocalDate birthDate;
 
@@ -110,15 +111,15 @@ public class User {
         this.name = name;
     }
 
-    public String getGender() {
-        return gender;
-    }
+    public Gender getGender() {
+		return gender;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
 
-    public LocalDate getBirthDate() {
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 

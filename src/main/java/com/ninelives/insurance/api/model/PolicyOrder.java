@@ -177,5 +177,26 @@ public class PolicyOrder {
 		this.period = period;
 	}
 
+	@Override
+	public String toString() {
+		return "PolicyOrder [" + (orderId != null ? "orderId=" + orderId + ", " : "")
+				+ (orderDate != null ? "orderDate=" + orderDate + ", " : "")
+				+ (userId != null ? "userId=" + userId + ", " : "")
+				+ (coverageCategoryId != null ? "coverageCategoryId=" + coverageCategoryId + ", " : "")
+				+ (hasBeneficiary != null ? "hasBeneficiary=" + hasBeneficiary + ", " : "")
+				+ (periodId != null ? "periodId=" + periodId + ", " : "")
+				+ (policyNumber != null ? "policyNumber=" + policyNumber + ", " : "")
+				+ (policyStartDate != null ? "policyStartDate=" + policyStartDate + ", " : "")
+				+ (policyEndDate != null ? "policyEndDate=" + policyEndDate + ", " : "")
+				+ (totalPremi != null ? "totalPremi=" + totalPremi + ", " : "")
+				+ (productCount != null ? "productCount=" + productCount + ", " : "")
+				+ (status != null ? "status=" + status + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
+				+ (policyOrderUsers != null ? "policyOrderUsers=" + policyOrderUsers + ", " : "")
+				+ (policyOrderProducts != null ? "policyOrderProducts=" + policyOrderProducts + ", " : "")
+				+ (period != null ? "period=" + period : "") + "]";
+	}
+	
 
 }

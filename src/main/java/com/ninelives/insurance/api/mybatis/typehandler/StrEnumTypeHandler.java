@@ -9,7 +9,16 @@ import java.sql.SQLException;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
+import com.ninelives.insurance.api.ref.Gender;
+import com.ninelives.insurance.api.ref.PeriodUnit;
+import com.ninelives.insurance.api.ref.PolicyStatus;
+import com.ninelives.insurance.api.ref.UserStatus;
+
+@MappedTypes({
+	Gender.class, PeriodUnit.class, PolicyStatus.class, UserStatus.class
+})
 public class StrEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 	private Class<E> type;
 
@@ -54,6 +63,9 @@ public class StrEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
 	@SuppressWarnings("unchecked")
 	private E getEnum(final String stringValue) throws SQLException {
+		if (stringValue == null){
+			return null;
+		}
 		try {
 			return (E) type.getMethod("toEnum", String.class).invoke(null, stringValue);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException

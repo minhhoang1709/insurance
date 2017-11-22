@@ -3,6 +3,8 @@ package com.ninelives.insurance.api.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
 import com.ninelives.insurance.api.dto.SubmitOrderDto;
+import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
@@ -29,16 +32,20 @@ import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
+import com.ninelives.insurance.api.service.UserService;
 import com.ninelives.insurance.api.util.GsonUtil;
 
 @Controller
 public class TestController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 	
 	@Autowired ProductService productService;
 	@Autowired OrderService orderService;
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	
+	@Autowired UserService userService;
 	@Autowired UserMapper userMapper;
 	
 	@Value("${ninelives.order.list-limmit:50}")
@@ -144,9 +151,23 @@ public class TestController {
 		return orderService.testConflict(authUserId, submitOrder);
 	}
 	
-	@RequestMapping(value="test/user/{userId}", method=RequestMethod.GET)
+	@RequestMapping(value="/test/user/{userId}", method=RequestMethod.GET)
 	@ResponseBody
 	public User getUser(@PathVariable("userId") String userId){
 		return userMapper.selectByUserId(userId);
+	}
+	
+	@RequestMapping(value="/test/users/{userId}",
+			method={ RequestMethod.PATCH, RequestMethod.PUT })
+	@ResponseBody
+	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto){
+		logger.debug("Terima /users PUT untuk authuser {} and user {}", authUserId, userId);
+		logger.debug("put data: {}", usersDto);
+		logger.debug("---");
+		UserDto result = userService.getUserDto(userId);
+		if(result==null){
+			result = usersDto;
+		}
+		return result;
 	}
 }

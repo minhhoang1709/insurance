@@ -124,18 +124,32 @@ public class UserService {
 		return userMapper.selectByUserId(userId);
 	}
 	
+	public int updateProfileInfo(User user) {
+		return userMapper.updateProfileByUserId(user);
+	}
+
+	public int updatePhoneInfo(String userId, String phone) {
+		return userMapper.updatePhoneByUserId(userId, phone);
+	}
+	
 	//test
 	public UserDto getUserDto(String userId) {
 		User users = userMapper.selectByUserId(userId);
-		UserDto userDto = new UserDto();
-		userDto.setUserId(users.getUserId());
-		userDto.setEmail(users.getEmail());
-		userDto.setName(users.getName());
+		UserDto userDto = null;
+		if(users!=null){
+			userDto = new UserDto();
+			userDto.setUserId(users.getUserId());
+			userDto.setEmail(users.getEmail());
+			userDto.setName(users.getName());
+		}
 		
+				
 		return userDto;
 	}
 	
 	private String generateUserId(){
 		return UUID.randomUUID().toString().replace("-", "");
 	}
+
+
 }

@@ -3,6 +3,8 @@ package com.ninelives.insurance.api.model;
 import java.time.LocalDate;
 import java.util.Date;
 
+import com.ninelives.insurance.api.ref.Gender;
+
 public class PolicyOrderUsers {
     private Long policyOrderUsersId;
 
@@ -12,7 +14,7 @@ public class PolicyOrderUsers {
 
     private String name;
 
-    private String gender;
+    private Gender gender;
 
     private LocalDate birthDate;
 
@@ -59,16 +61,16 @@ public class PolicyOrderUsers {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public Gender getGender() {
+		return gender;
+	}
 
-    public String getGender() {
-        return gender;
-    }
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public LocalDate getBirthDate() {
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 
@@ -123,4 +125,20 @@ public class PolicyOrderUsers {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+	@Override
+	public String toString() {
+		return "PolicyOrderUsers ["
+				+ (policyOrderUsersId != null ? "policyOrderUsersId=" + policyOrderUsersId + ", " : "")
+				+ (orderId != null ? "orderId=" + orderId + ", " : "") + (email != null ? "email=" + email + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "") + (gender != null ? "gender=" + gender + ", " : "")
+				+ (birthDate != null ? "birthDate=" + birthDate + ", " : "")
+				+ (birthPlace != null ? "birthPlace=" + birthPlace + ", " : "")
+				+ (phone != null ? "phone=" + phone + ", " : "") + (address != null ? "address=" + address + ", " : "")
+				+ (idCardFileId != null ? "idCardFileId=" + idCardFileId + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate : "") + "]";
+	}
+    
+    
 }

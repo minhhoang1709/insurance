@@ -75,4 +75,15 @@ public class Period {
     public void setStatus(String status) {
         this.status = status;
     }
+
+	@Override
+	public String toString() {
+		return "Period [" + (periodId != null ? "periodId=" + periodId + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "") + (value != null ? "value=" + value + ", " : "")
+				+ (unit != null ? "unit=" + unit + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
+				+ (status != null ? "status=" + status : "") + "]";
+	}
+        
 }

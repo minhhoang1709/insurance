@@ -55,5 +55,13 @@ public class ProductDto {
 		this.premi = premi;
 	}
 
+	@Override
+	public String toString() {
+		return "ProductDto [" + (productId != null ? "productId=" + productId + ", " : "")
+				+ (coverage != null ? "coverage=" + coverage + ", " : "")
+				+ (period != null ? "period=" + period + ", " : "") + (name != null ? "name=" + name + ", " : "")
+				+ (premi != null ? "premi=" + premi : "") + "]";
+	}
 
+	
 }

@@ -216,46 +216,81 @@ public class OrderService {
 		//v fetch user from db
 		//v method isProfileForOrderExists
 		// v check jika di user ada gender atau birthdate atau birtplace atau phone 
-		//jika profile tidak exists
-		//bikin newuser buat update, check with isprofilefororderexists
-		//run update userinfo
-		//jika profile exists
-		//check jika phone berubah, jika iya
-		//run update phonenumber
-		
-		//bikin objectpolicyorder user based on whether profile eixsts or not
-		
-		//create new user for insert or update 
-		//pertama kali, yang boleh diupdate adalah nama dan semua other field
-		//next time, yang boleh diupdate adalah phone only
-		//so, object user buat update
-		//iterate, check jika perlu update, if this is new update
-		//		
+		//v jika profile tidak exists
+		//v bikin newuser buat update, check with isprofilefororderexists
+		//v run update userinfo
+		//v jika profile exists
+		//v check jika phone berubah, jika iya
+		//v run update phonenumber
 		
 		
-		final User user = userService.fetchUserByUserId(userId);
-		boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(user);
+		//v bikin objectpolicyorder user based on whether profile eixsts or not
 		
+
+		//test buat isUserProfileCompleteForOrder
+		
+		final User existingUser = userService.fetchUserByUserId(userId);
+		boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
+		boolean isAllProfileInfoUpdated = false;
+		boolean isPhoneInfoUpdated = false;
+		User newUserProfile = null;
 		if(!isUserProfileCompleteForOrder){
 			if(submitOrderDto.getUser()==null){
 				logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 				throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
 						"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
 			}
-			User newUsersProfile = new User();
+			newUserProfile = new User();
+			newUserProfile.setUserId(userId);;
+			newUserProfile.setName(submitOrderDto.getUser().getName());
+			newUserProfile.setGender(submitOrderDto.getUser().getGender());
+			newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate());
+			newUserProfile.setBirthPlace(submitOrderDto.getUser().getBirthPlace());
+			newUserProfile.setPhone(submitOrderDto.getUser().getPhone());
+			
+			if(!isUserProfileCompleteForOrder(newUserProfile)){
+				logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
+				throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
+						"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
+			}
+			
+			userService.updateProfileInfo(newUserProfile);
+			
+			isAllProfileInfoUpdated = true;
+		}else{
+			if(submitOrderDto.getUser()!=null 
+					&& !existingUser.getPhone().equals(submitOrderDto.getUser().getPhone())){
+				userService.updatePhoneInfo(userId, submitOrderDto.getUser().getPhone());
+				isPhoneInfoUpdated = true;
+			}			
+			
 		}
 		
 		//Set user info
 		PolicyOrderUsers policyOrderUser = new PolicyOrderUsers();
 		policyOrderUser.setOrderId(policyOrder.getOrderId());
-		policyOrderUser.setName(user.getName());
-		policyOrderUser.setEmail(user.getEmail());
-		policyOrderUser.setGender(user.getGender());
-		policyOrderUser.setBirthDate(user.getBirthDate());
-		policyOrderUser.setBirthPlace(user.getBirthPlace());
-		policyOrderUser.setPhone(user.getPhone());
-		policyOrderUser.setAddress(user.getAddress());
-		policyOrderUser.setIdCardFileId(user.getIdCardFileId());
+		policyOrderUser.setEmail(existingUser.getEmail());
+		policyOrderUser.setIdCardFileId(existingUser.getIdCardFileId());
+
+		if(isAllProfileInfoUpdated){			
+			policyOrderUser.setName(newUserProfile.getName());
+			policyOrderUser.setGender(newUserProfile.getGender());
+			policyOrderUser.setBirthDate(newUserProfile.getBirthDate());
+			policyOrderUser.setBirthPlace(newUserProfile.getBirthPlace());
+			policyOrderUser.setAddress(newUserProfile.getAddress());
+			policyOrderUser.setPhone(newUserProfile.getPhone());
+		}else{
+			policyOrderUser.setName(existingUser.getName());
+			policyOrderUser.setGender(existingUser.getGender());
+			policyOrderUser.setBirthDate(existingUser.getBirthDate());
+			policyOrderUser.setBirthPlace(existingUser.getBirthPlace());
+			policyOrderUser.setAddress(existingUser.getAddress());
+			if(isPhoneInfoUpdated){
+				policyOrderUser.setPhone(submitOrderDto.getUser().getPhone());
+			}else{
+				policyOrderUser.setPhone(existingUser.getPhone());
+			}
+		}
 		
 		policyOrder.setPolicyOrderUsers(policyOrderUser);		
 		
@@ -278,6 +313,9 @@ public class OrderService {
 		policyOrder.setPolicyOrderProducts(policyOrderProducts);
 		
 		policyOrderTrxService.registerPolicyOrder(policyOrder);
+		
+		logger.debug("Process order for {} with order {}, result update profile: {}, update phone: {}, order: {}",
+				userId, submitOrderDto, isAllProfileInfoUpdated, isPhoneInfoUpdated, policyOrder);
 
 		return policyOrder;
 	}
@@ -286,8 +324,8 @@ public class OrderService {
 		boolean result = true;
 		if(user == null 
 				|| StringUtils.isEmpty(user.getName()) 
-				|| StringUtils.isEmpty(user.getGender())
-				|| StringUtils.isEmpty(user.getBirthDate())
+				|| user.getGender()==null
+				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
 				|| StringUtils.isEmpty(user.getPhone())				
 				){

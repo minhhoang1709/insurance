@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.api.ref.Gender;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
@@ -17,7 +18,7 @@ public class UserDto {
 
     private String name;
 
-    private String gender;
+    private Gender gender;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
@@ -56,11 +57,11 @@ public class UserDto {
 		this.name = name;
 	}
 
-	public String getGender() {
+	public Gender getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
 
