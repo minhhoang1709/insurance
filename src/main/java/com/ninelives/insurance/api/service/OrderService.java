@@ -89,8 +89,8 @@ public class OrderService {
 	@Value("${ninelives.order.filter-offset:0}")
 	int defaultOrdersFilterOffset;
 	
-	public OrderDto submitOrder(final String userId, final OrderDto orderDto) throws ApiBadRequestException{
-		PolicyOrder policyOrder = registerOrder(userId, orderDto);
+	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiBadRequestException{
+		PolicyOrder policyOrder = registerOrder(userId, orderDto, isValidateOnly);
 		return policyOrderToOrderDto(policyOrder);
 	}
 	
@@ -109,16 +109,23 @@ public class OrderService {
 		}
 		return orderDtos;		
 	}
-	
-	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto) throws ApiBadRequestException{
-		logger.debug("Process order for {} with order {}", userId, submitOrderDto);
+	/**
+	 * 
+	 * @param userId
+	 * @param submitOrderDto
+	 * @param isValidateOnly Dry-run. Validate if order is valid (without validation to the user's profile).
+	 * @return
+	 * @throws ApiBadRequestException
+	 */
+	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto, final boolean isValidateOnly) throws ApiBadRequestException{
+		logger.debug("Process isvalidationonly {} order for {} with order {}", isValidateOnly, userId, submitOrderDto);
 		
 		LocalDate today = LocalDate.now();
 		
 		if (submitOrderDto == null || submitOrderDto.getProducts() == null
 				|| submitOrderDto.getPolicyStartDate() == null || submitOrderDto.getTotalPremi() == null) {
-			logger.debug("Process order for {} with order {} with result: exception empty order or product", userId,
-					submitOrderDto);
+			logger.debug("Process order for {} with order {} with result: exception empty order or product", 
+					userId,	submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4000_ORDER_INVALID,
 					"Permintaan tidak dapat diproses, silahkan cek kembali pesanan");
 		}
@@ -176,8 +183,7 @@ public class OrderService {
 		if(calculatedTotalPremi!=submitOrderDto.getTotalPremi()){
 			logger.debug("Process order for {} with order {} with result: exception calculatd premi {} ", userId, submitOrderDto, calculatedTotalPremi);
 			throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
-		}
-				
+		}				
 		
 		Period period = products.get(0).getPeriod();
 		if(!period.getUnit().equals(PeriodUnit.DAILY)){
@@ -196,127 +202,117 @@ public class OrderService {
 			throw new ApiBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
 					"Permintaan tidak dapat diproses, anda telah memiliki 3 asuransi yang akan atau telah aktif pada waktu yang sama");
 		}
-		
-		//TODO: submit order to ASWATA
-		
-		PolicyOrder policyOrder = new PolicyOrder();
-		policyOrder.setOrderId(generateOrderId());
-		policyOrder.setOrderDate(today);
-		policyOrder.setUserId(userId);
-		policyOrder.setCoverageCategoryId(coverageCategoryId);
-		policyOrder.setHasBeneficiary(hasBeneficiary);
-		policyOrder.setPeriodId(periodId);
-		policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate());
-		policyOrder.setPolicyEndDate(policyEndDate);
-		policyOrder.setTotalPremi(calculatedTotalPremi);
-		policyOrder.setProductCount(products.size());
-		policyOrder.setPeriod(period);
-		policyOrder.setStatus(PolicyStatus.SUBMITTED);
-		
-		//v fetch user from db
-		//v method isProfileForOrderExists
-		// v check jika di user ada gender atau birthdate atau birtplace atau phone 
-		//v jika profile tidak exists
-		//v bikin newuser buat update, check with isprofilefororderexists
-		//v run update userinfo
-		//v jika profile exists
-		//v check jika phone berubah, jika iya
-		//v run update phonenumber
-		
-		
-		//v bikin objectpolicyorder user based on whether profile eixsts or not
-		
-
-		//test buat isUserProfileCompleteForOrder
-		
-		final User existingUser = userService.fetchUserByUserId(userId);
-		boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
+				
+		PolicyOrder policyOrder = null;
 		boolean isAllProfileInfoUpdated = false;
-		boolean isPhoneInfoUpdated = false;
-		User newUserProfile = null;
-		if(!isUserProfileCompleteForOrder){
-			if(submitOrderDto.getUser()==null){
-				logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
-						"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
-			}
-			newUserProfile = new User();
-			newUserProfile.setUserId(userId);;
-			newUserProfile.setName(submitOrderDto.getUser().getName());
-			newUserProfile.setGender(submitOrderDto.getUser().getGender());
-			newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate());
-			newUserProfile.setBirthPlace(submitOrderDto.getUser().getBirthPlace());
-			newUserProfile.setPhone(submitOrderDto.getUser().getPhone());
-			
-			if(!isUserProfileCompleteForOrder(newUserProfile)){
-				logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
-						"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
-			}
-			
-			userService.updateProfileInfo(newUserProfile);
-			
-			isAllProfileInfoUpdated = true;
-		}else{
-			if(submitOrderDto.getUser()!=null 
-					&& !existingUser.getPhone().equals(submitOrderDto.getUser().getPhone())){
-				userService.updatePhoneInfo(userId, submitOrderDto.getUser().getPhone());
-				isPhoneInfoUpdated = true;
-			}			
-			
-		}
+		boolean isPhoneInfoUpdated = false;		
 		
-		//Set user info
-		PolicyOrderUsers policyOrderUser = new PolicyOrderUsers();
-		policyOrderUser.setOrderId(policyOrder.getOrderId());
-		policyOrderUser.setEmail(existingUser.getEmail());
-		policyOrderUser.setIdCardFileId(existingUser.getIdCardFileId());
+		if(!isValidateOnly){			
+			//TODO: submit order to ASWATA
+			
+			final User existingUser = userService.fetchUserByUserId(userId);
 
-		if(isAllProfileInfoUpdated){			
-			policyOrderUser.setName(newUserProfile.getName());
-			policyOrderUser.setGender(newUserProfile.getGender());
-			policyOrderUser.setBirthDate(newUserProfile.getBirthDate());
-			policyOrderUser.setBirthPlace(newUserProfile.getBirthPlace());
-			policyOrderUser.setAddress(newUserProfile.getAddress());
-			policyOrderUser.setPhone(newUserProfile.getPhone());
-		}else{
-			policyOrderUser.setName(existingUser.getName());
-			policyOrderUser.setGender(existingUser.getGender());
-			policyOrderUser.setBirthDate(existingUser.getBirthDate());
-			policyOrderUser.setBirthPlace(existingUser.getBirthPlace());
-			policyOrderUser.setAddress(existingUser.getAddress());
-			if(isPhoneInfoUpdated){
-				policyOrderUser.setPhone(submitOrderDto.getUser().getPhone());
+			boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
+
+			User newUserProfile = null;
+			if(!isUserProfileCompleteForOrder){
+				if(submitOrderDto.getUser()==null){
+					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
+					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
+							"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
+				}
+				newUserProfile = new User();
+				newUserProfile.setUserId(userId);;
+				newUserProfile.setName(submitOrderDto.getUser().getName());
+				newUserProfile.setGender(submitOrderDto.getUser().getGender());
+				newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate());
+				newUserProfile.setBirthPlace(submitOrderDto.getUser().getBirthPlace());
+				newUserProfile.setPhone(submitOrderDto.getUser().getPhone());
+				
+				if(!isUserProfileCompleteForOrder(newUserProfile)){
+					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
+					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
+							"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
+				}
+				
+				userService.updateProfileInfo(newUserProfile);
+				
+				isAllProfileInfoUpdated = true;
 			}else{
-				policyOrderUser.setPhone(existingUser.getPhone());
-			}
-		}
-		
-		policyOrder.setPolicyOrderUsers(policyOrderUser);		
-		
-		//Set for policy product
-		List<PolicyOrderProduct> policyOrderProducts = new ArrayList<>();
-		for(Product p: products){
-			PolicyOrderProduct pop = new PolicyOrderProduct();
-			pop.setOrderId(policyOrder.getOrderId());
-			pop.setCoverageId(p.getCoverageId());
-			pop.setPeriodId(p.getPeriodId());
-			pop.setProductId(p.getProductId());
-			pop.setCoverageName(p.getCoverage().getName());
-			pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
-			pop.setPremi(p.getPremi());
-			pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
-			pop.setPeriod(p.getPeriod());
-			policyOrderProducts.add(pop);
-		}
-		
-		policyOrder.setPolicyOrderProducts(policyOrderProducts);
-		
-		policyOrderTrxService.registerPolicyOrder(policyOrder);
-		
-		logger.debug("Process order for {} with order {}, result update profile: {}, update phone: {}, order: {}",
-				userId, submitOrderDto, isAllProfileInfoUpdated, isPhoneInfoUpdated, policyOrder);
+				if(submitOrderDto.getUser()!=null 
+						&& !existingUser.getPhone().equals(submitOrderDto.getUser().getPhone())){
+					userService.updatePhoneInfo(userId, submitOrderDto.getUser().getPhone());
+					isPhoneInfoUpdated = true;
+				}			
+				
+			}		
+			
+			policyOrder = new PolicyOrder();
+			policyOrder.setOrderId(generateOrderId());
+			policyOrder.setOrderDate(today);
+			policyOrder.setUserId(userId);
+			policyOrder.setCoverageCategoryId(coverageCategoryId);
+			policyOrder.setHasBeneficiary(hasBeneficiary);
+			policyOrder.setPeriodId(periodId);
+			policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate());
+			policyOrder.setPolicyEndDate(policyEndDate);
+			policyOrder.setTotalPremi(calculatedTotalPremi);
+			policyOrder.setProductCount(products.size());
+			policyOrder.setPeriod(period);
+			policyOrder.setStatus(PolicyStatus.SUBMITTED);
 
+			//Set user info
+			PolicyOrderUsers policyOrderUser = new PolicyOrderUsers();
+			policyOrderUser.setOrderId(policyOrder.getOrderId());
+			policyOrderUser.setEmail(existingUser.getEmail());
+			policyOrderUser.setIdCardFileId(existingUser.getIdCardFileId());
+
+			if(isAllProfileInfoUpdated){			
+				policyOrderUser.setName(newUserProfile.getName());
+				policyOrderUser.setGender(newUserProfile.getGender());
+				policyOrderUser.setBirthDate(newUserProfile.getBirthDate());
+				policyOrderUser.setBirthPlace(newUserProfile.getBirthPlace());
+				policyOrderUser.setAddress(newUserProfile.getAddress());
+				policyOrderUser.setPhone(newUserProfile.getPhone());
+			}else{
+				policyOrderUser.setName(existingUser.getName());
+				policyOrderUser.setGender(existingUser.getGender());
+				policyOrderUser.setBirthDate(existingUser.getBirthDate());
+				policyOrderUser.setBirthPlace(existingUser.getBirthPlace());
+				policyOrderUser.setAddress(existingUser.getAddress());
+				if(isPhoneInfoUpdated){
+					policyOrderUser.setPhone(submitOrderDto.getUser().getPhone());
+				}else{
+					policyOrderUser.setPhone(existingUser.getPhone());
+				}
+			}
+			
+			policyOrder.setPolicyOrderUsers(policyOrderUser);
+							
+			//Set for policy product
+			List<PolicyOrderProduct> policyOrderProducts = new ArrayList<>();
+			for(Product p: products){
+				PolicyOrderProduct pop = new PolicyOrderProduct();
+				pop.setOrderId(policyOrder.getOrderId());
+				pop.setCoverageId(p.getCoverageId());
+				pop.setPeriodId(p.getPeriodId());
+				pop.setProductId(p.getProductId());
+				pop.setCoverageName(p.getCoverage().getName());
+				pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
+				pop.setPremi(p.getPremi());
+				pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
+				pop.setPeriod(p.getPeriod());
+				policyOrderProducts.add(pop);
+			}
+			
+			policyOrder.setPolicyOrderProducts(policyOrderProducts);			
+			
+			policyOrderTrxService.registerPolicyOrder(policyOrder);
+			
+		}
+		logger.debug("Process order isValidateOnly {} for {} with order {}, result update profile: {}, update phone: {}, order: {}",
+				isValidateOnly, userId, submitOrderDto, isAllProfileInfoUpdated, isPhoneInfoUpdated, policyOrder);
+		
 		return policyOrder;
 	}
 	

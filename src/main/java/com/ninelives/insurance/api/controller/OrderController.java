@@ -74,13 +74,14 @@ public class OrderController {
 	@RequestMapping(value="/orders",
 			method=RequestMethod.POST)	
 	@ResponseBody
-	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId, 
+	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId,
+			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
 			@RequestBody(required=false) OrderDto submitOrder, 
 			HttpServletResponse response) throws ApiException{
 		
-		logger.debug("POST submitOrder with request {}", submitOrder);
+		logger.debug("POST submitOrder with request {} and validate-only {}", submitOrder, isValidateOnly);
 		
-		return orderService.submitOrder(authUserId, submitOrder);
+		return orderService.submitOrder(authUserId, submitOrder, isValidateOnly);
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/beneficiary",

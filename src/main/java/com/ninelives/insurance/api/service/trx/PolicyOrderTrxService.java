@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ninelives.insurance.api.model.PolicyOrder;
-import com.ninelives.insurance.api.mybatis.mapper.OrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
@@ -19,7 +18,6 @@ public class PolicyOrderTrxService {
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
-	@Autowired OrderProductMapper orderProductMapper;
 	
 	@Transactional
 	public void registerPolicyOrder(PolicyOrder policyOrder){

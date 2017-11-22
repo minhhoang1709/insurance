@@ -99,7 +99,7 @@ public class TestController {
 	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
 			@RequestBody(required=false) OrderDto orderDto) throws ApiException{	
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-		return orderService.submitOrder(authUserId, orderDto);
+		return orderService.submitOrder(authUserId, orderDto, false);
 	}
 	
 	@RequestMapping(value="/test/testfetchorder", method=RequestMethod.GET)
