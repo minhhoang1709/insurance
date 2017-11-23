@@ -194,11 +194,14 @@ public class OrderService {
 		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().plusDays(products.get(0).getPeriod().getValue()-1);
 		LocalDate dueOrderDate = today.minusDays(policyDueDatePeriod);
 		
-		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
-				submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
-		
-		if(conflictList.size()>=policyConflictPeriodLimit){
-			logger.debug("Process order for {} with order {} with result: exception conflict coverage {}", userId, submitOrderDto, conflictList);
+//		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
+//				submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);		
+//		
+		//Map<String, Long> conflictCoverageMap = conflictList.stream().collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));		
+		//boolean isOverLimit = conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
+		boolean isOverLimit = isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
+		if(isOverLimit){
+			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
 					"Permintaan tidak dapat diproses, anda telah memiliki 3 asuransi yang akan atau telah aktif pada waktu yang sama");
 		}
@@ -328,6 +331,18 @@ public class OrderService {
 			result = false;
 		}
 		return result;
+	}
+	
+	protected boolean isOverCoverageInSamePeriodLimit(String userId, LocalDate policyStartDate, LocalDate policyEndDate,
+			LocalDate dueOrderDate, List<String> coverageIds) {
+		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
+				policyStartDate, policyEndDate, dueOrderDate, coverageIds);		
+		
+		Map<String, Long> conflictCoverageMap = conflictList.stream().collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
+		
+		//logger.debug("result conflictmap is "+conflictCoverageMap);
+		
+		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
 	}
 	
 	protected PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
