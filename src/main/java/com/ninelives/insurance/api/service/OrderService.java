@@ -1,13 +1,8 @@
 package com.ninelives.insurance.api.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,13 +10,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.ibatis.reflection.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.dto.CoverageDto;
@@ -29,24 +22,23 @@ import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
-import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.model.Period;
-import com.ninelives.insurance.api.model.Product;
-import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderCoverage;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
 import com.ninelives.insurance.api.model.PolicyOrderUsers;
+import com.ninelives.insurance.api.model.Product;
+import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.mybatis.mapper.OrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.ref.OrderDtoFilterStatus;
+import com.ninelives.insurance.api.ref.PeriodUnit;
 import com.ninelives.insurance.api.ref.PolicyStatus;
 import com.ninelives.insurance.api.service.trx.PolicyOrderTrxService;
-import com.ninelives.insurance.api.ref.PeriodUnit;
 
 @Service
 public class OrderService {
@@ -109,6 +101,8 @@ public class OrderService {
 		}
 		return orderDtos;		
 	}
+	
+	
 	/**
 	 * 
 	 * @param userId
@@ -194,11 +188,6 @@ public class OrderService {
 		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().plusDays(products.get(0).getPeriod().getValue()-1);
 		LocalDate dueOrderDate = today.minusDays(policyDueDatePeriod);
 		
-//		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
-//				submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);		
-//		
-		//Map<String, Long> conflictCoverageMap = conflictList.stream().collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));		
-		//boolean isOverLimit = conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
 		boolean isOverLimit = isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
 		if(isOverLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
@@ -209,8 +198,7 @@ public class OrderService {
 		PolicyOrder policyOrder = null;
 		boolean isAllProfileInfoUpdated = false;
 		boolean isPhoneInfoUpdated = false;		
-		
-		if(!isValidateOnly){			
+		if(!isValidateOnly){
 			//TODO: submit order to ASWATA
 			
 			final User existingUser = userService.fetchUserByUserId(userId);
@@ -339,8 +327,6 @@ public class OrderService {
 				policyStartDate, policyEndDate, dueOrderDate, coverageIds);		
 		
 		Map<String, Long> conflictCoverageMap = conflictList.stream().collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
-		
-		//logger.debug("result conflictmap is "+conflictCoverageMap);
 		
 		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
 	}
@@ -605,7 +591,7 @@ public class OrderService {
 //		return orders;
 //	}
 	
-	//test
+	//TODO remove test
 	public List<PolicyOrderCoverage> testConflict(String userId, final OrderDto submitOrderDto){
 		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
 		List<Product> products = productService.fetchProductByProductIds(productIdSet);
@@ -625,7 +611,7 @@ public class OrderService {
 		}
 		return checklist;
 	}
-	//test
+	//TODO remove test
 	public List<PolicyOrder> tesFetch(String userId, final OrderFilterDto filter){
 		int offset = this.defaultOrdersFilterOffset;
 		int limit = this.defaultOrdersFilterLimit;
@@ -653,7 +639,6 @@ public class OrderService {
 			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
 		}		
 		
-		//TODO: safety check here? in the loop, throw exception if the request ACTIVE doesnt return ACTIVE, etc
 		LocalDate today = LocalDate.now();
 		if(orders!=null){
 			for(PolicyOrder po: orders){

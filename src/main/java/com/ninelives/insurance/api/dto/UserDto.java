@@ -32,6 +32,8 @@ public class UserDto {
     private Long idCardFileId;
 
     private Map<String, Object> config;
+    
+    private UserFileDto idCardFile;
 
 	public String getUserId() {
 		return userId;
@@ -111,6 +113,15 @@ public class UserDto {
 
 	public void setConfig(Map<String, Object> config) {
 		this.config = config;
+	}
+		
+
+	public UserFileDto getIdCardFile() {
+		return idCardFile;
+	}
+
+	public void setIdCardFile(UserFileDto idCardFile) {
+		this.idCardFile = idCardFile;
 	}
 
 	@Override

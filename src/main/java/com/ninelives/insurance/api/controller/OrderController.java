@@ -30,9 +30,9 @@ import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.OrderService;
-import com.ninelives.insurance.api.service.StorageService;
 import com.ninelives.insurance.api.util.GsonUtil;
 
 @Controller
@@ -40,7 +40,7 @@ public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 			
 	@Autowired OrderService orderService;
-	@Autowired StorageService storageService;
+	@Autowired StorageProvider storageService;
 	
 	@RequestMapping(value="/orders/{orderId}",
 			method=RequestMethod.GET)	

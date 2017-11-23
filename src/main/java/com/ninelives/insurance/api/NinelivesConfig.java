@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
 import com.ninelives.insurance.api.provider.storage.StorageProperties;
-import com.ninelives.insurance.api.service.StorageService;
+import com.ninelives.insurance.api.provider.storage.StorageProvider;
 
 @Configuration
 @EnableConfigurationProperties(StorageProperties.class)

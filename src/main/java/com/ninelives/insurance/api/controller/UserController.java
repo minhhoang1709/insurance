@@ -29,7 +29,8 @@ import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.User;
-import com.ninelives.insurance.api.service.StorageService;
+import com.ninelives.insurance.api.provider.storage.StorageProvider;
+import com.ninelives.insurance.api.service.FileUploadService;
 import com.ninelives.insurance.api.service.UserService;
 
 @Controller
@@ -38,17 +39,14 @@ public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired UserService userService;
-	@Autowired StorageService storageService;
+	//@Autowired StorageProvider storageService;
+	@Autowired FileUploadService fileUploadService; 
 	
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{
-		
-		//String registerSource = registerData.get("source");		
-		//check jika users empty maka this is new, 
+	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{		
 		logger.debug("register with {}", registrationDto);
-				
 		
 		RegisterUsersResult registerResult = userService.registerUserByGoogleAccount(registrationDto);
 		
@@ -77,11 +75,12 @@ public class UserController {
 	@RequestMapping(value="/users/{userId}/idCardFiles",
 			method=RequestMethod.PUT)
 	@ResponseBody
-	public Map<String, String> updateIdCardFile (@RequestParam("file") MultipartFile file){
+	public Map<String, String> updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, 
+			@RequestParam("file") MultipartFile file){
 		logger.debug("Terima /users PUT");
 		logger.debug("---");
 		
-		storageService.store(file);
+		fileUploadService.saveIdCard(authUserId, file);
 		
 		Map<String, String> result = new HashMap<>();
 		result.put("fileId", "12323123123");
