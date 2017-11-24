@@ -68,5 +68,15 @@ public interface UserMapper {
     })
     int updatePhoneByUserId(@Param("userId")String userId, @Param("phone") String phone);
     
+    @Update({
+        "update public.users",
+        "set id_card_file_id = #{fileId,jdbcType=BIGINT},",
+          "update_date = now() ",
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
+    int updateIdCardFileIdByUserId(@Param("userId")String userId, @Param("fileId") Long fileId);
+    
     int insertSelective(User record);
+
+	
 }

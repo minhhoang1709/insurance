@@ -13,23 +13,19 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
-import com.ninelives.insurance.api.dto.SubmitOrderDto;
-import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.OrderService;
@@ -101,7 +97,7 @@ public class OrderController {
 	@ResponseBody
 	public ResponseEntity<Resource> downloadPolicy(@RequestAttribute("authUserId") String authUserId,
 			@RequestBody(required=false) Map<String, String> requestData, 
-			HttpServletResponse response){
+			HttpServletResponse response) throws StorageException{
 		
 		logger.debug("GET policy with request {}", requestData);
 		

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.ninelives.insurance.api.dto.ErrorDto;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
@@ -49,6 +50,17 @@ public class ApiExceptionHandler {
 	@ResponseBody
 	public Map<String, ErrorDto> handleBadRequestException(HttpServletRequest request, Exception ex){
 		ErrorDto errorDto = new ErrorDto(HttpStatus.BAD_REQUEST.value(), ((ApiException) ex).getCode(), ex.getMessage());
+		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
+		errorDtoResp.put("error", errorDto);
+		
+		return errorDtoResp;
+	}
+	
+	@ExceptionHandler(ApiInternalServerErrorException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public Map<String, ErrorDto> handleInternalServerErrorException(HttpServletRequest request, Exception ex){
+		ErrorDto errorDto = new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), ((ApiException) ex).getCode(), ex.getMessage());
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		

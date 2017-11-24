@@ -11,5 +11,6 @@ public class FileExtensionUtil {
 	    fileExtensionMap.put("pdf", "application/pdf");
 	    fileExtensionMap.put("jpg", "image/jpeg");
 	    fileExtensionMap.put("png", "image/png");
+	    fileExtensionMap.put("gif", "image/gif");
 	}
 }

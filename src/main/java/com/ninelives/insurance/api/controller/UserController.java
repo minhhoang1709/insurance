@@ -1,8 +1,5 @@
 package com.ninelives.insurance.api.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -12,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,12 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
+import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
-import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
-import com.ninelives.insurance.api.model.User;
-import com.ninelives.insurance.api.provider.storage.StorageProvider;
-import com.ninelives.insurance.api.service.FileUploadService;
 import com.ninelives.insurance.api.service.UserService;
 
 @Controller
@@ -39,8 +32,6 @@ public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired UserService userService;
-	//@Autowired StorageProvider storageService;
-	@Autowired FileUploadService fileUploadService; 
 	
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
@@ -75,16 +66,9 @@ public class UserController {
 	@RequestMapping(value="/users/{userId}/idCardFiles",
 			method=RequestMethod.PUT)
 	@ResponseBody
-	public Map<String, String> updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, 
-			@RequestParam("file") MultipartFile file){
-		logger.debug("Terima /users PUT");
-		logger.debug("---");
-		
-		fileUploadService.saveIdCard(authUserId, file);
-		
-		Map<String, String> result = new HashMap<>();
-		result.put("fileId", "12323123123");
-		
-		return result;
+	public UserFileDto updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, 
+			@RequestParam("file") MultipartFile file) throws ApiException{
+
+		return userService.updateIdCardFile(authUserId, file); 
 	}
 }

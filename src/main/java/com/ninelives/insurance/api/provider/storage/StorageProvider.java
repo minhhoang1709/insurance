@@ -10,15 +10,15 @@ import com.ninelives.insurance.api.model.UserFile;
 
 public interface StorageProvider {
 
-    void init();
+    void init() throws StorageException;
 
-    void store(MultipartFile file, UserFile userFile);
+    void store(MultipartFile file, UserFile userFile) throws StorageException;
 
     //Stream<Path> loadAll();
 
     Path load(String filename);
 
-    Resource loadAsResource(String filename);
+    Resource loadAsResource(String filename) throws StorageException;
 
     //void deleteAll();
 

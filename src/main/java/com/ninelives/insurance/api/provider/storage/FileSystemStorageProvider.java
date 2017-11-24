@@ -31,9 +31,8 @@ public class FileSystemStorageProvider implements StorageProvider {
     }
 
     @Override
-    public void store(MultipartFile file, UserFile userFile) {
+    public void store(MultipartFile file, UserFile userFile) throws StorageException {
         String filepath = StringUtils.cleanPath(userFile.getFilePath());
-        //String directory = FilenameUtils.getFullPath(userFile.getFilePath());
         
         try {
             if (file.isEmpty()) {
@@ -74,7 +73,7 @@ public class FileSystemStorageProvider implements StorageProvider {
     }
 
     @Override
-    public Resource loadAsResource(String filename) {
+    public Resource loadAsResource(String filename) throws StorageException {
         try {
             Path file = load(filename);
             Resource resource = new UrlResource(file.toUri());
@@ -98,7 +97,7 @@ public class FileSystemStorageProvider implements StorageProvider {
 //    }
 
     @Override
-    public void init() {
+    public void init() throws StorageException {
         try {
             Files.createDirectories(rootLocation);
         }

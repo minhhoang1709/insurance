@@ -29,7 +29,7 @@ public class UserDto {
 
     private String address;
 
-    private Long idCardFileId;
+    //private Long idCardFileId;
 
     private Map<String, Object> config;
     
@@ -99,13 +99,13 @@ public class UserDto {
 		this.address = address;
 	}
 
-	public Long getIdCardFileId() {
-		return idCardFileId;
-	}
-
-	public void setIdCardFileId(Long idCardFileId) {
-		this.idCardFileId = idCardFileId;
-	}
+//	public Long getIdCardFileId() {
+//		return idCardFileId;
+//	}
+//
+//	public void setIdCardFileId(Long idCardFileId) {
+//		this.idCardFileId = idCardFileId;
+//	}
 
 	public Map<String, Object> getConfig() {
 		return config;
@@ -126,10 +126,14 @@ public class UserDto {
 
 	@Override
 	public String toString() {
-		return "UsersDto [userId=" + userId + ", email=" + email + ", name=" + name + ", gender=" + gender
-				+ ", birthDate=" + birthDate + ", birthPlace=" + birthPlace + ", phone=" + phone + ", address="
-				+ address + ", idCardFileId=" + idCardFileId + ", config=" + config + "]";
+		return "UserDto [" + (userId != null ? "userId=" + userId + ", " : "")
+				+ (email != null ? "email=" + email + ", " : "") + (name != null ? "name=" + name + ", " : "")
+				+ (gender != null ? "gender=" + gender + ", " : "")
+				+ (birthDate != null ? "birthDate=" + birthDate + ", " : "")
+				+ (birthPlace != null ? "birthPlace=" + birthPlace + ", " : "")
+				+ (phone != null ? "phone=" + phone + ", " : "") + (address != null ? "address=" + address + ", " : "")
+				+ (config != null ? "config=" + config + ", " : "")
+				+ (idCardFile != null ? "idCardFile=" + idCardFile : "") + "]";
 	}
-	
     
 }

@@ -9,29 +9,39 @@ import java.util.UUID;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
+import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.User;
+import com.ninelives.insurance.api.model.UserFile;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.api.ref.ErrorCode;
+import com.ninelives.insurance.api.ref.FileUseType;
 import com.ninelives.insurance.api.ref.UserStatus;
 
 @Service
 public class UserService {
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+	
 	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = false;
 	
 	@Autowired UserMapper userMapper;
 	@Autowired RedisService redisService;
+	@Autowired FileUploadService fileUploadService;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	
@@ -103,7 +113,9 @@ public class UserService {
 		userDto.setBirthPlace(user.getBirthPlace());
 		userDto.setEmail(user.getEmail());
 		userDto.setGender(user.getGender());
-		userDto.setIdCardFileId(user.getIdCardFileId());
+		if(user.getIdCardFileId()!=null){
+			userDto.setIdCardFile(new UserFileDto(user.getIdCardFileId()));
+		}		
 		userDto.setPhone(user.getPhone());
 		userDto.setAddress(user.getAddress());
 		
@@ -132,6 +144,20 @@ public class UserService {
 		return userMapper.updatePhoneByUserId(userId, phone);
 	}
 	
+	public UserFileDto updateIdCardFile(String userId, MultipartFile file) throws ApiException {
+		if(file==null){
+			logger.debug("Update idcard for user {} with empty file", userId);
+			throw new ApiBadRequestException(ErrorCode.ERR6001_UPLOAD_EMPTY, "Permintaan tidak dapat diproses, periksa kembali berkas yang akan Anda unggah");
+		}
+		logger.info("Update idcard for user {} with content-type {} and size {}", userId, file.getContentType(), file.getSize());
+		
+		UserFile userFile =  fileUploadService.save(userId, file, FileUseType.ID);
+		if(userFile!=null && userFile.getFileId()!=null){
+			userMapper.updateIdCardFileIdByUserId(userId, userFile.getFileId());
+		}
+		return fileUploadService.userFileToUserFileDto(userFile);
+	}
+	
 	//test
 	public UserDto getUserDto(String userId) {
 		User users = userMapper.selectByUserId(userId);
@@ -146,7 +172,7 @@ public class UserService {
 				
 		return userDto;
 	}
-	
+
 	private String generateUserId(){
 		return UUID.randomUUID().toString().replace("-", "");
 	}

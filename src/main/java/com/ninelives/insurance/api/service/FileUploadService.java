@@ -13,9 +13,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ninelives.insurance.api.dto.UserFileDto;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
 import com.ninelives.insurance.api.model.UserFile;
 import com.ninelives.insurance.api.mybatis.mapper.UserFileMapper;
+import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
+import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.ref.FileUseType;
 import com.ninelives.insurance.api.ref.UserFileStatus;
 
@@ -28,26 +34,13 @@ public class FileUploadService {
 	
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 	
-	//TODO return fileobj
-	public void saveIdCard(String userId, MultipartFile file) {
-		save(userId, file, FileUseType.ID);
-	}
-	
-	protected UserFile save(String userId, MultipartFile file, FileUseType fileUseType){
-		//check limit content type allowed
+	protected UserFile save(String userId, MultipartFile file, FileUseType fileUseType) throws ApiException{
+		//TODO save id card should check allowed content type
 		//check limit extension also?
-		//v generate the id
-		//v generate file obj
-		//v get the contenttype
-		//v save to file with info where to save
-		//v storage service check if dir belom ada maka creaet?
-		//mapper to save the fileobj
-		//refactor, userservice ygn panggil fileuploadservice
-		//update reference in user		
-		//test
-		//throw error 500, internal server error kalo fail to save
-		//throw error 400, bad request kalo file nya null
-		//return userfiledto to controller
+		
+		if(file==null||file.getSize()<=0){
+			throw new ApiBadRequestException(ErrorCode.ERR6001_UPLOAD_EMPTY, "Permintaan tidak dapat diproses, periksa kembali berkas yang akan Anda unggah");
+		}
 		
 		LocalDate today = LocalDate.now();
 		
@@ -70,16 +63,30 @@ public class FileUploadService {
 				userFile.setFilePath(FilenameUtils.concat(directory, fileUseType+"-"+String.valueOf(userFile.getFileId())));
 			}
 			
-			storageProvider.store(file, userFile);
+			try {
+				storageProvider.store(file, userFile);
+			} catch (StorageException e) {
+				logger.error("Error saving file {} wiht message {}", userFile, e.getMessage());
+				throw new ApiInternalServerErrorException(ErrorCode.ERR6002_UPLOAD_SYSTEM_ERROR, "Permintaan tidak dapat diproses, terjadi error pada sistem"); 
+			}
 			
 			userFileMapper.insert(userFile);
 		}
 		return userFile;
 	}
 	
+	
 	private Path generateFileDirectoryPath(LocalDate today, String userId, FileUseType fileUseType){		
 		Path path = Paths.get(fileUseType.toStr(), today.format(formatter), userId);
 		return path;
+	}
+	
+	protected UserFileDto userFileToUserFileDto(UserFile userFile) {
+		UserFileDto dto = null;
+		if(userFile!=null){
+			dto = new UserFileDto(userFile.getFileId());			
+		}
+		return dto;
 	}
 	
 	private Long generateFileId(){

@@ -23,7 +23,9 @@ public enum ErrorCode {
 	ERR4008_ORDER_PRODUCT_UNSUPPORTED("ERR4008"), //only day-based product is supported
 	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009"), //only limited number of same coverage can be active at the same time
 	ERR4010_ORDER_PROFILE_INVALID("ERR4010"), //empty or incomplete profile
-	ERR5001_ORDER_NOT_FOUND("ERR5001")
+	ERR5001_ORDER_NOT_FOUND("ERR5001"), //get order with given id not found
+	ERR6001_UPLOAD_EMPTY("ERR6001"), //upload with empty file
+	ERR6002_UPLOAD_SYSTEM_ERROR("ERR6002") //system error
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

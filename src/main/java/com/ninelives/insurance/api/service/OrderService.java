@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +23,8 @@ import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
+import com.ninelives.insurance.api.dto.UserDto;
+import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PolicyOrder;
@@ -192,7 +195,7 @@ public class OrderService {
 		if(isOverLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
-					"Permintaan tidak dapat diproses, anda telah memiliki 3 asuransi yang akan atau telah aktif pada waktu yang sama");
+					"Permintaan tidak dapat diproses, Anda telah memiliki 3 asuransi yang akan atau telah aktif pada waktu yang sama");
 		}
 				
 		PolicyOrder policyOrder = null;
@@ -210,7 +213,7 @@ public class OrderService {
 				if(submitOrderDto.getUser()==null){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
-							"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
+							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan");
 				}
 				newUserProfile = new User();
 				newUserProfile.setUserId(userId);;
@@ -223,7 +226,7 @@ public class OrderService {
 				if(!isUserProfileCompleteForOrder(newUserProfile)){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
-							"Permintaan tidak dapat diproses, lengkapi data pribadi anda untuk melanjutkan pemesanan");
+							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan");
 				}
 				
 				userService.updateProfileInfo(newUserProfile);
@@ -301,7 +304,7 @@ public class OrderService {
 			policyOrderTrxService.registerPolicyOrder(policyOrder);
 			
 		}
-		logger.debug("Process order isValidateOnly {} for {} with order {}, result update profile: {}, update phone: {}, order: {}",
+		logger.debug("Process order isValidateOnly {} for {} with order {}, result update profile: {}, update phone: {}, order: {} with result success",
 				isValidateOnly, userId, submitOrderDto, isAllProfileInfoUpdated, isPhoneInfoUpdated, policyOrder);
 		
 		return policyOrder;
@@ -458,8 +461,25 @@ public class OrderService {
 			}
 			orderDto.setProducts(productDtos);
 			
-
 			orderDto.setPeriod(periodDto);
+			
+			if(policyOrder.getPolicyOrderUsers()!=null){
+				UserDto userDto = new UserDto();
+				userDto.setUserId(policyOrder.getUserId());
+				userDto.setName(policyOrder.getPolicyOrderUsers().getName());
+				userDto.setBirthDate(policyOrder.getPolicyOrderUsers().getBirthDate());
+				userDto.setBirthPlace(policyOrder.getPolicyOrderUsers().getBirthPlace());
+				userDto.setEmail(policyOrder.getPolicyOrderUsers().getEmail());
+				userDto.setGender(policyOrder.getPolicyOrderUsers().getGender());
+				if(policyOrder.getPolicyOrderUsers().getIdCardFileId()!=null){
+					userDto.setIdCardFile(new UserFileDto(policyOrder.getPolicyOrderUsers().getIdCardFileId()));
+				}				
+				userDto.setPhone(policyOrder.getPolicyOrderUsers().getPhone());
+				userDto.setAddress(policyOrder.getPolicyOrderUsers().getAddress());
+				
+				orderDto.setUser(userDto);
+			}
+			
 		}
 
 		return orderDto;
