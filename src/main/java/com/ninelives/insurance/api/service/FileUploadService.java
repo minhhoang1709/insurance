@@ -81,7 +81,7 @@ public class FileUploadService {
 		return path;
 	}
 	
-	protected UserFileDto userFileToUserFileDto(UserFile userFile) {
+	protected UserFileDto userFileToDto(UserFile userFile) {
 		UserFileDto dto = null;
 		if(userFile!=null){
 			dto = new UserFileDto(userFile.getFileId());			

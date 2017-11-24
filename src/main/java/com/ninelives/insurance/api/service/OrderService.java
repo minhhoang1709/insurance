@@ -3,7 +3,6 @@ package com.ninelives.insurance.api.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,18 +21,22 @@ import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
+import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PolicyOrder;
+import com.ninelives.insurance.api.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.api.model.PolicyOrderCoverage;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
 import com.ninelives.insurance.api.model.PolicyOrderUsers;
 import com.ninelives.insurance.api.model.Product;
 import com.ninelives.insurance.api.model.User;
-import com.ninelives.insurance.api.mybatis.mapper.OrderProductMapper;
+import com.ninelives.insurance.api.model.UserBeneficiary;
+import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
@@ -56,7 +59,7 @@ public class OrderService {
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
-	@Autowired OrderProductMapper orderProductMapper;
+	@Autowired PolicyOrderBeneficiaryMapper policyOrderBeneficiaryMapper;
 	
 	@Value("${ninelives.order.policy-startdate-period:60}")
 	int policyStartDatePeriod;
@@ -84,14 +87,21 @@ public class OrderService {
 	@Value("${ninelives.order.filter-offset:0}")
 	int defaultOrdersFilterOffset;
 	
+	
+	public PolicyOrderBeneficiaryDto updateBeneficiary(String authUserId, String orderId,
+			PolicyOrderBeneficiaryDto beneficiary) throws ApiException {
+		PolicyOrderBeneficiary policyOrderBeneficiary = registerBeneficiary(authUserId, orderId, beneficiary);
+		return policyOrderBeneficiaryToDto(policyOrderBeneficiary);
+	}
+	
 	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiBadRequestException{
 		PolicyOrder policyOrder = registerOrder(userId, orderDto, isValidateOnly);
-		return policyOrderToOrderDto(policyOrder);
+		return policyOrderToDto(policyOrder);
 	}
 	
 	public OrderDto fetchOrderDtoByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = fetchOrderByOrderId(userId, orderId);
-		return policyOrderToOrderDto(policyOrder);
+		return policyOrderToDto(policyOrder);
 	}
 	
 	public List<OrderDto> fetchOrderDtos(final String userId, final OrderFilterDto filter){
@@ -99,12 +109,131 @@ public class OrderService {
 		List<PolicyOrder> orders = fetchOrder(userId, filter);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
-				orderDtos.add(policyOrderToOrderDto(po));
+				orderDtos.add(policyOrderToDto(po));
 			}
 		}
 		return orderDtos;		
 	}
 	
+	protected PolicyOrderBeneficiary registerBeneficiary(String userId, String orderId,
+			PolicyOrderBeneficiaryDto beneficiaryDto) throws ApiException{
+
+		logger.debug("Start process registerBeneficiary for {} with order {} and beneficiary {}", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto);
+		
+		if (beneficiaryDto == null 
+				|| StringUtils.isEmpty(beneficiaryDto.getEmail())
+				|| StringUtils.isEmpty(beneficiaryDto.getName())
+				|| StringUtils.isEmpty(beneficiaryDto.getPhone())
+				|| StringUtils.isEmpty(beneficiaryDto.getRelationship())
+				) {
+			logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} with result: exception invalid beneficiary", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto);
+			throw new ApiBadRequestException(ErrorCode.ERR4101_BENEFICIARY_INVALID,
+					"Permintaan tidak dapat diproses, silahkan cek kembali data penerima");
+		}
+		PolicyOrder policyOrder = policyOrderMapper.selectWithBeneficiaryByUserIdAndOrderId(userId, orderId);
+		mapPolicyOrderStatus(policyOrder, LocalDate.now());
+		if(policyOrder == null){
+			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {} with result: order not found", userId,
+					orderId, beneficiaryDto);
+			throw new ApiBadRequestException(ErrorCode.ERR5001_ORDER_NOT_FOUND,
+					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
+		}		
+		if(!policyOrder.getHasBeneficiary()){
+			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {} with result: order doesnot require beneficiary", userId,
+					orderId, beneficiaryDto);
+			throw new ApiBadRequestException(ErrorCode.ERR4103_BENEFICIARY_NOTACCEPTED,
+					"Permintaan tidak dapat diproses, pemesanan Anda tidak membutuhkan data penerima");
+		}
+		if(policyOrder.getPolicyOrderBeneficiary()!=null){
+			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {}  with result: beneficiary already exists", userId,
+					orderId, beneficiaryDto);
+			throw new ApiBadRequestException(ErrorCode.ERR4102_BENEFICIARY_EXISTS,
+					"Permintaan tidak dapat diproses, daftar penerima sudah didaftarkan untuk asuransi ini");
+		}
+		if(policyOrder.getStatus().equals(PolicyStatus.TERMINATED)||policyOrder.getStatus().equals(PolicyStatus.EXPIRED)){
+			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {}  with result: cannot update expired/terminated order", userId,
+					orderId, beneficiaryDto);
+			throw new ApiBadRequestException(ErrorCode.ERR4104_BENEFICIARY_ORDER_STATUS,
+					"Permintaan tidak dapat diproses, masa aktif asuransi Anda telah melewati periode");
+		}
+		
+		PolicyOrderBeneficiary beneficiary = new PolicyOrderBeneficiary();
+		beneficiary.setOrderId(orderId);
+		beneficiary.setName(beneficiaryDto.getName());
+		beneficiary.setEmail(beneficiaryDto.getEmail());
+		beneficiary.setPhone(beneficiaryDto.getPhone());
+		beneficiary.setRelationship(beneficiaryDto.getRelationship());
+		
+		policyOrderBeneficiaryMapper.insert(beneficiary);
+		
+		UserBeneficiary userBeneficiary = userService.fetchUserBeneficiaryByUserId(userId);
+		if(userBeneficiary==null){
+			logger.debug("Start process registerBeneficiary for {} with order {} and beneficiary {} to insert user beneficiary", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto);
+
+			userBeneficiary = new UserBeneficiary();
+			userBeneficiary.setUserId(userId);
+			userBeneficiary.setName(beneficiaryDto.getName());
+			userBeneficiary.setEmail(beneficiaryDto.getEmail());
+			userBeneficiary.setPhone(beneficiaryDto.getPhone());
+			userBeneficiary.setRelationship(beneficiaryDto.getRelationship());
+			
+			userService.registerUserBeneficiary(userBeneficiary);
+			
+			
+		}else if(!isEquals(beneficiary, userBeneficiary)){
+			logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} and old beneficiary {} to update user beneficiary", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto, userBeneficiary) ;
+
+			userBeneficiary.setName(beneficiaryDto.getName());
+			userBeneficiary.setEmail(beneficiaryDto.getEmail());
+			userBeneficiary.setPhone(beneficiaryDto.getPhone());
+			userBeneficiary.setRelationship(beneficiaryDto.getRelationship());
+			
+			userService.updateUserBeneficiaryFromOrder(userBeneficiary);
+			
+		}
+		
+		logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} finish", userId,
+				orderId, beneficiaryDto==null?"":beneficiaryDto) ;
+		
+		return beneficiary;
+	}
+	
+	protected boolean isEquals(PolicyOrderBeneficiary pob, UserBeneficiary ub){
+		if(pob.getName()==null){
+			if(ub.getName()!=null){
+				return false;
+			}
+		}else if(!pob.getName().equals(ub.getName())){
+			return false;		
+		}
+		if(pob.getEmail()==null){
+			if(ub.getEmail()!=null){
+				return false;
+			}
+		}else if(!pob.getEmail().equals(ub.getEmail())){
+			return false;		
+		}
+		if(pob.getPhone()==null){
+			if(ub.getPhone()!=null){
+				return false;
+			}
+		}else if(!pob.getPhone().equals(ub.getPhone())){
+			return false;		
+		}
+		if(pob.getRelationship()==null){
+			if(ub.getRelationship()!=null){
+				return false;
+			}
+		}else if(!pob.getRelationship().equals(ub.getRelationship())){
+			return false;		
+		}		
+		
+		return true;
+	}
 	
 	/**
 	 * 
@@ -204,7 +333,7 @@ public class OrderService {
 		if(!isValidateOnly){
 			//TODO: submit order to ASWATA
 			
-			final User existingUser = userService.fetchUserByUserId(userId);
+			final User existingUser = userService.fetchByUserId(userId);
 
 			boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
 
@@ -335,7 +464,9 @@ public class OrderService {
 	}
 	
 	protected PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
-		return policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);		
+		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
+		mapPolicyOrderStatus(policyOrder,LocalDate.now());
+		return policyOrder;
 	}
 	
 	protected List<PolicyOrder> fetchOrder(final String userId, final OrderFilterDto filter){
@@ -377,16 +508,18 @@ public class OrderService {
 	}
 	
 	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
-		if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
-			if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
-				policyOrder.setStatus(PolicyStatus.OVERDUE);
-			}
-		}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
-			if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
-				policyOrder.setStatus(PolicyStatus.ACTIVE);
-			}else if(policyOrder.getPolicyEndDate().isBefore(today)){
-				policyOrder.setStatus(PolicyStatus.EXPIRED);
-			}
+		if(policyOrder!=null){
+			if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
+				if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
+					policyOrder.setStatus(PolicyStatus.OVERDUE);
+				}
+			}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
+				if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
+					policyOrder.setStatus(PolicyStatus.ACTIVE);
+				}else if(policyOrder.getPolicyEndDate().isBefore(today)){
+					policyOrder.setStatus(PolicyStatus.EXPIRED);
+				}
+			}		
 		}
 	}
 	
@@ -411,7 +544,7 @@ public class OrderService {
 		return filterType;
 	}
 	
-	protected OrderDto policyOrderToOrderDto(final PolicyOrder policyOrder){
+	protected OrderDto policyOrderToDto(final PolicyOrder policyOrder){
 		OrderDto orderDto = null;
 
 		if(policyOrder!=null){
@@ -484,6 +617,19 @@ public class OrderService {
 
 		return orderDto;
 		
+	}
+	
+	protected PolicyOrderBeneficiaryDto policyOrderBeneficiaryToDto(PolicyOrderBeneficiary policyOrderBeneficiary){
+		PolicyOrderBeneficiaryDto dto = null; 
+		if(policyOrderBeneficiary!=null){
+			dto = new PolicyOrderBeneficiaryDto();
+			dto.setOrderId(policyOrderBeneficiary.getOrderId());
+			dto.setName(policyOrderBeneficiary.getName());
+			dto.setEmail(policyOrderBeneficiary.getEmail());
+			dto.setPhone(policyOrderBeneficiary.getPhone());
+			dto.setRelationship(policyOrderBeneficiary.getRelationship());
+		}
+		return dto;
 	}
 	
 //	public OrderDto fetchOrderByOrderId(String orderId){

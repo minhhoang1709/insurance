@@ -26,7 +26,9 @@ import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.model.User;
+import com.ninelives.insurance.api.model.UserBeneficiary;
 import com.ninelives.insurance.api.model.UserFile;
+import com.ninelives.insurance.api.mybatis.mapper.UserBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.api.ref.ErrorCode;
@@ -40,6 +42,7 @@ public class UserService {
 	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = false;
 	
 	@Autowired UserMapper userMapper;
+	@Autowired UserBeneficiaryMapper userBeneficiaryMapper;
 	@Autowired RedisService redisService;
 	@Autowired FileUploadService fileUploadService;
 	
@@ -132,7 +135,7 @@ public class UserService {
 		return registerResult;
 	}
 	
-	public User fetchUserByUserId(String userId){
+	public User fetchByUserId(String userId){
 		return userMapper.selectByUserId(userId);
 	}
 	
@@ -143,6 +146,19 @@ public class UserService {
 	public int updatePhoneInfo(String userId, String phone) {
 		return userMapper.updatePhoneByUserId(userId, phone);
 	}
+	
+	public UserBeneficiary fetchUserBeneficiaryByUserId(String userId){
+		return userBeneficiaryMapper.selectByUserId(userId);
+	}
+	
+	public int registerUserBeneficiary(UserBeneficiary userBeneficiary){
+		return userBeneficiaryMapper.insert(userBeneficiary);
+	}
+	
+	public int updateUserBeneficiaryFromOrder(UserBeneficiary userBeneficiary) {
+		return userBeneficiaryMapper.updateByUserBeneficiaryId(userBeneficiary);
+	}
+	
 	
 	public UserFileDto updateIdCardFile(String userId, MultipartFile file) throws ApiException {
 		if(file==null){
@@ -155,7 +171,7 @@ public class UserService {
 		if(userFile!=null && userFile.getFileId()!=null){
 			userMapper.updateIdCardFileIdByUserId(userId, userFile.getFileId());
 		}
-		return fileUploadService.userFileToUserFileDto(userFile);
+		return fileUploadService.userFileToDto(userFile);
 	}
 	
 	//test
@@ -176,6 +192,7 @@ public class UserService {
 	private String generateUserId(){
 		return UUID.randomUUID().toString().replace("-", "");
 	}
+
 
 
 }

@@ -72,4 +72,6 @@ public class ClientAppConfig {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+    
+    
 }

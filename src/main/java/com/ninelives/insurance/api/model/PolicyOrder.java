@@ -39,6 +39,8 @@ public class PolicyOrder {
     
     private List<PolicyOrderProduct> policyOrderProducts;
     
+    private PolicyOrderBeneficiary policyOrderBeneficiary;
+    
     private Period period;
 
 	public String getOrderId() {
@@ -176,6 +178,14 @@ public class PolicyOrder {
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
+	
+	public PolicyOrderBeneficiary getPolicyOrderBeneficiary() {
+		return policyOrderBeneficiary;
+	}
+
+	public void setPolicyOrderBeneficiary(PolicyOrderBeneficiary policyOrderBeneficiary) {
+		this.policyOrderBeneficiary = policyOrderBeneficiary;
+	}
 
 	@Override
 	public String toString() {
@@ -195,6 +205,7 @@ public class PolicyOrder {
 				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
 				+ (policyOrderUsers != null ? "policyOrderUsers=" + policyOrderUsers + ", " : "")
 				+ (policyOrderProducts != null ? "policyOrderProducts=" + policyOrderProducts + ", " : "")
+				+ (policyOrderBeneficiary != null ? "policyOrderBeneficiary=" + policyOrderBeneficiary + ", " : "")
 				+ (period != null ? "period=" + period : "") + "]";
 	}
 	

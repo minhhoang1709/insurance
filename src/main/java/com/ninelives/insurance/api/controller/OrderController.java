@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
+import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.api.ref.ErrorCode;
@@ -81,15 +83,17 @@ public class OrderController {
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/beneficiary",
-			method=RequestMethod.PUT)	
+			method={ RequestMethod.POST, RequestMethod.PUT })	
 	@ResponseBody
-	public Map<String, String> updateBeneficiary(@RequestAttribute("authUserId") String authUserId,
-			@RequestBody(required=false) Map<String, String> requestData, 
-			HttpServletResponse response){
+	public PolicyOrderBeneficiaryDto updateBeneficiary(@RequestAttribute("authUserId") String authUserId,
+			@PathVariable("orderId") String orderId,
+			@RequestBody PolicyOrderBeneficiaryDto beneficiaryDto, 
+			HttpServletResponse response) throws ApiException{
 		
-		logger.debug("PUT beneficiary with request {}", requestData);
+		logger.debug("PUT beneficiary userid is {} with order {} beneficiary {}", authUserId, orderId, beneficiaryDto);
 		
-		return requestData;
+		return orderService.updateBeneficiary(authUserId, orderId, beneficiaryDto);
+			
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/policy",

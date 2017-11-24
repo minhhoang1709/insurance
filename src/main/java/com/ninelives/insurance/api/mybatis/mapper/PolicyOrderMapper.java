@@ -63,4 +63,6 @@ public interface PolicyOrderMapper {
 	List<PolicyOrder> selectWhereStatusApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
 	List<PolicyOrder> selectWhereStatusExpiredOrTerminatedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
 	List<PolicyOrder> selectWhereStatusBeforeApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
+	
+	PolicyOrder selectWithBeneficiaryByUserIdAndOrderId(@Param("userId") String userId, @Param("orderId") String orderId);
 }

@@ -11,6 +11,7 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
+import com.ninelives.insurance.api.ref.BeneficiaryRelationship;
 import com.ninelives.insurance.api.ref.FileUseType;
 import com.ninelives.insurance.api.ref.Gender;
 import com.ninelives.insurance.api.ref.PeriodUnit;
@@ -19,7 +20,7 @@ import com.ninelives.insurance.api.ref.UserFileStatus;
 import com.ninelives.insurance.api.ref.UserStatus;
 
 @MappedTypes({
-	Gender.class, PeriodUnit.class, PolicyStatus.class, UserStatus.class, FileUseType.class, UserFileStatus.class
+	Gender.class, PeriodUnit.class, PolicyStatus.class, UserStatus.class, FileUseType.class, UserFileStatus.class, BeneficiaryRelationship.class
 })
 public class StrEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 	private Class<E> type;
