@@ -26,15 +26,15 @@ public class ClaimController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
 			
-	@RequestMapping(value="/orders/{orderId}/claims",
-			method=RequestMethod.POST)	
-	@ResponseBody
-	public Map<String, String> claim(@PathVariable("orderId") String orderId, @RequestBody Map<String, String> requestMap){
-		logger.debug("Terima /order/claim POST untuk order {} dan data {}", orderId, requestMap);
-		requestMap.put("claimId", "xxxxxxx");
-		
-		return requestMap;
-	}
+//	@RequestMapping(value="/orders/{orderId}/claims",
+//			method=RequestMethod.POST)	
+//	@ResponseBody
+//	public Map<String, String> claim(@PathVariable("orderId") String orderId, @RequestBody Map<String, String> requestMap){
+//		logger.debug("Terima /order/claim POST untuk order {} dan data {}", orderId, requestMap);
+//		requestMap.put("claimId", "xxxxxxx");
+//		
+//		return requestMap;
+//	}
 //	@RequestMapping(value="/orders/{orderId}/claims",
 //			method=RequestMethod.PUT)	
 //	@ResponseBody

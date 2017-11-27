@@ -260,7 +260,7 @@ public class TestController {
 		return claimDtos;
 	}
 	
-	@RequestMapping(value="/order/{orderId}/claims",
+	@RequestMapping(value="/orders/{orderId}/claims",
 			method=RequestMethod.POST)
 	@ResponseBody
 	public ClaimDto getClaim(@RequestAttribute ("authUserId") String authUserId, 
@@ -269,6 +269,7 @@ public class TestController {
 		logger.debug("Terima /order/claim POST untuk order {} dan data {}", orderId, claimDto);
 		if(claimDto!=null){
 			claimDto.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
+			claimDto.setStatus("SUBMITTED");
 		}
 		return claimDto;
 		
