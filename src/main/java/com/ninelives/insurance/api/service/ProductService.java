@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
+import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.Coverage;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.Product;
@@ -57,7 +60,19 @@ public class ProductService {
 				coverageDto.setRecommendation(p.getCoverage().getRecommendation());
 				coverageDto.setIsRecommended(p.getCoverage().getIsRecommended());
 				coverageDto.setHasBeneficiary(p.getCoverage().getHasBeneficiary());
-				coverageDto.setMaxLimit(p.getCoverage().getMaxLimit());				
+				coverageDto.setMaxLimit(p.getCoverage().getMaxLimit());
+				
+				if(!CollectionUtils.isEmpty(p.getCoverage().getClaimDocTypes())){
+					List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
+					for(ClaimDocType docType: p.getCoverage().getClaimDocTypes()){
+						ClaimDocTypeDto docTypeDto = new ClaimDocTypeDto();
+						docTypeDto.setClaimDocTypeId(docType.getClaimDocTypeId());
+						docTypeDto.setName(docType.getName());
+						docTypeDtos.add(docTypeDto);
+					}
+					coverageDto.setClaimDocTypes(docTypeDtos);
+				}
+				
 				productDto.setCoverage(coverageDto);
 			}
 			

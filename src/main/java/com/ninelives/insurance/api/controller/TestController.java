@@ -71,7 +71,7 @@ public class TestController {
 	@RequestMapping("/test/product")
 	@ResponseBody
 	public List<Product> getproduct(){
-		return null;
+		return productService.fetchAllProduct();
 	}
 	
 //	@RequestMapping("/test/product/bylist")

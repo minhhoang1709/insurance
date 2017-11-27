@@ -28,16 +28,24 @@
     <result column="coverage_max_limit" jdbcType="BIGINT" property="maxLimit" />
     <result column="coverage_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
     <result column="coverage_is_recommended" jdbcType="BIT" property="isRecommended" />
+    <collection property="claimDocTypes" ofType="com.ninelives.insurance.api.model.ClaimDocType">
+    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+	    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+    </collection>
   </resultMap>
-
   <select id="selectByStatusActive" resultMap="NestedProductResultMap">
   	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
   		b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
   		c.coverage_id as coverage_coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
   		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
-  		c.is_recommended as coverage_is_recommended
-  	from public.product a, public.period b, public.coverage c
-  	where a.status='A' and b.period_id=a.period_id and c.coverage_id=a.coverage_id
+  		c.is_recommended as coverage_is_recommended,
+  		e.claim_doc_type_id, e.name as claim_doc_type_name 
+  	from public.product a
+  	inner join public.period b on b.period_id=a.period_id
+  	inner join public.coverage c on  c.coverage_id=a.coverage_id
+  	left outer join public.coverage_claim_doc_type d on d.coverage_id=c.coverage_id
+  	left outer join public.claim_doc_type e on e.claim_doc_type_id=d.claim_doc_type_id
+  	where a.status='A'
   	order by a.product_id
   </select>
   

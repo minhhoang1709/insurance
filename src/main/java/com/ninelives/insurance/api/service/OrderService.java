@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
@@ -27,6 +28,7 @@ import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderBeneficiary;
@@ -106,7 +108,7 @@ public class OrderService {
 	
 	public List<OrderDto> fetchOrderDtos(final String userId, final OrderFilterDto filter){
 		ArrayList<OrderDto> orderDtos = new ArrayList<>();
-		List<PolicyOrder> orders = fetchOrder(userId, filter);
+		List<PolicyOrder> orders = fetchOrders(userId, filter);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
 				orderDtos.add(policyOrderToDto(po));
@@ -469,7 +471,7 @@ public class OrderService {
 		return policyOrder;
 	}
 	
-	protected List<PolicyOrder> fetchOrder(final String userId, final OrderFilterDto filter){
+	protected List<PolicyOrder> fetchOrders(final String userId, final OrderFilterDto filter){
 		int offset = this.defaultOrdersFilterOffset;
 		int limit = this.defaultOrdersFilterLimit;
 		String[] filterStatus = null;
@@ -499,8 +501,7 @@ public class OrderService {
 		LocalDate today = LocalDate.now();		
 		if(orders!=null){
 			for(PolicyOrder po: orders){
-				mapPolicyOrderStatus(po,today);
-				
+				mapPolicyOrderStatus(po,today);				
 			}
 		}
 		
@@ -590,6 +591,17 @@ public class OrderService {
 				if(p.getCoverageDisplayRank() < rank){
 					orderDto.setSubtitle(p.getCoverageName());
 					rank = p.getCoverageDisplayRank();
+				}
+				
+				if(!CollectionUtils.isEmpty(p.getClaimDocTypes())){
+					List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
+					for(ClaimDocType docType: p.getClaimDocTypes()){
+						ClaimDocTypeDto docTypeDto = new ClaimDocTypeDto();
+						docTypeDto.setClaimDocTypeId(docType.getClaimDocTypeId());
+						docTypeDto.setName(docType.getName());
+						docTypeDtos.add(docTypeDto);
+					}
+					covDto.setClaimDocTypes(docTypeDtos);
 				}
 			}
 			orderDto.setProducts(productDtos);

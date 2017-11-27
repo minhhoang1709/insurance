@@ -1,5 +1,7 @@
 package com.ninelives.insurance.api.model;
 
+import java.util.List;
+
 public class PolicyOrderProduct {
     private Long orderProductId;
 
@@ -21,7 +23,10 @@ public class PolicyOrderProduct {
     
     private Period period;
     
-    //not-persisted
+    //transient
+    private List<ClaimDocType> claimDocTypes;
+    
+    //transient
     private int coverageDisplayRank;
 
     public Long getOrderProductId() {
@@ -111,6 +116,14 @@ public class PolicyOrderProduct {
 	public void setCoverageDisplayRank(int coverageDisplayRank) {
 		this.coverageDisplayRank = coverageDisplayRank;
 	}
+	
+	public List<ClaimDocType> getClaimDocTypes() {
+		return claimDocTypes;
+	}
+
+	public void setClaimDocTypes(List<ClaimDocType> claimDocTypes) {
+		this.claimDocTypes = claimDocTypes;
+	}
 
 	@Override
 	public String toString() {
@@ -123,7 +136,8 @@ public class PolicyOrderProduct {
 				+ (coverageMaxLimit != null ? "coverageMaxLimit=" + coverageMaxLimit + ", " : "")
 				+ (coverageHasBeneficiary != null ? "coverageHasBeneficiary=" + coverageHasBeneficiary + ", " : "")
 				+ (premi != null ? "premi=" + premi + ", " : "") + (period != null ? "period=" + period + ", " : "")
-				+ "coverageDisplayRank=" + coverageDisplayRank + "]";
+				+ (claimDocTypes != null ? "claimDocTypes=" + claimDocTypes + ", " : "") + "coverageDisplayRank="
+				+ coverageDisplayRank + "]";
 	}
 	
 	

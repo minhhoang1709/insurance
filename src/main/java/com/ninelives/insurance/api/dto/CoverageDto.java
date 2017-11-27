@@ -1,5 +1,7 @@
 package com.ninelives.insurance.api.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -17,6 +19,8 @@ public class CoverageDto {
     private Long maxLimit;
 
     private Boolean isRecommended;
+    
+    private List<ClaimDocTypeDto> claimDocTypes;
     
 	public Long getMaxLimit() {
 		return maxLimit;
@@ -73,5 +77,14 @@ public class CoverageDto {
 	public void setIsRecommended(Boolean isRecommended) {
 		this.isRecommended = isRecommended;
 	}
+
+	public List<ClaimDocTypeDto> getClaimDocTypes() {
+		return claimDocTypes;
+	}
+
+	public void setClaimDocTypes(List<ClaimDocTypeDto> claimDocTypes) {
+		this.claimDocTypes = claimDocTypes;
+	}
+
 
 }

@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Coverage {
     private String coverageId;
@@ -26,6 +27,8 @@ public class Coverage {
     private int displayRank;
     
     private Boolean isRecommended;
+    
+    private List<ClaimDocType> claimDocTypes;
 
     public String getCoverageId() {
         return coverageId;
@@ -121,6 +124,14 @@ public class Coverage {
 
 	public void setIsRecommended(Boolean isRecommended) {
 		this.isRecommended = isRecommended;
+	}
+
+	public List<ClaimDocType> getClaimDocTypes() {
+		return claimDocTypes;
+	}
+
+	public void setClaimDocTypes(List<ClaimDocType> claimDocTypes) {
+		this.claimDocTypes = claimDocTypes;
 	}
     
 }
