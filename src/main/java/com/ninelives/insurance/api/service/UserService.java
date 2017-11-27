@@ -167,7 +167,7 @@ public class UserService {
 		}
 		logger.info("Update idcard for user {} with content-type {} and size {}", userId, file.getContentType(), file.getSize());
 		
-		UserFile userFile =  fileUploadService.save(userId, file, FileUseType.ID);
+		UserFile userFile =  fileUploadService.save(userId, file, FileUseType.IDT);
 		if(userFile!=null && userFile.getFileId()!=null){
 			userMapper.updateIdCardFileIdByUserId(userId, userFile.getFileId());
 		}

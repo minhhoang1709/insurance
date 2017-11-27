@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -17,12 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.service.FileUploadService;
 
 @Controller
 public class ClaimController {
-	
-	//test
-	int testnum;
+	@Autowired FileUploadService fileUploadService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
 			
@@ -49,17 +49,14 @@ public class ClaimController {
 	@RequestMapping(value="/claimDocumentFiles",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Integer> updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, 
+	public UserFileDto uploadClaimDocumentFile (@RequestAttribute ("authUserId") String authUserId, 
 			@RequestParam("file") MultipartFile file) throws ApiException{
-
-		Map<String, Integer> result = new HashMap<>();
-		result.put("fileId", getNextSequence());
-		return result;
+		return fileUploadService.saveTemp(authUserId, file);
 	}
 	
-	//test
-	public int getNextSequence(){
-		testnum++;
-		return testnum;
-	}
+//	//test
+//	public int getNextSequence(){
+//		testnum++;
+//		return testnum;
+//	}
 }

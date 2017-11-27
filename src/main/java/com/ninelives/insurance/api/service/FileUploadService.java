@@ -34,6 +34,10 @@ public class FileUploadService {
 	
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 	
+	public UserFileDto saveTemp(String userId, MultipartFile file) throws ApiException{
+		UserFile userFile = save(userId, file, FileUseType.TEMP);
+		return userFileToDto(userFile);
+	}
 	protected UserFile save(String userId, MultipartFile file, FileUseType fileUseType) throws ApiException{
 		//TODO save id card should check allowed content type
 		//check limit extension also?

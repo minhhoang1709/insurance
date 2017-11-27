@@ -6,8 +6,9 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum FileUseType {
-	ID("ID"),
-	CLAIM("CL") //CLAIM
+	IDT("IDT"), //Identity Card
+	CLAIM("CLA"), //CLAIM
+	TEMP("TMP") //TEMP
 	;
 	
 	static final Map<String, FileUseType> lookup = new HashMap<>();
