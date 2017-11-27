@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,13 +17,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ninelives.insurance.api.dto.ClaimAccidentAddressDto;
+import com.ninelives.insurance.api.dto.ClaimAccountDto;
+import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
+import com.ninelives.insurance.api.dto.ClaimDocumentDto;
+import com.ninelives.insurance.api.dto.ClaimDto;
+import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.OrderFilterDto;
+import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.SubmitOrderDto;
 import com.ninelives.insurance.api.dto.UserDto;
+import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.Product;
 import com.ninelives.insurance.api.model.User;
@@ -47,6 +57,8 @@ public class TestController {
 	
 	@Autowired UserService userService;
 	@Autowired UserMapper userMapper;
+	
+	
 	
 	@Value("${ninelives.order.list-limmit:50}")
 	int defaultFilterLimit;
@@ -169,5 +181,172 @@ public class TestController {
 			result = usersDto;
 		}
 		return result;
+	}
+	
+	@RequestMapping(value="/claims",
+			method=RequestMethod.GET)
+	@ResponseBody
+	public List<ClaimDto> getClaims(@RequestAttribute ("authUserId") String authUserId, 
+			@RequestParam(value="filter",required=false) String filter){
+		//DateTimeFormatter formatter = new DateTimeFormatter;
+		
+		List<ClaimDto> claimDtos = new ArrayList<>();
+		ClaimDto claimDto1 = new ClaimDto();
+		claimDto1.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
+		claimDto1.setClaimDateTime("2017-11-21T15:30:00");
+		claimDto1.setAccidentDateTime("2017-11-10T15:30:00");
+		claimDto1.setAccidentSummary("The reason lorem ipsum dollar etsum");
+		
+		List<CoverageDto> coverageDtos = new ArrayList<>();
+		List<ProductDto> productDtos = productService.fetchActiveProductDtos();
+		for(ProductDto p: productDtos){
+			if(p.getProductId().equals("P101003103")){
+				coverageDtos.add(p.getCoverage());
+			}
+			if(p.getProductId().equals("P101002103")){
+				coverageDtos.add(p.getCoverage());
+			}
+		}		
+		claimDto1.setCoverages(coverageDtos);		
+		
+		ClaimAccidentAddressDto claimAddress = new ClaimAccidentAddressDto();
+		claimAddress.setCountry("Indonesia");
+		claimAddress.setProvince("Jawa Tengah");
+		claimAddress.setCity("Semarang");
+		claimAddress.setAddress("Jln. Kertajaya no.19");		
+		claimDto1.setAccidentAddress(claimAddress);
+		
+		ClaimAccountDto account = new ClaimAccountDto();
+		account.setName("Nama pelanggan");
+		account.setBankName("BCA");
+		account.setBankSwiftCode("014");
+		account.setBankSwitt("CENAIDJA");
+		account.setAccount("6227182391006");
+		claimDto1.setClaimAccount(account);
+		
+		OrderDto orderDto = orderService.fetchOrderDtoByOrderId("e3c0e93695ef4fd2bbf65f42a45fa207", "ec9dbb13-e4fe-45bf-871b-b503ad2445b0");
+		
+		claimDto1.setOrder(orderDto);
+		
+		List<ClaimDocumentDto> docs = new ArrayList<>();
+		
+		for(ProductDto p: productDtos){
+			if(p.getProductId().equals("P101003103")){
+				int i=1;
+				for(ClaimDocTypeDto docType: p.getCoverage().getClaimDocTypes()){
+					ClaimDocumentDto claimDocumentDto1 = new ClaimDocumentDto();
+					
+					claimDocumentDto1.setClaimDocumentId("123123123"+i);
+					claimDocumentDto1.setClaimDocType(docType);
+					UserFileDto userFileDto = new UserFileDto();
+					userFileDto.setFileId(12321312L+i);
+					claimDocumentDto1.setFile(userFileDto);
+					
+					docs.add(claimDocumentDto1);
+					i++;
+				}				
+			}
+			if(p.getProductId().equals("P101002103")){
+				coverageDtos.add(p.getCoverage());
+			}
+		}
+				
+		//docs.add(claimDocumentDto);		
+		claimDto1.setClaimDocuments(docs);
+		claimDto1.setStatus("INREVIEW");
+		
+		claimDtos.add(claimDto1);				
+		
+		return claimDtos;
+	}
+	
+	@RequestMapping(value="/order/{orderId}/claims",
+			method=RequestMethod.POST)
+	@ResponseBody
+	public ClaimDto getClaim(@RequestAttribute ("authUserId") String authUserId, 
+			@RequestBody ClaimDto claimDto,
+			@PathVariable("orderId") String orderId){
+		logger.debug("Terima /order/claim POST untuk order {} dan data {}", orderId, claimDto);
+		if(claimDto!=null){
+			claimDto.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
+		}
+		return claimDto;
+		
+	}
+	
+	@RequestMapping(value="/claims/{claimId}",
+			method=RequestMethod.GET)
+	@ResponseBody
+	public ClaimDto getClaim(@RequestAttribute ("authUserId") String authUserId, 
+			@PathVariable("claimId") String claimId){
+		//DateTimeFormatter formatter = new DateTimeFormatter;
+						
+		ClaimDto claimDto1 = new ClaimDto();
+		claimDto1.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
+		claimDto1.setClaimDateTime("2017-11-21T15:30:00");
+		claimDto1.setAccidentDateTime("2017-11-10T15:30:00");
+		claimDto1.setAccidentSummary("The reason lorem ipsum dollar etsum");
+		
+		List<CoverageDto> coverageDtos = new ArrayList<>();
+		List<ProductDto> productDtos = productService.fetchActiveProductDtos();
+		for(ProductDto p: productDtos){
+			if(p.getProductId().equals("P101003103")){
+				coverageDtos.add(p.getCoverage());
+			}
+			if(p.getProductId().equals("P101002103")){
+				coverageDtos.add(p.getCoverage());
+			}
+		}		
+		claimDto1.setCoverages(coverageDtos);		
+		
+		ClaimAccidentAddressDto claimAddress = new ClaimAccidentAddressDto();
+		claimAddress.setCountry("Indonesia");
+		claimAddress.setProvince("Jawa Tengah");
+		claimAddress.setCity("Semarang");
+		claimAddress.setAddress("Jln. Kertajaya no.19");		
+		claimDto1.setAccidentAddress(claimAddress);
+		
+		ClaimAccountDto account = new ClaimAccountDto();
+		account.setName("Nama pelanggan");
+		account.setBankName("BCA");
+		account.setBankSwiftCode("014");
+		account.setBankSwitt("CENAIDJA");
+		account.setAccount("6227182391006");
+		claimDto1.setClaimAccount(account);
+		
+		OrderDto orderDto = orderService.fetchOrderDtoByOrderId("e3c0e93695ef4fd2bbf65f42a45fa207", "ec9dbb13-e4fe-45bf-871b-b503ad2445b0");
+		
+		claimDto1.setOrder(orderDto);
+		
+		List<ClaimDocumentDto> docs = new ArrayList<>();
+		
+		for(ProductDto p: productDtos){
+			if(p.getProductId().equals("P101003103")){
+				int i=1;
+				for(ClaimDocTypeDto docType: p.getCoverage().getClaimDocTypes()){
+					ClaimDocumentDto claimDocumentDto1 = new ClaimDocumentDto();
+					
+					claimDocumentDto1.setClaimDocumentId("123123123"+i);
+					claimDocumentDto1.setClaimDocType(docType);
+					UserFileDto userFileDto = new UserFileDto();
+					userFileDto.setFileId(12321312L+i);
+					claimDocumentDto1.setFile(userFileDto);
+					
+					docs.add(claimDocumentDto1);
+					i++;
+				}
+				
+			}
+			if(p.getProductId().equals("P101002103")){
+				coverageDtos.add(p.getCoverage());
+			}
+		}
+				
+		//docs.add(claimDocumentDto);		
+		claimDto1.setClaimDocuments(docs);
+		claimDto1.setStatus("INREVIEW");
+
+		
+		return claimDto1;
 	}
 }

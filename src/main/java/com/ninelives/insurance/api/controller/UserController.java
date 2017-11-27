@@ -62,7 +62,6 @@ public class UserController {
 		return result;
 	}
 	
-	//dummy
 	@RequestMapping(value="/users/{userId}/idCardFiles",
 			method=RequestMethod.PUT)
 	@ResponseBody
