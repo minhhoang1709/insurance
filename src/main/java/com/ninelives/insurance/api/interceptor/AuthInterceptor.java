@@ -45,7 +45,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 
 		if(StringUtils.isEmpty(tokenId)){
 			//allow POST to user without authentication
-			if(request.getRequestURI().equals("/users") && request.getMethod().equals(HttpMethod.POST.toString())){
+			if ((request.getRequestURI().equals("/users") || request.getRequestURI().equals("/payment/charge"))
+					&& request.getMethod().equals(HttpMethod.POST.toString())) {
 				return true;
 			}else{
 				throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
