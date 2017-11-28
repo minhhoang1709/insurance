@@ -45,18 +45,12 @@ public class ClaimController {
 //		return requestMap;
 //	}
 //	
-	//test, dummy
+
 	@RequestMapping(value="/claimDocumentFiles",
 			method=RequestMethod.POST)
 	@ResponseBody
 	public UserFileDto uploadClaimDocumentFile (@RequestAttribute ("authUserId") String authUserId, 
 			@RequestParam("file") MultipartFile file) throws ApiException{
 		return fileUploadService.saveTemp(authUserId, file);
-	}
-	
-//	//test
-//	public int getNextSequence(){
-//		testnum++;
-//		return testnum;
-//	}
+	}	
 }

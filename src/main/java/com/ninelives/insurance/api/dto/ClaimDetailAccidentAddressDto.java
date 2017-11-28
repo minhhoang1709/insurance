@@ -3,7 +3,7 @@ package com.ninelives.insurance.api.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClaimAccidentAddressDto {
+public class ClaimDetailAccidentAddressDto{
     private String country;
 
     private String province;
