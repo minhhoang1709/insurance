@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.api.model.CoverageCategory;
 import com.ninelives.insurance.api.ref.ClaimStatus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -26,6 +27,8 @@ public class AccidentClaimDto {
     private ClaimBankAccountDto claimBankAccount;
     
     private List<ClaimDocumentDto> claimDocuments;
+    
+    private CoverageCategoryDto coverageCategory;
     
     private OrderDto order;
 
@@ -93,6 +96,14 @@ public class AccidentClaimDto {
 
 	public void setClaimDocuments(List<ClaimDocumentDto> claimDocuments) {
 		this.claimDocuments = claimDocuments;
+	}
+
+	public CoverageCategoryDto getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategoryDto coverageCategory) {
+		this.coverageCategory = coverageCategory;
 	}
 
 	public OrderDto getOrder() {

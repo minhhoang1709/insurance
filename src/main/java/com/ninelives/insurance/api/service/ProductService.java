@@ -17,6 +17,7 @@ import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.Coverage;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.Product;
+import com.ninelives.insurance.api.mybatis.mapper.ClaimDocTypeMapper;
 import com.ninelives.insurance.api.mybatis.mapper.CoverageMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PeriodMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
@@ -27,6 +28,8 @@ public class ProductService {
 	@Autowired CoverageMapper coverageMapper;
 	@Autowired PeriodMapper periodMapper;
 	@Autowired ProductMapper productMapper;
+	
+	@Autowired ClaimDocTypeMapper claimDocTypeMapper;
 	
 	public List<Product> fetchAllProduct(){
 		//test
@@ -46,6 +49,12 @@ public class ProductService {
 	protected Coverage fetchCoverageByCoverageId(String coverageId){
 		return coverageMapper.selectByCoverageId(coverageId);
 	}
+	
+	@Cacheable("ClaimDocType")
+	protected ClaimDocType fetchClaimDocTypeByClaimDocTypeId(String claimDocTypeId){
+		return claimDocTypeMapper.selectByPrimaryKey(claimDocTypeId);
+	}
+	
 	
 	@Cacheable("ProductDtosAll")
 	public List<ProductDto> fetchActiveProductDtos(){

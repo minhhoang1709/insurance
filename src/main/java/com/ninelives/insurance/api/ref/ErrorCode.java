@@ -31,8 +31,8 @@ public enum ErrorCode {
 	
 	ERR5001_ORDER_NOT_FOUND("ERR5001"), //get order with given id not found
 	ERR6001_UPLOAD_EMPTY("ERR6001"), //upload with empty file
-	ERR6002_UPLOAD_SYSTEM_ERROR("ERR6002") //system error
-	
+	ERR6002_UPLOAD_SYSTEM_ERROR("ERR6002"), //system error
+	ERR7001_CLAIM_NOT_FOUND("ERR7001") //get claim with given id not found	
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

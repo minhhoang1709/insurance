@@ -3,6 +3,7 @@
 <mapper namespace="com.ninelives.insurance.api.mybatis.mapper.PolicyClaimMapper">
   <resultMap id="NestedPolicyClaimResultMap" type="com.ninelives.insurance.api.model.PolicyClaim">
     <id column="claim_id" jdbcType="VARCHAR" property="claimId" />
+<!--     <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" /> -->
     <result column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="claim_date" jdbcType="DATE" property="claimDate" />
@@ -11,6 +12,10 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <association property="coverageCategory" javaType="com.ninelives.insurance.api.model.CoverageCategory">
+    	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
+    </association>
     <association property="policyClaimDetail" javaType="com.ninelives.insurance.api.model.PolicyClaimDetailAccident">
     	<id column="detail_claim_id" jdbcType="VARCHAR" property="claimId" />
     	<result column="accident_address_country" jdbcType="VARCHAR" property="accidentAddressCountry" />
@@ -27,7 +32,7 @@
 	    <result column="account_number" jdbcType="VARCHAR" property="accountNumber" />	 
     </association>
     <association property="policyOrder" javaType="com.ninelives.insurance.api.model.PolicyOrder">
-    	<result column="po_order_id" jdbcType="VARCHAR" property="orderId" />
+    	<id column="po_order_id" jdbcType="VARCHAR" property="orderId" />
     	<result column="po_order_date" jdbcType="DATE" property="orderDate" />
 	    <result column="po_user_id" jdbcType="VARCHAR" property="userId" />
 	    <result column="po_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
@@ -57,7 +62,7 @@
     </collection>    
   </resultMap>
   <sql id="Base_Column_List">
-    claim_id, order_id, user_id, claim_date, incident_date_time, incident_summary, status, 
+    claim_id, coverage_category_id, order_id, user_id, claim_date, incident_date_time, incident_summary, status, 
     created_date, update_date
   </sql>
   <sql id="NestedPolicyClaimColumnList">
@@ -75,7 +80,8 @@
     g.period_id as po_period_id, g.policy_number as po_policy_number, 
     g.policy_start_date as po_policy_start_date, g.policy_end_date as po_policy_end_date, 
     g.total_premi as po_total_premi, g.product_count as po_product_count, g.status as po_status, 
-    g.created_date as po_created_date
+    g.created_date as po_created_date,
+    h.coverage_category_id as covcat_coverage_category_id, h.name as covcat_name
   </sql>
   <sql id="NestedPolicyClaimTableJoinList">
     public.policy_claim as a
@@ -85,16 +91,49 @@
     left join public.claim_doc_type e on e.claim_doc_type_id=d.claim_doc_type_id
     left join public.policy_claim_coverage f on f.claim_id=a.claim_id
     left join public.policy_order g on g.order_id=a.order_id
+    left join public.coverage_category h on h.coverage_category_id=a.coverage_category_id
   </sql>
   
   <!--   sql start -->
-  
-  <select id="selectByUserId" resultMap="NestedPolicyClaimResultMap">
+  <select id="selectByUserIdAndClaimId" resultMap="NestedPolicyClaimResultMap">
   	select 
   		<include refid="NestedPolicyClaimColumnList"/>
     from
     	<include refid="NestedPolicyClaimTableJoinList"/>
     where a.user_id=#{userId,jdbcType=VARCHAR}
+    	and a.claim_id=#{claimId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByUserIdAndOrderIdAndStatusSet" resultMap="NestedPolicyClaimResultMap">
+  	select 
+  		<include refid="NestedPolicyClaimColumnList"/>
+    from
+    	<include refid="NestedPolicyClaimTableJoinList"/>
+    where a.user_id=#{userId,jdbcType=VARCHAR}
+    	and a.order_id=#{orderId,jdbcType=VARCHAR}
+    	<if test="statusSet != null">
+    		and a.status in
+    		<foreach item="item" index="index" collection="statusSet"
+      			open="(" separator="," close=")">#{item}
+        	</foreach>
+    	</if>
+    order by a.created_date desc
+    limit #{limit,jdbcType=INTEGER}
+    offset #{offset,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUserIdAndStatusSet" resultMap="NestedPolicyClaimResultMap">
+  	select 
+  		<include refid="NestedPolicyClaimColumnList"/>
+    from
+    	<include refid="NestedPolicyClaimTableJoinList"/>
+    where a.user_id=#{userId,jdbcType=VARCHAR}
+    	<if test="statusSet != null">
+    		and a.status in
+    		<foreach item="item" index="index" collection="statusSet"
+      			open="(" separator="," close=")">#{item}
+        	</foreach>
+    	</if>
     order by a.created_date desc
     limit #{limit,jdbcType=INTEGER}
     offset #{offset,jdbcType=INTEGER}

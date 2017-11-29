@@ -176,17 +176,17 @@ public class TestController {
 		return result;
 	}
 	
-	@RequestMapping(value="/test/claims",
-			method={ RequestMethod.POST })
-	@ResponseBody
-	public PolicyClaim<PolicyClaimDetailAccident> submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
-			@RequestBody AccidentClaimDto claimDto){
-		logger.debug("Terima /claims POST untuk authuser {} ", authUserId);
-		logger.debug("put data: {}", claimDto);
-		logger.debug("---");
-		
-		return claimService.submitAccidentalClaim(authUserId, claimDto);
-	}
+//	@RequestMapping(value="/test/claims",
+//			method={ RequestMethod.POST })
+//	@ResponseBody
+//	public PolicyClaim<PolicyClaimDetailAccident> submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
+//			@RequestBody AccidentClaimDto claimDto){
+//		logger.debug("Terima /claims POST untuk authuser {} ", authUserId);
+//		logger.debug("put data: {}", claimDto);
+//		logger.debug("---");
+//		
+//		return claimService.submitAccidentalClaim(authUserId, claimDto);
+//	}
 	
 	@RequestMapping(value="/test/claims",
 			method={ RequestMethod.GET })

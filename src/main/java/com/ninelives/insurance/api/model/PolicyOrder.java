@@ -42,7 +42,6 @@ public class PolicyOrder {
     private PolicyOrderBeneficiary policyOrderBeneficiary;
     
     private Period period;
-        
 
 	public String getOrderId() {
 		return orderId;

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
@@ -63,6 +64,8 @@ public class OrderService {
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
 	@Autowired PolicyOrderBeneficiaryMapper policyOrderBeneficiaryMapper;
 	
+	@Autowired ModelMapperAdapter modelMapperAdapter;
+	
 	@Value("${ninelives.order.policy-startdate-period:60}")
 	int policyStartDatePeriod;
 	
@@ -98,12 +101,12 @@ public class OrderService {
 	
 	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiBadRequestException{
 		PolicyOrder policyOrder = registerOrder(userId, orderDto, isValidateOnly);
-		return policyOrderToDto(policyOrder);
+		return modelMapperAdapter.toDto(policyOrder);
 	}
 	
 	public OrderDto fetchOrderDtoByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = fetchOrderByOrderId(userId, orderId);
-		return policyOrderToDto(policyOrder);
+		return modelMapperAdapter.toDto(policyOrder);
 	}
 	
 	public List<OrderDto> fetchOrderDtos(final String userId, final FilterDto filter){
@@ -111,7 +114,8 @@ public class OrderService {
 		List<PolicyOrder> orders = fetchOrders(userId, filter);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
-				orderDtos.add(policyOrderToDto(po));
+				//orderDtos.add(policyOrderToDto(po));
+				orderDtos.add(modelMapperAdapter.toDto(po));
 			}
 		}
 		return orderDtos;		
@@ -550,91 +554,91 @@ public class OrderService {
 		return filterType;
 	}
 	
-	protected OrderDto policyOrderToDto(final PolicyOrder policyOrder){
-		OrderDto orderDto = null;
-
-		if(policyOrder!=null){
-			orderDto = new OrderDto();
-			orderDto.setOrderId(policyOrder.getOrderId());
-			orderDto.setOrderDate(policyOrder.getOrderDate());
-			orderDto.setPolicyNumber(policyOrder.getPolicyNumber());
-			orderDto.setPolicyStartDate(policyOrder.getPolicyStartDate());
-			orderDto.setPolicyEndDate(policyOrder.getPolicyEndDate());
-			orderDto.setTotalPremi(policyOrder.getTotalPremi());
-			orderDto.setHasBeneficiary(policyOrder.getHasBeneficiary());
-			orderDto.setProductCount(policyOrder.getProductCount());
-			orderDto.setStatus(policyOrder.getStatus());
-			orderDto.setCreatedDate(policyOrder.getCreatedDate());
-			orderDto.setTitle(this.policyTitle);
-			orderDto.setImgUrl(this.policyImgUrl);
-
-			PeriodDto periodDto = new PeriodDto();
-			periodDto.setName(policyOrder.getPeriod().getName());
-			periodDto.setPeriodId(policyOrder.getPeriodId());
-			periodDto.setUnit(policyOrder.getPeriod().getUnit());
-			periodDto.setValue(policyOrder.getPeriod().getValue());
-
-			int rank = 99;
-			List<ProductDto> productDtos = new ArrayList<>();
-			for(PolicyOrderProduct p: policyOrder.getPolicyOrderProducts()){
-				ProductDto dto = new ProductDto();
-				dto.setProductId(p.getProductId());
-				dto.setName(p.getCoverageName());
-				dto.setPremi(p.getPremi());
-				
-				dto.setPeriod(periodDto);
-
-				CoverageDto covDto = new CoverageDto();
-				covDto.setCoverageId(p.getCoverageId());
-				covDto.setName(p.getCoverageName());
-				covDto.setMaxLimit(p.getCoverageMaxLimit());
-				covDto.setHasBeneficiary(p.getCoverageHasBeneficiary());
-				dto.setCoverage(covDto);
-
-				productDtos.add(dto);
-				
-				if(p.getCoverageDisplayRank() < rank){
-					orderDto.setSubtitle(p.getCoverageName());
-					rank = p.getCoverageDisplayRank();
-				}
-				
-				if(!CollectionUtils.isEmpty(p.getClaimDocTypes())){
-					List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
-					for(ClaimDocType docType: p.getClaimDocTypes()){
-						ClaimDocTypeDto docTypeDto = new ClaimDocTypeDto();
-						docTypeDto.setClaimDocTypeId(docType.getClaimDocTypeId());
-						docTypeDto.setName(docType.getName());
-						docTypeDtos.add(docTypeDto);
-					}
-					covDto.setClaimDocTypes(docTypeDtos);
-				}
-			}
-			orderDto.setProducts(productDtos);
-			
-			orderDto.setPeriod(periodDto);
-			
-			if(policyOrder.getPolicyOrderUsers()!=null){
-				UserDto userDto = new UserDto();
-				userDto.setUserId(policyOrder.getUserId());
-				userDto.setName(policyOrder.getPolicyOrderUsers().getName());
-				userDto.setBirthDate(policyOrder.getPolicyOrderUsers().getBirthDate());
-				userDto.setBirthPlace(policyOrder.getPolicyOrderUsers().getBirthPlace());
-				userDto.setEmail(policyOrder.getPolicyOrderUsers().getEmail());
-				userDto.setGender(policyOrder.getPolicyOrderUsers().getGender());
-				if(policyOrder.getPolicyOrderUsers().getIdCardFileId()!=null){
-					userDto.setIdCardFile(new UserFileDto(policyOrder.getPolicyOrderUsers().getIdCardFileId()));
-				}				
-				userDto.setPhone(policyOrder.getPolicyOrderUsers().getPhone());
-				userDto.setAddress(policyOrder.getPolicyOrderUsers().getAddress());
-				
-				orderDto.setUser(userDto);
-			}
-			
-		}
-
-		return orderDto;
-		
-	}
+//	protected OrderDto policyOrderToDto(final PolicyOrder policyOrder){
+//		OrderDto orderDto = null;
+//
+//		if(policyOrder!=null){
+//			orderDto = new OrderDto();
+//			orderDto.setOrderId(policyOrder.getOrderId());
+//			orderDto.setOrderDate(policyOrder.getOrderDate());
+//			orderDto.setPolicyNumber(policyOrder.getPolicyNumber());
+//			orderDto.setPolicyStartDate(policyOrder.getPolicyStartDate());
+//			orderDto.setPolicyEndDate(policyOrder.getPolicyEndDate());
+//			orderDto.setTotalPremi(policyOrder.getTotalPremi());
+//			orderDto.setHasBeneficiary(policyOrder.getHasBeneficiary());
+//			orderDto.setProductCount(policyOrder.getProductCount());
+//			orderDto.setStatus(policyOrder.getStatus());
+//			orderDto.setCreatedDate(policyOrder.getCreatedDate());
+//			orderDto.setTitle(this.policyTitle);
+//			orderDto.setImgUrl(this.policyImgUrl);
+//
+//			PeriodDto periodDto = new PeriodDto();
+//			periodDto.setName(policyOrder.getPeriod().getName());
+//			periodDto.setPeriodId(policyOrder.getPeriodId());
+//			periodDto.setUnit(policyOrder.getPeriod().getUnit());
+//			periodDto.setValue(policyOrder.getPeriod().getValue());
+//
+//			int rank = 99;
+//			List<ProductDto> productDtos = new ArrayList<>();
+//			for(PolicyOrderProduct p: policyOrder.getPolicyOrderProducts()){
+//				ProductDto dto = new ProductDto();
+//				dto.setProductId(p.getProductId());
+//				dto.setName(p.getCoverageName());
+//				dto.setPremi(p.getPremi());
+//				
+//				dto.setPeriod(periodDto);
+//
+//				CoverageDto covDto = new CoverageDto();
+//				covDto.setCoverageId(p.getCoverageId());
+//				covDto.setName(p.getCoverageName());
+//				covDto.setMaxLimit(p.getCoverageMaxLimit());
+//				covDto.setHasBeneficiary(p.getCoverageHasBeneficiary());
+//				dto.setCoverage(covDto);
+//
+//				productDtos.add(dto);
+//				
+//				if(p.getCoverageDisplayRank() < rank){
+//					orderDto.setSubtitle(p.getCoverageName());
+//					rank = p.getCoverageDisplayRank();
+//				}
+//				
+//				if(!CollectionUtils.isEmpty(p.getClaimDocTypes())){
+//					List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
+//					for(ClaimDocType docType: p.getClaimDocTypes()){
+//						ClaimDocTypeDto docTypeDto = new ClaimDocTypeDto();
+//						docTypeDto.setClaimDocTypeId(docType.getClaimDocTypeId());
+//						docTypeDto.setName(docType.getName());
+//						docTypeDtos.add(docTypeDto);
+//					}
+//					covDto.setClaimDocTypes(docTypeDtos);
+//				}
+//			}
+//			orderDto.setProducts(productDtos);
+//			
+//			orderDto.setPeriod(periodDto);
+//			
+//			if(policyOrder.getPolicyOrderUsers()!=null){
+//				UserDto userDto = new UserDto();
+//				userDto.setUserId(policyOrder.getUserId());
+//				userDto.setName(policyOrder.getPolicyOrderUsers().getName());
+//				userDto.setBirthDate(policyOrder.getPolicyOrderUsers().getBirthDate());
+//				userDto.setBirthPlace(policyOrder.getPolicyOrderUsers().getBirthPlace());
+//				userDto.setEmail(policyOrder.getPolicyOrderUsers().getEmail());
+//				userDto.setGender(policyOrder.getPolicyOrderUsers().getGender());
+//				if(policyOrder.getPolicyOrderUsers().getIdCardFileId()!=null){
+//					userDto.setIdCardFile(new UserFileDto(policyOrder.getPolicyOrderUsers().getIdCardFileId()));
+//				}				
+//				userDto.setPhone(policyOrder.getPolicyOrderUsers().getPhone());
+//				userDto.setAddress(policyOrder.getPolicyOrderUsers().getAddress());
+//				
+//				orderDto.setUser(userDto);
+//			}
+//			
+//		}
+//
+//		return orderDto;
+//		
+//	}
 	
 	protected PolicyOrderBeneficiaryDto policyOrderBeneficiaryToDto(PolicyOrderBeneficiary policyOrderBeneficiary){
 		PolicyOrderBeneficiaryDto dto = null; 

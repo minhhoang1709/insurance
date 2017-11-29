@@ -8,6 +8,8 @@ import com.ninelives.insurance.api.ref.ClaimStatus;
 
 public class PolicyClaim <T extends PolicyClaimDetail>{
     private String claimId;
+    
+    private String coverageCategoryId;
 
     private String orderId;
 
@@ -35,6 +37,8 @@ public class PolicyClaim <T extends PolicyClaimDetail>{
 
     private PolicyOrder policyOrder;
     
+    private CoverageCategory coverageCategory;
+    
     public String getClaimId() {
         return claimId;
     }
@@ -42,8 +46,16 @@ public class PolicyClaim <T extends PolicyClaimDetail>{
     public void setClaimId(String claimId) {
         this.claimId = claimId;
     }
+    
+    public String getCoverageCategoryId() {
+		return coverageCategoryId;
+	}
 
-    public String getOrderId() {
+	public void setCoverageCategoryId(String coverageCategoryId) {
+		this.coverageCategoryId = coverageCategoryId;
+	}
+
+	public String getOrderId() {
         return orderId;
     }
 
@@ -121,6 +133,14 @@ public class PolicyClaim <T extends PolicyClaimDetail>{
 
 	public void setPolicyOrder(PolicyOrder policyOrder) {
 		this.policyOrder = policyOrder;
+	}
+
+	public CoverageCategory getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategory coverageCategory) {
+		this.coverageCategory = coverageCategory;
 	}
 
 	public ClaimStatus getStatus() {

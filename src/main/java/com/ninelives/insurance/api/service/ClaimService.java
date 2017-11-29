@@ -3,8 +3,12 @@ package com.ninelives.insurance.api.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -12,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
@@ -27,6 +32,8 @@ import com.ninelives.insurance.api.model.PolicyClaimDocument;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyClaimMapper;
 import com.ninelives.insurance.api.ref.ClaimCoverageStatus;
 import com.ninelives.insurance.api.ref.ClaimStatus;
+import com.ninelives.insurance.api.ref.OrderDtoFilterStatus;
+import com.ninelives.insurance.api.ref.PolicyStatus;
 import com.ninelives.insurance.api.service.trx.PolicyClaimTrxService;
 
 @Service
@@ -37,6 +44,7 @@ public class ClaimService {
 	
 	@Autowired PolicyClaimTrxService policyClaimTrxService;
 	@Autowired ProductService productService;
+	@Autowired OrderService orderService;
 	@Autowired PolicyClaimMapper policyClaimMapper;
 	
 	@Autowired ModelMapperAdapter modelMapperAdapter;
@@ -51,11 +59,25 @@ public class ClaimService {
 	int defaultFilterOffset;
 
 	
-	//TODO: return DTO
-	public PolicyClaim<PolicyClaimDetailAccident> submitAccidentalClaim(final String userId, final AccidentClaimDto claimDto){
-		return registerAccidentalClaim(userId, claimDto);
+	public AccidentClaimDto submitAccidentalClaim(final String userId, final AccidentClaimDto claimDto){
+		PolicyClaim<PolicyClaimDetailAccident> claim = registerAccidentalClaim(userId, claimDto);		
+		return modelMapperAdapter.toDto(claim);
+	}	
+	public AccidentClaimDto fetchClaimDtoByClaimId(String userId, String claimId){
+		PolicyClaim<PolicyClaimDetailAccident> policyClaim = fetchClaimByClaimId(userId, claimId);
+		return modelMapperAdapter.toDto(policyClaim);
 	}
-	
+	public List<AccidentClaimDto> fetchClaimDtosByOrderId(String userId, String orderId, FilterDto filterDto) {
+		List<PolicyClaim<PolicyClaimDetailAccident>> policyClaims = fetchClaimsByOrderId(userId, orderId, filterDto);
+		List<AccidentClaimDto> dtoList = new ArrayList<>();
+		if(policyClaims!=null){
+			for(PolicyClaim<PolicyClaimDetailAccident> c: policyClaims){
+				AccidentClaimDto dto = modelMapperAdapter.toDto(c);
+				dtoList.add(dto);
+			}
+		}
+		return dtoList;
+	}
 	public List<AccidentClaimDto> fetchClaimDtos(String userId, FilterDto filterDto){
 		List<PolicyClaim<PolicyClaimDetailAccident>> policyClaims = fetchClaims(userId, filterDto);
 		List<AccidentClaimDto> dtoList = new ArrayList<>();
@@ -68,10 +90,24 @@ public class ClaimService {
 		return dtoList;
 	}
 	
-	protected List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaims(String userId, FilterDto filterDto){
+	protected PolicyClaim<PolicyClaimDetailAccident> fetchClaimByClaimId(String userId, String claimId){		
+		PolicyClaim<PolicyClaimDetailAccident> policyClaim = policyClaimMapper.selectByUserIdAndClaimId(userId, claimId);
+		if(policyClaim!=null){
+			for(PolicyClaimCoverage c: policyClaim.getPolicyClaimCoverages()){
+				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));		
+			}
+			if(policyClaim.getPolicyOrder()!=null){
+				orderService.mapPolicyOrderStatus(policyClaim.getPolicyOrder(), LocalDate.now());
+			}
+		}
+		
+		return policyClaim;
+	}
+	
+	protected List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaimsByOrderId(String userId, String orderId, FilterDto filterDto){
 		int offset = this.defaultFilterOffset;
 		int limit = this.defaultFilterLimit;
-		String[] filterStatus = null;
+		Set<String> statusSet = null;
 		if(filterDto!=null){
 			offset = filterDto.getOffset();
 			if(filterDto.getLimit() > this.maxFilterLimit){
@@ -79,23 +115,60 @@ public class ClaimService {
 			}else{
 				limit = filterDto.getLimit();
 			}
-			filterStatus = filterDto.getStatus();
+			if(filterDto.getStatus()!=null && filterDto.getStatus().length > 0){
+				statusSet = Arrays.stream(filterDto.getStatus()).collect(Collectors.toSet());				
+			}
 		}
-		//if(filterStatus.equals(obj))
-		List<PolicyClaim<PolicyClaimDetailAccident>> policyClaims = policyClaimMapper.selectByUserId(userId, limit, offset);
+		
+		LocalDate today = LocalDate.now();
+		List<PolicyClaim<PolicyClaimDetailAccident>> policyClaims = policyClaimMapper.selectByUserIdAndOrderIdAndStatusSet(userId, orderId, statusSet, limit, offset);
 		for(PolicyClaim<PolicyClaimDetailAccident> p: policyClaims){
 			for(PolicyClaimCoverage c: p.getPolicyClaimCoverages()){
 				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));				
+			}
+			if(p.getPolicyOrder()!=null){
+				orderService.mapPolicyOrderStatus(p.getPolicyOrder(), today);
+			}
+		}
+		return policyClaims;
+	}
+	
+	protected List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaims(String userId, FilterDto filterDto){
+		int offset = this.defaultFilterOffset;
+		int limit = this.defaultFilterLimit;
+		Set<String> statusSet = null;
+		if(filterDto!=null){
+			offset = filterDto.getOffset();
+			if(filterDto.getLimit() > this.maxFilterLimit){
+				limit = this.maxFilterLimit;
+			}else{
+				limit = filterDto.getLimit();
+			}
+			if(filterDto.getStatus()!=null && filterDto.getStatus().length > 0){
+				statusSet = Arrays.stream(filterDto.getStatus()).collect(Collectors.toSet());				
+			}
+		}
+		
+		LocalDate today = LocalDate.now();
+		List<PolicyClaim<PolicyClaimDetailAccident>> policyClaims = policyClaimMapper.selectByUserIdAndStatusSet(userId, statusSet, limit, offset);
+		for(PolicyClaim<PolicyClaimDetailAccident> p: policyClaims){
+			for(PolicyClaimCoverage c: p.getPolicyClaimCoverages()){
+				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));				
+			}
+			if(p.getPolicyOrder()!=null){
+				orderService.mapPolicyOrderStatus(p.getPolicyOrder(), today);
 			}
 		}
 		return policyClaims;
 	}
 	
 	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto){
+		//check if coverage require such doctype
 		
 		LocalDate today = LocalDate.now();
 		
 		PolicyClaim<PolicyClaimDetailAccident>  claim = new PolicyClaim<>();
+		claim.setCoverageCategoryId("101"); //TODO: remove hardcoded
 		claim.setClaimId(generateClaimId());
 		claim.setOrderId(claimDto.getOrder().getOrderId());
 		claim.setUserId(userId);
@@ -126,6 +199,7 @@ public class ClaimService {
 			PolicyClaimDocument doc = new PolicyClaimDocument();
 			doc.setClaimId(claim.getClaimId());
 			doc.setClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId());
+			doc.setClaimDocType(productService.fetchClaimDocTypeByClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId()));
 			doc.setFileId(c.getFile().getFileId());
 			claimDocs.add(doc);
 		}
@@ -138,9 +212,10 @@ public class ClaimService {
 			cov.setClaimId(claim.getClaimId());
 			cov.setCoverageId(c.getCoverage().getCoverageId());			
 			cov.setStatus(ClaimCoverageStatus.SUBMITTED);
+			cov.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverage().getCoverageId()));
 			claimCovs.add(cov);
 		}
-		claim.setPolicyClaimCoverages(claimCovs);
+		claim.setPolicyClaimCoverages(claimCovs);		
 		
 		policyClaimTrxService.registerPolicyClaim(claim);
 		
@@ -153,5 +228,6 @@ public class ClaimService {
 	private String generateClaimId(){
 		return UUID.randomUUID().toString();
 	}
+	
 
 }
