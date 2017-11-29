@@ -33,6 +33,8 @@ public class PolicyClaim <T extends PolicyClaimDetail>{
     
     private List<PolicyClaimCoverage> policyClaimCoverages;
 
+    private PolicyOrder policyOrder;
+    
     public String getClaimId() {
         return claimId;
     }
@@ -111,6 +113,14 @@ public class PolicyClaim <T extends PolicyClaimDetail>{
 
 	public void setPolicyClaimCoverages(List<PolicyClaimCoverage> policyClaimCoverages) {
 		this.policyClaimCoverages = policyClaimCoverages;
+	}
+	
+	public PolicyOrder getPolicyOrder() {
+		return policyOrder;
+	}
+
+	public void setPolicyOrder(PolicyOrder policyOrder) {
+		this.policyOrder = policyOrder;
 	}
 
 	public ClaimStatus getStatus() {

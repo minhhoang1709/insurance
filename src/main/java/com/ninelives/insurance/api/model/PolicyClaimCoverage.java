@@ -16,6 +16,8 @@ public class PolicyClaimCoverage {
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
+    
+    private Coverage coverage;
 
     public Long getClaimCoverageId() {
         return claimCoverageId;
@@ -47,6 +49,14 @@ public class PolicyClaimCoverage {
 
 	public void setStatus(ClaimCoverageStatus status) {
 		this.status = status;
+	}
+	
+	public Coverage getCoverage() {
+		return coverage;
+	}
+
+	public void setCoverage(Coverage coverage) {
+		this.coverage = coverage;
 	}
 
 	public LocalDateTime getCreatedDate() {

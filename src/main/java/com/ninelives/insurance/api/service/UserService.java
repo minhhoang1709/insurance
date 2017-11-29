@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
@@ -45,6 +46,7 @@ public class UserService {
 	@Autowired UserBeneficiaryMapper userBeneficiaryMapper;
 	@Autowired RedisService redisService;
 	@Autowired FileUploadService fileUploadService;
+	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	
@@ -171,7 +173,7 @@ public class UserService {
 		if(userFile!=null && userFile.getFileId()!=null){
 			userMapper.updateIdCardFileIdByUserId(userId, userFile.getFileId());
 		}
-		return fileUploadService.userFileToDto(userFile);
+		return modelMapperAdapter.toDto(userFile);
 	}
 	
 	//test

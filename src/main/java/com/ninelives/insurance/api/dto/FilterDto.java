@@ -2,7 +2,7 @@ package com.ninelives.insurance.api.dto;
 
 import java.util.Arrays;
 
-public class OrderFilterDto {
+public class FilterDto {
 	int offset;
 	int limit;
 	String[] status;

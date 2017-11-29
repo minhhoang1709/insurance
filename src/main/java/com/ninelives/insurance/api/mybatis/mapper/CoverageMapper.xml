@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.CoverageMapper">
+  <resultMap id="CoverageResultMap" type="com.ninelives.insurance.api.model.Coverage">
+    <id column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="recommendation" jdbcType="VARCHAR" property="recommendation" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="max_limit" jdbcType="BIGINT" property="maxLimit" />
+    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="display_rank" jdbcType="INTEGER" property="displayRank" />
+    <result column="is_recommended" jdbcType="BIT" property="isRecommended" />
+    <collection property="claimDocTypes" ofType="com.ninelives.insurance.api.model.ClaimDocType">
+    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+	    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+    </collection>
+  </resultMap>
+  <select id="selectByCoverageId" resultMap="CoverageResultMap">
+  	select a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, 
+    	a.has_beneficiary, a.status, a.display_rank, a.is_recommended,
+    	c.claim_doc_type_id, c.name as claim_doc_type_name
+    from public.coverage a
+	  	left outer join public.coverage_claim_doc_type b on b.coverage_id=a.coverage_id
+	  	left outer join public.claim_doc_type c on c.claim_doc_type_id=b.claim_doc_type_id
+  	where a.coverage_id=#{coverageId,jdbcType=VARCHAR}
+  </select>
+</mapper>

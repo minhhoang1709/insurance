@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.dto.OrderDto;
-import com.ninelives.insurance.api.dto.OrderFilterDto;
+import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
@@ -64,7 +64,7 @@ public class OrderController {
 		
 		logger.debug("GET getOrders userid is {} with filter {}", authUserId, filter);
 		
-		OrderFilterDto orderFilter = GsonUtil.gson.fromJson(filter, OrderFilterDto.class);
+		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
 		return orderService.fetchOrderDtos(authUserId, orderFilter);
 	}

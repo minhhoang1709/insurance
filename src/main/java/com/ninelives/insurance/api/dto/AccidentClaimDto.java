@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.api.ref.ClaimStatus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccidentClaimDto {
@@ -28,7 +29,7 @@ public class AccidentClaimDto {
     
     private OrderDto order;
 
-    private String status;
+    private ClaimStatus status;
 
 	public String getClaimId() {
 		return claimId;
@@ -102,13 +103,13 @@ public class AccidentClaimDto {
 		this.order = order;
 	}
 
-	public String getStatus() {
+	public ClaimStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(ClaimStatus status) {
 		this.status = status;
 	}
-    
+
     
 }

@@ -42,6 +42,11 @@ public class ProductService {
 		return productMapper.selectByProductIds(productIds);
 	}
 	
+	@Cacheable("Coverage")
+	protected Coverage fetchCoverageByCoverageId(String coverageId){
+		return coverageMapper.selectByCoverageId(coverageId);
+	}
+	
 	@Cacheable("ProductDtosAll")
 	public List<ProductDto> fetchActiveProductDtos(){
 		List<Product> products = productMapper.selectByStatusActive();

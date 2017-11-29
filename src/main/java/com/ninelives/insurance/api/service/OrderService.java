@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
 import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
-import com.ninelives.insurance.api.dto.OrderFilterDto;
+import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
@@ -106,7 +106,7 @@ public class OrderService {
 		return policyOrderToDto(policyOrder);
 	}
 	
-	public List<OrderDto> fetchOrderDtos(final String userId, final OrderFilterDto filter){
+	public List<OrderDto> fetchOrderDtos(final String userId, final FilterDto filter){
 		ArrayList<OrderDto> orderDtos = new ArrayList<>();
 		List<PolicyOrder> orders = fetchOrders(userId, filter);
 		if(orders!=null){
@@ -134,8 +134,7 @@ public class OrderService {
 			throw new ApiBadRequestException(ErrorCode.ERR4101_BENEFICIARY_INVALID,
 					"Permintaan tidak dapat diproses, silahkan cek kembali data penerima");
 		}
-		PolicyOrder policyOrder = policyOrderMapper.selectWithBeneficiaryByUserIdAndOrderId(userId, orderId);
-		mapPolicyOrderStatus(policyOrder, LocalDate.now());
+		PolicyOrder policyOrder = fetchOrderWithBeneficiaryByOrderId(userId, orderId);
 		if(policyOrder == null){
 			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {} with result: order not found", userId,
 					orderId, beneficiaryDto);
@@ -465,13 +464,19 @@ public class OrderService {
 		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
 	}
 	
+	protected PolicyOrder fetchOrderWithBeneficiaryByOrderId(final String userId, final String orderId){
+		PolicyOrder policyOrder = policyOrderMapper.selectWithBeneficiaryByUserIdAndOrderId(userId, orderId);
+		mapPolicyOrderStatus(policyOrder, LocalDate.now());
+		return policyOrder;
+	}
+	
 	protected PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
 		mapPolicyOrderStatus(policyOrder,LocalDate.now());
 		return policyOrder;
 	}
 	
-	protected List<PolicyOrder> fetchOrders(final String userId, final OrderFilterDto filter){
+	protected List<PolicyOrder> fetchOrders(final String userId, final FilterDto filter){
 		int offset = this.defaultOrdersFilterOffset;
 		int limit = this.defaultOrdersFilterLimit;
 		String[] filterStatus = null;
@@ -644,130 +649,6 @@ public class OrderService {
 		return dto;
 	}
 	
-//	public OrderDto fetchOrderByOrderId(String orderId){
-//		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
-//		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-//		
-//		List<Period> periods = productService.fetchAllPeriod();
-//		Map<String,PeriodDto> perMap = new HashMap<>();
-//		for(Period c: periods) {
-//			PeriodDto dto = new PeriodDto();
-//			dto.setPeriodId(c.getPeriodId());
-//			dto.setName(c.getName());
-//			dto.setValue(c.getValue());
-//			dto.setUnit(c.getUnit());
-//			perMap.put(c.getPeriodId(), dto);
-//		}
-//		
-//		PolicyOrder po = policyOrderMapper.selectByOrderId(orderId);
-//		OrderDto order = null;
-//		if(po!=null){
-//			order = new OrderDto();
-//			List<ProductDto> productDtos = new ArrayList<>();
-//
-//			order.setOrderId(po.getOrderId());
-//			order.setOrderDate(po.getOrderDate());
-//			order.setPolicyNumber(po.getPolicyNumber());
-//			order.setPolicyStartDate(po.getPolicyStartDate());
-//			order.setPolicyEndDate(po.getPolicyEndDate());
-//			order.setTotalPremi(po.getTotalPremi());
-//			order.setHasBeneficiary(po.getHasBeneficiary());
-//			order.setProductCount(po.getProductCount());
-//			order.setStatus(po.getStatus());
-//			order.setCreatedDate(po.getCreatedDate());
-//			order.setTitle("Asuransi kecelakaan");
-//			order.setImgUrl("");
-//
-//			List<PolicyOrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
-//			for (PolicyOrderProduct op : productList) {
-//				ProductDto dto = new ProductDto();
-//				dto.setProductId(op.getProductId());
-//				dto.setName(op.getCoverageName());
-//				dto.setPremi(op.getPremi());
-//				//dto.setPeriod(perMap.get(op.getPeriodId()));
-//
-//				CoverageDto covDto = new CoverageDto();
-//				covDto.setCoverageId(op.getCoverageId());
-//				covDto.setName(op.getCoverageName());
-//				covDto.setMaxLimit(op.getCoverageMaxLimit());
-//				covDto.setHasBeneficiary(op.getCoverageHasBeneficiary());
-//				dto.setCoverage(covDto);
-//
-//				productDtos.add(dto);
-//			}
-//			if (!productList.isEmpty()) {
-//				order.setProducts(productDtos);
-//			}
-//
-//			order.setPeriod(perMap.get(po.getPeriodId()));
-//		}		
-//		
-//		return order;
-//	}
-	
-	
-	//test
-//	public List<OrderDto> testfetchOrderListByUserId(String userId){
-//		DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
-//		DateFormat dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-//		
-//		List<Period> periods = productService.fetchAllPeriod();
-//		Map<String,PeriodDto> perMap = new HashMap<>();
-//		for(Period c: periods) {
-//			PeriodDto dto = new PeriodDto();
-//			dto.setPeriodId(c.getPeriodId());
-//			dto.setName(c.getName());
-//			dto.setValue(c.getValue());
-//			dto.setUnit(c.getUnit());
-//			perMap.put(c.getPeriodId(), dto);
-//		}
-//		
-//		List<PolicyOrder> pos = policyOrderMapper.selectByUserId(userId,100,0);
-//		List<OrderDto> orders = new ArrayList<>();
-//		for(PolicyOrder po:pos){
-//			OrderDto order = new OrderDto();
-//			List<ProductDto> productDtos = new ArrayList<>();
-//			
-//			order.setOrderId(po.getOrderId());
-//			order.setOrderDate(po.getOrderDate());
-//			order.setPolicyNumber(po.getPolicyNumber());
-//			order.setPolicyStartDate(po.getPolicyStartDate());
-//			order.setPolicyEndDate(po.getPolicyEndDate());
-//			order.setTotalPremi(po.getTotalPremi());
-//			order.setHasBeneficiary(po.getHasBeneficiary());
-//			order.setProductCount(po.getProductCount());
-//			order.setStatus(po.getStatus());
-//			order.setCreatedDate(po.getCreatedDate());
-//			order.setTitle("Asuransi kecelakaan");
-//			order.setImgUrl("https://i.imgur.com/f3h2z7k.jpg");
-//			
-//			List<PolicyOrderProduct> productList = orderProductMapper.selectByOrderId(po.getOrderId());
-//			for(PolicyOrderProduct op: productList){
-//				ProductDto dto = new ProductDto();
-//				dto.setProductId(op.getProductId());
-//				dto.setName(op.getCoverageName());
-//				dto.setPremi(op.getPremi());
-//				//dto.setPeriod(perMap.get(op.getPeriodId()));
-//				
-//				CoverageDto covDto = new CoverageDto();
-//				covDto.setCoverageId(op.getCoverageId());
-//				covDto.setName(op.getCoverageName());
-//				covDto.setMaxLimit(op.getCoverageMaxLimit());
-//				covDto.setHasBeneficiary(op.getCoverageHasBeneficiary());				
-//				dto.setCoverage(covDto);
-//				
-//				productDtos.add(dto);
-//			}
-//			if(!productList.isEmpty()){
-//				order.setProducts(productDtos);
-//			}
-//			
-//			order.setPeriod(perMap.get(po.getPeriodId()));
-//			
-//			orders.add(order);			
-//		}		
-//		return orders;
-//	}
 	
 	//TODO remove test
 	public List<PolicyOrderCoverage> testConflict(String userId, final OrderDto submitOrderDto){
@@ -790,7 +671,7 @@ public class OrderService {
 		return checklist;
 	}
 	//TODO remove test
-	public List<PolicyOrder> tesFetch(String userId, final OrderFilterDto filter){
+	public List<PolicyOrder> tesFetch(String userId, final FilterDto filter){
 		int offset = this.defaultOrdersFilterOffset;
 		int limit = this.defaultOrdersFilterLimit;
 		String[] filterStatus = null;

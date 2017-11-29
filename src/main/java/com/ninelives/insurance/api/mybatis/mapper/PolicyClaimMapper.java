@@ -1,9 +1,13 @@
 package com.ninelives.insurance.api.mybatis.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.ninelives.insurance.api.model.PolicyClaim;
+import com.ninelives.insurance.api.model.PolicyClaimDetailAccident;
 
 @Mapper
 public interface PolicyClaimMapper {
@@ -17,5 +21,7 @@ public interface PolicyClaimMapper {
         "#{incidentDateTime,jdbcType=TIMESTAMP}, #{incidentSummary,jdbcType=VARCHAR}, ",
         "#{status,jdbcType=VARCHAR})"
     })
-    int insert(PolicyClaim record);    
+    int insert(PolicyClaim record); 
+	
+	List<PolicyClaim<PolicyClaimDetailAccident>> selectByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
 }

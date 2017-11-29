@@ -19,4 +19,6 @@ public interface CoverageMapper {
 		"order by coverage_id"
 		})
 	List<Coverage> selectByStatusActive();
+	
+	Coverage selectByCoverageId(@Param("coverageId") String coverageId);
 }

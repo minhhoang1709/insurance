@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClaimDocumentDto {
-	private String claimDocumentId;
+	private Long claimDocumentId;
 	private UserFileDto file;
 	private ClaimDocTypeDto claimDocType;
-	
-	public String getClaimDocumentId() {
+
+	public Long getClaimDocumentId() {
 		return claimDocumentId;
 	}
-	public void setClaimDocumentId(String claimDocumentId) {
+	public void setClaimDocumentId(Long claimDocumentId) {
 		this.claimDocumentId = claimDocumentId;
 	}
 	public UserFileDto getFile() {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
@@ -31,12 +32,13 @@ public class FileUploadService {
 	
 	@Autowired UserFileMapper userFileMapper;
 	@Autowired StorageProvider storageProvider;
+	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 	
 	public UserFileDto saveTemp(String userId, MultipartFile file) throws ApiException{
 		UserFile userFile = save(userId, file, FileUseType.TEMP);
-		return userFileToDto(userFile);
+		return modelMapperAdapter.toDto(userFile);
 	}
 	protected UserFile save(String userId, MultipartFile file, FileUseType fileUseType) throws ApiException{
 		//TODO save id card should check allowed content type
@@ -85,13 +87,7 @@ public class FileUploadService {
 		return path;
 	}
 	
-	protected UserFileDto userFileToDto(UserFile userFile) {
-		UserFileDto dto = null;
-		if(userFile!=null){
-			dto = new UserFileDto(userFile.getFileId());			
-		}
-		return dto;
-	}
+	
 	
 	private Long generateFileId(){
 		return userFileMapper.selectNextFileId();

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.OrderDto;
-import com.ninelives.insurance.api.dto.OrderFilterDto;
+import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
@@ -118,7 +118,7 @@ public class TestController {
 		//orderFilter = new OrderFilterDto();
 		//orderFilter.setLimit(limit);
 		
-		OrderFilterDto orderFilter = GsonUtil.gson.fromJson(filter, OrderFilterDto.class);
+		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
 		return orderService.tesFetch(authUserId, orderFilter); 
 	}
@@ -134,7 +134,7 @@ public class TestController {
 		//orderFilter = new OrderFilterDto();
 		//orderFilter.setLimit(limit);
 		
-		OrderFilterDto orderFilter = GsonUtil.gson.fromJson(filter, OrderFilterDto.class);
+		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
 		return orderService.fetchOrderDtos(authUserId, orderFilter);
 	}
@@ -181,12 +181,40 @@ public class TestController {
 	@ResponseBody
 	public PolicyClaim<PolicyClaimDetailAccident> submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
 			@RequestBody AccidentClaimDto claimDto){
-		logger.debug("Terima /users PUT untuk authuser {} ", authUserId);
+		logger.debug("Terima /claims POST untuk authuser {} ", authUserId);
 		logger.debug("put data: {}", claimDto);
 		logger.debug("---");
 		
 		return claimService.submitAccidentalClaim(authUserId, claimDto);
 	}
+	
+	@RequestMapping(value="/test/claims",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public List<AccidentClaimDto> getClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
+			@RequestParam(value="filter",required=false) String filter){
+		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
+		logger.debug("param data: {}", filter);
+		logger.debug("---");
+		
+		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
+		
+		return claimService.fetchClaimDtos(authUserId, filterDto);
+	}
+	
+//	@RequestMapping(value="/test/claims",
+//			method={ RequestMethod.GET })
+//	@ResponseBody
+//	public List<PolicyClaim<PolicyClaimDetailAccident>> getClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
+//			@RequestParam(value="filter",required=false) String filter){
+//		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
+//		logger.debug("param data: {}", filter);
+//		logger.debug("---");
+//		
+//		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
+//		
+//		return claimService.fetchClaims(authUserId, filterDto);
+//	}
 	
 //	@RequestMapping(value="/claims",
 //			method=RequestMethod.GET)
