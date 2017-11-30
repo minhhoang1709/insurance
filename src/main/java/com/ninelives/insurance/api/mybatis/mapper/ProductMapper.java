@@ -11,6 +11,8 @@ import com.ninelives.insurance.api.model.Product;
 @Mapper
 public interface ProductMapper {
 		
-	List<Product> selectByStatusActive();
-	List<Product> selectByProductIds(@Param("productIds") Set<String> productIds);
+	Product selectByProductId(@Param("productId") String productId);
+	List<Product> select();
+	List<Product> selectByStatusActive();	
+	List<Product> selectByProductIds(@Param("productIds") Set<String> productIds);	
 }

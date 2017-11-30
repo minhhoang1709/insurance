@@ -1,9 +1,14 @@
 package com.ninelives.insurance.api.adapter;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,10 +37,13 @@ import com.ninelives.insurance.api.model.PolicyClaimDocument;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
 import com.ninelives.insurance.api.model.PolicyOrderUsers;
+import com.ninelives.insurance.api.model.Product;
 import com.ninelives.insurance.api.model.UserFile;
 
 @Component
 public class ModelMapperAdapter {
+	private static final Logger logger = LoggerFactory.getLogger(ModelMapperAdapter.class);
+	
 	//TODO: replace the hardcoded imgurl and title
 	@Value("${ninelives.order.policy-imgUrl}")
 	String policyImgUrl;
@@ -48,20 +56,22 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new OrderDto();
 			dto.setOrderId(m.getOrderId());
-			dto.setOrderDate(m.getOrderDate());
+			dto.setOrderDate(m.getOrderDate().atStartOfDay());
 			dto.setPolicyNumber(m.getPolicyNumber());
-			dto.setPolicyStartDate(m.getPolicyStartDate());
-			dto.setPolicyEndDate(m.getPolicyEndDate());
+			dto.setPolicyStartDate(m.getPolicyStartDate().atStartOfDay());
+			dto.setPolicyEndDate(m.getPolicyEndDate().atTime(LocalTime.MAX));
 			dto.setTotalPremi(m.getTotalPremi());
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setProductCount(m.getProductCount());
 			dto.setStatus(m.getStatus());
 			dto.setCreatedDate(m.getCreatedDate());
-			dto.setTitle(this.policyTitle);
-			dto.setImgUrl(this.policyImgUrl);
+			//dto.setTitle(this.policyTitle);
+			//dto.setImgUrl(this.policyImgUrl);
 			
 			PeriodDto periodDto = toDto(m.getPeriod()); 
 			dto.setPeriod(periodDto);
+			
+			dto.setCoverageCategory(toDto(m.getCoverageCategory()));
 			
 			if(!CollectionUtils.isEmpty(m.getPolicyOrderProducts())){
 				int rank = 99;
@@ -84,7 +94,7 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new AccidentClaimDto();
 			dto.setClaimId(m.getClaimId());
-			dto.setClaimDate(m.getCreatedDate());
+			dto.setClaimDate(m.getClaimDate().atStartOfDay());
 			dto.setAccidentSummary(m.getIncidentSummary());
 			dto.setStatus(m.getStatus());
 			dto.setAccidentAddress(toDto(m.getPolicyClaimDetail()));
@@ -113,7 +123,7 @@ public class ModelMapperAdapter {
 		CoverageCategoryDto dto = null;
 		if(m!=null){
 			dto = new CoverageCategoryDto();
-			//dto.setCoverageCategoryId(m.getCoverageCategoryId());
+			dto.setCoverageCategoryId(m.getCoverageCategoryId());
 			dto.setName(m.getName());
 			dto.setImageUrl(this.policyImgUrl);
 		}
@@ -200,22 +210,35 @@ public class ModelMapperAdapter {
 				covDto.setClaimDocTypes(docTypeDtos);
 			}
 			dto.setCoverage(covDto);
-		}
+		}				
 		return dto;
 	}
+	
 	public UserDto toDto(PolicyOrderUsers m, String userId){
 		UserDto dto = null;
 		if (m!=null){
 			dto = new UserDto();
 			dto.setUserId(userId);
 			dto.setName(m.getName());
-			dto.setBirthDate(m.getBirthDate());
+			dto.setBirthDate(m.getBirthDate().atStartOfDay());
 			dto.setBirthPlace(m.getBirthPlace());
 			dto.setEmail(m.getEmail());
 			dto.setGender(m.getGender());
 			dto.setIdCardFile(toUserFileDto(m.getIdCardFileId()));				
 			dto.setPhone(m.getPhone());
 			dto.setAddress(m.getAddress());						
+		}
+		return dto;
+	}
+	public ProductDto toDto(Product m){
+		ProductDto dto = null;
+		if(m!=null){
+			dto = new ProductDto();
+			dto.setProductId(m.getProductId());			
+			dto.setName(m.getName());
+			dto.setPremi(m.getPremi());
+			dto.setPeriod(toDto(m.getPeriod()));
+			dto.setCoverage(toDto(m.getCoverage()));
 		}
 		return dto;
 	}
@@ -234,6 +257,8 @@ public class ModelMapperAdapter {
 				for(ClaimDocType docType: m.getClaimDocTypes()){
 					docTypeDtos.add(toDto(docType));
 				}
+				dto.setClaimDocTypes(docTypeDtos);
+				//dto.setClaimDocTypes(m.getClaimDocTypes().stream().map(this::toDto).collect(Collectors.toList()));
 			}
 		}
 		return dto;

@@ -1,6 +1,6 @@
 package com.ninelives.insurance.api.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class CoverageCategory {
     private String coverageCategoryId;
@@ -9,9 +9,9 @@ public class CoverageCategory {
 
     private String description;
 
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    private Date updateDate;
+    private LocalDateTime updateDate;
 
     public String getCoverageCategoryId() {
         return coverageCategoryId;
@@ -37,19 +37,21 @@ public class CoverageCategory {
         this.description = description;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public Date getUpdateDate() {
-        return updateDate;
-    }
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.updateDate = updateDate;
+	}
+
+
 }

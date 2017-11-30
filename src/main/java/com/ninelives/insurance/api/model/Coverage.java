@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -18,9 +19,9 @@ public class Coverage {
 
     private Boolean hasBeneficiary;
 
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    private Date updateDate;
+    private LocalDateTime updateDate;
 
     private String status;
     
@@ -29,6 +30,8 @@ public class Coverage {
     private Boolean isRecommended;
     
     private List<ClaimDocType> claimDocTypes;
+    
+    private CoverageCategory coverageCategory;
 
     public String getCoverageId() {
         return coverageId;
@@ -86,19 +89,19 @@ public class Coverage {
         this.hasBeneficiary = hasBeneficiary;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getUpdateDate() {
+    public LocalDateTime getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(Date updateDate) {
+    public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
 
@@ -133,5 +136,31 @@ public class Coverage {
 	public void setClaimDocTypes(List<ClaimDocType> claimDocTypes) {
 		this.claimDocTypes = claimDocTypes;
 	}
-    
+
+	public CoverageCategory getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategory coverageCategory) {
+		this.coverageCategory = coverageCategory;
+	}
+
+	@Override
+	public String toString() {
+		return "Coverage [" + (coverageId != null ? "coverageId=" + coverageId + ", " : "")
+				+ (coverageCategoryId != null ? "coverageCategoryId=" + coverageCategoryId + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (recommendation != null ? "recommendation=" + recommendation + ", " : "")
+				+ (description != null ? "description=" + description + ", " : "")
+				+ (maxLimit != null ? "maxLimit=" + maxLimit + ", " : "")
+				+ (hasBeneficiary != null ? "hasBeneficiary=" + hasBeneficiary + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
+				+ (status != null ? "status=" + status + ", " : "") + "displayRank=" + displayRank + ", "
+				+ (isRecommended != null ? "isRecommended=" + isRecommended + ", " : "")
+				+ (claimDocTypes != null ? "claimDocTypes=" + claimDocTypes + ", " : "")
+				+ (coverageCategory != null ? "coverageCategory=" + coverageCategory : "") + "]";
+	}
+	
+	
 }

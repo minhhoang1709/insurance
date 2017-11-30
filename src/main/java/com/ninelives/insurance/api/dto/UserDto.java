@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -20,8 +21,8 @@ public class UserDto {
 
     private Gender gender;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate birthDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime birthDate;
 
     private String birthPlace;
 
@@ -67,11 +68,11 @@ public class UserDto {
 		this.gender = gender;
 	}
 
-	public LocalDate getBirthDate() {
+	public LocalDateTime getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(LocalDate birthDate) {
+	public void setBirthDate(LocalDateTime birthDate) {
 		this.birthDate = birthDate;
 	}
 

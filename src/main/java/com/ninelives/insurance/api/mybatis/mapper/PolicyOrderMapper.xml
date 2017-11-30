@@ -17,6 +17,10 @@
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <association property="period" resultMap="PeriodResultMap" />
+    <association property="coverageCategory" javaType="com.ninelives.insurance.api.model.CoverageCategory">
+    	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
+    </association>
     <collection property="policyOrderProducts" ofType="com.ninelives.insurance.api.model.PolicyOrderProduct">
     	<id column="order_product_id" jdbcType="BIGINT" property="orderProductId" />
 	    <result column="order_product_coverage_id" jdbcType="VARCHAR" property="coverageId" />
@@ -78,7 +82,8 @@
    	b.premi as order_product_premi,
    	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, 
    	d.display_rank as order_product_coverage_display_rank,
-   	f.claim_doc_type_id, f.name as claim_doc_type_name 
+   	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name,
+   	g.claim_doc_type_id, g.name as claim_doc_type_name   	
   </sql>
   
   <sql id="NestedPolicyOrderTableJoinList">
@@ -86,8 +91,9 @@
     inner join public.policy_order_product as b on b.order_id=a.order_id
     inner join public.period c on c.period_id=a.period_id
     inner join public.coverage d on  d.coverage_id = b.coverage_id
-    left outer join public.coverage_claim_doc_type e on e.coverage_id=d.coverage_id
-  	left outer join public.claim_doc_type f on f.claim_doc_type_id=e.claim_doc_type_id
+    inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
+    left outer join public.coverage_claim_doc_type f on f.coverage_id=d.coverage_id
+  	left outer join public.claim_doc_type g on g.claim_doc_type_id=f.claim_doc_type_id
   </sql>
   
   <!--   sql start -->

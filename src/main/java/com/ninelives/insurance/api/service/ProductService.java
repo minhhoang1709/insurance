@@ -5,35 +5,48 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.Coverage;
+import com.ninelives.insurance.api.model.CoverageCategory;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.Product;
 import com.ninelives.insurance.api.mybatis.mapper.ClaimDocTypeMapper;
+import com.ninelives.insurance.api.mybatis.mapper.CoverageCategoryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.CoverageMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PeriodMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
 
 @Service
 public class ProductService {
-	
+	private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+			
+	@Autowired CoverageCategoryMapper coverageCategoryMapper;
 	@Autowired CoverageMapper coverageMapper;
 	@Autowired PeriodMapper periodMapper;
-	@Autowired ProductMapper productMapper;
-	
+	@Autowired ProductMapper productMapper;		
 	@Autowired ClaimDocTypeMapper claimDocTypeMapper;
 	
-	public List<Product> fetchAllProduct(){
-		//test
-		return productMapper.selectByStatusActive();
+	@Autowired ModelMapperAdapter modelMapperAdapter;
+	
+	@Cacheable("ProductDtos")
+	public List<ProductDto> fetchProductDtosWithStatusActive(){
+		List<Product> products = fetchProductsWithStatusActive();
+		List<ProductDto> dtoList = new ArrayList<>();
+		for(Product p: products){
+			dtoList.add(modelMapperAdapter.toDto(p));
+		}
+		return dtoList;
 	}
 	
 	public List<Coverage> fetchAllCoverage(){
@@ -45,63 +58,28 @@ public class ProductService {
 		return productMapper.selectByProductIds(productIds);
 	}
 	
+	@Cacheable("CoverageCategory")
+	public CoverageCategory fetchCoverageCategoryByCoverageCategoryId(String coverageCategoryId){
+		return coverageCategoryMapper.selectByCoverageCategoryId(coverageCategoryId);
+	}
+	
 	@Cacheable("Coverage")
-	protected Coverage fetchCoverageByCoverageId(String coverageId){
+	public Coverage fetchCoverageByCoverageId(String coverageId){
 		return coverageMapper.selectByCoverageId(coverageId);
 	}
 	
-	@Cacheable("ClaimDocType")
-	protected ClaimDocType fetchClaimDocTypeByClaimDocTypeId(String claimDocTypeId){
-		return claimDocTypeMapper.selectByPrimaryKey(claimDocTypeId);
+	@Cacheable("Product")
+	public Product fetchProductByProductId(String productId){
+		return productMapper.selectByProductId(productId);
 	}
 	
-	
-	@Cacheable("ProductDtosAll")
-	public List<ProductDto> fetchActiveProductDtos(){
-		List<Product> products = productMapper.selectByStatusActive();
-		
-		List<ProductDto> dtoList = new ArrayList<>();
-		for(Product p: products){
-			ProductDto productDto = new ProductDto();
-			productDto.setProductId(p.getProductId());			
-			productDto.setName(p.getName());
-			productDto.setPremi(p.getPremi());
-			
-			if(p.getCoverage()!=null){
-				CoverageDto coverageDto = new CoverageDto();
-				coverageDto.setCoverageId(p.getCoverageId());
-				coverageDto.setName(p.getCoverage().getName());
-				coverageDto.setRecommendation(p.getCoverage().getRecommendation());
-				coverageDto.setIsRecommended(p.getCoverage().getIsRecommended());
-				coverageDto.setHasBeneficiary(p.getCoverage().getHasBeneficiary());
-				coverageDto.setMaxLimit(p.getCoverage().getMaxLimit());
-				
-				if(!CollectionUtils.isEmpty(p.getCoverage().getClaimDocTypes())){
-					List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
-					for(ClaimDocType docType: p.getCoverage().getClaimDocTypes()){
-						ClaimDocTypeDto docTypeDto = new ClaimDocTypeDto();
-						docTypeDto.setClaimDocTypeId(docType.getClaimDocTypeId());
-						docTypeDto.setName(docType.getName());
-						docTypeDtos.add(docTypeDto);
-					}
-					coverageDto.setClaimDocTypes(docTypeDtos);
-				}
-				
-				productDto.setCoverage(coverageDto);
-			}
-			
-			if(p.getPeriod()!=null){
-				PeriodDto periodDto = new PeriodDto();
-				periodDto.setPeriodId(p.getPeriodId());
-				periodDto.setName(p.getPeriod().getName());
-				periodDto.setUnit(p.getPeriod().getUnit());
-				periodDto.setValue(p.getPeriod().getValue());
-				productDto.setPeriod(periodDto);
-			}
+	@Cacheable("ClaimDocType")
+	public ClaimDocType fetchClaimDocTypeByClaimDocTypeId(String claimDocTypeId){
+		return claimDocTypeMapper.selectByClaimDocTypeId(claimDocTypeId);
+	}
 
-			dtoList.add(productDto);
-		}
-		return dtoList;
+	public List<Product> fetchProductsWithStatusActive(){
+		return productMapper.selectByStatusActive();
 	}
 	
 	@Cacheable("CoverageDtosAll")

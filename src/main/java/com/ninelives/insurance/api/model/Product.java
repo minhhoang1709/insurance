@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Product {
@@ -15,9 +16,9 @@ public class Product {
 
     private String status;
 
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    private Date updateDate;
+    private LocalDateTime updateDate;
     
     private Period period;
     
@@ -71,19 +72,19 @@ public class Product {
         this.status = status;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getUpdateDate() {
+    public LocalDateTime getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(Date updateDate) {
+    public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
 
@@ -101,6 +102,18 @@ public class Product {
 
 	public void setCoverage(Coverage coverage) {
 		this.coverage = coverage;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [" + (productId != null ? "productId=" + productId + ", " : "")
+				+ (coverageId != null ? "coverageId=" + coverageId + ", " : "")
+				+ (periodId != null ? "periodId=" + periodId + ", " : "") + (name != null ? "name=" + name + ", " : "")
+				+ (premi != null ? "premi=" + premi + ", " : "") + (status != null ? "status=" + status + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
+				+ (period != null ? "period=" + period + ", " : "") + (coverage != null ? "coverage=" + coverage : "")
+				+ "]";
 	}
     
 }

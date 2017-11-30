@@ -21,6 +21,7 @@ import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.model.CoverageCategory;
 import com.ninelives.insurance.api.model.PolicyClaim;
 import com.ninelives.insurance.api.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.api.model.PolicyOrder;
@@ -33,6 +34,7 @@ import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.ClaimService;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
+import com.ninelives.insurance.api.service.TestService;
 import com.ninelives.insurance.api.service.UserService;
 import com.ninelives.insurance.api.util.GsonUtil;
 
@@ -44,6 +46,7 @@ public class TestController {
 	@Autowired ProductService productService;
 	@Autowired OrderService orderService;
 	@Autowired ClaimService claimService;
+	@Autowired TestService testService;
 	
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
@@ -51,14 +54,11 @@ public class TestController {
 	@Autowired UserService userService;
 	@Autowired UserMapper userMapper;
 	
-	
-	
 	@Value("${ninelives.order.list-limmit:50}")
 	int defaultFilterLimit;
 	
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
-
 	
 	@RequestMapping("/test/error/generic")
 	public String errorGeneric() throws Exception{
@@ -73,11 +73,24 @@ public class TestController {
 		//return "ok";
 	}
 	
-	@RequestMapping("/test/product")
+	@RequestMapping("/test/products")
 	@ResponseBody
-	public List<Product> getproduct(){
-		return productService.fetchAllProduct();
+	public List<Product> getProductActive(){
+		return testService.fetchProductsWithStatusActive();
 	}
+	
+	@RequestMapping("/test/products/{productId}")
+	@ResponseBody
+	public Product getProductById(@PathVariable("productId") String productId){
+		return testService.fetchProduct(productId);
+	}
+	
+//	@RequestMapping(value="/test/products",
+//			method={ RequestMethod.GET })
+//	@ResponseBody
+//	public List<Product> getProducts(@RequestAttribute ("authUserId") String authUserId){
+//		return testService.fetchProducts();
+//	}
 	
 //	@RequestMapping("/test/product/bylist")
 //	@ResponseBody
@@ -201,6 +214,22 @@ public class TestController {
 		
 		return claimService.fetchClaimDtos(authUserId, filterDto);
 	}
+	
+	@RequestMapping(value="/test/covcat",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public CoverageCategory getCoverageCategory(@RequestAttribute ("authUserId") String authUserId){
+		logger.debug("Terima GET untuk authuser {} ", authUserId);
+		//logger.debug("param data: {}", filter);
+		logger.debug("---");
+		
+		//FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
+		
+		return testService.fetchCoverageCategoryByCoverageCategoryId("101");
+	}
+	
+
+	
 	
 //	@RequestMapping(value="/test/claims",
 //			method={ RequestMethod.GET })

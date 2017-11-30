@@ -273,13 +273,13 @@ public class OrderService {
 		}
 		
 		LocalDate limitPolicyStartDate = today.plusDays(this.policyStartDatePeriod);
-		if(submitOrderDto.getPolicyStartDate().isAfter(limitPolicyStartDate)){
+		if(submitOrderDto.getPolicyStartDate().toLocalDate().isAfter(limitPolicyStartDate)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, this.policyStartDatePeriod);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
 							+ limitPolicyStartDate.format(formatter));			
 		}
-		if(submitOrderDto.getPolicyStartDate().isBefore(today)){
+		if(submitOrderDto.getPolicyStartDate().toLocalDate().isBefore(today)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date before today {}", userId, submitOrderDto, this.policyStartDatePeriod);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
@@ -322,10 +322,10 @@ public class OrderService {
 			throw new ApiBadRequestException(ErrorCode.ERR4008_ORDER_PRODUCT_UNSUPPORTED, "Permintaan tidak dapat diproses");
 		}
 		
-		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().plusDays(products.get(0).getPeriod().getValue()-1);
+		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
 		LocalDate dueOrderDate = today.minusDays(policyDueDatePeriod);
 		
-		boolean isOverLimit = isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
+		boolean isOverLimit = isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
 		if(isOverLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
@@ -353,7 +353,7 @@ public class OrderService {
 				newUserProfile.setUserId(userId);;
 				newUserProfile.setName(submitOrderDto.getUser().getName());
 				newUserProfile.setGender(submitOrderDto.getUser().getGender());
-				newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate());
+				newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate().toLocalDate());
 				newUserProfile.setBirthPlace(submitOrderDto.getUser().getBirthPlace());
 				newUserProfile.setPhone(submitOrderDto.getUser().getPhone());
 				
@@ -382,7 +382,7 @@ public class OrderService {
 			policyOrder.setCoverageCategoryId(coverageCategoryId);
 			policyOrder.setHasBeneficiary(hasBeneficiary);
 			policyOrder.setPeriodId(periodId);
-			policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate());
+			policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate().toLocalDate());
 			policyOrder.setPolicyEndDate(policyEndDate);
 			policyOrder.setTotalPremi(calculatedTotalPremi);
 			policyOrder.setProductCount(products.size());
@@ -664,11 +664,11 @@ public class OrderService {
 		}
 		
 		LocalDate dueOrderDate = LocalDate.now().minusDays(policyDueDatePeriod);
-		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().plusDays(products.get(0).getPeriod().getValue()-1);
+		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
 		
 		logger.debug("trx with order-date {} is due today", dueOrderDate);
 		logger.debug("check conflict {} {} {} {}",userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate);
-		List<PolicyOrderCoverage> checklist = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
+		List<PolicyOrderCoverage> checklist = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
 		for(PolicyOrderCoverage item: checklist){
 			logger.debug("Test item {}", item);
 		}

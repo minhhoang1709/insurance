@@ -52,4 +52,14 @@ public class ClaimDocType {
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	@Override
+	public String toString() {
+		return "ClaimDocType [" + (claimDocTypeId != null ? "claimDocTypeId=" + claimDocTypeId + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (description != null ? "description=" + description + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate : "") + "]";
+	}
+    
 }

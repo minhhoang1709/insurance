@@ -1,19 +1,19 @@
 package com.ninelives.insurance.api.dto;
 
 public class CoverageCategoryDto {
-	//private String coverageCategoryId;
+	private String coverageCategoryId;
 
     private String name;
     
     private String imageUrl;
 
-//	public String getCoverageCategoryId() {
-//		return coverageCategoryId;
-//	}
-//
-//	public void setCoverageCategoryId(String coverageCategoryId) {
-//		this.coverageCategoryId = coverageCategoryId;
-//	}
+	public String getCoverageCategoryId() {
+		return coverageCategoryId;
+	}
+
+	public void setCoverageCategoryId(String coverageCategoryId) {
+		this.coverageCategoryId = coverageCategoryId;
+	}
 
 	public String getName() {
 		return name;

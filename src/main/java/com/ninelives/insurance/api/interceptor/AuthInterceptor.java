@@ -2,6 +2,7 @@ package com.ninelives.insurance.api.interceptor;
 
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	
 	private static final String HEADER_AUTHENTICATION = "Authorization";
 	
+	Pattern paymentUrlPattern = Pattern.compile("/payment/.*");
+	
 	@Autowired AuthService authService;
 	
 	@Override
@@ -45,8 +48,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 
 		if(StringUtils.isEmpty(tokenId)){
 			//allow POST to user without authentication
-			if ((request.getRequestURI().equals("/users") || request.getRequestURI().equals("/payment/charge"))
+			if ((request.getRequestURI().equals("/users") || request.getRequestURI().equals("/payment/charge") || request.getRequestURI().equals("/charge"))
 					&& request.getMethod().equals(HttpMethod.POST.toString())) {
+				return true;
+			}else if(paymentUrlPattern.matcher(request.getRequestURI()).matches()){
 				return true;
 			}else{
 				throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");

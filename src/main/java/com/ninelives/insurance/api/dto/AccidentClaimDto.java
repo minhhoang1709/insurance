@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import com.ninelives.insurance.api.ref.ClaimStatus;
 public class AccidentClaimDto {
 	private String claimId;
 
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime claimDate;
 
@@ -122,5 +124,18 @@ public class AccidentClaimDto {
 		this.status = status;
 	}
 
-    
+	@Override
+	public String toString() {
+		return "AccidentClaimDto [" + (claimId != null ? "claimId=" + claimId + ", " : "")
+				+ (claimDate != null ? "claimDate=" + claimDate + ", " : "")
+				+ (accidentDate != null ? "accidentDate=" + accidentDate + ", " : "")
+				+ (accidentSummary != null ? "accidentSummary=" + accidentSummary + ", " : "")
+				+ (accidentAddress != null ? "accidentAddress=" + accidentAddress + ", " : "")
+				+ (claimCoverages != null ? "claimCoverages=" + claimCoverages + ", " : "")
+				+ (claimBankAccount != null ? "claimBankAccount=" + claimBankAccount + ", " : "")
+				+ (claimDocuments != null ? "claimDocuments=" + claimDocuments + ", " : "")
+				+ (coverageCategory != null ? "coverageCategory=" + coverageCategory + ", " : "")
+				+ (order != null ? "order=" + order + ", " : "") + (status != null ? "status=" + status : "") + "]";
+	}
+
 }

@@ -34,46 +34,8 @@ public class ProductController {
 	@RequestMapping(value="/products",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public List<ProductDto> getProducts( @RequestBody(required=false) Map<String, String> requestData, HttpServletResponse response){
-		
-//		List<Product> products = productService.fetchAllProduct();
-//		List<Coverage> coverages = productService.fetchAllCoverage();
-//		//List<Period> periods = productService.fetchAllPeriod();
-//		
-//		Map<String,CoverageDto> covMap = new HashMap<>();
-//		for(Coverage c: coverages){
-//			CoverageDto dto = new CoverageDto();
-//			dto.setCoverageId(c.getCoverageId());
-//			dto.setName(c.getName());
-//			dto.setRecommendation(c.getRecommendation());
-//			dto.setHasBeneficiary(c.getHasBeneficiary());
-//			dto.setMaxLimit(c.getMaxLimit());
-//			covMap.put(dto.getCoverageId(), dto);
-//		}
-//		
-////		Map<String,PeriodDto> perMap = new HashMap<>();
-////		for(Period c: periods) {
-////			PeriodDto dto = new PeriodDto();
-////			dto.setPeriodId(c.getPeriodId());
-////			dto.setName(c.getName());
-////			dto.setValue(c.getValue());
-////			dto.setUnit(c.getUnit());
-////			perMap.put(c.getPeriodId(), dto);
-////		}
-////		
-//		List<ProductDto> productDtos = new ArrayList<>();
-//		
-//		for(Product p: products){
-//			ProductDto productDto = new ProductDto();
-//			productDto.setProductId(p.getProductId());			
-//			productDto.setName(p.getName());
-//			productDto.setPremi(p.getPremi());
-//			productDto.setCoverage(covMap.get(p.getCoverageId()));
-//			//productDto.setPeriod(perMap.get(p.getPeriodId()));
-//			productDtos.add(productDto);
-//		}
-		
-		return productService.fetchActiveProductDtos();
+	public List<ProductDto> getProducts( HttpServletResponse response){
+		return productService.fetchProductDtosWithStatusActive();
 	}
 	
 	@RequestMapping(value="/coverages",

@@ -35,6 +35,8 @@ public class PolicyOrder {
 
     private LocalDateTime updateDate;
         
+    private CoverageCategory coverageCategory;
+    
     private PolicyOrderUsers policyOrderUsers;
     
     private List<PolicyOrderProduct> policyOrderProducts;
@@ -153,6 +155,14 @@ public class PolicyOrder {
 
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
+	}
+	
+	public CoverageCategory getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategory coverageCategory) {
+		this.coverageCategory = coverageCategory;
 	}
 
 	public PolicyOrderUsers getPolicyOrderUsers() {

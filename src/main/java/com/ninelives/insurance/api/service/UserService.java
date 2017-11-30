@@ -114,7 +114,7 @@ public class UserService {
 		UserDto userDto = new UserDto();
 		userDto.setUserId(user.getUserId());
 		userDto.setName(user.getName());
-		userDto.setBirthDate(user.getBirthDate());
+		userDto.setBirthDate(user.getBirthDate().atStartOfDay());
 		userDto.setBirthPlace(user.getBirthPlace());
 		userDto.setEmail(user.getEmail());
 		userDto.setGender(user.getGender());

@@ -13,5 +13,5 @@ public interface ClaimDocTypeMapper {
         "from public.claim_doc_type",
         "where claim_doc_type_id = #{claimDocTypeId,jdbcType=VARCHAR}"
     })
-    ClaimDocType selectByPrimaryKey(String claimDocTypeId);  
+    ClaimDocType selectByClaimDocTypeId(String claimDocTypeId);  
 }

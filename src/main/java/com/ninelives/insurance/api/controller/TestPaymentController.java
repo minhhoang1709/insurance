@@ -71,6 +71,48 @@ public class TestPaymentController {
 		return respBody;
 	}
 	
+	@RequestMapping(value="/charge", 
+			method=RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	@ResponseBody
+	public String charge2(HttpServletRequest request, 
+			@RequestHeader(required=false) Map<String,String> headers, 
+			@RequestParam(required=false) Map<String,String> requestParams, 
+			@RequestBody(required=false) String requestBody){
+		logger.info("---");
+		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
+		logger.info("Body {} ", requestBody);
+		if( headers!=null&&headers.size()>0 ){
+			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
+		}
+		if( requestParams!=null&&requestParams.size()>0 ){
+			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+		}
+		
+		RestTemplate template = new RestTemplate();
+		HttpHeaders restHeader = new HttpHeaders();
+		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		restHeader.setContentType(MediaType.APPLICATION_JSON);
+		restHeader.set("Authorization", "Basic U0ItTWlkLXNlcnZlci1kcF9JVFlVY3hCMGlRMWh0T0xRXzJLWjM6");
+		HttpEntity<String> entity = new HttpEntity<>(requestBody, restHeader);
+		
+		ResponseEntity<String> resp = null;
+		resp = template.exchange("https://app.sandbox.midtrans.com/snap/v1/transactions", HttpMethod.POST, entity, String.class);
+		
+		String respBody = null;
+		if(resp!=null){
+			respBody = resp.getBody();
+			String respHeader = resp.getHeaders().toString();
+			String respStatus = resp.getStatusCode().toString();			
+			logger.info("Call to restteamplate {} with result {}", entity.toString(), resp.toString());
+			
+		}else{
+			logger.info("Call to restteamplate {} with result null", entity.toString());
+		}
+		
+		return respBody;
+	}
+	
 	@RequestMapping(value="/payment/notification", 
 			method=RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)

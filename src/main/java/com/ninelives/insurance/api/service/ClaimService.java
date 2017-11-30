@@ -4,13 +4,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +19,19 @@ import org.springframework.util.StringUtils;
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.ClaimCoverageDto;
-import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
 import com.ninelives.insurance.api.dto.FilterDto;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.model.PolicyClaim;
 import com.ninelives.insurance.api.model.PolicyClaimBankAccount;
 import com.ninelives.insurance.api.model.PolicyClaimCoverage;
 import com.ninelives.insurance.api.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.api.model.PolicyClaimDocument;
+import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyClaimMapper;
 import com.ninelives.insurance.api.ref.ClaimCoverageStatus;
 import com.ninelives.insurance.api.ref.ClaimStatus;
-import com.ninelives.insurance.api.ref.OrderDtoFilterStatus;
-import com.ninelives.insurance.api.ref.PolicyStatus;
+import com.ninelives.insurance.api.ref.ErrorCode;
 import com.ninelives.insurance.api.service.trx.PolicyClaimTrxService;
 
 @Service
@@ -162,12 +160,30 @@ public class ClaimService {
 		return policyClaims;
 	}
 	
+//	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiBadRequestException{
+//		//check that order is exists and valid
+//		//check that the coverage is same like order
+//		//check that the document is complete? and file status is uploaded
+//		//check current outstanding claim
+//		//check field is ok for address? or check for non-empty only
+//		//check field is ok for bank account? or check for non-empty only
+//		//
+//		logger.debug("Process isvalidationonly {} claim for {} with claim {}", isValidateOnly, userId, claimDto);
+//		
+//		LocalDate today = LocalDate.now();
+//		
+//		if(claimDto==null || claimDto.getOrder() == null || StringUtils.isEmpty(claimDto.getOrder().getOrderId())){
+//			throw new ApiBadRequestException(ErrorCode.ERR7000_CLAIM_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali data klaim");
+//		}
+//		
+//		PolicyOrder order = orderService.fetchOrderByOrderId(userId, claimDto.getOrder().getOrderId());
+//	}
 	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto){
 		//check if coverage require such doctype
 		
 		LocalDate today = LocalDate.now();
 		
-		PolicyClaim<PolicyClaimDetailAccident>  claim = new PolicyClaim<>();
+		PolicyClaim<PolicyClaimDetailAccident> claim = new PolicyClaim<>();
 		claim.setCoverageCategoryId("101"); //TODO: remove hardcoded
 		claim.setClaimId(generateClaimId());
 		claim.setOrderId(claimDto.getOrder().getOrderId());
@@ -203,8 +219,7 @@ public class ClaimService {
 			doc.setFileId(c.getFile().getFileId());
 			claimDocs.add(doc);
 		}
-		claim.setPolicyClaimDocuments(claimDocs);
-		
+		claim.setPolicyClaimDocuments(claimDocs);		
 		
 		List<PolicyClaimCoverage> claimCovs = new ArrayList<>();
 		for(ClaimCoverageDto c: claimDto.getClaimCoverages()){

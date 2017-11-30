@@ -12,8 +12,8 @@ import com.ninelives.insurance.api.ref.PolicyStatus;
 public class OrderDto {
 	private String orderId;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate orderDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime orderDate;
     
     private String title;
     
@@ -23,11 +23,11 @@ public class OrderDto {
 
     private String policyNumber;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate policyStartDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime policyStartDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate policyEndDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime policyEndDate;
 
     private Integer totalPremi;
 
@@ -42,6 +42,8 @@ public class OrderDto {
 
     private List<ProductDto> products;
 
+    private CoverageCategoryDto coverageCategory;
+    
     private PeriodDto period;
     
     private UserDto user;
@@ -54,11 +56,11 @@ public class OrderDto {
 		this.orderId = orderId;
 	}
 
-	public LocalDate getOrderDate() {
+	public LocalDateTime getOrderDate() {
 		return orderDate;
 	}
 
-	public void setOrderDate(LocalDate orderDate) {
+	public void setOrderDate(LocalDateTime orderDate) {
 		this.orderDate = orderDate;
 	}
 
@@ -94,19 +96,19 @@ public class OrderDto {
 		this.policyNumber = policyNumber;
 	}
 
-	public LocalDate getPolicyStartDate() {
+	public LocalDateTime getPolicyStartDate() {
 		return policyStartDate;
 	}
 
-	public void setPolicyStartDate(LocalDate policyStartDate) {
+	public void setPolicyStartDate(LocalDateTime policyStartDate) {
 		this.policyStartDate = policyStartDate;
 	}
 
-	public LocalDate getPolicyEndDate() {
+	public LocalDateTime getPolicyEndDate() {
 		return policyEndDate;
 	}
 
-	public void setPolicyEndDate(LocalDate policyEndDate) {
+	public void setPolicyEndDate(LocalDateTime policyEndDate) {
 		this.policyEndDate = policyEndDate;
 	}
 
@@ -164,6 +166,14 @@ public class OrderDto {
 
 	public void setPeriod(PeriodDto period) {
 		this.period = period;
+	}
+
+	public CoverageCategoryDto getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategoryDto coverageCategory) {
+		this.coverageCategory = coverageCategory;
 	}
 
 	public UserDto getUser() {
