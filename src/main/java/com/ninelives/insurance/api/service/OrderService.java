@@ -287,7 +287,8 @@ public class OrderService {
 			
 		}
 		
-		List<Product> products = productService.fetchProductByProductIds(productIdSet);
+		List<Product> products = productIdSet.stream().map(productService::fetchProductByProductId).collect(Collectors.toList());
+		//List<Product> products = productService.fetchProductByProductIds(productIdSet);
 		if(products.isEmpty() || products.size()!=submitOrderDto.getProducts().size()){
 			logger.debug("Process order for {} with order {} with result: exception product not found", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4003_ORDER_PRODUCT_NOTFOUND, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");

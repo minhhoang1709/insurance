@@ -59,14 +59,19 @@ public class ProductService {
 		return dtoList;
 	}	
 	
-//	public List<Coverage> fetchAllCoverage(){
-//		//test
-//		return coverageMapper.selectByStatusActive();
-//	}
-	
-	public List<Product> fetchProductByProductIds(Set<String> productIds){
-		return productMapper.selectByProductIds(productIds);
+	@Cacheable("PeriodDtos")
+	public List<PeriodDto> fetchActivePeriodDtos(){
+		List<Period> periods = periodMapper.selectByStatusActive();
+		List<PeriodDto> dtoList = new ArrayList<>();
+		for(Period c: periods) {			
+			dtoList.add(modelMapperAdapter.toDto(c));
+		}
+		return dtoList;
 	}
+	
+//	public List<Product> fetchProductByProductIds(Set<String> productIds){
+//		return productMapper.selectByProductIds(productIds);
+//	}
 	
 	@Cacheable("CoverageCategory")
 	public CoverageCategory fetchCoverageCategoryByCoverageCategoryId(String coverageCategoryId){
@@ -80,6 +85,7 @@ public class ProductService {
 	
 	@Cacheable("Product")
 	public Product fetchProductByProductId(String productId){
+		logger.debug("PANGGIL product {}",productId);
 		return productMapper.selectByProductId(productId);
 	}
 	
@@ -94,25 +100,7 @@ public class ProductService {
 	
 	public List<Coverage> fetchCoveragesWithStatusActive(){
 		return coverageMapper.selectByStatusActive();
-	}
-	
-	
-	
-	@Cacheable("PeriodDtosAll")
-	public List<PeriodDto> fetchActivePeriodDtos(){
-		List<Period> periods = periodMapper.selectByStatusActive();
-
-		List<PeriodDto> dtoList = new ArrayList<>();
-		for(Period c: periods) {
-			PeriodDto dto = new PeriodDto();
-			dto.setPeriodId(c.getPeriodId());
-			dto.setName(c.getName());
-			dto.setValue(c.getValue());
-			dto.setUnit(c.getUnit());
-			dtoList.add(dto);
-		}
-		return dtoList;
-	}
+	}	
 	
 	public List<Period> fetchAllPeriod(){
 		return periodMapper.selectByStatusActive();
