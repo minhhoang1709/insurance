@@ -18,18 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
-import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
-import com.ninelives.insurance.api.dto.CoverageDto;
-import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.FilterDto;
-import com.ninelives.insurance.api.dto.PeriodDto;
+import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
-import com.ninelives.insurance.api.dto.UserDto;
-import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderBeneficiary;
@@ -381,6 +375,7 @@ public class OrderService {
 			policyOrder.setOrderDate(today);
 			policyOrder.setUserId(userId);
 			policyOrder.setCoverageCategoryId(coverageCategoryId);
+			policyOrder.setCoverageCategory(productService.fetchCoverageCategoryByCoverageCategoryId(coverageCategoryId));
 			policyOrder.setHasBeneficiary(hasBeneficiary);
 			policyOrder.setPeriodId(periodId);
 			policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate().toLocalDate());
@@ -655,26 +650,27 @@ public class OrderService {
 	}
 	
 	
-	//TODO remove test
-	public List<PolicyOrderCoverage> testConflict(String userId, final OrderDto submitOrderDto){
-		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
-		List<Product> products = productService.fetchProductByProductIds(productIdSet);
-		List<String> coverageIds = new ArrayList<>();
-		for(Product p: products){			
-			coverageIds.add(p.getCoverageId());
-		}
-		
-		LocalDate dueOrderDate = LocalDate.now().minusDays(policyDueDatePeriod);
-		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
-		
-		logger.debug("trx with order-date {} is due today", dueOrderDate);
-		logger.debug("check conflict {} {} {} {}",userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate);
-		List<PolicyOrderCoverage> checklist = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
-		for(PolicyOrderCoverage item: checklist){
-			logger.debug("Test item {}", item);
-		}
-		return checklist;
-	}
+//	//TODO remove test
+//	public List<PolicyOrderCoverage> testConflict(String userId, final OrderDto submitOrderDto){
+//		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
+//		List<Product> products = productService.fetchProductByProductIds(productIdSet);
+//		List<String> coverageIds = new ArrayList<>();
+//		for(Product p: products){			
+//			coverageIds.add(p.getCoverageId());
+//		}
+//		
+//		LocalDate dueOrderDate = LocalDate.now().minusDays(policyDueDatePeriod);
+//		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
+//		
+//		logger.debug("trx with order-date {} is due today", dueOrderDate);
+//		logger.debug("check conflict {} {} {} {}",userId, submitOrderDto.getPolicyStartDate(), policyEndDate, dueOrderDate);
+//		List<PolicyOrderCoverage> checklist = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
+//		for(PolicyOrderCoverage item: checklist){
+//			logger.debug("Test item {}", item);
+//		}
+//		return checklist;
+//	}
+	
 	//TODO remove test
 	public List<PolicyOrder> tesFetch(String userId, final FilterDto filter){
 		int offset = this.defaultOrdersFilterOffset;

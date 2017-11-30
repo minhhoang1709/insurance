@@ -163,12 +163,12 @@ public class TestController {
 		return policyOrderMapper.selectByUserIdAndOrderId(authUserId, orderId);
 	}
 	
-	@RequestMapping("/test/conflictorder")
-	@ResponseBody
-	public List conflictOrder(@RequestAttribute("authUserId") String authUserId, @RequestBody(required=false) OrderDto submitOrder) throws ApiException{	
-		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-		return orderService.testConflict(authUserId, submitOrder);
-	}
+//	@RequestMapping("/test/conflictorder")
+//	@ResponseBody
+//	public List conflictOrder(@RequestAttribute("authUserId") String authUserId, @RequestBody(required=false) OrderDto submitOrder) throws ApiException{	
+//		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
+//		return orderService.testConflict(authUserId, submitOrder);
+//	}
 	
 	@RequestMapping(value="/test/user/{userId}", method=RequestMethod.GET)
 	@ResponseBody

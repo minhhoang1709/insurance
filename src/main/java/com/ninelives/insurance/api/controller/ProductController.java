@@ -1,7 +1,5 @@
 package com.ninelives.insurance.api.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
-import com.ninelives.insurance.api.model.Coverage;
-import com.ninelives.insurance.api.model.Period;
-import com.ninelives.insurance.api.model.Product;
-import com.ninelives.insurance.api.model.User;
 import com.ninelives.insurance.api.service.ProductService;
 
 @Controller
@@ -48,7 +42,7 @@ public class ProductController {
 	@RequestMapping(value="/periods",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public List<PeriodDto> getPeriods( @RequestBody(required=false) Map<String, String> requestData, HttpServletResponse response){		
-		return productService.fetchActivePeriodDtos();				
+	public List<PeriodDto> getPeriods(){		
+		return productService.fetchPeriodDtosWithStatusActive();				
 	}
 }

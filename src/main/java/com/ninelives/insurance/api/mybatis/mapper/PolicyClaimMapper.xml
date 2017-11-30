@@ -32,20 +32,23 @@
 	    <result column="account_number" jdbcType="VARCHAR" property="accountNumber" />	 
     </association>
     <association property="policyOrder" javaType="com.ninelives.insurance.api.model.PolicyOrder">
-    	<id column="po_order_id" jdbcType="VARCHAR" property="orderId" />
-    	<result column="po_order_date" jdbcType="DATE" property="orderDate" />
-	    <result column="po_user_id" jdbcType="VARCHAR" property="userId" />
-	    <result column="po_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
-	    <result column="po_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
-	    <result column="po_period_id" jdbcType="VARCHAR" property="periodId" />
-	    <result column="po_policy_number" jdbcType="VARCHAR" property="policyNumber" />
-	    <result column="po_policy_start_date" jdbcType="DATE" property="policyStartDate" />
-	    <result column="po_policy_end_date" jdbcType="DATE" property="policyEndDate" />
-	    <result column="po_total_premi" jdbcType="INTEGER" property="totalPremi" />
-	    <result column="po_product_count" jdbcType="INTEGER" property="productCount" />
-	    <result column="po_status" jdbcType="VARCHAR" property="status" />
-	    <result column="po_created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    	<id column="order_id" jdbcType="VARCHAR" property="orderId" />
     </association>
+<!--     <association property="policyOrder" javaType="com.ninelives.insurance.api.model.PolicyOrder"> -->
+<!--     	<id column="po_order_id" jdbcType="VARCHAR" property="orderId" /> -->
+<!--     	<result column="po_order_date" jdbcType="DATE" property="orderDate" /> -->
+<!-- 	    <result column="po_user_id" jdbcType="VARCHAR" property="userId" /> -->
+<!-- 	    <result column="po_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" /> -->
+<!-- 	    <result column="po_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" /> -->
+<!-- 	    <result column="po_period_id" jdbcType="VARCHAR" property="periodId" /> -->
+<!-- 	    <result column="po_policy_number" jdbcType="VARCHAR" property="policyNumber" /> -->
+<!-- 	    <result column="po_policy_start_date" jdbcType="DATE" property="policyStartDate" /> -->
+<!-- 	    <result column="po_policy_end_date" jdbcType="DATE" property="policyEndDate" /> -->
+<!-- 	    <result column="po_total_premi" jdbcType="INTEGER" property="totalPremi" /> -->
+<!-- 	    <result column="po_product_count" jdbcType="INTEGER" property="productCount" /> -->
+<!-- 	    <result column="po_status" jdbcType="VARCHAR" property="status" /> -->
+<!-- 	    <result column="po_created_date" jdbcType="TIMESTAMP" property="createdDate" /> -->
+<!--     </association> -->
     <collection property="policyClaimDocuments" ofType="com.ninelives.insurance.api.model.PolicyClaimDocument">
     	<id column="claim_document_id" jdbcType="BIGINT" property="claimDocumentId" />
 	    <result column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
@@ -75,12 +78,6 @@
     d.claim_document_id, d.claim_doc_type_id, d.file_id as claim_file_id,
     e.claim_doc_type_id, e.name as claim_doc_type_name,
     f.claim_coverage_id, f.coverage_id, f.status as claim_coverage_status,
-    g.order_id as po_order_id, g.order_date as po_order_date, g.user_id as po_user_id, 
-    g.coverage_category_id as po_coverage_category_id, g.has_beneficiary as po_has_beneficiary, 
-    g.period_id as po_period_id, g.policy_number as po_policy_number, 
-    g.policy_start_date as po_policy_start_date, g.policy_end_date as po_policy_end_date, 
-    g.total_premi as po_total_premi, g.product_count as po_product_count, g.status as po_status, 
-    g.created_date as po_created_date,
     h.coverage_category_id as covcat_coverage_category_id, h.name as covcat_name
   </sql>
   <sql id="NestedPolicyClaimTableJoinList">
@@ -90,9 +87,18 @@
     left join public.policy_claim_document d on d.claim_id=a.claim_id
     left join public.claim_doc_type e on e.claim_doc_type_id=d.claim_doc_type_id
     left join public.policy_claim_coverage f on f.claim_id=a.claim_id
-    left join public.policy_order g on g.order_id=a.order_id
     left join public.coverage_category h on h.coverage_category_id=a.coverage_category_id
   </sql>
+  
+<!--     
+	left join public.policy_order g on g.order_id=a.order_id
+    
+	g.order_id as po_order_id, g.order_date as po_order_date, g.user_id as po_user_id, 
+    g.coverage_category_id as po_coverage_category_id, g.has_beneficiary as po_has_beneficiary, 
+    g.period_id as po_period_id, g.policy_number as po_policy_number, 
+    g.policy_start_date as po_policy_start_date, g.policy_end_date as po_policy_end_date, 
+    g.total_premi as po_total_premi, g.product_count as po_product_count, g.status as po_status, 
+    g.created_date as po_created_date, -->
   
   <!--   sql start -->
   <select id="selectByUserIdAndClaimId" resultMap="NestedPolicyClaimResultMap">

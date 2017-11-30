@@ -1,10 +1,8 @@
 package com.ninelives.insurance.api.adapter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -56,10 +54,10 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new OrderDto();
 			dto.setOrderId(m.getOrderId());
-			dto.setOrderDate(m.getOrderDate().atStartOfDay());
+			dto.setOrderDate(m.getOrderDate()!=null?m.getOrderDate().atStartOfDay():null);
 			dto.setPolicyNumber(m.getPolicyNumber());
-			dto.setPolicyStartDate(m.getPolicyStartDate().atStartOfDay());
-			dto.setPolicyEndDate(m.getPolicyEndDate().atTime(LocalTime.MAX));
+			dto.setPolicyStartDate(m.getPolicyStartDate()!=null?m.getPolicyStartDate().atStartOfDay():null);
+			dto.setPolicyEndDate(m.getPolicyEndDate()!=null?m.getPolicyEndDate().atTime(LocalTime.MAX):null);
 			dto.setTotalPremi(m.getTotalPremi());
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setProductCount(m.getProductCount());
@@ -94,7 +92,7 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new AccidentClaimDto();
 			dto.setClaimId(m.getClaimId());
-			dto.setClaimDate(m.getClaimDate().atStartOfDay());
+			dto.setClaimDate(m.getClaimDate()!=null?m.getClaimDate().atStartOfDay():null);
 			dto.setAccidentSummary(m.getIncidentSummary());
 			dto.setStatus(m.getStatus());
 			dto.setAccidentAddress(toDto(m.getPolicyClaimDetail()));
@@ -220,7 +218,7 @@ public class ModelMapperAdapter {
 			dto = new UserDto();
 			dto.setUserId(userId);
 			dto.setName(m.getName());
-			dto.setBirthDate(m.getBirthDate().atStartOfDay());
+			dto.setBirthDate(m.getBirthDate()!=null?m.getBirthDate().atStartOfDay():null);
 			dto.setBirthPlace(m.getBirthPlace());
 			dto.setEmail(m.getEmail());
 			dto.setGender(m.getGender());

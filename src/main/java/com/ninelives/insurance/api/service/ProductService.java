@@ -2,9 +2,7 @@ package com.ninelives.insurance.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
-import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
@@ -60,7 +57,7 @@ public class ProductService {
 	}	
 	
 	@Cacheable("PeriodDtos")
-	public List<PeriodDto> fetchActivePeriodDtos(){
+	public List<PeriodDto> fetchPeriodDtosWithStatusActive(){
 		List<Period> periods = periodMapper.selectByStatusActive();
 		List<PeriodDto> dtoList = new ArrayList<>();
 		for(Period c: periods) {			
