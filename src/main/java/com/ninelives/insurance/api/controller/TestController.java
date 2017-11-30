@@ -21,6 +21,7 @@ import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.model.Coverage;
 import com.ninelives.insurance.api.model.CoverageCategory;
 import com.ninelives.insurance.api.model.PolicyClaim;
 import com.ninelives.insurance.api.model.PolicyClaimDetailAccident;
@@ -228,6 +229,22 @@ public class TestController {
 		return testService.fetchCoverageCategoryByCoverageCategoryId("101");
 	}
 	
+	@RequestMapping(value="/test/coverages/{coverageId}",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public Coverage getCoverage(@RequestAttribute ("authUserId") String authUserId,
+			@PathVariable("coverageId") String coverageId){
+		
+		return productService.fetchCoverageByCoverageId(coverageId);
+	}
+	
+	@RequestMapping(value="/test/coverages",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public List<Coverage> getCoverages(@RequestAttribute ("authUserId") String authUserId){
+		
+		return productService.fetchCoveragesWithStatusActive();
+	}
 
 	
 	

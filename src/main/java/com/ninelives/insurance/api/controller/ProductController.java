@@ -34,15 +34,15 @@ public class ProductController {
 	@RequestMapping(value="/products",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public List<ProductDto> getProducts( HttpServletResponse response){
+	public List<ProductDto> getProducts(){
 		return productService.fetchProductDtosWithStatusActive();
 	}
 	
 	@RequestMapping(value="/coverages",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public List<CoverageDto> getCoverages( @RequestBody(required=false) Map<String, String> requestData, HttpServletResponse response){
-		return productService.fetchActiveCoverageDtos();
+	public List<CoverageDto> getCoverages(){
+		return productService.fetchCoverageDtosWithStatusActive();
 	}
 	
 	@RequestMapping(value="/periods",

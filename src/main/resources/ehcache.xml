@@ -2,7 +2,7 @@
 		 xsi:noNamespaceSchemaLocation="ehcache.xsd">
 	<cache name="ClientAppConfig" maxEntriesLocalHeap="1" timeToLiveSeconds="600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="PeriodDtosAll" maxEntriesLocalHeap="1" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
-	<cache name="CoverageDtosAll" maxEntriesLocalHeap="1" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="CoverageDtos" maxEntriesLocalHeap="1" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="ProductDtos" maxEntriesLocalHeap="1" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>	
 	<!-- <cache name="ProductsWithStatusActive" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache> -->
 	<cache name="CoverageCategory" maxEntriesLocalHeap="1" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>

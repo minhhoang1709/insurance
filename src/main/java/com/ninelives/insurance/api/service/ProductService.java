@@ -49,10 +49,20 @@ public class ProductService {
 		return dtoList;
 	}
 	
-	public List<Coverage> fetchAllCoverage(){
-		//test
-		return coverageMapper.selectByStatusActive();
-	}
+	@Cacheable("CoverageDtos")
+	public List<CoverageDto> fetchCoverageDtosWithStatusActive(){
+		List<Coverage> coverages = fetchCoveragesWithStatusActive();
+		List<CoverageDto> dtoList = new ArrayList<>();
+		for(Coverage c: coverages){			
+			dtoList.add(modelMapperAdapter.toDto(c));
+		}
+		return dtoList;
+	}	
+	
+//	public List<Coverage> fetchAllCoverage(){
+//		//test
+//		return coverageMapper.selectByStatusActive();
+//	}
 	
 	public List<Product> fetchProductByProductIds(Set<String> productIds){
 		return productMapper.selectByProductIds(productIds);
@@ -82,22 +92,11 @@ public class ProductService {
 		return productMapper.selectByStatusActive();
 	}
 	
-	@Cacheable("CoverageDtosAll")
-	public List<CoverageDto> fetchActiveCoverageDtos(){
-		List<Coverage> coverages = coverageMapper.selectByStatusActive();
-		List<CoverageDto> dtoList = new ArrayList<>();
-		for(Coverage c: coverages){
-			CoverageDto dto = new CoverageDto();
-			dto.setCoverageId(c.getCoverageId());
-			dto.setName(c.getName());
-			dto.setRecommendation(c.getRecommendation());
-			dto.setIsRecommended(c.getIsRecommended());
-			dto.setHasBeneficiary(c.getHasBeneficiary());
-			dto.setMaxLimit(c.getMaxLimit());
-			dtoList.add(dto);
-		}
-		return dtoList;
-	}	
+	public List<Coverage> fetchCoveragesWithStatusActive(){
+		return coverageMapper.selectByStatusActive();
+	}
+	
+	
 	
 	@Cacheable("PeriodDtosAll")
 	public List<PeriodDto> fetchActivePeriodDtos(){
