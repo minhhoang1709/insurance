@@ -81,7 +81,6 @@
     h.coverage_category_id as covcat_coverage_category_id, h.name as covcat_name
   </sql>
   <sql id="NestedPolicyClaimTableJoinList">
-    public.policy_claim as a
     left join public.policy_claim_detail_accident b on b.claim_id=a.claim_id
     left join public.policy_claim_bank_account c on c.claim_id=a.claim_id
     left join public.policy_claim_document d on d.claim_id=a.claim_id
@@ -104,7 +103,8 @@
   <select id="selectByUserIdAndClaimId" resultMap="NestedPolicyClaimResultMap">
   	select 
   		<include refid="NestedPolicyClaimColumnList"/>
-    from
+    from 
+    	public.policy_claim a
     	<include refid="NestedPolicyClaimTableJoinList"/>
     where a.user_id=#{userId,jdbcType=VARCHAR}
     	and a.claim_id=#{claimId,jdbcType=VARCHAR}
@@ -113,35 +113,45 @@
   <select id="selectByUserIdAndOrderIdAndStatusSet" resultMap="NestedPolicyClaimResultMap">
   	select 
   		<include refid="NestedPolicyClaimColumnList"/>
-    from
-    	<include refid="NestedPolicyClaimTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    	and a.order_id=#{orderId,jdbcType=VARCHAR}
-    	<if test="statusSet != null">
-    		and a.status in
-    		<foreach item="item" index="index" collection="statusSet"
-      			open="(" separator="," close=")">#{item}
-        	</foreach>
-    	</if>
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
-  </select>
+    from (
+   		select 
+   			<include refid="Base_Column_List"/>
+   		from
+   			public.policy_claim a
+   		where a.user_id=#{userId,jdbcType=VARCHAR}
+   			and a.order_id=#{orderId,jdbcType=VARCHAR}
+	    	<if test="statusSet != null">
+	    		and a.status in
+	    		<foreach item="item" index="index" collection="statusSet"
+	      			open="(" separator="," close=")">#{item}
+	        	</foreach>
+	    	</if>
+	    order by a.created_date desc
+	    limit #{limit,jdbcType=INTEGER}
+	    offset #{offset,jdbcType=INTEGER}    			
+   	) as a
+   	<include refid="NestedPolicyClaimTableJoinList"/>
+   </select>
   
   <select id="selectByUserIdAndStatusSet" resultMap="NestedPolicyClaimResultMap">
   	select 
   		<include refid="NestedPolicyClaimColumnList"/>
-    from
-    	<include refid="NestedPolicyClaimTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    	<if test="statusSet != null">
-    		and a.status in
-    		<foreach item="item" index="index" collection="statusSet"
-      			open="(" separator="," close=")">#{item}
-        	</foreach>
-    	</if>
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
+    from (	
+   		select 
+   			<include refid="Base_Column_List"/>
+   		from
+   			public.policy_claim a
+   		where a.user_id=#{userId,jdbcType=VARCHAR}
+	    	<if test="statusSet != null">
+	    		and a.status in
+	    		<foreach item="item" index="index" collection="statusSet"
+	      			open="(" separator="," close=")">#{item}
+	        	</foreach>
+	    	</if>
+	    order by a.created_date desc
+	    limit #{limit,jdbcType=INTEGER}
+	    offset #{offset,jdbcType=INTEGER}    			
+   	) as a
+   	<include refid="NestedPolicyClaimTableJoinList"/>    
   </select>
 </mapper>
