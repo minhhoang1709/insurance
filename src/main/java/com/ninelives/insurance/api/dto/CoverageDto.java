@@ -20,7 +20,7 @@ public class CoverageDto {
 
     private Boolean isRecommended;
     
-    private List<ClaimDocTypeDto> claimDocTypes;
+    private List<CoverageClaimDocTypeDto> coverageClaimDocTypes;
     
 	public Long getMaxLimit() {
 		return maxLimit;
@@ -78,13 +78,13 @@ public class CoverageDto {
 		this.isRecommended = isRecommended;
 	}
 
-	public List<ClaimDocTypeDto> getClaimDocTypes() {
-		return claimDocTypes;
+	public List<CoverageClaimDocTypeDto> getCoverageClaimDocTypes() {
+		return coverageClaimDocTypes;
 	}
 
-	public void setClaimDocTypes(List<ClaimDocTypeDto> claimDocTypes) {
-		this.claimDocTypes = claimDocTypes;
+	public void setCoverageClaimDocTypes(List<CoverageClaimDocTypeDto> coverageClaimDocTypes) {
+		this.coverageClaimDocTypes = coverageClaimDocTypes;
 	}
 
-
+	
 }

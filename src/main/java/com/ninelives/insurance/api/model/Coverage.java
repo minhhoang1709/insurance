@@ -29,7 +29,7 @@ public class Coverage {
     
     private Boolean isRecommended;
     
-    private List<ClaimDocType> claimDocTypes;
+    private List<CoverageClaimDocType> coverageClaimDocTypes;
     
     private CoverageCategory coverageCategory;
 
@@ -129,12 +129,12 @@ public class Coverage {
 		this.isRecommended = isRecommended;
 	}
 
-	public List<ClaimDocType> getClaimDocTypes() {
-		return claimDocTypes;
+	public List<CoverageClaimDocType> getCoverageClaimDocTypes() {
+		return coverageClaimDocTypes;
 	}
 
-	public void setClaimDocTypes(List<ClaimDocType> claimDocTypes) {
-		this.claimDocTypes = claimDocTypes;
+	public void setCoverageClaimDocTypes(List<CoverageClaimDocType> coverageClaimDocTypes) {
+		this.coverageClaimDocTypes = coverageClaimDocTypes;
 	}
 
 	public CoverageCategory getCoverageCategory() {
@@ -158,9 +158,9 @@ public class Coverage {
 				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
 				+ (status != null ? "status=" + status + ", " : "") + "displayRank=" + displayRank + ", "
 				+ (isRecommended != null ? "isRecommended=" + isRecommended + ", " : "")
-				+ (claimDocTypes != null ? "claimDocTypes=" + claimDocTypes + ", " : "")
+				+ (coverageClaimDocTypes != null ? "coverageClaimDocType=" + coverageClaimDocTypes + ", " : "")
 				+ (coverageCategory != null ? "coverageCategory=" + coverageCategory : "") + "]";
 	}
-	
+
 	
 }

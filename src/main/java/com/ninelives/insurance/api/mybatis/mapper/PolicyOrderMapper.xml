@@ -31,11 +31,19 @@
 	    <result column="order_product_coverage_has_beneficiary" jdbcType="BIT" property="coverageHasBeneficiary" />
 	    <result column="order_product_premi" jdbcType="INTEGER" property="premi" />
 	    <result column="order_product_premi" jdbcType="INTEGER" property="premi" />
-	    <result column="order_product_coverage_display_rank" jdbcType="INTEGER" property="coverageDisplayRank" />
-	    <collection property="claimDocTypes" ofType="com.ninelives.insurance.api.model.ClaimDocType">
-	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
-		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
-	    </collection>
+<!-- 	    <result column="order_product_coverage_display_rank" jdbcType="INTEGER" property="coverageDisplayRank" /> -->
+<!-- 	    <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.api.model.CoverageClaimDocType"> -->
+<!-- 	    	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" /> -->
+<!-- 	    	<result column="is_mandatory" jdbcType="BIT" property="isMandatory" /> -->
+<!-- 		    <association property="claimDocType" javaType="com.ninelives.insurance.api.model.ClaimDocType"> -->
+<!-- 		    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" /> -->
+<!-- 			    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" /> -->
+<!-- 	    	</association>	 -->
+<!-- 	    </collection> -->
+<!-- 	    <collection property="claimDocTypes" ofType="com.ninelives.insurance.api.model.ClaimDocType"> -->
+<!-- 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" /> -->
+<!-- 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" /> -->
+<!-- 	    </collection> -->
     </collection>    
   </resultMap>
   
@@ -81,20 +89,27 @@
    	b.coverage_has_beneficiary as order_product_coverage_has_beneficiary, 
    	b.premi as order_product_premi,
    	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, 
-   	d.display_rank as order_product_coverage_display_rank,
-   	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name,
-   	g.claim_doc_type_id, g.name as claim_doc_type_name   	
+   	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name
   </sql>
+
+<!--      	
+	d.display_rank as order_product_coverage_display_rank,
+	g.claim_doc_type_id, g.name as claim_doc_type_name 
+-->
   
   <sql id="NestedPolicyOrderTableJoinList">
     public.policy_order as a
     inner join public.policy_order_product as b on b.order_id=a.order_id
     inner join public.period c on c.period_id=a.period_id
-    inner join public.coverage d on  d.coverage_id = b.coverage_id
     inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
+  </sql>
+
+<!--     
+	inner join public.coverage d on  d.coverage_id = b.coverage_id
     left outer join public.coverage_claim_doc_type f on f.coverage_id=d.coverage_id
   	left outer join public.claim_doc_type g on g.claim_doc_type_id=f.claim_doc_type_id
-  </sql>
+-->
+
   
   <!--   sql start -->
   

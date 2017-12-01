@@ -17,8 +17,8 @@ import com.ninelives.insurance.api.util.GsonUtil;
 public class RedisService {
 	private static final String AUTH_TOKEN_KEY = "T:";
 	
-	private static final String AUTH_TOKEN_OBJ_FIELD = "O:";
-	private static final String AUTH_TOKEN_UPDATE_MILLIS_FIELD = "M:";
+	private static final String AUTH_TOKEN_OBJ_FIELD = "TO:";
+	private static final String AUTH_TOKEN_UPDATE_MILLIS_FIELD = "TM:";
 	
 	//private RedisTemplate<String, AuthToken> redisAuthTokenTemplate;
 	

@@ -46,12 +46,14 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 		
 		String tokenId = request.getHeader(HEADER_AUTHENTICATION);
 
+		// request.getRequestURI().equals("/payment/charge")
+		//else if(paymentUrlPattern.matcher(request.getRequestURI()).matches()){
+		//return true;
+	
 		if(StringUtils.isEmpty(tokenId)){
 			//allow POST to user without authentication
-			if ((request.getRequestURI().equals("/users") || request.getRequestURI().equals("/payment/charge") || request.getRequestURI().equals("/charge"))
+			if ((request.getRequestURI().equals("/users") || request.getRequestURI().equals("/charge"))
 					&& request.getMethod().equals(HttpMethod.POST.toString())) {
-				return true;
-			}else if(paymentUrlPattern.matcher(request.getRequestURI()).matches()){
 				return true;
 			}else{
 				throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");

@@ -16,16 +16,21 @@
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
     </association>
-    <collection property="claimDocTypes" ofType="com.ninelives.insurance.api.model.ClaimDocType">
-    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
-	    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
-    </collection>
+    <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.api.model.CoverageClaimDocType">
+    	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" />
+    	<result column="is_mandatory" jdbcType="BIT" property="isMandatory" />
+	    <association property="claimDocType" javaType="com.ninelives.insurance.api.model.ClaimDocType">
+	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+    	</association>	
+    </collection>    
   </resultMap>
   
   <sql id="NestedCoverageColumnList">
 	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, 
 	a.has_beneficiary, a.status, a.display_rank, a.is_recommended,
 	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name,
+	c.coverage_claim_doc_type_id, c.is_mandatory,
 	d.claim_doc_type_id, d.name as claim_doc_type_name
   </sql>
   

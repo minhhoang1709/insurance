@@ -17,15 +17,18 @@ import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
 import com.ninelives.insurance.api.dto.CoverageCategoryDto;
+import com.ninelives.insurance.api.dto.CoverageClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
+import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.model.ClaimDocType;
 import com.ninelives.insurance.api.model.Coverage;
 import com.ninelives.insurance.api.model.CoverageCategory;
+import com.ninelives.insurance.api.model.CoverageClaimDocType;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PolicyClaim;
 import com.ninelives.insurance.api.model.PolicyClaimBankAccount;
@@ -33,6 +36,7 @@ import com.ninelives.insurance.api.model.PolicyClaimCoverage;
 import com.ninelives.insurance.api.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.api.model.PolicyClaimDocument;
 import com.ninelives.insurance.api.model.PolicyOrder;
+import com.ninelives.insurance.api.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
 import com.ninelives.insurance.api.model.PolicyOrderUsers;
 import com.ninelives.insurance.api.model.Product;
@@ -87,6 +91,19 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
+	public PolicyOrderBeneficiaryDto toDto(PolicyOrderBeneficiary m){
+		PolicyOrderBeneficiaryDto dto = null;
+		if(m!=null){
+			dto = new PolicyOrderBeneficiaryDto();
+			dto.setOrderId(m.getOrderId());
+			dto.setName(m.getName());
+			dto.setEmail(m.getEmail());
+			dto.setPhone(m.getPhone());
+			dto.setRelationship(m.getRelationship());			
+		}
+		return dto;
+	}
+
 	public AccidentClaimDto toDto(PolicyClaim<PolicyClaimDetailAccident> m){
 		AccidentClaimDto dto = null;
 		if(m!=null){
@@ -199,14 +216,22 @@ public class ModelMapperAdapter {
 			covDto.setName(m.getCoverageName());
 			covDto.setMaxLimit(m.getCoverageMaxLimit());
 			covDto.setHasBeneficiary(m.getCoverageHasBeneficiary());
-			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
-				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
-				for(ClaimDocType docType: m.getClaimDocTypes()){
-					ClaimDocTypeDto docTypeDto = toDto(docType);
-					docTypeDtos.add(docTypeDto);
+			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
+				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
+				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){
+					covDocTypeDtos.add(toDto(covDocType));
 				}
-				covDto.setClaimDocTypes(docTypeDtos);
+				covDto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}
+			//TODO: claim doc types?
+//			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
+//				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
+//				for(ClaimDocType docType: m.getClaimDocTypes()){
+//					ClaimDocTypeDto docTypeDto = toDto(docType);
+//					docTypeDtos.add(docTypeDto);
+//				}
+//				covDto.setClaimDocTypes(docTypeDtos);
+//			}
 			dto.setCoverage(covDto);
 		}				
 		return dto;
@@ -250,14 +275,21 @@ public class ModelMapperAdapter {
 			dto.setIsRecommended(m.getIsRecommended());
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setMaxLimit(m.getMaxLimit());
-			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
-				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
-				for(ClaimDocType docType: m.getClaimDocTypes()){
-					docTypeDtos.add(toDto(docType));
+			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
+				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
+				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){
+					covDocTypeDtos.add(toDto(covDocType));
 				}
-				dto.setClaimDocTypes(docTypeDtos);
-				//dto.setClaimDocTypes(m.getClaimDocTypes().stream().map(this::toDto).collect(Collectors.toList()));
+				dto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}
+//			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
+//				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
+//				for(ClaimDocType docType: m.getClaimDocTypes()){
+//					docTypeDtos.add(toDto(docType));
+//				}
+//				dto.setClaimDocTypes(docTypeDtos);
+//				//dto.setClaimDocTypes(m.getClaimDocTypes().stream().map(this::toDto).collect(Collectors.toList()));
+//			}
 		}
 		return dto;
 	}
@@ -272,6 +304,17 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
+	
+	public CoverageClaimDocTypeDto toDto(CoverageClaimDocType m){
+		CoverageClaimDocTypeDto dto = null;
+		if(m!=null){
+			dto = new CoverageClaimDocTypeDto();
+			dto.setIsMandatory(m.getIsMandatory());
+			dto.setClaimDocType(toDto(m.getClaimDocType()));
+		}
+		return dto;
+	}
+	
 	public ClaimDocTypeDto toDto(ClaimDocType m) {
 		ClaimDocTypeDto dto = null;
 		if(m!=null){

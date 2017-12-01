@@ -88,7 +88,7 @@ public class ClaimService {
 		return dtoList;
 	}
 	
-	protected PolicyClaim<PolicyClaimDetailAccident> fetchClaimByClaimId(String userId, String claimId){		
+	public PolicyClaim<PolicyClaimDetailAccident> fetchClaimByClaimId(String userId, String claimId){		
 		PolicyClaim<PolicyClaimDetailAccident> policyClaim = policyClaimMapper.selectByUserIdAndClaimId(userId, claimId);
 		if(policyClaim!=null){
 			for(PolicyClaimCoverage c: policyClaim.getPolicyClaimCoverages()){
@@ -102,7 +102,7 @@ public class ClaimService {
 		return policyClaim;
 	}
 	
-	protected List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaimsByOrderId(String userId, String orderId, FilterDto filterDto){
+	public List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaimsByOrderId(String userId, String orderId, FilterDto filterDto){
 		int offset = this.defaultFilterOffset;
 		int limit = this.defaultFilterLimit;
 		Set<String> statusSet = null;
@@ -131,7 +131,7 @@ public class ClaimService {
 		return policyClaims;
 	}
 	
-	protected List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaims(String userId, FilterDto filterDto){
+	public List<PolicyClaim<PolicyClaimDetailAccident>> fetchClaims(String userId, FilterDto filterDto){
 		int offset = this.defaultFilterOffset;
 		int limit = this.defaultFilterLimit;
 		Set<String> statusSet = null;
@@ -160,28 +160,36 @@ public class ClaimService {
 		return policyClaims;
 	}
 	
-//	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiBadRequestException{
-//		//check that order is exists and valid
-//		//check that the coverage is same like order
-//		//check that the document is complete? and file status is uploaded
-//		//check current outstanding claim
-//		//check field is ok for address? or check for non-empty only
-//		//check field is ok for bank account? or check for non-empty only
-//		//
-//		logger.debug("Process isvalidationonly {} claim for {} with claim {}", isValidateOnly, userId, claimDto);
-//		
-//		LocalDate today = LocalDate.now();
-//		
-//		if(claimDto==null || claimDto.getOrder() == null || StringUtils.isEmpty(claimDto.getOrder().getOrderId())){
-//			throw new ApiBadRequestException(ErrorCode.ERR7000_CLAIM_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali data klaim");
-//		}
-//		
-//		PolicyOrder order = orderService.fetchOrderByOrderId(userId, claimDto.getOrder().getOrderId());
-//	}
-	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto){
-		//check if coverage require such doctype
+	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiBadRequestException{
+		//check that order is exists and valid (not submitted, not inpayment)
+		//check that the coverage is same like order
+		//check that the document is complete(mandatory/nonmandatory)? and file status is uploaded
+		//check current outstanding claim
+		//check field is ok for address? or check for non-empty only
+		//check field is ok for bank account? or check for non-empty only
+		//
+		logger.debug("Process isvalidationonly {} claim for user {} with claim {}", isValidateOnly, userId, claimDto);
 		
 		LocalDate today = LocalDate.now();
+		
+		if(claimDto==null || claimDto.getOrder() == null || StringUtils.isEmpty(claimDto.getOrder().getOrderId())){
+			throw new ApiBadRequestException(ErrorCode.ERR7000_CLAIM_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali data klaim");
+		}
+		
+		PolicyOrder order = orderService.fetchOrderByOrderId(userId, claimDto.getOrder().getOrderId());
+		
+//		if(order.getStatus())
+//		
+		return null;
+	}
+	private PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto){
+		//check if coverage require such doctype
+		//check if doc is complete for mandatory case
+		//check if order status is valid (not submitted or inpayment)
+		
+		LocalDate today = LocalDate.now();
+		
+		
 		
 		PolicyClaim<PolicyClaimDetailAccident> claim = new PolicyClaim<>();
 		claim.setCoverageCategoryId("101"); //TODO: remove hardcoded

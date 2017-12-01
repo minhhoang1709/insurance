@@ -24,6 +24,7 @@ import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.model.Coverage;
 import com.ninelives.insurance.api.model.Period;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderBeneficiary;
@@ -90,7 +91,7 @@ public class OrderService {
 	public PolicyOrderBeneficiaryDto updateBeneficiary(String authUserId, String orderId,
 			PolicyOrderBeneficiaryDto beneficiary) throws ApiException {
 		PolicyOrderBeneficiary policyOrderBeneficiary = registerBeneficiary(authUserId, orderId, beneficiary);
-		return policyOrderBeneficiaryToDto(policyOrderBeneficiary);
+		return modelMapperAdapter.toDto(policyOrderBeneficiary);
 	}
 	
 	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiBadRequestException{
@@ -294,6 +295,7 @@ public class OrderService {
 		boolean hasBeneficiary = false;
 		List<String> coverageIds = new ArrayList<>();
 		for(Product p: products){
+			logger.debug("CHECK {}", p);
 			if(!periodId.equals(p.getPeriodId())){
 				logger.debug("Process order for {} with order {} with result: exception period mismatch", userId, submitOrderDto);
 				throw new ApiBadRequestException(ErrorCode.ERR4004_ORDER_PERIOD_MISMATCH, "Permintaan tidak dapat diproses, silahkan cek kembali periode asuransi");
@@ -464,19 +466,19 @@ public class OrderService {
 		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
 	}
 	
-	protected PolicyOrder fetchOrderWithBeneficiaryByOrderId(final String userId, final String orderId){
+	public PolicyOrder fetchOrderWithBeneficiaryByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = policyOrderMapper.selectWithBeneficiaryByUserIdAndOrderId(userId, orderId);
-		mapPolicyOrderStatus(policyOrder, LocalDate.now());
+		postRetrieval(policyOrder, LocalDate.now());
 		return policyOrder;
 	}
 	
-	protected PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
+	public PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
-		mapPolicyOrderStatus(policyOrder,LocalDate.now());
+		postRetrieval(policyOrder,LocalDate.now());
 		return policyOrder;
 	}
 	
-	protected List<PolicyOrder> fetchOrders(final String userId, final FilterDto filter){
+	public List<PolicyOrder> fetchOrders(final String userId, final FilterDto filter){
 		int offset = this.defaultOrdersFilterOffset;
 		int limit = this.defaultOrdersFilterLimit;
 		String[] filterStatus = null;
@@ -506,11 +508,25 @@ public class OrderService {
 		LocalDate today = LocalDate.now();		
 		if(orders!=null){
 			for(PolicyOrder po: orders){
-				mapPolicyOrderStatus(po,today);				
+				postRetrieval(po,today);
 			}
 		}
 		
 		return orders;
+	}
+	
+	protected void postRetrieval(PolicyOrder policyOrder, LocalDate today){
+		if(policyOrder!=null){
+			mapPolicyOrderStatus(policyOrder,today);
+			if(policyOrder.getPolicyOrderProducts()!=null){
+				for(PolicyOrderProduct pop: policyOrder.getPolicyOrderProducts()){
+					Coverage c = productService.fetchCoverageByCoverageId(pop.getCoverageId()); 
+					pop.setCoverageClaimDocTypes(c.getCoverageClaimDocTypes());
+					pop.setCoverageDisplayRank(c.getDisplayRank());
+				}
+			}
+		}		
+		
 	}
 	
 	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
@@ -636,18 +652,18 @@ public class OrderService {
 //		
 //	}
 	
-	protected PolicyOrderBeneficiaryDto policyOrderBeneficiaryToDto(PolicyOrderBeneficiary policyOrderBeneficiary){
-		PolicyOrderBeneficiaryDto dto = null; 
-		if(policyOrderBeneficiary!=null){
-			dto = new PolicyOrderBeneficiaryDto();
-			dto.setOrderId(policyOrderBeneficiary.getOrderId());
-			dto.setName(policyOrderBeneficiary.getName());
-			dto.setEmail(policyOrderBeneficiary.getEmail());
-			dto.setPhone(policyOrderBeneficiary.getPhone());
-			dto.setRelationship(policyOrderBeneficiary.getRelationship());
-		}
-		return dto;
-	}
+//	protected PolicyOrderBeneficiaryDto policyOrderBeneficiaryToDto(PolicyOrderBeneficiary policyOrderBeneficiary){
+//		PolicyOrderBeneficiaryDto dto = null; 
+//		if(policyOrderBeneficiary!=null){
+//			dto = new PolicyOrderBeneficiaryDto();
+//			dto.setOrderId(policyOrderBeneficiary.getOrderId());
+//			dto.setName(policyOrderBeneficiary.getName());
+//			dto.setEmail(policyOrderBeneficiary.getEmail());
+//			dto.setPhone(policyOrderBeneficiary.getPhone());
+//			dto.setRelationship(policyOrderBeneficiary.getRelationship());
+//		}
+//		return dto;
+//	}
 	
 	
 //	//TODO remove test

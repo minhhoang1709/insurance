@@ -24,7 +24,7 @@ public class PolicyOrderProduct {
     private Period period;
     
     //transient
-    private List<ClaimDocType> claimDocTypes;
+    private List<CoverageClaimDocType> coverageClaimDocTypes;
     
     //transient
     private int coverageDisplayRank;
@@ -116,30 +116,13 @@ public class PolicyOrderProduct {
 	public void setCoverageDisplayRank(int coverageDisplayRank) {
 		this.coverageDisplayRank = coverageDisplayRank;
 	}
-	
-	public List<ClaimDocType> getClaimDocTypes() {
-		return claimDocTypes;
+
+	public List<CoverageClaimDocType> getCoverageClaimDocTypes() {
+		return coverageClaimDocTypes;
 	}
 
-	public void setClaimDocTypes(List<ClaimDocType> claimDocTypes) {
-		this.claimDocTypes = claimDocTypes;
+	public void setCoverageClaimDocTypes(List<CoverageClaimDocType> coverageClaimDocTypes) {
+		this.coverageClaimDocTypes = coverageClaimDocTypes;
 	}
-
-	@Override
-	public String toString() {
-		return "PolicyOrderProduct [" + (orderProductId != null ? "orderProductId=" + orderProductId + ", " : "")
-				+ (orderId != null ? "orderId=" + orderId + ", " : "")
-				+ (coverageId != null ? "coverageId=" + coverageId + ", " : "")
-				+ (periodId != null ? "periodId=" + periodId + ", " : "")
-				+ (productId != null ? "productId=" + productId + ", " : "")
-				+ (coverageName != null ? "coverageName=" + coverageName + ", " : "")
-				+ (coverageMaxLimit != null ? "coverageMaxLimit=" + coverageMaxLimit + ", " : "")
-				+ (coverageHasBeneficiary != null ? "coverageHasBeneficiary=" + coverageHasBeneficiary + ", " : "")
-				+ (premi != null ? "premi=" + premi + ", " : "") + (period != null ? "period=" + period + ", " : "")
-				+ (claimDocTypes != null ? "claimDocTypes=" + claimDocTypes + ", " : "") + "coverageDisplayRank="
-				+ coverageDisplayRank + "]";
-	}
-	
-	
-    
+	    
 }

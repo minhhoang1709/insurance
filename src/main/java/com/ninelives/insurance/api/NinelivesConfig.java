@@ -32,6 +32,7 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 				"/login",
 				"/configs",
 				"/products",
+				"/payment/*",
 				"/error");
 	}
 	

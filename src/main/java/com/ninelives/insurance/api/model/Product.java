@@ -115,5 +115,7 @@ public class Product {
 				+ (period != null ? "period=" + period + ", " : "") + (coverage != null ? "coverage=" + coverage : "")
 				+ "]";
 	}
+
+
     
 }

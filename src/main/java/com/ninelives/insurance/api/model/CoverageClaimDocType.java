@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CoverageClaimDocType {
     private Integer coverageClaimDocTypeId;
@@ -8,6 +9,10 @@ public class CoverageClaimDocType {
     private String coverageId;
 
     private String claimDocTypeId;
+    
+    private Boolean isMandatory;
+    
+    private ClaimDocType claimDocType;
 
     private LocalDateTime createdDate;
 
@@ -35,9 +40,25 @@ public class CoverageClaimDocType {
 
     public void setClaimDocTypeId(String claimDocTypeId) {
         this.claimDocTypeId = claimDocTypeId;
-    }
+    }    
 
-    public LocalDateTime getCreatedDate() {
+	public ClaimDocType getClaimDocType() {
+		return claimDocType;
+	}
+
+	public void setClaimDocType(ClaimDocType claimDocType) {
+		this.claimDocType = claimDocType;
+	}
+
+	public Boolean getIsMandatory() {
+		return isMandatory;
+	}
+
+	public void setIsMandatory(Boolean isMandatory) {
+		this.isMandatory = isMandatory;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
