@@ -98,7 +98,6 @@
 -->
   
   <sql id="NestedPolicyOrderTableJoinList">
-    public.policy_order as a
     inner join public.policy_order_product as b on b.order_id=a.order_id
     inner join public.period c on c.period_id=a.period_id
     inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
@@ -118,6 +117,7 @@
   	select
   		<include refid="NestedPolicyOrderColumnList"/>
     from
+    	public.policy_order as a    	
     	<include refid="NestedPolicyOrderTableJoinList"/>
     where a.order_id=#{orderId,jdbcType=VARCHAR}
     	and a.user_id=#{userId,jdbcType=VARCHAR}
@@ -127,65 +127,90 @@
   	select 
   		<include refid="NestedPolicyOrderColumnList"/>
     from
-    	<include refid="NestedPolicyOrderTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
+    	(
+    	select
+    		<include refid="Base_Column_List"/>
+    	from public.policy_order as a
+    	where a.user_id=#{userId,jdbcType=VARCHAR}
+    	order by a.created_date desc
+    	limit #{limit,jdbcType=INTEGER}
+    	offset #{offset,jdbcType=INTEGER}
+    	) as a
+    	<include refid="NestedPolicyOrderTableJoinList"/>    
   </select>
   
-   <select id="selectWhereStatusActiveByUserId" resultMap="NestedPolicyOrderResultMap">
-  	select 
+  <select id="selectWhereStatusActiveByUserId" resultMap="NestedPolicyOrderResultMap">
+   	select 
   		<include refid="NestedPolicyOrderColumnList"/>
     from
+    	(
+    	select
+    		<include refid="Base_Column_List"/>
+    	from public.policy_order as a
+    	where a.user_id=#{userId,jdbcType=VARCHAR}
+    		and a.status='APPROVED'
+    		and current_date between a.policy_start_date and a.policy_end_date
+    	order by a.created_date desc
+    	limit #{limit,jdbcType=INTEGER}
+    	offset #{offset,jdbcType=INTEGER}
+    	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    	and a.status='APPROVED'
-    	and current_date between a.policy_start_date and a.policy_end_date
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
   </select>
   
   <select id="selectWhereStatusApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
-  	select 
+   	select 
   		<include refid="NestedPolicyOrderColumnList"/>
     from
+    	(
+    	select
+    		<include refid="Base_Column_List"/>
+    	from public.policy_order as a
+    	where a.user_id=#{userId,jdbcType=VARCHAR}
+    		and a.status='APPROVED'
+    		and current_date &lt; a.policy_start_date
+    	order by a.created_date desc
+    	limit #{limit,jdbcType=INTEGER}
+    	offset #{offset,jdbcType=INTEGER}
+    	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    	and a.status='APPROVED'
-    	and current_date &lt; a.policy_start_date
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
   </select>
   
   <select id="selectWhereStatusExpiredOrTerminatedByUserId" resultMap="NestedPolicyOrderResultMap">
-  	select 
+   	select 
   		<include refid="NestedPolicyOrderColumnList"/>
     from
+    	(
+    	select
+    		<include refid="Base_Column_List"/>
+    	from public.policy_order as a
+    	where a.user_id=#{userId,jdbcType=VARCHAR}
+	    	and (
+		    	( a.status='APPROVED' and current_date &gt; a.policy_end_date )
+		    	or
+		    	( a.status='TERMINATED')
+	    	)     	
+    	order by a.created_date desc
+    	limit #{limit,jdbcType=INTEGER}
+    	offset #{offset,jdbcType=INTEGER}
+    	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    	and (
-	    	( a.status='APPROVED' and current_date &gt; a.policy_end_date )
-	    	or
-	    	( a.status='TERMINATED')
-    	)     	
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
   </select>
   
   <select id="selectWhereStatusBeforeApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
-  	select 
+   	select 
   		<include refid="NestedPolicyOrderColumnList"/>
     from
-    	<include refid="NestedPolicyOrderTableJoinList"/>
-    where a.user_id=#{userId,jdbcType=VARCHAR}
-    	and a.status in ('SUBMITTED','INPAYMENT','PAID')    	
-    order by a.created_date desc
-    limit #{limit,jdbcType=INTEGER}
-    offset #{offset,jdbcType=INTEGER}
+    	(
+    	select
+    		<include refid="Base_Column_List"/>
+    	from public.policy_order as a
+    	where a.user_id=#{userId,jdbcType=VARCHAR}
+	    	and a.status in ('SUBMITTED','INPAYMENT','PAID')    	
+    	order by a.created_date desc
+    	limit #{limit,jdbcType=INTEGER}
+    	offset #{offset,jdbcType=INTEGER}
+    	) as a
+    	<include refid="NestedPolicyOrderTableJoinList"/>  
   </select>
   
   <select id="selectCoverageWithConflictedPolicyDate" resultType="com.ninelives.insurance.api.model.PolicyOrderCoverage">
