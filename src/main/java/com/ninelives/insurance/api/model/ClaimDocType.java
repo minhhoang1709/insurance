@@ -8,6 +8,8 @@ public class ClaimDocType {
     private String name;
 
     private String description;
+    
+    private Boolean isMandatory;
 
     private LocalDateTime createdDate;
 
@@ -36,8 +38,16 @@ public class ClaimDocType {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public Boolean getIsMandatory() {
+		return isMandatory;
+	}
 
-    public LocalDateTime getCreatedDate() {
+	public void setIsMandatory(Boolean isMandatory) {
+		this.isMandatory = isMandatory;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 

@@ -34,8 +34,15 @@ public enum ErrorCode {
 	ERR6002_UPLOAD_SYSTEM_ERROR("ERR6002"), //system error
 	
 	ERR7000_CLAIM_INVALID("ERR7000"), //get claim with given id not found
-	ERR7001_CLAIM_NOT_FOUND("ERR7001") //get claim with given id not found
-	
+	ERR7001_CLAIM_NOT_FOUND("ERR7001"),//get claim with given id not found
+	ERR7002_CLAIM_ORDER_INVALID("ERR7002"), //order status is not valid for claim
+	ERR7003_CLAIM_COVERAGE_INVALID("ERR7003"), //selected coverage is empty or not valid
+	ERR7004_CLAIM_DOCUMENT_EMPTY("ERR7004"), //submitted document is empty
+	ERR7005_CLAIM_DOCUMENT_INVALID("ERR7005"), //submitted document is invalid
+	ERR7006_CLAIM_DOCUMENT_MANDATORY("ERR7006"), //mandatory document missing
+	ERR7007_CLAIM_DOCUMENT_FILE_INVALID("ERR7007"), //file is empty or not uploaded
+	ERR7008_CLAIM_DETAIL_INVALID("ERR7008"), //detail info (e.g. address) is invalid
+	ERR7009_CLAIM_BANK_ACCOUNT_INVALID("ERR7009") //detail info (e.g. address) is invalid
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

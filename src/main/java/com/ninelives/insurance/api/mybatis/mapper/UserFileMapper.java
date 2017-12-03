@@ -1,12 +1,17 @@
 package com.ninelives.insurance.api.mybatis.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.ninelives.insurance.api.model.UserFile;
+import com.ninelives.insurance.api.ref.FileUseType;
+import com.ninelives.insurance.api.ref.UserFileStatus;
 
 @Mapper
 public interface UserFileMapper {
@@ -52,4 +57,7 @@ public interface UserFileMapper {
 
     @Select("select nextval('user_file_id_seq')")
 	Long selectNextFileId();
+
+	int countByUserIdAndFileIdsAndStatusAndUseType(@Param("userId") String userId, @Param("fileIds") List<Long> fileIds,
+			@Param("status") UserFileStatus status, @Param("useType") FileUseType useType);
 }

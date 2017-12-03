@@ -7,7 +7,7 @@ public class ClaimBankAccountDto {
 	private String name;
 	private String account;
 	private String bankName;
-	private String bankSwitt;
+	//private String bankSwitt;
 	private String bankSwiftCode;
 	
 	public String getName() {
@@ -28,12 +28,12 @@ public class ClaimBankAccountDto {
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
-	public String getBankSwitt() {
-		return bankSwitt;
-	}
-	public void setBankSwitt(String bankSwitt) {
-		this.bankSwitt = bankSwitt;
-	}
+//	public String getBankSwitt() {
+//		return bankSwitt;
+//	}
+//	public void setBankSwitt(String bankSwitt) {
+//		this.bankSwitt = bankSwitt;
+//	}
 	public String getBankSwiftCode() {
 		return bankSwiftCode;
 	}

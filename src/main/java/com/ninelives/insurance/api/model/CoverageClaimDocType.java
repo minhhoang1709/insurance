@@ -73,4 +73,17 @@ public class CoverageClaimDocType {
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	@Override
+	public String toString() {
+		return "CoverageClaimDocType ["
+				+ (coverageClaimDocTypeId != null ? "coverageClaimDocTypeId=" + coverageClaimDocTypeId + ", " : "")
+				+ (coverageId != null ? "coverageId=" + coverageId + ", " : "")
+				+ (claimDocTypeId != null ? "claimDocTypeId=" + claimDocTypeId + ", " : "")
+				+ (isMandatory != null ? "isMandatory=" + isMandatory + ", " : "")
+				+ (claimDocType != null ? "claimDocType=" + claimDocType + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate : "") + "]";
+	}
+    
 }

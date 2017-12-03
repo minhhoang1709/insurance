@@ -19,6 +19,16 @@
     create_date, update_date
   </sql>
   
+  <select id="countByUserIdAndFileIdsAndStatusAndUseType" resultType="int">
+  	select count(*) 
+  	from user_file
+  	where user_id=#{userId,jdbcType=VARCHAR} and status=#{status,jdbcType=VARCHAR} and file_use_type= #{useType,jdbcType=VARCHAR}
+  		and file_id in
+  		<foreach item="item" index="index" collection="fileIds"
+      		open="(" separator="," close=")">#{item}
+        </foreach> 
+  </select>
+  
   <insert id="insertSelective" parameterType="com.ninelives.insurance.api.model.UserFile">
     insert into public.user_file
     <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -65,3 +65,7 @@ war {
 bootRun {
     systemProperties = System.properties
 }
+
+//test {
+	//testLogging.showStandardStreams = true
+//}

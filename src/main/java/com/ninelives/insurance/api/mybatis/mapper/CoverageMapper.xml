@@ -19,6 +19,7 @@
     <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.api.model.CoverageClaimDocType">
     	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" />
     	<result column="is_mandatory" jdbcType="BIT" property="isMandatory" />
+    	<result column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
 	    <association property="claimDocType" javaType="com.ninelives.insurance.api.model.ClaimDocType">
 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />

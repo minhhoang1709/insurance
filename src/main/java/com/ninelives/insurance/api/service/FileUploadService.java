@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -40,7 +41,8 @@ public class FileUploadService {
 		UserFile userFile = save(userId, file, FileUseType.TEMP);
 		return modelMapperAdapter.toDto(userFile);
 	}
-	protected UserFile save(String userId, MultipartFile file, FileUseType fileUseType) throws ApiException{
+	
+	public UserFile save(String userId, MultipartFile file, FileUseType fileUseType) throws ApiException{
 		//TODO save id card should check allowed content type
 		//check limit extension also?
 		
@@ -80,14 +82,17 @@ public class FileUploadService {
 		}
 		return userFile;
 	}
-	
+	public int countUploadedTempFile(String userId, List<Long> fileIds){
+		return userFileMapper.countByUserIdAndFileIdsAndStatusAndUseType(userId, fileIds, UserFileStatus.UPLOADED, FileUseType.TEMP);
+	}
+//	public int countUserFileByFileIdsAndStatus(String userId, List<Long> fileIds, UserFileStatus status){
+//		return userFileMapper.countByUserIdAndFileIdsAndStatus(userId, fileIds, status);
+//	}
 	
 	private Path generateFileDirectoryPath(LocalDate today, String userId, FileUseType fileUseType){		
 		Path path = Paths.get(fileUseType.toStr(), today.format(formatter), userId);
 		return path;
-	}
-	
-	
+	}	
 	
 	private Long generateFileId(){
 		return userFileMapper.selectNextFileId();

@@ -60,25 +60,21 @@ public class ClaimController {
 	@RequestMapping(value="/claims",
 			method={ RequestMethod.POST })
 	@ResponseBody
-	public AccidentClaimDto submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
-			@RequestBody AccidentClaimDto claimDto){
-		logger.debug("Terima /claims POST untuk authuser {} ", authUserId);
-		logger.debug("put data: {}", claimDto);
-		logger.debug("---");
+	public AccidentClaimDto submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,
+			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
+			@RequestBody AccidentClaimDto claimDto) throws ApiException{
 		
-		return claimService.submitAccidentalClaim(authUserId, claimDto);
+		return claimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/claims",
 			method={ RequestMethod.POST })
 	@ResponseBody
-	public AccidentClaimDto submitClaimAccidentWithOrderId (@RequestAttribute ("authUserId") String authUserId, 
+	public AccidentClaimDto submitClaimAccidentWithOrderId (@RequestAttribute ("authUserId") String authUserId,
+			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
 			@PathVariable("orderId") String orderId,
-			@RequestBody AccidentClaimDto claimDto) throws ApiBadRequestException{
-		logger.debug("Terima /claims POST untuk authuser {} ", authUserId);
-		logger.debug("put data: {} and orderid: {}", claimDto, orderId);
-		logger.debug("---");
-		
+			@RequestBody AccidentClaimDto claimDto) throws ApiException{
+
 		if (!StringUtils.isEmpty(orderId)) {
 			if (claimDto != null){
 				if(claimDto.getOrder()==null){
@@ -92,7 +88,7 @@ public class ClaimController {
 				}
 			}
 		}
-		return claimService.submitAccidentalClaim(authUserId, claimDto);
+		return claimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
 	}
 	
 	@RequestMapping(value="/claims/{claimId}",

@@ -74,7 +74,11 @@ public class ModelMapperAdapter {
 			dto.setPeriod(periodDto);
 			
 			dto.setCoverageCategory(toDto(m.getCoverageCategory()));
-			
+			if(dto.getCoverageCategory()!=null){
+				dto.setTitle(dto.getCoverageCategory().getName());
+				dto.setImgUrl(dto.getCoverageCategory().getImageUrl());
+			}
+						
 			if(!CollectionUtils.isEmpty(m.getPolicyOrderProducts())){
 				int rank = 99;
 				List<ProductDto> productDtos = new ArrayList<>();
@@ -177,7 +181,7 @@ public class ModelMapperAdapter {
 			dto.setName(m.getAccountName());
 			dto.setAccount(m.getAccountNumber());
 			dto.setBankName(m.getAccountBankName());
-			dto.setBankSwitt(m.getAccountBankSwift());
+			//dto.setBankSwitt(m.getAccountBankSwift());
 			dto.setBankSwiftCode(m.getAccountBankSwiftCode());
 		}
 		return dto;

@@ -124,5 +124,20 @@ public class PolicyOrderProduct {
 	public void setCoverageClaimDocTypes(List<CoverageClaimDocType> coverageClaimDocTypes) {
 		this.coverageClaimDocTypes = coverageClaimDocTypes;
 	}
-	    
+
+	@Override
+	public String toString() {
+		return "PolicyOrderProduct [" + (orderProductId != null ? "orderProductId=" + orderProductId + ", " : "")
+				+ (orderId != null ? "orderId=" + orderId + ", " : "")
+				+ (coverageId != null ? "coverageId=" + coverageId + ", " : "")
+				+ (periodId != null ? "periodId=" + periodId + ", " : "")
+				+ (productId != null ? "productId=" + productId + ", " : "")
+				+ (coverageName != null ? "coverageName=" + coverageName + ", " : "")
+				+ (coverageMaxLimit != null ? "coverageMaxLimit=" + coverageMaxLimit + ", " : "")
+				+ (coverageHasBeneficiary != null ? "coverageHasBeneficiary=" + coverageHasBeneficiary + ", " : "")
+				+ (premi != null ? "premi=" + premi + ", " : "") + (period != null ? "period=" + period + ", " : "")
+				+ (coverageClaimDocTypes != null ? "coverageClaimDocTypes=" + coverageClaimDocTypes + ", " : "")
+				+ "coverageDisplayRank=" + coverageDisplayRank + "]";
+	}
+	
 }
