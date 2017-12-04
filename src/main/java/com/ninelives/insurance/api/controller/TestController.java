@@ -69,6 +69,7 @@ public class TestController {
 		throw new Exception("olalala");		
 		//return "ok";
 	}
+
 	@RequestMapping("/test/error/login")
 	public String errorLogin() throws ApiNotFoundException{
 		
@@ -115,6 +116,14 @@ public class TestController {
 //		return orderService.submitOrder(authUserId, submitOrderDto);
 //	}
 //	
+	
+	@RequestMapping(value="/test/order/status",  method=RequestMethod.PUT)
+	@ResponseBody
+	public OrderDto testChangeOrderStatus(@RequestAttribute("authUserId") String authUserId, 
+			@RequestBody(required=false) OrderDto orderDto) throws Exception{		
+		return testService.changeOrderStatus(authUserId, orderDto);		
+	}
+	
 	@RequestMapping(value="/test/fullorder", method=RequestMethod.POST)
 	@ResponseBody
 	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
