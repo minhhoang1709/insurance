@@ -39,10 +39,12 @@ import com.ninelives.insurance.api.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.api.model.PolicyClaimDocument;
 import com.ninelives.insurance.api.model.PolicyOrder;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
+import com.ninelives.insurance.api.model.UserFile;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyClaimMapper;
 import com.ninelives.insurance.api.ref.ClaimCoverageStatus;
 import com.ninelives.insurance.api.ref.ClaimStatus;
 import com.ninelives.insurance.api.ref.ErrorCode;
+import com.ninelives.insurance.api.ref.FileUseType;
 import com.ninelives.insurance.api.ref.PolicyStatus;
 import com.ninelives.insurance.api.ref.UserFileStatus;
 import com.ninelives.insurance.api.service.trx.PolicyClaimTrxService;
@@ -178,7 +180,7 @@ public class ClaimService {
 		return policyClaims;
 	}
 	
-	public PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiBadRequestException{
+	public PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiException{
 		//v check that order is exists and valid (not submitted, not inpayment)
 		//v check that the coverage is same like order
 		//v check that the document is complete(mandatory/nonmandatory)? and file status is uploaded
@@ -266,13 +268,15 @@ public class ClaimService {
 		}
 		
 		//check that all file already uploaded for each claim document
-		int uploadedFileCount = fileUploadService.countUploadedTempFile(userId, fileIds);		
-		if(uploadedFileCount!=claimDocCount){
+		//int uploadedFileCount = fileUploadService.countUploadedTempFile(userId, fileIds);
+		List<UserFile> userFiles = fileUploadService.selectUploadedTempFile(userId, fileIds);
+		if(userFiles.size()!=claimDocCount){
 			logger.debug(
 					"Process isvalidationonly {} claim for user {} with claim {} result: exception {} found {} declared {}",
-					isValidateOnly, userId, claimDto, ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, uploadedFileCount, claimDocCount);
+					isValidateOnly, userId, claimDto, ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, userFiles.size(), claimDocCount);
 			throw new ApiBadRequestException(ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 		}
+		Map<Long, UserFile> userFileMap = userFiles.stream().collect(Collectors.toMap(c -> c.getFileId(), c->c));
 		
 		if(!isPolicyClaimAccidentDetailIsValid(claimDto.getAccidentAddress())){
 			logger.debug(
@@ -328,6 +332,7 @@ public class ClaimService {
 				doc.setClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId());
 				doc.setClaimDocType(productService.fetchClaimDocTypeByClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId()));
 				doc.setFileId(c.getFile().getFileId());
+				doc.setUserFile(userFileMap.get(c.getFile().getFileId()));
 				claimDocs.add(doc);
 			}
 			claim.setPolicyClaimDocuments(claimDocs);		
@@ -346,6 +351,9 @@ public class ClaimService {
 			policyClaimTrxService.registerPolicyClaim(claim);
 			
 			//move file from temp to claim
+			updateClaimFiles(claim.getPolicyClaimDocuments());
+			
+			//TODO Process ASWATA claim (submit to QUEUE)
 		}
 		
 		logger.debug(
@@ -353,6 +361,12 @@ public class ClaimService {
 				isValidateOnly, userId, claimDto, claim==null?"null":claim);
 		
 		return claim;
+	}
+	
+	private void updateClaimFiles(List<PolicyClaimDocument> docs) throws ApiException{
+		for(PolicyClaimDocument doc: docs){
+			fileUploadService.moveTemp(doc.getUserFile(), FileUseType.CLAIM);
+		}
 	}
 	
 	private boolean isPolicyClaimBankAccountIsValid(ClaimBankAccountDto cba) {

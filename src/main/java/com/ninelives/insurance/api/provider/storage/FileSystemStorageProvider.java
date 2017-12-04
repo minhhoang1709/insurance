@@ -3,18 +3,16 @@ package com.ninelives.insurance.api.provider.storage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.stream.Stream;
 
-import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +20,8 @@ import com.ninelives.insurance.api.model.UserFile;
 
 @Service
 public class FileSystemStorageProvider implements StorageProvider {
-
+	private static final Logger logger = LoggerFactory.getLogger(FileSystemStorageProvider.class);
+	
     private final Path rootLocation;
 
     @Autowired
@@ -54,6 +53,21 @@ public class FileSystemStorageProvider implements StorageProvider {
         }
     }
 
+	@Override
+	public void move(UserFile userFileSrc, UserFile userFileDst) throws StorageException {
+		String destPath = StringUtils.cleanPath(userFileDst.getFilePath());
+		try {
+        	Files.createDirectories(this.rootLocation.resolve(destPath));
+        	
+			Files.move(this.rootLocation.resolve(userFileSrc.getFilePath()), this.rootLocation.resolve(destPath),
+					StandardCopyOption.REPLACE_EXISTING);
+
+        }
+        catch (IOException e) {
+        	logger.error("Error on move file ", e);
+            throw new StorageException("Failed to move file " + destPath +" with message "+e.getMessage(), e);
+        }		
+	}
 //    @Override
 //    public Stream<Path> loadAll() {
 //        try {
@@ -105,4 +119,5 @@ public class FileSystemStorageProvider implements StorageProvider {
             throw new StorageException("Could not initialize storage", e);
         }
     }
+
 }

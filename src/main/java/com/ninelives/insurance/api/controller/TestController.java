@@ -222,7 +222,7 @@ public class TestController {
 			method={ RequestMethod.POST})
 	@ResponseBody
 	public PolicyClaim<PolicyClaimDetailAccident> registerClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
-			@RequestBody AccidentClaimDto claimDto) throws ApiBadRequestException{
+			@RequestBody AccidentClaimDto claimDto) throws ApiException{
 		
 		return claimService.registerAccidentalClaim(authUserId, claimDto,true);
 	}

@@ -17,7 +17,7 @@ public class PolicyClaimDocument {
     
     private ClaimDocType claimDocType;
     
-    //private UserFile userFile;
+    private UserFile userFile;
 
     public Long getClaimDocumentId() {
         return claimDocumentId;
@@ -59,13 +59,13 @@ public class PolicyClaimDocument {
 		this.claimDocType = claimDocType;
 	}
 	
-//	public UserFile getUserFile() {
-//		return userFile;
-//	}
-//
-//	public void setUserFile(UserFile userFile) {
-//		this.userFile = userFile;
-//	}
+	public UserFile getUserFile() {
+		return userFile;
+	}
+
+	public void setUserFile(UserFile userFile) {
+		this.userFile = userFile;
+	}
 
 	public LocalDateTime getCreatedDate() {
         return createdDate;

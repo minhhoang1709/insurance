@@ -42,6 +42,37 @@ public class FileUploadService {
 		return modelMapperAdapter.toDto(userFile);
 	}
 	
+	public UserFile moveTemp(final UserFile userFileTemp, final FileUseType newFileUseType) throws ApiException{
+		LocalDate today = LocalDate.now();
+		
+		UserFile userFileDst = null;
+		
+		if(userFileTemp!=null){
+			userFileDst = new UserFile();
+			userFileDst.setFileId(userFileTemp.getFileId());
+			userFileDst.setUserId(userFileTemp.getUserId());
+			userFileDst.setContentType(userFileTemp.getContentType());
+			userFileDst.setFileSize(userFileTemp.getFileSize());
+			userFileDst.setFileUseType(newFileUseType);
+			userFileDst.setUploadDate(today);
+			userFileDst.setStatus(userFileTemp.getStatus());
+			
+			setFilePath(userFileDst, FilenameUtils.getExtension(userFileTemp.getFilePath()));
+			
+			logger.debug("Move fileid {} from {} to {}", userFileTemp.getFileId(), userFileTemp.getFilePath(), userFileDst.getFilePath());
+			
+			try {
+				storageProvider.move(userFileTemp, userFileDst);
+			} catch (StorageException e) {
+				logger.error("Error move file {} to {} with message {}", userFileTemp, userFileDst, e.getMessage());
+				throw new ApiInternalServerErrorException(ErrorCode.ERR6002_UPLOAD_SYSTEM_ERROR, "Permintaan tidak dapat diproses, terjadi error pada sistem"); 
+			}
+			
+			userFileMapper.updateUseTypeAndPathByFileId(userFileDst);
+		}
+		
+		return userFileDst;
+	}
 	public UserFile save(String userId, MultipartFile file, FileUseType fileUseType) throws ApiException{
 		//TODO save id card should check allowed content type
 		//check limit extension also?
@@ -63,13 +94,7 @@ public class FileUploadService {
 			userFile.setUploadDate(today);
 			userFile.setStatus(UserFileStatus.UPLOADED);
 			
-			String directory = generateFileDirectoryPath(today, userId, fileUseType).toString();
-			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-			if(!StringUtils.isEmpty(extension)){
-				userFile.setFilePath(FilenameUtils.concat(directory, fileUseType+"-"+String.valueOf(userFile.getFileId()+"."+extension)));
-			}else{
-				userFile.setFilePath(FilenameUtils.concat(directory, fileUseType+"-"+String.valueOf(userFile.getFileId())));
-			}
+			setFilePath(userFile, FilenameUtils.getExtension(file.getOriginalFilename()));
 			
 			try {
 				storageProvider.store(file, userFile);
@@ -82,12 +107,25 @@ public class FileUploadService {
 		}
 		return userFile;
 	}
-	public int countUploadedTempFile(String userId, List<Long> fileIds){
-		return userFileMapper.countByUserIdAndFileIdsAndStatusAndUseType(userId, fileIds, UserFileStatus.UPLOADED, FileUseType.TEMP);
+//	public int countUploadedTempFile(String userId, List<Long> fileIds){
+//		return userFileMapper.countByUserIdAndFileIdsAndStatusAndUseType(userId, fileIds, UserFileStatus.UPLOADED, FileUseType.TEMP);
+//	}
+	public List<UserFile> selectUploadedTempFile(String userId, List<Long> fileIds){
+		return userFileMapper.selectByUserIdAndFileIdsAndStatusAndUseType(userId, fileIds, UserFileStatus.UPLOADED, FileUseType.TEMP);
 	}
 //	public int countUserFileByFileIdsAndStatus(String userId, List<Long> fileIds, UserFileStatus status){
 //		return userFileMapper.countByUserIdAndFileIdsAndStatus(userId, fileIds, status);
 //	}
+	
+	private void setFilePath(UserFile userFile, String fileExtension){
+		String directory = generateFileDirectoryPath(userFile.getUploadDate(), userFile.getUserId(), userFile.getFileUseType()).toString();
+		//String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+		if(!StringUtils.isEmpty(fileExtension)){
+			userFile.setFilePath(FilenameUtils.concat(directory, userFile.getFileUseType()+"-"+String.valueOf(userFile.getFileId()+"."+fileExtension)));
+		}else{
+			userFile.setFilePath(FilenameUtils.concat(directory, userFile.getFileUseType()+"-"+String.valueOf(userFile.getFileId())));
+		}
+	}
 	
 	private Path generateFileDirectoryPath(LocalDate today, String userId, FileUseType fileUseType){		
 		Path path = Paths.get(fileUseType.toStr(), today.format(formatter), userId);

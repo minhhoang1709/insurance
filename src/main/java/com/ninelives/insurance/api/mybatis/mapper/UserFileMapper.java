@@ -60,4 +60,17 @@ public interface UserFileMapper {
 
 	int countByUserIdAndFileIdsAndStatusAndUseType(@Param("userId") String userId, @Param("fileIds") List<Long> fileIds,
 			@Param("status") UserFileStatus status, @Param("useType") FileUseType useType);
+	
+	List<UserFile> selectByUserIdAndFileIdsAndStatusAndUseType(@Param("userId") String userId, @Param("fileIds") List<Long> fileIds,
+			@Param("status") UserFileStatus status, @Param("useType") FileUseType useType);
+	
+	@Update({
+        "update public.user_file",
+        "set file_use_type = #{fileUseType,jdbcType=VARCHAR},",
+          "file_path = #{filePath,jdbcType=VARCHAR},",
+          "upload_date = #{uploadDate,jdbcType=DATE},",
+          "update_date = now()",
+        "where file_id = #{fileId,jdbcType=BIGINT}"
+    })
+	int updateUseTypeAndPathByFileId(UserFile record);
 }
