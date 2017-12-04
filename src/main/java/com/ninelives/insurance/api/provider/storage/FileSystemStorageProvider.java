@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ninelives.insurance.api.NinelivesConfigProperties;
 import com.ninelives.insurance.api.model.UserFile;
 
 @Service
@@ -25,8 +26,8 @@ public class FileSystemStorageProvider implements StorageProvider {
     private final Path rootLocation;
 
     @Autowired
-    public FileSystemStorageProvider(StorageProperties properties) {
-        this.rootLocation = Paths.get(properties.getLocation());
+    public FileSystemStorageProvider(NinelivesConfigProperties properties) {
+        this.rootLocation = Paths.get(properties.getStorage().getLocation());
     }
 
     @Override

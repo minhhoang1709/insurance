@@ -7,17 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
-import com.ninelives.insurance.api.provider.storage.StorageProperties;
-import com.ninelives.insurance.api.provider.storage.StorageProvider;
 
 @Configuration
-@EnableConfigurationProperties(StorageProperties.class)
+@EnableConfigurationProperties(NinelivesConfigProperties.class)
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
 			

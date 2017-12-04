@@ -52,7 +52,6 @@ public class ModelMapperAdapter {
 	@Value("${ninelives.order.policy-title}")
 	String policyTitle;
 	
-	
 	public OrderDto toDto(PolicyOrder m){
 		OrderDto dto = null;
 		if(m!=null){

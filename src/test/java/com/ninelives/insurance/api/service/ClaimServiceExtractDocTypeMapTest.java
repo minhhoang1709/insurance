@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ninelives.insurance.api.model.CoverageClaimDocType;
 import com.ninelives.insurance.api.model.PolicyOrderProduct;
 
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 public class ClaimServiceExtractDocTypeMapTest {
 	
 //	@Test
