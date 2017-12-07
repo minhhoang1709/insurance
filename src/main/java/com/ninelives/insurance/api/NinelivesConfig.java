@@ -19,10 +19,12 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
 			
 	@Autowired AuthInterceptor authInterceptor;
-	
+	@Autowired NinelivesConfigProperties config;
 	@Autowired DataSource dataSource;
 	//@Autowired TransactionManager trxManager;
 		
+	//TODO: Remove /test/payment dan /charge from excluded path pattern
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(authInterceptor).excludePathPatterns(
@@ -30,6 +32,8 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 				"/configs",
 				"/products",
 				"/payment/*",
+				"/test/payment/*",
+				"/charge",
 				"/error");
 	}
 	
@@ -37,6 +41,7 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@PostConstruct
 	public void configInfo() {
 		logger.info("Auto configuration, Datasource is {}", dataSource);
+		logger.info("Ninelives config is {}", config);
 		//logger.info("Auto configuration, TransactionManagement is {}", dataSource);
 	}
 	

@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,11 +27,25 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.ninelives.insurance.api.dto.ChargeDto;
+import com.ninelives.insurance.api.dto.ChargeResponseDto;
+import com.ninelives.insurance.api.exception.ApiBadRequestException;
+import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
+import com.ninelives.insurance.api.model.ApiSessionData;
+import com.ninelives.insurance.api.ref.ErrorCode;
+import com.ninelives.insurance.api.service.AuthService;
+import com.ninelives.insurance.api.service.PaymentService;
+
 @Controller
 public class TestPaymentController {
 	private static final Logger logger = LoggerFactory.getLogger(TestPaymentController.class);
 	
-	@RequestMapping(value="/payment/charge", 
+	@Autowired AuthService authService;
+	
+	@Autowired PaymentService paymentService;
+	
+	@RequestMapping(value="/test/payment/charge", 
 			method=RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
@@ -73,15 +89,15 @@ public class TestPaymentController {
 	
 	@RequestMapping(value="/charge", 
 			method=RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
-	public String charge2(HttpServletRequest request, 
+	public ChargeResponseDto charge2(HttpServletRequest request, 
+			HttpServletResponse response, 
 			@RequestHeader(required=false) Map<String,String> headers, 
 			@RequestParam(required=false) Map<String,String> requestParams, 
-			@RequestBody(required=false) String requestBody){
+			@RequestBody(required=true) ChargeDto chargeDto) throws ApiException{
 		logger.info("---");
 		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
-		logger.info("Body {} ", requestBody);
+		logger.info("Body {} ", chargeDto);
 		if( headers!=null&&headers.size()>0 ){
 			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
 		}
@@ -89,30 +105,69 @@ public class TestPaymentController {
 			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
 		}
 		
-		RestTemplate template = new RestTemplate();
-		HttpHeaders restHeader = new HttpHeaders();
-		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		restHeader.setContentType(MediaType.APPLICATION_JSON);
-		restHeader.set("Authorization", "Basic U0ItTWlkLXNlcnZlci1kcF9JVFlVY3hCMGlRMWh0T0xRXzJLWjM6");
-		HttpEntity<String> entity = new HttpEntity<>(requestBody, restHeader);
-		
-		ResponseEntity<String> resp = null;
-		resp = template.exchange("https://app.sandbox.midtrans.com/snap/v1/transactions", HttpMethod.POST, entity, String.class);
-		
-		String respBody = null;
-		if(resp!=null){
-			respBody = resp.getBody();
-			String respHeader = resp.getHeaders().toString();
-			String respStatus = resp.getStatusCode().toString();			
-			logger.info("Call to restteamplate {} with result {}", entity.toString(), resp.toString());
-			
-		}else{
-			logger.info("Call to restteamplate {} with result null", entity.toString());
+		String tokenId = chargeDto.getAuthToken();
+				
+		ApiSessionData sessionData;
+		try {
+			sessionData = authService.validateAuthToken(tokenId);
+		} catch (ApiNotAuthorizedException e) {
+			throw new ApiBadRequestException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication code not valid");
 		}
 		
-		return respBody;
+		chargeDto.setAuthToken(null);//dont forward authtoken to midtrans
+		
+		ChargeResponseDto responseDto = paymentService.charge(sessionData.getUserId(), chargeDto);
+//		if(responseDto.getHttpStatus()!=null){
+//			response.setStatus(responseDto.getHttpStatus().value());
+//		}
+//		
+		//TODO: return paymentTokenDto atau String as it is from midtrans
+		
+		return responseDto;
 	}
 	
+//	@RequestMapping(value="/charge", 
+//			method=RequestMethod.POST)
+//	@ResponseStatus(value = HttpStatus.OK)
+//	@ResponseBody
+//	public String charge2(HttpServletRequest request, 
+//			@RequestHeader(required=false) Map<String,String> headers, 
+//			@RequestParam(required=false) Map<String,String> requestParams, 
+//			@RequestBody(required=false) String requestBody){
+//		logger.info("---");
+//		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
+//		logger.info("Body {} ", requestBody);
+//		if( headers!=null&&headers.size()>0 ){
+//			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
+//		}
+//		if( requestParams!=null&&requestParams.size()>0 ){
+//			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+//		}
+//		
+//		RestTemplate template = new RestTemplate();
+//		HttpHeaders restHeader = new HttpHeaders();
+//		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//		restHeader.setContentType(MediaType.APPLICATION_JSON);
+//		restHeader.set("Authorization", "Basic U0ItTWlkLXNlcnZlci1kcF9JVFlVY3hCMGlRMWh0T0xRXzJLWjM6");
+//		HttpEntity<String> entity = new HttpEntity<>(requestBody, restHeader);
+//		
+//		ResponseEntity<String> resp = null;
+//		resp = template.exchange("https://app.sandbox.midtrans.com/snap/v1/transactions", HttpMethod.POST, entity, String.class);
+//		
+//		String respBody = null;
+//		if(resp!=null){
+//			respBody = resp.getBody();
+//			String respHeader = resp.getHeaders().toString();
+//			String respStatus = resp.getStatusCode().toString();			
+//			logger.info("Call to restteamplate {} with result {}", entity.toString(), resp.toString());
+//			
+//		}else{
+//			logger.info("Call to restteamplate {} with result null", entity.toString());
+//		}
+//		
+//		return respBody;
+//	}
+//	
 	@RequestMapping(value="/payment/notification", 
 			method=RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)

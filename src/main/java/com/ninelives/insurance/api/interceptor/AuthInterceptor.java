@@ -26,7 +26,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	
 	private static final String HEADER_AUTHENTICATION = "Authorization";
 	
-	Pattern paymentUrlPattern = Pattern.compile("/payment/.*");
+	//Pattern paymentUrlPattern = Pattern.compile("/payment/.*");
 	
 	@Autowired AuthService authService;
 	
@@ -52,7 +52,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	
 		if(StringUtils.isEmpty(tokenId)){
 			//allow POST to user without authentication
-			if ((request.getRequestURI().equals("/users") || request.getRequestURI().equals("/charge"))
+			if (request.getRequestURI().equals("/users")
 					&& request.getMethod().equals(HttpMethod.POST.toString())) {
 				return true;
 			}else{

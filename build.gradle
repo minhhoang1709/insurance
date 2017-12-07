@@ -4,7 +4,7 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
-		maven { url 'http://repo.spring.io/plugins-release' }
+		maven { url 'http://repo.spring.io/plugins-release' }		
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -16,6 +16,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'propdeps'
+apply plugin: 'propdeps-eclipse'
 apply plugin: 'war'
 
 group = 'com.ninelives'
@@ -25,6 +26,7 @@ sourceCompatibility = 1.8
 repositories {
 	mavenCentral()
 	maven { url 'http://repo.spring.io/plugins-release' }
+	maven { url 'http://jcenter.bintray.com' }
 }
 
 
@@ -52,13 +54,15 @@ dependencies {
 	compile('commons-codec:commons-codec:1.11')
 	compile('org.apache.commons:commons-collections4:4.1')	
 	compile('commons-io:commons-io:2.6')
-	
-	
+		
 	runtime('org.postgresql:postgresql')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	
 	optional('org.springframework.boot:spring-boot-configuration-processor')
+	
+	//payment
+	compile('id.co.veritrans:vt-java-client:1.5.0')
 }
 
 compileJava.dependsOn(processResources)

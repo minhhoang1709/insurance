@@ -1,8 +1,16 @@
 package com.ninelives.insurance.api;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+
 
 @ConfigurationProperties("ninelives")
+@Validated
 public class NinelivesConfigProperties {
 //	/**
 //	 * Default policy title if not specified by coverage category
@@ -17,7 +25,9 @@ public class NinelivesConfigProperties {
 //	private Order order = new Order();
 	
 	private Storage storage = new Storage();
-
+	
+	@Valid
+	private Payment payment = new Payment();
 
 //	public String getPolicyTitle() {
 //		return policyTitle;
@@ -50,7 +60,115 @@ public class NinelivesConfigProperties {
 	public void setStorage(Storage storage) {
 		this.storage = storage;
 	}
+	
+	
 
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
+
+
+	public static class Payment {
+		@NotEmpty
+		private String midtransEnvironment;
+		
+		@NotEmpty
+		private String midtransSandboxServerKey;
+		
+		@NotEmpty
+		private String midtransSandboxClientKey;
+		
+		@NotEmpty
+		private String midtransSandboxUrl;
+		
+		@NotEmpty
+		private String midtransProductionServerKey;
+		
+		@NotEmpty
+		private String midtransProductionClientKey;
+		
+		@NotEmpty
+		private String midtransProductionUrl;
+		
+		private int midtransConnectionPoolSize = 16;
+		private int midtransPoolTimeout = 5000;
+		private int midtransConnectTimeout = 5000;
+		private int midtransSocketTimeout = 20000;
+		
+		public String getMidtransSandboxServerKey() {
+			return midtransSandboxServerKey;
+		}
+		public void setMidtransSandboxServerKey(String midtransSandboxServerKey) {
+			this.midtransSandboxServerKey = midtransSandboxServerKey;
+		}
+		public String getMidtransSandboxClientKey() {
+			return midtransSandboxClientKey;
+		}
+		public void setMidtransSandboxClientKey(String midtransSandboxClientKey) {
+			this.midtransSandboxClientKey = midtransSandboxClientKey;
+		}
+		public String getMidtransProductionServerKey() {
+			return midtransProductionServerKey;
+		}
+		public void setMidtransProductionServerKey(String midtransProductionServerKey) {
+			this.midtransProductionServerKey = midtransProductionServerKey;
+		}
+		public String getMidtransProductionClientKey() {
+			return midtransProductionClientKey;
+		}
+		public void setMidtransProductionClientKey(String midtransProductionClientKey) {
+			this.midtransProductionClientKey = midtransProductionClientKey;
+		}
+		public String getMidtransEnvironment() {
+			return midtransEnvironment;
+		}
+		public void setMidtransEnvironment(String midtransEnvironment) {
+			this.midtransEnvironment = midtransEnvironment;
+		}
+		public int getMidtransConnectionPoolSize() {
+			return midtransConnectionPoolSize;
+		}
+		public void setMidtransConnectionPoolSize(int midtransConnectionPoolSize) {
+			this.midtransConnectionPoolSize = midtransConnectionPoolSize;
+		}		
+		public int getMidtransPoolTimeout() {
+			return midtransPoolTimeout;
+		}
+		public void setMidtransPoolTimeout(int midtransPoolTimeout) {
+			this.midtransPoolTimeout = midtransPoolTimeout;
+		}
+		public int getMidtransConnectTimeout() {
+			return midtransConnectTimeout;
+		}
+		public void setMidtransConnectTimeout(int midtransConnectTimeout) {
+			this.midtransConnectTimeout = midtransConnectTimeout;
+		}
+		public int getMidtransSocketTimeout() {
+			return midtransSocketTimeout;
+		}
+		public void setMidtransSocketTimeout(int midtransSocketTimeout) {
+			this.midtransSocketTimeout = midtransSocketTimeout;
+		}
+		public String getMidtransSandboxUrl() {
+			return midtransSandboxUrl;
+		}
+		public void setMidtransSandboxUrl(String midtransSandboxUrl) {
+			this.midtransSandboxUrl = midtransSandboxUrl;
+		}
+		public String getMidtransProductionUrl() {
+			return midtransProductionUrl;
+		}
+		public void setMidtransProductionUrl(String midtransProductionUrl) {
+			this.midtransProductionUrl = midtransProductionUrl;
+		}
+		
+		
+	}
 
 	public static class Storage {
 		/**
@@ -65,6 +183,12 @@ public class NinelivesConfigProperties {
 	    public void setLocation(String location) {
 	        this.location = location;
 	    }
+
+		@Override
+		public String toString() {
+			return "Storage [" + (location != null ? "location=" + location : "") + "]";
+		}
+	    
 	}
 	
 	public static class Order {
@@ -106,8 +230,20 @@ public class NinelivesConfigProperties {
 		public void setPolicyConflictPeriodLimit(int policyConflictPeriodLimit) {
 			this.policyConflictPeriodLimit = policyConflictPeriodLimit;
 		}
-	    
-	    
 
+		@Override
+		public String toString() {
+			return "Order [policyStartDatePeriod=" + policyStartDatePeriod + ", policyDueDatePeriod="
+					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit + "]";
+		}
+		
 	}
+
+	@Override
+	public String toString() {
+		return "NinelivesConfigProperties [" + (storage != null ? "storage=" + storage + ", " : "")
+				+ (payment != null ? "payment=" + payment : "") + "]";
+	}
+	
+	
 }

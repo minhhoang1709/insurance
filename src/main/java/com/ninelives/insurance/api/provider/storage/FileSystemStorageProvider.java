@@ -26,8 +26,8 @@ public class FileSystemStorageProvider implements StorageProvider {
     private final Path rootLocation;
 
     @Autowired
-    public FileSystemStorageProvider(NinelivesConfigProperties properties) {
-        this.rootLocation = Paths.get(properties.getStorage().getLocation());
+    public FileSystemStorageProvider(NinelivesConfigProperties config) {
+        this.rootLocation = Paths.get(config.getStorage().getLocation());
     }
 
     @Override
