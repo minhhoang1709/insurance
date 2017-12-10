@@ -285,6 +285,7 @@ public class ModelMapperAdapter {
 				}
 				dto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}
+			dto.setCoverageCategory(toDto(m.getCoverageCategory()));
 //			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
 //				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
 //				for(ClaimDocType docType: m.getClaimDocTypes()){

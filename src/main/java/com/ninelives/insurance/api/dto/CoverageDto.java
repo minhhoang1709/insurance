@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.api.model.CoverageCategory;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CoverageDto {
@@ -21,6 +22,8 @@ public class CoverageDto {
     private Boolean isRecommended;
     
     private List<CoverageClaimDocTypeDto> coverageClaimDocTypes;
+    
+    private CoverageCategoryDto coverageCategory;
     
 	public Long getMaxLimit() {
 		return maxLimit;
@@ -86,5 +89,14 @@ public class CoverageDto {
 		this.coverageClaimDocTypes = coverageClaimDocTypes;
 	}
 
+	public CoverageCategoryDto getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategoryDto coverageCategory) {
+		this.coverageCategory = coverageCategory;
+	}
+
+	
 	
 }
