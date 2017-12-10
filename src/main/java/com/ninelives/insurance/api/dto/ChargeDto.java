@@ -1,7 +1,12 @@
 package com.ninelives.insurance.api.dto;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,6 +29,9 @@ public class ChargeDto {
 	
 	@JsonProperty("custom_field1")
 	private String authToken;
+	
+	@JsonIgnore
+	public Map<String, Object> other = new HashMap<>();
 	
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
@@ -73,6 +81,27 @@ public class ChargeDto {
 		this.authToken = authToken;
 	}
 
+	@JsonAnyGetter
+	public Map<String, Object> any() {
+		return other;
+	}
+
+	@JsonAnySetter
+	public void set(String name, Object value) {
+		other.put(name, value);
+	}
+
+	public boolean hasUnknowProperties() {
+		return !other.isEmpty();
+	}
+	
+	public Map<String, Object> getOther() {
+		return other;
+	}
+
+	public void setOther(Map<String, Object> other) {
+		this.other = other;
+	}
 	public static class ItemDetails{
 		String id;
 		String name;
@@ -377,6 +406,7 @@ public class ChargeDto {
 				+ (itemDetails != null ? "itemDetails=" + itemDetails + ", " : "")
 				+ (transactionDetails != null ? "transactionDetails=" + transactionDetails + ", " : "")
 				+ (userId != null ? "userId=" + userId + ", " : "")
-				+ (authToken != null ? "authToken=" + authToken : "") + "]";
+				+ (authToken != null ? "authToken=" + authToken + ", " : "") + (other != null ? "other=" + other : "")
+				+ "]";
 	}
 }
