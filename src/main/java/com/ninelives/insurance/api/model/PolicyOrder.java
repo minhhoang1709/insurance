@@ -45,6 +45,8 @@ public class PolicyOrder {
     
     private Period period;
 
+    private PolicyPayment payment;
+    
 	public String getOrderId() {
 		return orderId;
 	}
@@ -197,6 +199,14 @@ public class PolicyOrder {
 		this.policyOrderBeneficiary = policyOrderBeneficiary;
 	}
 
+	public PolicyPayment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(PolicyPayment payment) {
+		this.payment = payment;
+	}
+
 	@Override
 	public String toString() {
 		return "PolicyOrder [" + (orderId != null ? "orderId=" + orderId + ", " : "")
@@ -213,10 +223,12 @@ public class PolicyOrder {
 				+ (status != null ? "status=" + status + ", " : "")
 				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
 				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
+				+ (coverageCategory != null ? "coverageCategory=" + coverageCategory + ", " : "")
 				+ (policyOrderUsers != null ? "policyOrderUsers=" + policyOrderUsers + ", " : "")
 				+ (policyOrderProducts != null ? "policyOrderProducts=" + policyOrderProducts + ", " : "")
 				+ (policyOrderBeneficiary != null ? "policyOrderBeneficiary=" + policyOrderBeneficiary + ", " : "")
-				+ (period != null ? "period=" + period : "") + "]";
+				+ (period != null ? "period=" + period + ", " : "") + (payment != null ? "payment=" + payment : "")
+				+ "]";
 	}
 	
 

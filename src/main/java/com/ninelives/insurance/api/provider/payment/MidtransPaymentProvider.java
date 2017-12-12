@@ -66,9 +66,11 @@ public class MidtransPaymentProvider implements PaymentProvider{
 				chargeResponseDto.setHttpStatus(resp.getStatusCode());
 			}
 		}catch(HttpClientErrorException e){
-			logger.error("Error on payment provider charge <{}> with exception <{}>", chargeDto, e.getMessage());
 			try {
 				String errorResponseBody = e.getResponseBodyAsString();
+				
+				logger.error("Error on payment provider charge <{}> with response <{}> and exception <{}>", chargeDto, errorResponseBody, e.getMessage());
+				
 				if(!StringUtils.isEmpty(errorResponseBody) && e.getStatusCode() != null){
 					chargeResponseDto = GsonUtil.gsonUnderscore.fromJson(errorResponseBody, ChargeResponseDto.class);
 					chargeResponseDto.setHttpStatus(e.getStatusCode());

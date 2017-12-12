@@ -35,34 +35,38 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jersey')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-redis')
-	
-	//database
-	compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.1')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
+	compile('org.springframework.boot:spring-boot-starter-cache')
+	
+	//mybatis
+	compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.1')	
 	
 	//redis	
 	//compile('redis.clients:jedis:2.9.0')
 	
-	//cache
-	compile('org.springframework.boot:spring-boot-starter-cache')
+	//ehcache	
 	compile('net.sf.ehcache:ehcache:2.10.4')
 	
 	//json
 	compile('com.google.code.gson:gson:2.8.2')
+	
+	//jackson, javatime
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.2')
-		
+	
+	//common
 	compile('commons-codec:commons-codec:1.11')
 	compile('org.apache.commons:commons-collections4:4.1')	
 	compile('commons-io:commons-io:2.6')
+	
+	//payment midtrans
+	compile('id.co.veritrans:vt-java-client:1.5.0')	
 		
 	runtime('org.postgresql:postgresql')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	
 	optional('org.springframework.boot:spring-boot-configuration-processor')
-	
-	//payment
-	compile('id.co.veritrans:vt-java-client:1.5.0')
 }
 
 compileJava.dependsOn(processResources)

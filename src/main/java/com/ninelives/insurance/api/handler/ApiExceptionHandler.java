@@ -21,7 +21,6 @@ import com.ninelives.insurance.api.ref.ErrorCode;;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
-//public class ApiExceptionHandler{
 	
 	@ExceptionHandler(ApiNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)

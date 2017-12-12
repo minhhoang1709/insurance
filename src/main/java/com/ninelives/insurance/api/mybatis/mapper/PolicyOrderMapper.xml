@@ -21,6 +21,7 @@
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
     </association>
+    <association property="payment" resultMap="PolicyPaymentResultMap" />
     <collection property="policyOrderProducts" ofType="com.ninelives.insurance.api.model.PolicyOrderProduct">
     	<id column="order_product_id" jdbcType="BIGINT" property="orderProductId" />
 	    <result column="order_product_coverage_id" jdbcType="VARCHAR" property="coverageId" />
@@ -74,6 +75,25 @@
     </association>
   </resultMap>
   
+  <resultMap id="PolicyPaymentResultMap" type="com.ninelives.insurance.api.model.PolicyPayment">
+    <id column="payment_id" jdbcType="VARCHAR" property="id" />
+    <result column="payment_start_date" jdbcType="DATE" property="paymentStartDate" />
+    <result column="payment_order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="payment_user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="payment_total_amount" jdbcType="INTEGER" property="totalAmount" />
+    <result column="payment_status" jdbcType="VARCHAR" property="status" />
+    <result column="payment_type" jdbcType="VARCHAR" property="paymentType" />
+    <result column="payment_provider_transaction_id" jdbcType="VARCHAR" property="providerTransactionId" />
+    <result column="payment_provider_transaction_status" jdbcType="VARCHAR" property="providerTransactionStatus" />
+    <result column="payment_provider_status_code" jdbcType="INTEGER" property="providerStatusCode" />
+    <result column="payment_charge_date" jdbcType="TIMESTAMP" property="chargeDate" />
+    <result column="payment_pending_notif_date" jdbcType="TIMESTAMP" property="pendingNotifDate" />
+    <result column="payment_success_notif_date" jdbcType="TIMESTAMP" property="successNotifDate" />
+    <result column="payment_failed_notif_date" jdbcType="TIMESTAMP" property="failedNotifDate" />
+    <result column="payment_expired_notif_date" jdbcType="TIMESTAMP" property="expiredNotifDate" />
+    <result column="payment_cnt" jdbcType="INTEGER" property="cnt" />
+  </resultMap>
+  
   <sql id="Base_Column_List">
     order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
     policy_start_date, policy_end_date, total_premi, product_count, status, created_date, 
@@ -89,7 +109,13 @@
    	b.coverage_has_beneficiary as order_product_coverage_has_beneficiary, 
    	b.premi as order_product_premi,
    	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, 
-   	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name
+   	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name,
+   	pp.id as payment_id, pp.payment_start_date, pp.order_id as payment_order_id, pp.user_id as payment_user_id, pp.total_amount as payment_total_amount, 
+   	pp.status as payment_status, pp.payment_type, pp.provider_transaction_id as payment_provider_transaction_id, 
+    pp.provider_transaction_status as payment_provider_transaction_status, pp.provider_status_code as payment_provider_status_code, 
+    pp.charge_date as payment_charge_date, pp.pending_notif_date as payment_pending_notif_date, 
+    pp.success_notif_date as payment_success_notif_date, pp.failed_notif_date as payment_failed_notif_date, 
+    pp.expired_notif_date as payment_expired_notif_date, pp.cnt as payment_cnt
   </sql>
 
 <!--      	
@@ -101,6 +127,7 @@
     inner join public.policy_order_product as b on b.order_id=a.order_id
     inner join public.period c on c.period_id=a.period_id
     inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
+    left outer join public.policy_payment pp on pp.order_id=a.order_id
   </sql>
 
 <!--     

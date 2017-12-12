@@ -5,22 +5,22 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum PaymentStatus {
+public enum PaymentChargeStatus {
 	CHARGE("CHARGE"),
 	ERRSYS("ERRSYS"), //Internal system error
 	ERRMID("ERRMID") //Error response from Midtrans
 	;
 	
-	static final Map<String, PaymentStatus> lookup = new HashMap<>();
+	static final Map<String, PaymentChargeStatus> lookup = new HashMap<>();
 	static {
-		for (PaymentStatus c:PaymentStatus.values()){
+		for (PaymentChargeStatus c:PaymentChargeStatus.values()){
 			lookup.put(c.toString(), c);
 		}
 	}
 	
 	private final String stringValue;
 
-    private PaymentStatus(final String newValue) {
+    private PaymentChargeStatus(final String newValue) {
         stringValue = newValue;
     }
 
@@ -33,8 +33,8 @@ public enum PaymentStatus {
     	return stringValue;
     }
     
-    public static PaymentStatus toEnum(String value){
-    	PaymentStatus result = lookup.get(value);
+    public static PaymentChargeStatus toEnum(String value){
+    	PaymentChargeStatus result = lookup.get(value);
     	if (result != null){
     		return result;
     	}

@@ -687,45 +687,45 @@ public class OrderService {
 //		return checklist;
 //	}
 	
-	//TODO remove test
-	public List<PolicyOrder> tesFetch(String userId, final FilterDto filter){
-		int offset = this.defaultOrdersFilterOffset;
-		int limit = this.defaultOrdersFilterLimit;
-		String[] filterStatus = null;
-		if(filter!=null){
-			offset = filter.getOffset();
-			if(filter.getLimit() > this.maxOrdersFilterLimit){
-				limit = this.maxOrdersFilterLimit;
-			}else{
-				limit = filter.getLimit();
-			}
-			filterStatus = filter.getStatus();
-		}
-		OrderDtoFilterStatus filterType = getFetchOrderFilterType(filterStatus);
-		List<PolicyOrder> orders = null;
-		if(filterType.equals(OrderDtoFilterStatus.ALL)){
-			orders = policyOrderMapper.selectByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.ACTIVE)){
-			orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.APPROVED)){
-			orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.EXPIRED)){
-			orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
-		}else if (filterType.equals(OrderDtoFilterStatus.UNPAID)){
-			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
-		}		
-		
-		LocalDate today = LocalDate.now();
-		if(orders!=null){
-			for(PolicyOrder po: orders){
-				mapPolicyOrderStatus(po,today);
-			}
-		}
-		
-		logger.debug("call testfetch with filter {} and filterType {} and result-size {}", filter, filterType,
-				orders == null ? "0" : String.valueOf(orders.size()));
-		return orders;
-	}
+//	//TODO remove test
+//	public List<PolicyOrder> tesFetch(String userId, final FilterDto filter){
+//		int offset = this.defaultOrdersFilterOffset;
+//		int limit = this.defaultOrdersFilterLimit;
+//		String[] filterStatus = null;
+//		if(filter!=null){
+//			offset = filter.getOffset();
+//			if(filter.getLimit() > this.maxOrdersFilterLimit){
+//				limit = this.maxOrdersFilterLimit;
+//			}else{
+//				limit = filter.getLimit();
+//			}
+//			filterStatus = filter.getStatus();
+//		}
+//		OrderDtoFilterStatus filterType = getFetchOrderFilterType(filterStatus);
+//		List<PolicyOrder> orders = null;
+//		if(filterType.equals(OrderDtoFilterStatus.ALL)){
+//			orders = policyOrderMapper.selectByUserId(userId, limit, offset);
+//		}else if (filterType.equals(OrderDtoFilterStatus.ACTIVE)){
+//			orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
+//		}else if (filterType.equals(OrderDtoFilterStatus.APPROVED)){
+//			orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
+//		}else if (filterType.equals(OrderDtoFilterStatus.EXPIRED)){
+//			orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
+//		}else if (filterType.equals(OrderDtoFilterStatus.UNPAID)){
+//			orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
+//		}		
+//		
+//		LocalDate today = LocalDate.now();
+//		if(orders!=null){
+//			for(PolicyOrder po: orders){
+//				mapPolicyOrderStatus(po,today);
+//			}
+//		}
+//		
+//		logger.debug("call testfetch with filter {} and filterType {} and result-size {}", filter, filterType,
+//				orders == null ? "0" : String.valueOf(orders.size()));
+//		return orders;
+//	}
 	private String generateOrderId(){
 		return UUID.randomUUID().toString();
 	}

@@ -61,8 +61,6 @@ public class NinelivesConfigProperties {
 		this.storage = storage;
 	}
 	
-	
-
 	public Payment getPayment() {
 		return payment;
 	}
@@ -70,8 +68,6 @@ public class NinelivesConfigProperties {
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
-
-
 
 	public static class Payment {
 		@NotEmpty

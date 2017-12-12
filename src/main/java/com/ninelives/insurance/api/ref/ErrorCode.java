@@ -46,7 +46,9 @@ public enum ErrorCode {
 	ERR7008_CLAIM_DETAIL_INVALID("ERR7008"), //detail info (e.g. address) is invalid
 	ERR7009_CLAIM_BANK_ACCOUNT_INVALID("ERR7009"), //bank account info is invalid
 	
-	ERR8001_PAYMENT_CHARGE_ERROR("ERR8001") //
+	ERR8001_CHARGE_API_ERROR("ERR8001"), //error from api call to midtrans
+	ERR8002_CHARGE_INVALID("ERR8002"), //empty or invalid charge data
+	ERR8003_ORDER_NOT_FOUND("ERR8003") //empty or invalid order data
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

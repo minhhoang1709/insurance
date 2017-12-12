@@ -70,4 +70,12 @@ public class UserController {
 
 		return userService.updateIdCardFile(authUserId, file); 
 	}
+	
+//	@RequestMapping(value="/users/{userId}/idCardFiles",
+//			method=RequestMethod.GET)
+//	@ResponseBody
+//	public UserFileDto downloadIdCardFile (@RequestAttribute ("authUserId") String authUserId) throws ApiException{
+//
+//		return userService.updateIdCardFile(authUserId, file); 
+//	}
 }

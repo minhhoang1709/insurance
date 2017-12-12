@@ -132,7 +132,7 @@ public class TestController {
 		return orderService.submitOrder(authUserId, orderDto, false);
 	}
 	
-	@RequestMapping(value="/test/testfetchorder", method=RequestMethod.GET)
+	@RequestMapping(value="/test/fullorder", method=RequestMethod.GET)
 	@ResponseBody
 	public List<PolicyOrder> getTestFetchOrder(@RequestAttribute("authUserId") String authUserId, 
 			@RequestParam(value="filter",required=false) String filter) throws ApiException{
@@ -145,7 +145,7 @@ public class TestController {
 		
 		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return orderService.tesFetch(authUserId, orderFilter); 
+		return orderService.fetchOrders(authUserId, orderFilter); 
 	}
 	
 	@RequestMapping(value="/test/order", method=RequestMethod.GET)
