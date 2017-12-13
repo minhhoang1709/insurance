@@ -16,6 +16,8 @@ public class PaymentChargeLog {
 
     private String userId;
 
+    private Integer paymentSeq;
+
     private Integer totalAmount;
 
     private String providerTransactionId;
@@ -70,6 +72,14 @@ public class PaymentChargeLog {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Integer getPaymentSeq() {
+        return paymentSeq;
+    }
+
+    public void setPaymentSeq(Integer paymentSeq) {
+        this.paymentSeq = paymentSeq;
     }
 
     public Integer getTotalAmount() {

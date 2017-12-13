@@ -30,6 +30,11 @@ public class ChargeDto {
 	@JsonProperty("custom_field1")
 	private String authToken;
 	
+	@JsonProperty("custom_field2")
+	private String paymentSeq;
+	
+	private Expiry expiry;
+	
 	@JsonIgnore
 	public Map<String, Object> other = new HashMap<>();
 	
@@ -79,6 +84,22 @@ public class ChargeDto {
 
 	public void setAuthToken(String authToken) {
 		this.authToken = authToken;
+	}
+	
+	public String getPaymentSeq() {
+		return paymentSeq;
+	}
+
+	public void setPaymentSeq(String paymentSeq) {
+		this.paymentSeq = paymentSeq;
+	}
+
+	public Expiry getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(Expiry expiry) {
+		this.expiry = expiry;
 	}
 
 	@JsonAnyGetter
@@ -398,6 +419,29 @@ public class ChargeDto {
 					+ (postalCode != null ? "postalCode=" + postalCode : "") + "]";
 		}
 	}
+	
+	public static class Expiry{
+		String unit;
+		String duration;
+		public String getUnit() {
+			return unit;
+		}
+		public void setUnit(String unit) {
+			this.unit = unit;
+		}
+		public String getDuration() {
+			return duration;
+		}
+		public void setDuration(String duration) {
+			this.duration = duration;
+		}
+		@Override
+		public String toString() {
+			return "Expiry [" + (unit != null ? "unit=" + unit + ", " : "")
+					+ (duration != null ? "duration=" + duration : "") + "]";
+		}
+		
+	}
 
 	@Override
 	public String toString() {
@@ -406,7 +450,8 @@ public class ChargeDto {
 				+ (itemDetails != null ? "itemDetails=" + itemDetails + ", " : "")
 				+ (transactionDetails != null ? "transactionDetails=" + transactionDetails + ", " : "")
 				+ (userId != null ? "userId=" + userId + ", " : "")
-				+ (authToken != null ? "authToken=" + authToken + ", " : "") + (other != null ? "other=" + other : "")
-				+ "]";
+				+ (authToken != null ? "authToken=" + authToken + ", " : "")
+				+ (paymentSeq != null ? "paymentSeq=" + paymentSeq + ", " : "")
+				+ (expiry != null ? "expiry=" + expiry + ", " : "") + (other != null ? "other=" + other : "") + "]";
 	}
 }

@@ -1,14 +1,12 @@
 package com.ninelives.insurance.api.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.ninelives.insurance.api.ref.PaymentStatus;
 
 public class PolicyPayment {
     private String id;
-
-    private LocalDate paymentStartDate;
 
     private String orderId;
 
@@ -16,46 +14,42 @@ public class PolicyPayment {
 
     private Integer totalAmount;
 
-    private PaymentStatus status;
-
     private String paymentType;
 
     private String providerTransactionId;
 
-    private String providerTransactionStatus;
+    private Date providerTransactionTime;
 
     private Integer providerStatusCode;
 
-    private LocalDateTime chargeDate;
+    private String providerTransactionStatus;
 
-    private LocalDateTime pendingNotifDate;
+    private Integer paymentSeq;
 
-    private LocalDateTime successNotifDate;
+    private Integer notifPaymentSeq;
 
-    private LocalDateTime failedNotifDate;
+    private LocalDateTime startTime;
 
-    private LocalDateTime expiredNotifDate;
+    private LocalDateTime chargeTime;
 
-    private Integer cnt;
+    private LocalDateTime notifPendingTime;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime notifSuccessTime;
+
+    private LocalDateTime notifFailedTime;
+
+    private LocalDateTime notifExpiredTime;
+
+    private PaymentStatus status;
 
     private LocalDateTime updateDate;
 
     public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public LocalDate getPaymentStartDate() {
-        return paymentStartDate;
+        return id;
     }
 
-    public void setPaymentStartDate(LocalDate paymentStartDate) {
-        this.paymentStartDate = paymentStartDate;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getOrderId() {
@@ -82,14 +76,6 @@ public class PolicyPayment {
         this.totalAmount = totalAmount;
     }
 
-    public PaymentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
     public String getPaymentType() {
         return paymentType;
     }
@@ -106,12 +92,12 @@ public class PolicyPayment {
         this.providerTransactionId = providerTransactionId;
     }
 
-    public String getProviderTransactionStatus() {
-        return providerTransactionStatus;
+    public Date getProviderTransactionTime() {
+        return providerTransactionTime;
     }
 
-    public void setProviderTransactionStatus(String providerTransactionStatus) {
-        this.providerTransactionStatus = providerTransactionStatus;
+    public void setProviderTransactionTime(Date providerTransactionTime) {
+        this.providerTransactionTime = providerTransactionTime;
     }
 
     public Integer getProviderStatusCode() {
@@ -122,60 +108,84 @@ public class PolicyPayment {
         this.providerStatusCode = providerStatusCode;
     }
 
-    public LocalDateTime getChargeDate() {
-        return chargeDate;
+    public String getProviderTransactionStatus() {
+        return providerTransactionStatus;
     }
 
-    public void setChargeDate(LocalDateTime chargeDate) {
-        this.chargeDate = chargeDate;
+    public void setProviderTransactionStatus(String providerTransactionStatus) {
+        this.providerTransactionStatus = providerTransactionStatus;
     }
 
-    public LocalDateTime getPendingNotifDate() {
-        return pendingNotifDate;
+    public Integer getPaymentSeq() {
+        return paymentSeq;
     }
 
-    public void setPendingNotifDate(LocalDateTime pendingNotifDate) {
-        this.pendingNotifDate = pendingNotifDate;
+    public void setPaymentSeq(Integer paymentSeq) {
+        this.paymentSeq = paymentSeq;
     }
 
-    public LocalDateTime getSuccessNotifDate() {
-        return successNotifDate;
+    public Integer getNotifPaymentSeq() {
+        return notifPaymentSeq;
     }
 
-    public void setSuccessNotifDate(LocalDateTime successNotifDate) {
-        this.successNotifDate = successNotifDate;
+    public void setNotifPaymentSeq(Integer notifPaymentSeq) {
+        this.notifPaymentSeq = notifPaymentSeq;
     }
 
-    public LocalDateTime getFailedNotifDate() {
-        return failedNotifDate;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setFailedNotifDate(LocalDateTime failedNotifDate) {
-        this.failedNotifDate = failedNotifDate;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
-    public LocalDateTime getExpiredNotifDate() {
-        return expiredNotifDate;
+    public LocalDateTime getChargeTime() {
+        return chargeTime;
     }
 
-    public void setExpiredNotifDate(LocalDateTime expiredNotifDate) {
-        this.expiredNotifDate = expiredNotifDate;
+    public void setChargeTime(LocalDateTime chargeTime) {
+        this.chargeTime = chargeTime;
     }
 
-    public Integer getCnt() {
-        return cnt;
+    public LocalDateTime getNotifPendingTime() {
+        return notifPendingTime;
     }
 
-    public void setCnt(Integer cnt) {
-        this.cnt = cnt;
+    public void setNotifPendingTime(LocalDateTime notifPendingTime) {
+        this.notifPendingTime = notifPendingTime;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getNotifSuccessTime() {
+        return notifSuccessTime;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setNotifSuccessTime(LocalDateTime notifSuccessTime) {
+        this.notifSuccessTime = notifSuccessTime;
+    }
+
+    public LocalDateTime getNotifFailedTime() {
+        return notifFailedTime;
+    }
+
+    public void setNotifFailedTime(LocalDateTime notifFailedTime) {
+        this.notifFailedTime = notifFailedTime;
+    }
+
+    public LocalDateTime getNotifExpiredTime() {
+        return notifExpiredTime;
+    }
+
+    public void setNotifExpiredTime(LocalDateTime notifExpiredTime) {
+        this.notifExpiredTime = notifExpiredTime;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 
     public LocalDateTime getUpdateDate() {
@@ -185,4 +195,29 @@ public class PolicyPayment {
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	@Override
+	public String toString() {
+		return "PolicyPayment [" + (id != null ? "id=" + id + ", " : "")
+				+ (orderId != null ? "orderId=" + orderId + ", " : "")
+				+ (userId != null ? "userId=" + userId + ", " : "")
+				+ (totalAmount != null ? "totalAmount=" + totalAmount + ", " : "")
+				+ (paymentType != null ? "paymentType=" + paymentType + ", " : "")
+				+ (providerTransactionId != null ? "providerTransactionId=" + providerTransactionId + ", " : "")
+				+ (providerTransactionTime != null ? "providerTransactionTime=" + providerTransactionTime + ", " : "")
+				+ (providerStatusCode != null ? "providerStatusCode=" + providerStatusCode + ", " : "")
+				+ (providerTransactionStatus != null ? "providerTransactionStatus=" + providerTransactionStatus + ", "
+						: "")
+				+ (paymentSeq != null ? "paymentSeq=" + paymentSeq + ", " : "")
+				+ (notifPaymentSeq != null ? "notifPaymentSeq=" + notifPaymentSeq + ", " : "")
+				+ (startTime != null ? "startTime=" + startTime + ", " : "")
+				+ (chargeTime != null ? "chargeTime=" + chargeTime + ", " : "")
+				+ (notifPendingTime != null ? "notifPendingTime=" + notifPendingTime + ", " : "")
+				+ (notifSuccessTime != null ? "notifSuccessTime=" + notifSuccessTime + ", " : "")
+				+ (notifFailedTime != null ? "notifFailedTime=" + notifFailedTime + ", " : "")
+				+ (notifExpiredTime != null ? "notifExpiredTime=" + notifExpiredTime + ", " : "")
+				+ (status != null ? "status=" + status + ", " : "")
+				+ (updateDate != null ? "updateDate=" + updateDate : "") + "]";
+	}
+    
 }

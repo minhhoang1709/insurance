@@ -127,6 +127,6 @@ public class MidtransPaymentProvider implements PaymentProvider{
 			midtransServerAuthorization = "Basic "
 					+ Base64.getEncoder().encodeToString((config.getPayment().getMidtransSandboxServerKey() + ":").getBytes());
 		}
-		logger.info("Init PaymentProvider with environment {} and url {}", midtransEnvironment, midtransUrl);
+		logger.info("Init PaymentProvider with environment <{}> and url <{}>", midtransEnvironment, midtransUrl);
 	}
 }

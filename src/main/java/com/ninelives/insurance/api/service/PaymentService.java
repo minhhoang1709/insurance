@@ -52,7 +52,7 @@ public class PaymentService {
 		//v test valid order trus valid  trus invalid trus valid 
 		//v test invalid order trus order valid
 		//? hit midtrans to check latest status?
-		//? kalo latest payment status is not charge dan charge result in error, then dont update policy_payment?
+		//v kalo latest payment status is not charge dan charge result in error, then dont update policy_payment?
 		//    the thing is we want to know the latest payment status?
 		//    incase of pending-fail, then we allow charge and then error 'cannot reuse id' then the latest status charging will be error
 		//check that chargedto is valid (no null pointer)
@@ -65,7 +65,8 @@ public class PaymentService {
 		//check the coverage claim limit, check also other limit in orderservice (since we might need to prevent charge after free insurance cases)
 		//rethink whether to update order table
 		
-		LocalDate today = LocalDate.now();
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate today = now.toLocalDate();
 
 		logger.debug("Charge user <{}> with charge <{}>", userId, chargeDto);
 		
@@ -84,58 +85,52 @@ public class PaymentService {
 		}
 		
 		
-//        		  if payment.status is charge and order.status=submitted, allow
-//                if payment.status is pending, error
-//                if payment.status is fail, allow, update order.status=charge
-//                if payment.status is expire, (this should be another purchase, so error?)
-//                if payment.status is success, error
-		
 		PolicyPayment payment = order.getPayment();
 		if(payment==null){
 			payment = new PolicyPayment();
 			payment.setId(generatePolicyPaymentId());
 			payment.setOrderId(chargeDto.getTransactionDetails().getOrderId());
 			payment.setUserId(userId);
-			payment.setPaymentStartDate(today);
-			payment.setChargeDate(LocalDateTime.now());
+			payment.setStartTime(now);
+			payment.setChargeTime(now);
 			payment.setTotalAmount(chargeDto.getTransactionDetails().getGrossAmount());		
-			payment.setCnt(1);
+			payment.setPaymentSeq(1);
 		}else{
-			payment.setChargeDate(LocalDateTime.now());
-			payment.setCnt(payment.getCnt()+1);
+			payment.setChargeTime(now);
+			payment.setPaymentSeq(payment.getPaymentSeq()+1);
 		}
-						
-		PaymentChargeLog chargeLog = new PaymentChargeLog();
-		chargeLog.setChargeDate(today);
-		chargeLog.setOrderId(payment.getOrderId());
-		chargeLog.setPolicyPaymentId(payment.getId());
-		chargeLog.setUserId(payment.getUserId());
-		chargeLog.setTotalAmount(payment.getTotalAmount());
-		
+
 		ChargeDto midtransChargeDto = new ChargeDto();
 		midtransChargeDto.setUserId(userId);
 		midtransChargeDto.setCreditCard(chargeDto.getCreditCard());
 		midtransChargeDto.setCustomerDetails(chargeDto.getCustomerDetails());
 		midtransChargeDto.setItemDetails(chargeDto.getItemDetails());
 		midtransChargeDto.setTransactionDetails(chargeDto.getTransactionDetails());
-		//midtransChargeDto.getTransactionDetails().setOrderId(payment.getPaymentId()); //order_id to midtrans is payment_id in Ninelives, since pending trx cannot be reused at midtrans
-				
+		midtransChargeDto.setPaymentSeq(String.valueOf(payment.getPaymentSeq()));
+		midtransChargeDto.setExpiry(new ChargeDto.Expiry());
+		midtransChargeDto.getExpiry().setDuration(String.valueOf(config.getPayment().getMidtransPaymentExpiryDuration()));
+		midtransChargeDto.getExpiry().setUnit(config.getPayment().getMidtransPaymentExpiryUnit());
+		
+		PaymentChargeLog chargeLog = new PaymentChargeLog();
+		chargeLog.setChargeDate(today);
+		chargeLog.setPolicyPaymentId(payment.getId());
+		chargeLog.setPaymentSeq(payment.getPaymentSeq());
+		chargeLog.setOrderId(payment.getOrderId());		
+		chargeLog.setUserId(payment.getUserId());
+		chargeLog.setTotalAmount(payment.getTotalAmount());
+		
 		paymentChargeLogMapper.insert(chargeLog);
 		
 		ChargeResponseDto chargeResponseDto = paymentProvider.charge(midtransChargeDto);
 		
 		if(chargeResponseDto == null){
-			payment.setStatus(PaymentStatus.ERRSYS);
 			chargeLog.setStatus(PaymentChargeStatus.ERRSYS);
 		}else{
 			chargeLog.setResponseHttpStatus(chargeResponseDto.getHttpStatus().value() +"");
 			if(!StringUtils.isEmpty(chargeResponseDto.getToken())){
-				payment.setStatus(PaymentStatus.CHARGE);
-				payment.setProviderTransactionId(chargeResponseDto.getToken());
 				chargeLog.setStatus(PaymentChargeStatus.CHARGE);
-				chargeLog.setProviderTransactionId(chargeResponseDto.getToken());
+				chargeLog.setProviderTransactionId(chargeResponseDto.getToken());				
 			}else{				
-				payment.setStatus(PaymentStatus.ERRMID);
 				chargeLog.setStatus(PaymentChargeStatus.ERRMID);
 				if(!CollectionUtils.isEmpty(chargeResponseDto.getErrorMessages())){
 					chargeLog.setResponseErrorMessage(chargeResponseDto.getErrorMessages().toString());
@@ -147,14 +142,17 @@ public class PaymentService {
 		
 		paymentChargeLogMapper.updateChargeResponseById(chargeLog);
 		
-		if(order.getPayment()==null){
-			policyPaymentMapper.insertForStatusCharge(payment);
-		}else{
-			policyPaymentMapper.updateChargeResponseById(payment);
+		if(chargeResponseDto!=null && !StringUtils.isEmpty(chargeResponseDto.getToken())){
+			payment.setStatus(PaymentStatus.CHARGE);
+			payment.setProviderTransactionId(chargeResponseDto.getToken());
+			if(order.getPayment()==null){
+				policyPaymentMapper.insertForStatusCharge(payment);
+			}else{
+				policyPaymentMapper.updateChargeResponseById(payment);
+			}
 		}
 		
-		
-		if(!payment.getStatus().equals(PaymentStatus.CHARGE)){	
+		if(!PaymentStatus.CHARGE.equals(payment.getStatus())){	
 			throw new ApiInternalServerErrorException(ErrorCode.ERR8001_CHARGE_API_ERROR, "Maaf, permintaan Anda belum dapat diproses");
 		}
 		

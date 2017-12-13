@@ -12,14 +12,16 @@ public interface PaymentChargeLogMapper {
     @Insert({
         "insert into public.payment_charge_log (charge_date, ",
         "policy_payment_id, order_id, ",
-        "user_id, total_amount)",
+        "user_id, payment_seq, ",
+        "total_amount )",
         "values (#{chargeDate,jdbcType=DATE}, ",
         "#{policyPaymentId,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, ",
-        "#{userId,jdbcType=VARCHAR}, #{totalAmount,jdbcType=INTEGER})"
+        "#{userId,jdbcType=VARCHAR}, #{paymentSeq,jdbcType=INTEGER}, ",
+        "#{totalAmount,jdbcType=INTEGER})"
     })
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(PaymentChargeLog record);
-
+    
     @Update({
         "update public.payment_charge_log",
         "set provider_transaction_id = #{providerTransactionId,jdbcType=VARCHAR},",
@@ -30,5 +32,6 @@ public interface PaymentChargeLogMapper {
           "update_date = now()",
         "where id = #{id,jdbcType=BIGINT}"
     })
-    int updateChargeResponseById(PaymentChargeLog record);    
+    int updateChargeResponseById(PaymentChargeLog record);
+    
 }

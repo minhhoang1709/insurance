@@ -96,6 +96,9 @@ public class NinelivesConfigProperties {
 		private int midtransConnectTimeout = 5000;
 		private int midtransSocketTimeout = 20000;
 		
+		private int midtransPaymentExpiryDuration = 3;
+		private String midtransPaymentExpiryUnit = "hours";
+		
 		public String getMidtransSandboxServerKey() {
 			return midtransSandboxServerKey;
 		}
@@ -162,7 +165,18 @@ public class NinelivesConfigProperties {
 		public void setMidtransProductionUrl(String midtransProductionUrl) {
 			this.midtransProductionUrl = midtransProductionUrl;
 		}
-		
+		public int getMidtransPaymentExpiryDuration() {
+			return midtransPaymentExpiryDuration;
+		}
+		public void setMidtransPaymentExpiryDuration(int midtransPaymentExpiryDuration) {
+			this.midtransPaymentExpiryDuration = midtransPaymentExpiryDuration;
+		}
+		public String getMidtransPaymentExpiryUnit() {
+			return midtransPaymentExpiryUnit;
+		}
+		public void setMidtransPaymentExpiryUnit(String midtransPaymentExpiryUnit) {
+			this.midtransPaymentExpiryUnit = midtransPaymentExpiryUnit;
+		}
 		
 	}
 
