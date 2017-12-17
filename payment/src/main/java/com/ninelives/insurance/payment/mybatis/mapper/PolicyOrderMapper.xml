@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.payment.mybatis.mapper.PolicyOrderMapper">
+  <resultMap id="NestedPolicyOrderResultMap" type="com.ninelives.insurance.model.PolicyOrder">
+    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_date" jdbcType="DATE" property="orderDate" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
+    <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
+    <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
+    <result column="product_count" jdbcType="INTEGER" property="productCount" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <association property="period" resultMap="PeriodResultMap" />
+    <association property="payment" resultMap="PolicyPaymentResultMap" />
+  </resultMap>
+  
+  <resultMap id="PeriodResultMap" type="com.ninelives.insurance.model.Period">
+    <id column="period_period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="period_name" jdbcType="VARCHAR" property="name" />
+    <result column="period_value" jdbcType="INTEGER" property="value" />
+    <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+  </resultMap>
+  
+  <resultMap id="PolicyPaymentResultMap" type="com.ninelives.insurance.model.PolicyPayment">
+    <id column="payment_id" jdbcType="VARCHAR" property="id" />
+    <result column="payment_start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="payment_order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="payment_user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="payment_seq" jdbcType="INTEGER" property="paymentSeq" />
+    <result column="payment_notif_payment_seq" jdbcType="INTEGER" property="notifPaymentSeq" />
+    <result column="payment_total_amount" jdbcType="INTEGER" property="totalAmount" />
+    <result column="payment_status" jdbcType="VARCHAR" property="status" />
+    <result column="payment_type" jdbcType="VARCHAR" property="paymentType" />
+    <result column="payment_provider_transaction_id" jdbcType="VARCHAR" property="providerTransactionId" />
+    <result column="payment_provider_transaction_status" jdbcType="VARCHAR" property="providerTransactionStatus" />
+    <result column="payment_provider_status_code" jdbcType="INTEGER" property="providerStatusCode" />
+    <result column="payment_charge_time" jdbcType="TIMESTAMP" property="chargeTime" />
+    <result column="payment_notif_pending_time" jdbcType="TIMESTAMP" property="notifPendingTime" />
+    <result column="payment_notif_success_time" jdbcType="TIMESTAMP" property="notifSuccessTime" />
+    <result column="payment_notif_failed_time" jdbcType="TIMESTAMP" property="notifFailedTime" />
+    <result column="payment_notif_expired_time" jdbcType="TIMESTAMP" property="notifExpiredTime" />
+  </resultMap>
+      
+  <sql id="Base_Column_List">
+    order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
+    policy_start_date, policy_end_date, total_premi, product_count, status, created_date, 
+    update_date
+  </sql>
+  
+  <sql id="NestedPolicyOrderColumnList">
+    a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
+   	a.policy_start_date, a.policy_end_date, a.total_premi, a.product_count, a.status, a.created_date,
+   	pr.period_id as period_period_id, pr.name as period_name, pr.value as period_value, pr.unit as period_unit, 
+   	pp.id as payment_id, 
+   	pp.start_time as payment_start_time,
+   	pp.order_id as payment_order_id, 
+   	pp.user_id as payment_user_id, 
+   	pp.payment_seq as payment_seq, 
+   	pp.notif_payment_seq as payment_notif_payment_seq, 
+   	pp.total_amount as payment_total_amount, 
+   	pp.status as payment_status, 
+   	pp.payment_type, 
+   	pp.provider_transaction_id as payment_provider_transaction_id, 
+    pp.provider_transaction_status as payment_provider_transaction_status, 
+    pp.provider_status_code as payment_provider_status_code, 
+	pp.charge_time as payment_charge_time, 
+	pp.notif_pending_time as payment_notif_pending_time, 
+	pp.notif_success_time as payment_notif_success_time, 
+	pp.notif_failed_time as payment_notif_failed_time,
+    pp.notif_expired_time as payment_notif_expired_time    
+  </sql>
+
+<!--      	
+	d.display_rank as order_product_coverage_display_rank,
+	g.claim_doc_type_id, g.name as claim_doc_type_name 
+-->
+  
+  <sql id="NestedPolicyOrderTableJoinList">
+    inner join public.period pr on pr.period_id=a.period_id
+    left outer join public.policy_payment pp on pp.order_id=a.order_id
+  </sql>
+
+   
+  <select id="selectByOrderId" resultMap="NestedPolicyOrderResultMap">
+  	select
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a    	
+    	<include refid="NestedPolicyOrderTableJoinList"/>
+    where a.order_id=#{orderId,jdbcType=VARCHAR}    	
+  </select>
+
+</mapper>

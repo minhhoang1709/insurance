@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.CoverageMapper">
+  <resultMap id="NestedCoverageResultMap" type="com.ninelives.insurance.model.Coverage">
+    <id column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="recommendation" jdbcType="VARCHAR" property="recommendation" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="max_limit" jdbcType="BIGINT" property="maxLimit" />
+    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="is_recommended" jdbcType="BIT" property="isRecommended" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="display_rank" jdbcType="INTEGER" property="displayRank" />
+    <association property="coverageCategory" javaType="com.ninelives.insurance.model.CoverageCategory">
+    	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
+    </association>
+    <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.model.CoverageClaimDocType">
+    	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" />
+    	<result column="is_mandatory" jdbcType="BIT" property="isMandatory" />
+    	<result column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+	    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType">
+	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+    	</association>	
+    </collection>    
+  </resultMap>
+  
+  <sql id="NestedCoverageColumnList">
+	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, 
+	a.has_beneficiary, a.status, a.display_rank, a.is_recommended,
+	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name,
+	c.coverage_claim_doc_type_id, c.is_mandatory,
+	d.claim_doc_type_id, d.name as claim_doc_type_name
+  </sql>
+  
+  <sql id="NestedCoverageTableJoinList">
+	public.coverage a
+	inner join public.coverage_category b on b.coverage_category_id=a.coverage_category_id
+	left outer join public.coverage_claim_doc_type c on c.coverage_id=a.coverage_id
+	left outer join public.claim_doc_type d on d.claim_doc_type_id=c.claim_doc_type_id
+  </sql>
+  
+  <select id="selectByCoverageId" resultMap="NestedCoverageResultMap">
+  	select
+  		<include refid="NestedCoverageColumnList"/>
+    from 
+    	<include refid="NestedCoverageTableJoinList"/>
+  	where a.coverage_id=#{coverageId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByStatusActive" resultMap="NestedCoverageResultMap">
+  	select
+  		<include refid="NestedCoverageColumnList"/>
+    from 
+    	<include refid="NestedCoverageTableJoinList"/>
+  	where a.status='A'
+  </select>
+</mapper>

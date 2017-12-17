@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.payment.mybatis.mapper.PolicyPaymentMapper">  
+  <update id="updateSelectiveByOrderIdAndPaymentId" parameterType="com.ninelives.insurance.model.PolicyPayment">
+    update public.policy_payment    
+    <set>
+      <if test="paymentType != null">
+        payment_type = #{paymentType,jdbcType=VARCHAR},
+      </if>
+      <if test="providerTransactionId != null">
+        provider_transaction_id = #{providerTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="providerTransactionTime != null">
+        provider_transaction_time = #{providerTransactionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="providerStatusCode != null">
+        provider_status_code = #{providerStatusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="providerTransactionStatus != null">
+        provider_transaction_status = #{providerTransactionStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="notifPaymentSeq != null">
+        notif_payment_seq = #{notifPaymentSeq,jdbcType=INTEGER},
+      </if>
+      <if test="notifPendingTime != null">
+        notif_pending_time = #{notifPendingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notifSuccessTime != null">
+        notif_success_time = #{notifSuccessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notifFailedTime != null">
+        notif_failed_time = #{notifFailedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notifExpiredTime != null">
+        notif_expired_time = #{notifExpiredTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="true">
+      	update_date = now(),
+      </if>
+    </set>    	
+    where id = #{id,jdbcType=VARCHAR}
+    	and order_id = #{orderId,jdbcType=VARCHAR}
+  </update>
+</mapper>

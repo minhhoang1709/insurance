@@ -1,0 +1,5 @@
+rootProject.name = 'insurance'
+
+include 'common'
+include 'api'
+include 'payment'

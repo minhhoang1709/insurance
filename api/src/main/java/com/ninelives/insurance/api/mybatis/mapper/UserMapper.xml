@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.User">
+    <id column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="google_refresh_token" jdbcType="VARCHAR" property="googleRefreshToken" />
+    <result column="google_auth_code" jdbcType="VARCHAR" property="googleAuthCode" />
+    <result column="google_access_token" jdbcType="VARCHAR" property="googleAccessToken" />
+    <result column="fcm_token" jdbcType="VARCHAR" property="fcmToken" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="birth_date" jdbcType="DATE" property="birthDate" />
+    <result column="birth_place" jdbcType="VARCHAR" property="birthPlace" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="id_card_file_id" jdbcType="BIGINT" property="idCardFileId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="google_user_id" jdbcType="VARCHAR" property="googleUserId" />
+    <result column="is_sync_gmail_enabled" jdbcType="BIT" property="isSyncGmailEnabled" />
+    <result column="is_notification_enabled" jdbcType="BIT" property="isNotificationEnabled" />
+  </resultMap> 
+  <sql id="Base_Column_List">
+    user_id, password, email, google_refresh_token, google_auth_code, google_access_token, 
+    fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, 
+    status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled
+  </sql>
+<insert id="insertSelective" parameterType="com.ninelives.insurance.model.User">
+    insert into public.users
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="googleRefreshToken != null">
+        google_refresh_token,
+      </if>
+      <if test="googleAuthCode != null">
+        google_auth_code,
+      </if>
+      <if test="googleAccessToken != null">
+        google_access_token,
+      </if>
+      <if test="fcmToken != null">
+        fcm_token,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="birthDate != null">
+        birth_date,
+      </if>
+      <if test="birthPlace != null">
+        birth_place,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="idCardFileId != null">
+        id_card_file_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createdDate != null">
+        created_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="googleUserId != null">
+        google_user_id,
+      </if>
+      <if test="isSyncGmailEnabled != null">
+        is_sync_gmail_enabled,
+      </if>
+      <if test="isNotificationEnabled != null">
+        is_notification_enabled,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="googleRefreshToken != null">
+        #{googleRefreshToken,jdbcType=VARCHAR},
+      </if>
+      <if test="googleAuthCode != null">
+        #{googleAuthCode,jdbcType=VARCHAR},
+      </if>
+      <if test="googleAccessToken != null">
+        #{googleAccessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="fcmToken != null">
+        #{fcmToken,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null">
+        #{birthDate,jdbcType=DATE},
+      </if>
+      <if test="birthPlace != null">
+        #{birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="idCardFileId != null">
+        #{idCardFileId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null">
+        #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="googleUserId != null">
+        #{googleUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="isSyncGmailEnabled != null">
+        #{isSyncGmailEnabled,jdbcType=BIT},
+      </if>
+      <if test="isNotificationEnabled != null">
+        #{isNotificationEnabled,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+</mapper>

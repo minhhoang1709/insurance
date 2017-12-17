@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.api.mybatis.mapper.ProductMapper">
+  <resultMap id="NestedProductResultMap" type="com.ninelives.insurance.model.Product">
+    <id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
+    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="premi" jdbcType="INTEGER" property="premi" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <association property="period" resultMap="PeriodResultMap" />
+    <association property="coverage" resultMap="CoverageResultMap" />
+  </resultMap>
+  <resultMap id="PeriodResultMap" type="com.ninelives.insurance.model.Period">
+    <id column="period_period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="period_name" jdbcType="VARCHAR" property="name" />
+    <result column="period_value" jdbcType="INTEGER" property="value" />
+    <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+  </resultMap>
+  <resultMap id="CoverageResultMap" type="com.ninelives.insurance.model.Coverage">
+    <id column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="coverage_name" jdbcType="VARCHAR" property="name" />
+    <result column="coverage_recommendation" jdbcType="VARCHAR" property="recommendation" />
+    <result column="coverage_description" jdbcType="VARCHAR" property="description" />
+    <result column="coverage_max_limit" jdbcType="BIGINT" property="maxLimit" />
+    <result column="coverage_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="coverage_is_recommended" jdbcType="BIT" property="isRecommended" />
+    <result column="coverage_status" jdbcType="VARCHAR" property="status" />
+    <result column="coverage_display_rank" jdbcType="INTEGER" property="displayRank" />
+    <association property="coverageCategory" javaType="com.ninelives.insurance.model.CoverageCategory">
+    	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
+    </association>
+    <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.model.CoverageClaimDocType">
+    	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" />
+    	<result column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+    	<result column="is_mandatory" jdbcType="BIT" property="isMandatory" />
+	    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType">
+	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
+		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+    	</association>	
+    </collection>    
+  </resultMap>
+  
+  <sql id="NestedProductColumnList">
+  	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
+	b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
+	c.coverage_id as coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
+	c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
+	c.is_recommended as coverage_is_recommended, c.status as coverage_status, c.display_rank as coverage_display_rank,
+	d.coverage_category_id as covcat_coverage_category_id, d.name as covcat_name,
+	e.coverage_claim_doc_type_id, e.is_mandatory,
+	f.claim_doc_type_id, f.name as claim_doc_type_name
+  </sql>
+  
+  <sql id="NestedProductTableJoinList">
+   	public.product a
+  	inner join public.period b on b.period_id=a.period_id
+  	inner join public.coverage c on c.coverage_id=a.coverage_id
+  	inner join public.coverage_category d on d.coverage_category_id=c.coverage_category_id
+  	left outer join public.coverage_claim_doc_type e on e.coverage_id=c.coverage_id
+  	left outer join public.claim_doc_type f on f.claim_doc_type_id=e.claim_doc_type_id
+  </sql>
+  
+  <select id="selectByStatusActive" resultMap="NestedProductResultMap">
+  	select
+  		<include refid="NestedProductColumnList"/>
+  	from
+  		<include refid="NestedProductTableJoinList"/>
+  	where a.status='A'
+  	order by a.product_id
+  </select>
+  
+  <select id="selectByProductId" resultMap="NestedProductResultMap">
+  	select
+  		<include refid="NestedProductColumnList"/>
+  	from
+  		<include refid="NestedProductTableJoinList"/>
+  	where a.product_id=#{productId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByProductIds" resultMap="NestedProductResultMap">
+  	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
+  		b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
+  		c.coverage_id as coverage_coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
+  		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
+  		c.is_recommended as coverage_is_recommended
+  	from public.product a, public.period b, public.coverage c
+  	where a.status='A' and b.period_id=a.period_id and c.coverage_id=a.coverage_id
+		and a.product_id in
+	  	<foreach item="item" index="index" collection="productIds"
+      		open="(" separator="," close=")">#{item}
+        </foreach>
+  </select>
+  
+</mapper>
