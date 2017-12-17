@@ -76,6 +76,10 @@ public class UserService {
 		
 		User user = userMapper.selectByEmail(registrationDto.getGoogleEmail());
 		
+		//check google login valid
+		//1. kalo dia select sycngmail true? ambil refresh token, authentication token
+		//2. kalo gak select sync -> 
+		
 		if(user!=null){
 			if(!user.getPassword().equals(DigestUtils.sha1Hex(registrationDto.getPassword()))){
 				throw new ApiBadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");

@@ -36,35 +36,40 @@ public class OrderServiceOrderTest {
 		orderService.policyOrderMapper = policyOrderMapper;
 		orderService.policyConflictPeriodLimit=3;
 		
-		PolicyOrderCoverage poc11 = new PolicyOrderCoverage();
-		poc11.setCoverageId("101001");
-		conflictList.add(poc11);
-		PolicyOrderCoverage poc12 = new PolicyOrderCoverage();
-		poc12.setCoverageId("101001");
-		conflictList.add(poc12);		
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(0).setCoverageId("101001");
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(1).setCoverageId("101001");		
 		
 		boolean result = orderService.isOverCoverageInSamePeriodLimit("id", today, today, today, coverageIds);
 		
 		assertEquals(result, false);
-		
+		//---
 		conflictList.clear();
-		
-		PolicyOrderCoverage poc21 = new PolicyOrderCoverage();
-		poc21.setCoverageId("101001");
-		conflictList.add(poc21);
-		PolicyOrderCoverage poc22 = new PolicyOrderCoverage();
-		poc22.setCoverageId("101001");
-		conflictList.add(poc22);
-		PolicyOrderCoverage poc23 = new PolicyOrderCoverage();
-		poc23.setCoverageId("101001");
-		conflictList.add(poc23);
-		PolicyOrderCoverage poc24 = new PolicyOrderCoverage();
-		poc24.setCoverageId("101000");
-		conflictList.add(poc24);
-		
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(0).setCoverageId("101001");
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(1).setCoverageId("101001");
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(2).setCoverageId("101001");
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(3).setCoverageId("101000");
 		boolean result2 = orderService.isOverCoverageInSamePeriodLimit("id", today, today, today, coverageIds);
 		
 		assertEquals(result2, true);
+		//---
+		conflictList.clear();		
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(0).setCoverageId("101001");
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(1).setCoverageId("101002");
+		conflictList.add(new PolicyOrderCoverage());
+		conflictList.get(2).setCoverageId("101003");
+		
+		boolean result3 = orderService.isOverCoverageInSamePeriodLimit("id", today, today, today, coverageIds);
+		
+		assertEquals(result3, false);
+		
 		
 	}
 }

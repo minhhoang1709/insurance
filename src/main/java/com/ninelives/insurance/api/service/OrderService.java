@@ -541,7 +541,7 @@ public class OrderService {
 				}else if(policyOrder.getPolicyEndDate().isBefore(today)){
 					policyOrder.setStatus(PolicyStatus.EXPIRED);
 				}
-			}		
+			}
 		}
 	}
 	

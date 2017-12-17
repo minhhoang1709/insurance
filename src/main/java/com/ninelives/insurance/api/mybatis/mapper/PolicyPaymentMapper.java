@@ -14,6 +14,10 @@ public interface PolicyPaymentMapper {
           "charge_time = #{chargeTime,jdbcType=TIMESTAMP},",
           "payment_seq = #{paymentSeq,jdbcType=INTEGER},",
           "provider_transaction_id = #{providerTransactionId,jdbcType=VARCHAR},",
+          "provider_transaction_time = NULL,",
+          "provider_status_code = NULL,",
+          "provider_transaction_status = NULL,",
+          "payment_type = NULL,",
           "update_date = now()",
         "where id = #{id,jdbcType=BIGINT}"
     })

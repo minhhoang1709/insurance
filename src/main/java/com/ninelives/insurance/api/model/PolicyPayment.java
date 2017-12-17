@@ -20,7 +20,7 @@ public class PolicyPayment {
 
     private Date providerTransactionTime;
 
-    private Integer providerStatusCode;
+    private String providerStatusCode;
 
     private String providerTransactionStatus;
 
@@ -100,11 +100,11 @@ public class PolicyPayment {
         this.providerTransactionTime = providerTransactionTime;
     }
 
-    public Integer getProviderStatusCode() {
+    public String getProviderStatusCode() {
         return providerStatusCode;
     }
 
-    public void setProviderStatusCode(Integer providerStatusCode) {
+    public void setProviderStatusCode(String providerStatusCode) {
         this.providerStatusCode = providerStatusCode;
     }
 

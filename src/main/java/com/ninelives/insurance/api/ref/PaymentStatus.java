@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PaymentStatus {
 	CHARGE("CHARGE"),
-	ERRSYS("ERRSYS"), //Internal system error
-	ERRMID("ERRMID") //Error response from Midtrans
+	PENDING("PENDING"),
+	EXPIRE("EXPIRE"),
+	FAIL("FAIL"),	
+	SUCCESS("SUCCESS")
 	;
 	
 	static final Map<String, PaymentStatus> lookup = new HashMap<>();
