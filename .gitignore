@@ -1,6 +1,6 @@
 .gradle
 /build/
-/bin/
+bin/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -26,5 +26,5 @@ nbdist/
 .nb-gradle/
 
 #running artifact
-/logs/
-/tomcat/
+tomcat/
+
