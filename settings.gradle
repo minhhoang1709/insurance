@@ -1,4 +1,4 @@
-rootProject.name = 'insurance'
+rootProject.name = 'ninelives'
 
 include 'common'
 include 'api'
