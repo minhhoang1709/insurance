@@ -60,35 +60,7 @@ public class MidtransPaymentNotificationService {
 	
 	public void processNotification(MidtransNotificationDto notifDto) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
-		//v insert log
-		//x android generate order id by guid
-		//v error exception handler
-		//v verify signature
-		//v test local
-		//v notification log table with processing status
-		//v get payment and order (nested)
-		//v print it, test
-		//v retest permata to verify fraudstatus=accept
-		//v apply opt6 (or hit midtrans to get status)
-		//X another table to log unprocessed or race condition or other abnormal case
-		//  if signature not match
-		//  if order or payment not found in db
-		//  -> LOG di kolom baru
-		//update payment
-		// the transactionid, transactiontime, expire/pending/deny date
-		//update order
-		//check order status and next action
-		//  kalo sukses,
-		//  x kalo overdue,
-		//test
-		//test beli cc
-		//test transfer bca
-		//test beli indomaret?
-		//recheck indepotemt
-		//always log (except empty notif)
-		//jika cancel, maka
-		//test cancel (beli cc, use challenge and let it expired)-> e1556c1b-5e4c-4c9c-a183-24035d344f0c
-		//test class?
+
 		
 		logger.debug("Process notification notif:<{}> ", notifDto);
 		
@@ -150,17 +122,13 @@ public class MidtransPaymentNotificationService {
 			//TODO: insert this
 			notifLog.setProcessingStatus(PaymentNotificationProcessStatus.LATE_NOTIF);
 			isValidForProcessing = false;
-		}
-		
-		if(notifDto.getPaymentSeq() == order.getPayment().getPaymentSeq()){
+		}else if(notifDto.getPaymentSeq() == order.getPayment().getPaymentSeq()){
 			if(order.getPayment().getProviderTransactionStatus()!=null && order.getPayment().getProviderTransactionStatus().equals(notifDto.getTransactionStatus())){
 				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error duplicate notif", notifDto, order.getPayment());
 				notifLog.setProcessingStatus(PaymentNotificationProcessStatus.DUPLICATE);
 				isValidForProcessing = false;
 			}
-		}	
-		
-		if(order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)){
+		}else if(order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)){
 			logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error success but receive another notif", notifDto, order.getPayment());
 			notifLog.setProcessingStatus(PaymentNotificationProcessStatus.OUT_OF_ORDER);
 			isValidForProcessing = false;
@@ -242,41 +210,6 @@ public class MidtransPaymentNotificationService {
 		//TODO: transaction, update payment and order
 		 
 		//TODO: send notif to queue to be picked up and send to aswata
-
-		
-//		 -   notif /pending
-//         :   jika payment.status is charge, maka payment.status=pending, order.status=inpayment
-//             otherwise do nothing
-//     -   notif /deny
-//         :   jika payment.status is charge, maka payment.status=fail, order.status=submitted
-//         :   jika payment.status is pending, maka payment.status=fail, order.status=submitted
-//         :   otherwise do nothing (or update updatedate?)
-//     -   notif /expire
-//         :   jika payment.status is charge, maka payment.status=expire, order.status=overdue
-//         :   jika payment.status is pending, maka payment.status=expire, order.status=overdue
-//         :   jika payment.status is fail, maka payment.status=expire, order.status=overdue
-//         :   otherwise do nothing
-//     -   notif /settlement or /capture (code 200 OK)
-//         :   jika payment.status is charge, maka payment.status=success, order.status=paid
-//         :   jika payment.status is pending, maka payment.status=success, order.status=paid
-//         :   jika payment.status is fail, maka payment.status=success, order.status=paid
-//         :   jika payment.status is expire, maka payment.status=success, order.status=paid		
-		
-//		$orderId = "1111";
-//		$statusCode = "200";
-//		$grossAmount = "100000.00";
-//		$serverKey = "askvnoibnosifnboseofinbofinfgbiufglnbfg";
-//		$input = $orderId.$statusCode.$grossAmount.$serverKey;
-//		$signature = openssl_digest($input, 'sha512');
-//		echo "INPUT: " , $input."<br/>";
-//		echo "SIGNATURE: " , $signature;
-		
-//		Always check all the following three fields for confirming success transaction
-//		status code: Should be 200 for successful transactions
-//		? fraud status: ACCEPT
-//		transaction status : settlement/capture
-		
-
 		
 	}
 	
