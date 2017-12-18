@@ -314,7 +314,7 @@ public class OrderService {
 		}				
 		
 		Period period = products.get(0).getPeriod();
-		if(!period.getUnit().equals(PeriodUnit.DAILY)){
+		if(!period.getUnit().equals(PeriodUnit.DAY)){
 			logger.debug("Process order for {} with order {} with result: exception period unit {}", userId, submitOrderDto, period.getUnit());
 			throw new ApiBadRequestException(ErrorCode.ERR4008_ORDER_PRODUCT_UNSUPPORTED, "Permintaan tidak dapat diproses");
 		}

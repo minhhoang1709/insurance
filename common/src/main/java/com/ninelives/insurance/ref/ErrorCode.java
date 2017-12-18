@@ -48,7 +48,9 @@ public enum ErrorCode {
 	
 	ERR8001_CHARGE_API_ERROR("ERR8001"), //error from api call to midtrans
 	ERR8002_CHARGE_INVALID("ERR8002"), //empty or invalid charge data
-	ERR8003_ORDER_NOT_FOUND("ERR8003"), //empty or invalid order data
+	ERR8003_CHARGE_ORDER_NOT_FOUND("ERR8003"), //empty or invalid order data
+	ERR8004_CHARGE_ORDER_NOT_VALID("ERR8004"), //empty or invalid order data
+	ERR8005_CHARGE_PREMI_NOT_MATCH("ERR8005"), //premi != grossamount
 	
 	ERR8200_PAYMENT_NOTIF_GENERIC_ERROR("ERR8200"), //
 	ERR8201_PAYMENT_NOTIF_SIGNATURE_INVALID("ERR8201"), //

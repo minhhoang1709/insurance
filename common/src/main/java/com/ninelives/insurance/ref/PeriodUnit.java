@@ -6,7 +6,10 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PeriodUnit {
-	DAILY("DAILY")
+	DAY("DAY"),
+	WEEK("WEEK"),
+	MONTH("MONTH"),
+	YEAR("YEAR")
 	;
 	
 	static final Map<String, PeriodUnit> lookup = new HashMap<>();

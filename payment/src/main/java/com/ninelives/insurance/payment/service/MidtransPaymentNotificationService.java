@@ -133,7 +133,8 @@ public class MidtransPaymentNotificationService {
 			notifLog.setProcessingStatus(PaymentNotificationProcessStatus.OUT_OF_ORDER);
 			isValidForProcessing = false;
 		}				
-		
+
+		//(capture, settlement, pending, cancel, expired) + (deny)
 		if(isValidForProcessing){
 			if(isPaymentSuccess(notifDto)){
 				orderUpdate.getPayment().setStatus(PaymentStatus.SUCCESS);
@@ -194,7 +195,6 @@ public class MidtransPaymentNotificationService {
 				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: unknown", notifDto, order.getPayment());
 			}			
 		}
-		//(capture, settlement, pending, cancel, expired) + (denied?)    
 		
 		paymentNotificationLogMapper.insert(notifLog);
 		
@@ -207,8 +207,6 @@ public class MidtransPaymentNotificationService {
 			}
 		}
 		
-		//TODO: transaction, update payment and order
-		 
 		//TODO: send notif to queue to be picked up and send to aswata
 		
 	}

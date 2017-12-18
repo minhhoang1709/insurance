@@ -181,14 +181,7 @@ public class ClaimService {
 	}
 	
 	public PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiException{
-		//v check that order is exists and valid (not submitted, not inpayment)
-		//v check that the coverage is same like order
-		//v check that the document is complete(mandatory/nonmandatory)? and file status is uploaded
-		//v check that the file is unique and uploaded
-		//x check current outstanding claim
-		//v check field is ok for address? or check for non-empty only
-		//v check field is ok for bank account? or check for non-empty only
-		//move the uploaded file from temp to claim
+
 		logger.debug("Process isvalidationonly {} claim for user {} with claim {}", isValidateOnly, userId, claimDto);
 		
 		LocalDate today = LocalDate.now();

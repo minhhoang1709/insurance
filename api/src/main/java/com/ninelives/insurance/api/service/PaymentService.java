@@ -26,6 +26,7 @@ import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PaymentChargeStatus;
 import com.ninelives.insurance.ref.PaymentStatus;
+import com.ninelives.insurance.ref.PolicyStatus;
 
 @Service
 public class PaymentService {
@@ -55,13 +56,13 @@ public class PaymentService {
 		//v kalo latest payment status is not charge dan charge result in error, then dont update policy_payment?
 		//    the thing is we want to know the latest payment status?
 		//    incase of pending-fail, then we allow charge and then error 'cannot reuse id' then the latest status charging will be error
-		//check that chargedto is valid (no null pointer)
-		//validate that grossamount is same
-		//validate order is valid in db
-		//validate order is submitted
-		//validate order is not overdue
-		//validate order is ??? (any else?) policystart date other field?, check the possible status, check the property
-		//check or validate payment info
+		//v check that chargedto is valid (no null pointer)
+		//v validate that grossamount is same
+		//v validate order is valid in db
+		//v validate order is submitted
+		//v validate order is not overdue
+		//x validate order is ??? (any else?) policystart date other field?, check the possible status, check the property
+		//x check or validate payment info
 		//check the coverage claim limit, check also other limit in orderservice (since we might need to prevent charge after free insurance cases)
 		//rethink whether to update order table
 		
@@ -80,10 +81,21 @@ public class PaymentService {
 		
 		if(order==null){
 			logger.debug("Process charge for user <{}> and charge <{}> result: empty chargeDto or transaction details", userId,	chargeDto);
-			throw new ApiBadRequestException(ErrorCode.ERR8003_ORDER_NOT_FOUND,
+			throw new ApiBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
 		
+		if(!PolicyStatus.SUBMITTED.equals(order.getStatus())){
+			logger.debug("Process charge for user <{}> and charge <{}> result: order not in submitted state", userId, chargeDto);
+			throw new ApiBadRequestException(ErrorCode.ERR8004_CHARGE_ORDER_NOT_VALID,
+					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
+		}
+		
+		if(order.getTotalPremi()!=chargeDto.getTransactionDetails().getGrossAmount()){
+			logger.debug("Process charge for user <{}> and charge <{}> result: premi not match", userId, chargeDto);
+			throw new ApiBadRequestException(ErrorCode.ERR8005_CHARGE_PREMI_NOT_MATCH,
+					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
+		}
 		
 		PolicyPayment payment = order.getPayment();
 		if(payment==null){
