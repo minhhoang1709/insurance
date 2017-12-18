@@ -23,14 +23,16 @@ public class OrderServicePolicyStatusTest {
 		
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setStatus(PolicyStatus.SUBMITTED);
-		policyOrder.setOrderDate(LocalDate.parse("2017-11-10", formatter));;
+		policyOrder.setOrderDate(LocalDate.parse("2017-11-10", formatter));
+		policyOrder.setPolicyStartDate(LocalDate.parse("2017-11-15", formatter));
 		LocalDate today = LocalDate.parse("2017-11-15", formatter);				
 		orderService.mapPolicyOrderStatus(policyOrder, today);		
 		assertEquals(PolicyStatus.SUBMITTED, policyOrder.getStatus());
 		
 		PolicyOrder policyOrder2 = new PolicyOrder();
 		policyOrder2.setStatus(PolicyStatus.SUBMITTED);
-		policyOrder2.setOrderDate(LocalDate.parse("2017-11-10", formatter));;
+		policyOrder2.setOrderDate(LocalDate.parse("2017-11-10", formatter));
+		policyOrder2.setPolicyStartDate(LocalDate.parse("2017-11-14", formatter));
 		LocalDate today2 = LocalDate.parse("2017-11-14", formatter);				
 		orderService.mapPolicyOrderStatus(policyOrder2, today2);		
 		assertEquals(PolicyStatus.SUBMITTED, policyOrder2.getStatus());
@@ -55,6 +57,22 @@ public class OrderServicePolicyStatusTest {
 		LocalDate today2 = LocalDate.parse("2017-11-17", formatter);	
 		orderService.mapPolicyOrderStatus(policyOrder2, today2);		
 		assertEquals(PolicyStatus.OVERDUE, policyOrder2.getStatus());
+		
+		PolicyOrder policyOrder3 = new PolicyOrder();
+		policyOrder3.setStatus(PolicyStatus.SUBMITTED);
+		policyOrder3.setOrderDate(LocalDate.parse("2017-11-10", formatter));
+		policyOrder3.setPolicyStartDate(LocalDate.parse("2017-11-13", formatter));		
+		LocalDate today3 = LocalDate.parse("2017-11-14", formatter);	
+		orderService.mapPolicyOrderStatus(policyOrder3, today3);		
+		assertEquals(PolicyStatus.OVERDUE, policyOrder3.getStatus());
+		
+		PolicyOrder policyOrder4 = new PolicyOrder();
+		policyOrder4.setStatus(PolicyStatus.SUBMITTED);
+		policyOrder4.setOrderDate(LocalDate.parse("2017-11-10", formatter));
+		policyOrder4.setPolicyStartDate(LocalDate.parse("2017-11-14", formatter));		
+		LocalDate today4 = LocalDate.parse("2017-11-14", formatter);	
+		orderService.mapPolicyOrderStatus(policyOrder4, today4);		
+		assertEquals(PolicyStatus.SUBMITTED, policyOrder4.getStatus());
 
 	}
 	

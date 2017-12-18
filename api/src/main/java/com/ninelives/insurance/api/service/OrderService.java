@@ -534,6 +534,8 @@ public class OrderService {
 			if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
 				if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
 					policyOrder.setStatus(PolicyStatus.OVERDUE);
+				}else if(policyOrder.getPolicyStartDate().isBefore(today)){
+					policyOrder.setStatus(PolicyStatus.OVERDUE);
 				}
 			}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
 				if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
