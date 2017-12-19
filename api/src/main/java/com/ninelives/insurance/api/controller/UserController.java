@@ -21,6 +21,7 @@ import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.service.UserService;
 
@@ -45,19 +46,26 @@ public class UserController {
 		
 		return registerResult.getUserDto();
 	}
-	//dummy
+	
 	@RequestMapping(value="/users/{userId}",
 			method={ RequestMethod.PATCH, RequestMethod.PUT })
 	@ResponseBody
-	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto){
-		logger.debug("Terima /users PUT untuk authuser {} and user {}", authUserId, userId);
-		logger.debug("put data: {}", usersDto);
-		logger.debug("---");
-		UserDto result = userService.getUserDto(authUserId);
-		if(result==null){
-			result = usersDto;
-		}
+	public UserDto updateUsers(@RequestAttribute("authUserId") String authUserId, @PathVariable("userId") String userId,
+			@RequestBody UserDto userDto) throws ApiException {
+
+		UserDto result = userService.updateUser(authUserId, userDto);
+		
 		return result;
+	}
+	
+	@RequestMapping(value="/users/{userId}",
+			method=RequestMethod.GET)
+	@ResponseBody
+	public UserDto getUser( @RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId) throws ApiException{		
+		//logger.debug("register with {}", registrationDto);
+		UserDto userDto = userService.getUserDto(authUserId);
+		
+		return userDto;
 	}
 	
 	@RequestMapping(value="/users/{userId}/idCardFiles",

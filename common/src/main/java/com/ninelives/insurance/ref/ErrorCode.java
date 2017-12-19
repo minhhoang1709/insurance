@@ -7,8 +7,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ErrorCode {
 	ERR1001_GENERIC_ERROR("ERR1001"),
+	
 	ERR2001_LOGIN_FAILURE("ERR2001"),
 	ERR2002_NOT_AUTHORIZED("ERR2002"),
+	ERR2003_USER_NOT_FOUND("ERR2003"),
+	ERR2004_USER_EMPTY("ERR2004"), //Submitted profile info is empty
+	ERR2005_USER_PROFILE_INVALID("ERR2005"), //Submitted profile info is empty
 	
 	ERR3001_REGISTER_GOOGLE_FAIL("ERR3001"),
 	ERR3002_REGISTER_PASSWORD_CONFLICT("ERR3002"),

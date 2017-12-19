@@ -9,6 +9,8 @@ import java.util.UUID;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,23 +117,7 @@ public class UserService {
 			isNew = true;
 		}
 		
-		UserDto userDto = new UserDto();
-		userDto.setUserId(user.getUserId());
-		userDto.setName(user.getName());
-		userDto.setBirthDate(user.getBirthDate()!=null?user.getBirthDate().atStartOfDay():null);
-		userDto.setBirthPlace(user.getBirthPlace());
-		userDto.setEmail(user.getEmail());
-		userDto.setGender(user.getGender());
-		if(user.getIdCardFileId()!=null){
-			userDto.setIdCardFile(new UserFileDto(user.getIdCardFileId()));
-		}		
-		userDto.setPhone(user.getPhone());
-		userDto.setAddress(user.getAddress());
-		
-		Map<String, Object> configMap = new HashMap<>();
-		configMap.put(UserDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED, user.getIsNotificationEnabled());
-		configMap.put(UserDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED, user.getIsSyncGmailEnabled());
-		userDto.setConfig(configMap);
+		UserDto userDto = modelMapperAdapter.toDto(user);
 		
 		RegisterUsersResult registerResult = new RegisterUsersResult();
 		registerResult.setIsNew(isNew);
@@ -165,7 +151,6 @@ public class UserService {
 		return userBeneficiaryMapper.updateByUserBeneficiaryId(userBeneficiary);
 	}
 	
-	
 	public UserFileDto updateIdCardFile(String userId, MultipartFile file) throws ApiException {
 		if(file==null){
 			logger.debug("Update idcard for user {} with empty file", userId);
@@ -180,19 +165,108 @@ public class UserService {
 		return modelMapperAdapter.toDto(userFile);
 	}
 	
-	//test
-	public UserDto getUserDto(String userId) {
-		User users = userMapper.selectByUserId(userId);
-		UserDto userDto = null;
-		if(users!=null){
-			userDto = new UserDto();
-			userDto.setUserId(users.getUserId());
-			userDto.setEmail(users.getEmail());
-			userDto.setName(users.getName());
+	/**
+	 * If existing profile is not empty, user is only allowed to edit phone number or configuration
+	 * 
+	 * @param userId
+	 * @param userDto
+	 * @return
+	 * @throws ApiException
+	 */
+	public UserDto updateUser(String userId, UserDto userDto) throws ApiException{
+		logger.debug("Update user {} with dto {} ", userId, userDto);
+		if(userDto==null){
+			throw new ApiBadRequestException(ErrorCode.ERR2004_USER_EMPTY,
+					"Permintaan tidak dapat diproses, periksa kembali data pribadi Anda");
+		}
+		User existingProfile = fetchByUserId(userId);
+		
+		if(existingProfile==null){
+			throw new ApiNotFoundException(ErrorCode.ERR2003_USER_NOT_FOUND, "User not found");
 		}
 		
+		User updateUser = new User();
+		updateUser.setUserId(userId);
+		if(!isUserProfileComplete(existingProfile)){
+			//submitted profile has include name (means modify profile)
+			if(!StringUtils.isEmpty(userDto.getName())){
+				if(!isUserProfileComplete(userDto)){
+					logger.error("Update profile {} with result: error profile not complete", userDto);
+					throw new ApiBadRequestException(ErrorCode.ERR2005_USER_PROFILE_INVALID,
+							"Permintaan tidak dapat diproses, periksa kembali data pribadi Anda");
+				}
+				updateUser.setName(userDto.getName());
+				updateUser.setGender(userDto.getGender());
+				updateUser.setBirthDate(userDto.getBirthDate().toLocalDate());
+				updateUser.setBirthPlace(userDto.getBirthPlace());
+				updateUser.setAddress(userDto.getAddress());
 				
-		return userDto;
+				existingProfile.setName(userDto.getName());
+				existingProfile.setGender(userDto.getGender());
+				existingProfile.setBirthDate(userDto.getBirthDate().toLocalDate());
+				existingProfile.setBirthPlace(userDto.getBirthPlace());
+				existingProfile.setAddress(userDto.getAddress());
+			}			
+		}
+		if(!StringUtils.isEmpty(userDto.getPhone()) 
+				&& !userDto.getPhone().equals(existingProfile.getPhone())){
+			updateUser.setPhone(userDto.getPhone());
+			existingProfile.setPhone(userDto.getPhone());
+		}
+		if(!MapUtils.isEmpty(userDto.getConfig())){
+			Boolean isNotifEnabledFromDto = (Boolean) userDto.getConfig().get(UserDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED);
+			Boolean isGmailSyncEnabledFromDto = (Boolean) userDto.getConfig().get(UserDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED);
+			if(isNotifEnabledFromDto!=null
+					&& !isNotifEnabledFromDto.equals(existingProfile.getIsNotificationEnabled())){
+				updateUser.setIsNotificationEnabled(isNotifEnabledFromDto);
+				existingProfile.setIsNotificationEnabled(isNotifEnabledFromDto);
+			}
+			if(isGmailSyncEnabledFromDto!=null
+					&& !isGmailSyncEnabledFromDto.equals(existingProfile.getIsSyncGmailEnabled())){
+				updateUser.setIsSyncGmailEnabled(isGmailSyncEnabledFromDto);
+				existingProfile.setIsSyncGmailEnabled(isGmailSyncEnabledFromDto);
+			}
+		}
+		
+		userMapper.updateProfileAndConfigByUserIdSelective(updateUser);
+		
+		return modelMapperAdapter.toDto(existingProfile);
+	}
+
+	public UserDto getUserDto(String userId) throws ApiNotFoundException {
+		User user = userMapper.selectByUserId(userId);
+		if(user==null){
+			throw new ApiNotFoundException(ErrorCode.ERR2003_USER_NOT_FOUND, "User not found");
+		}
+		return modelMapperAdapter.toDto(user);
+	}
+	
+
+	protected Boolean isUserProfileComplete(UserDto user){
+		boolean result = true;
+		if(user == null 
+				|| StringUtils.isEmpty(user.getName()) 
+				|| user.getGender()==null
+				|| user.getBirthDate()==null
+				|| StringUtils.isEmpty(user.getBirthPlace())
+				|| StringUtils.isEmpty(user.getPhone())				
+				){
+			result = false;
+		}
+		return result;
+	}
+	protected Boolean isUserProfileComplete(User user){
+		boolean result = true;
+		if(user == null 
+				|| StringUtils.isEmpty(user.getName()) 
+				|| user.getGender()==null
+				|| user.getBirthDate()==null
+				|| StringUtils.isEmpty(user.getBirthPlace())
+				|| StringUtils.isEmpty(user.getPhone())				
+				){
+			result = false;
+		}
+		return result;
 	}
 
 	private String generateUserId(){

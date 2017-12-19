@@ -155,4 +155,37 @@
       </if>
     </trim>
   </insert>
+  <update id="updateProfileAndConfigByUserIdSelective" parameterType="com.ninelives.insurance.model.User">
+    update public.users
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="birthDate != null">
+        birth_date = #{birthDate,jdbcType=DATE},
+      </if>
+      <if test="birthPlace != null">
+        birth_place = #{birthPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="isSyncGmailEnabled != null">
+        is_sync_gmail_enabled = #{isSyncGmailEnabled,jdbcType=BIT},
+      </if>
+      <if test="isNotificationEnabled != null">
+        is_notification_enabled = #{isNotificationEnabled,jdbcType=BIT},
+      </if>
+      <if test="true">
+        update_date = now(),
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
 </mapper>

@@ -78,5 +78,5 @@ public interface UserMapper {
     
     int insertSelective(User record);
 
-	
+	int updateProfileAndConfigByUserIdSelective(User record);
 }

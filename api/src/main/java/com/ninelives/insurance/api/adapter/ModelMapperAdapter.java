@@ -2,7 +2,9 @@ package com.ninelives.insurance.api.adapter;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.Product;
+import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserFile;
 
 @Component
@@ -52,6 +55,28 @@ public class ModelMapperAdapter {
 	@Value("${ninelives.order.policy-title}")
 	String policyTitle;
 	
+	public UserDto toDto(User m){
+		UserDto dto = null;
+		if(m!=null){
+			dto = new UserDto();
+			dto.setUserId(m.getUserId());
+			dto.setName(m.getName());
+			dto.setBirthDate(m.getBirthDate()!=null?m.getBirthDate().atStartOfDay():null);
+			dto.setBirthPlace(m.getBirthPlace());
+			dto.setEmail(m.getEmail());
+			dto.setGender(m.getGender());
+			dto.setIdCardFile(toUserFileDto((m.getIdCardFileId())));
+			dto.setPhone(m.getPhone());
+			dto.setAddress(m.getAddress());
+			
+			Map<String, Object> configMap = new HashMap<>();
+			configMap.put(UserDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED, m.getIsNotificationEnabled());
+			configMap.put(UserDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED, m.getIsSyncGmailEnabled());
+			
+			dto.setConfig(configMap);
+		}
+		return dto;
+	}
 	public OrderDto toDto(PolicyOrder m){
 		OrderDto dto = null;
 		if(m!=null){

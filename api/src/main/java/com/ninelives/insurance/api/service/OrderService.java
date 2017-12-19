@@ -337,10 +337,10 @@ public class OrderService {
 			
 			final User existingUser = userService.fetchByUserId(userId);
 
-			boolean isUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
+			boolean isExistingUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
 
 			User newUserProfile = null;
-			if(!isUserProfileCompleteForOrder){
+			if(!isExistingUserProfileCompleteForOrder){
 				if(submitOrderDto.getUser()==null){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,

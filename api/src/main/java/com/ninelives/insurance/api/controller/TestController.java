@@ -190,7 +190,7 @@ public class TestController {
 	@RequestMapping(value="/test/users/{userId}",
 			method={ RequestMethod.PATCH, RequestMethod.PUT })
 	@ResponseBody
-	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto){
+	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto) throws ApiException{
 		logger.debug("Terima /users PUT untuk authuser {} and user {}", authUserId, userId);
 		logger.debug("put data: {}", usersDto);
 		logger.debug("---");
