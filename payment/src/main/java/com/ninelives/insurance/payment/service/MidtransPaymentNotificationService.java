@@ -122,7 +122,7 @@ public class MidtransPaymentNotificationService {
 			//TODO: insert this
 			notifLog.setProcessingStatus(PaymentNotificationProcessStatus.LATE_NOTIF);
 			isValidForProcessing = false;
-		}else if(notifDto.getPaymentSeq() == order.getPayment().getPaymentSeq()){
+		}else if(notifDto.getPaymentSeq().equals(order.getPayment().getPaymentSeq())){
 			if(order.getPayment().getProviderTransactionStatus()!=null && order.getPayment().getProviderTransactionStatus().equals(notifDto.getTransactionStatus())){
 				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error duplicate notif", notifDto, order.getPayment());
 				notifLog.setProcessingStatus(PaymentNotificationProcessStatus.DUPLICATE);

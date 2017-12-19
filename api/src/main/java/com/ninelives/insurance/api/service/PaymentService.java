@@ -80,7 +80,7 @@ public class PaymentService {
 		PolicyOrder order = orderService.fetchOrderByOrderId(userId, chargeDto.getTransactionDetails().getOrderId());
 		
 		if(order==null){
-			logger.debug("Process charge for user <{}> and charge <{}> result: empty chargeDto or transaction details", userId,	chargeDto);
+			logger.debug("Process charge for user <{}> and charge <{}> result: order not found", userId,	chargeDto);
 			throw new ApiBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
@@ -91,8 +91,8 @@ public class PaymentService {
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
 		
-		if(order.getTotalPremi()!=chargeDto.getTransactionDetails().getGrossAmount()){
-			logger.debug("Process charge for user <{}> and charge <{}> result: premi not match", userId, chargeDto);
+		if(!order.getTotalPremi().equals(chargeDto.getTransactionDetails().getGrossAmount())){
+			logger.debug("Process charge for user <{}> and charge <{}> result: premi not match order <{}> ", userId, chargeDto, order.getTotalPremi());
 			throw new ApiBadRequestException(ErrorCode.ERR8005_CHARGE_PREMI_NOT_MATCH,
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}

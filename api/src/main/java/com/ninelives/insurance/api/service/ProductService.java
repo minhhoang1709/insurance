@@ -82,7 +82,7 @@ public class ProductService {
 	
 	@Cacheable("Product")
 	public Product fetchProductByProductId(String productId){
-		logger.debug("PANGGIL product {}",productId);
+		//logger.debug("PANGGIL product {}",productId);
 		return productMapper.selectByProductId(productId);
 	}
 	

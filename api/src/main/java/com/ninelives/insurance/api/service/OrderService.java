@@ -295,7 +295,7 @@ public class OrderService {
 		boolean hasBeneficiary = false;
 		List<String> coverageIds = new ArrayList<>();
 		for(Product p: products){
-			logger.debug("CHECK {}", p);
+			//logger.debug("CHECK {}", p);
 			if(!periodId.equals(p.getPeriodId())){
 				logger.debug("Process order for {} with order {} with result: exception period mismatch", userId, submitOrderDto);
 				throw new ApiBadRequestException(ErrorCode.ERR4004_ORDER_PERIOD_MISMATCH, "Permintaan tidak dapat diproses, silahkan cek kembali periode asuransi");
@@ -309,17 +309,19 @@ public class OrderService {
 			coverageIds.add(p.getCoverageId());
 		}
 		if(calculatedTotalPremi!=submitOrderDto.getTotalPremi()){
-			logger.debug("Process order for {} with order {} with result: exception calculatd premi {} ", userId, submitOrderDto, calculatedTotalPremi);
+			logger.debug("Process order for {} with order {} with result: exception calculated premi {} ", userId, submitOrderDto, calculatedTotalPremi);
 			throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
 		}				
 		
 		Period period = products.get(0).getPeriod();
-		if(!period.getUnit().equals(PeriodUnit.DAY)){
-			logger.debug("Process order for {} with order {} with result: exception period unit {}", userId, submitOrderDto, period.getUnit());
-			throw new ApiBadRequestException(ErrorCode.ERR4008_ORDER_PRODUCT_UNSUPPORTED, "Permintaan tidak dapat diproses");
-		}
+//		if(!period.getUnit().equals(PeriodUnit.DAY)){
+//			logger.debug("Process order for {} with order {} with result: exception period unit {}", userId, submitOrderDto, period.getUnit());
+//			throw new ApiBadRequestException(ErrorCode.ERR4008_ORDER_PRODUCT_UNSUPPORTED, "Permintaan tidak dapat diproses");
+//		}
 		
-		LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
+		//LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
+		
+		LocalDate policyEndDate = calculatePolicyEndDate(submitOrderDto.getPolicyStartDate().toLocalDate(), products.get(0).getPeriod());
 		LocalDate dueOrderDate = today.minusDays(policyDueDatePeriod);
 		
 		boolean isOverLimit = isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
@@ -442,6 +444,22 @@ public class OrderService {
 		return policyOrder;
 	}
 	
+	protected LocalDate calculatePolicyEndDate(LocalDate localDate, Period period) {
+		LocalDate calculatedDate = null;
+		if(period!=null && period.getValue()!=null){
+			if(PeriodUnit.DAY.equals(period.getUnit())){
+				calculatedDate = localDate.plusDays(period.getValue()).minusDays(1);
+			}else if(PeriodUnit.WEEK.equals(period.getUnit())){
+				calculatedDate = localDate.plusWeeks(period.getValue()).minusDays(1);
+			}else if(PeriodUnit.MONTH.equals(period.getUnit())){
+				calculatedDate = localDate.plusMonths(period.getValue()).minusDays(1);
+			}else if(PeriodUnit.YEAR.equals(period.getUnit())){
+				calculatedDate = localDate.plusYears(period.getValue()).minusDays(1);
+			}
+		}
+		return calculatedDate;
+	}
+
 	protected Boolean isUserProfileCompleteForOrder(User user){
 		boolean result = true;
 		if(user == null 
