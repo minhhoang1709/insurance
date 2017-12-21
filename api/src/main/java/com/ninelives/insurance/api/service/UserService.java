@@ -1,15 +1,11 @@
 package com.ninelives.insurance.api.service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
-
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +18,11 @@ import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
-import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
-import com.ninelives.insurance.api.model.AuthToken;
-import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
+import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.mybatis.mapper.UserBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
@@ -37,6 +32,7 @@ import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.UserStatus;
+import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class UserService {
@@ -49,6 +45,8 @@ public class UserService {
 	@Autowired RedisService redisService;
 	@Autowired FileUploadService fileUploadService;
 	@Autowired ModelMapperAdapter modelMapperAdapter;
+	
+	@Autowired FluentProducerTemplate producerTemplate;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	
@@ -123,6 +121,9 @@ public class UserService {
 		registerResult.setIsNew(isNew);
 		registerResult.setUserDto(userDto);
 		
+//		if(isNew){
+//			producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(body, type);
+//		}
 		
 		return registerResult;
 	}

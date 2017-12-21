@@ -15,3 +15,7 @@ repositories {
 dependencies {
 	compile('com.fasterxml.jackson.core:jackson-annotations:2.8.0')
 }
+
+jar {
+    baseName='ninelives-common'
+}

@@ -2,18 +2,25 @@ package com.ninelives.insurance.api.controller;
 
 import java.util.List;
 
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.OrderDto;
@@ -39,7 +46,9 @@ import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.route.EndPointRef;
 
 @Controller
 public class TestController {
@@ -56,6 +65,8 @@ public class TestController {
 	
 	@Autowired UserService userService;
 	@Autowired UserMapper userMapper;
+	
+	@Autowired FluentProducerTemplate producerTemplate;
 	
 	@Value("${ninelives.order.list-limmit:50}")
 	int defaultFilterLimit;
@@ -87,6 +98,23 @@ public class TestController {
 	@ResponseBody
 	public Product getProductById(@PathVariable("productId") String productId){
 		return testService.fetchProduct(productId);
+	}
+	
+	@PostMapping("/test/notifs")
+	@ResponseBody
+	public String sendNotif(@RequestAttribute("authUserId") String userId, @RequestBody FcmNotifMessageDto messageDto){
+				
+		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
+		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		return "ok-2";
+	}
+	
+	@GetMapping("/test/notifs/token")
+	@ResponseBody
+	public String getGoogleToken(@RequestAttribute("authUserId") String userId){
+		RestTemplate restTemplate = new RestTemplate();				
+		ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:9643/test/token", String.class);
+		return response.getBody();
 	}
 	
 //	@RequestMapping(value="/test/products",

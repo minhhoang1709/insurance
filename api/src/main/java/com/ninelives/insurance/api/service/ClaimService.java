@@ -26,7 +26,6 @@ import com.ninelives.insurance.api.dto.ClaimBankAccountDto;
 import com.ninelives.insurance.api.dto.ClaimCoverageDto;
 import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
-import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
@@ -47,7 +46,6 @@ import com.ninelives.insurance.ref.ClaimStatus;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.PolicyStatus;
-import com.ninelives.insurance.ref.UserFileStatus;
 
 @Service
 public class ClaimService {
