@@ -251,15 +251,7 @@ public class ModelMapperAdapter {
 				}
 				covDto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}
-			//TODO: claim doc types?
-//			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
-//				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
-//				for(ClaimDocType docType: m.getClaimDocTypes()){
-//					ClaimDocTypeDto docTypeDto = toDto(docType);
-//					docTypeDtos.add(docTypeDto);
-//				}
-//				covDto.setClaimDocTypes(docTypeDtos);
-//			}
+
 			dto.setCoverage(covDto);
 		}				
 		return dto;

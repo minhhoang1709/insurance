@@ -68,8 +68,7 @@ public class FcmProvider {
 		
 	}
 	
-	//test, return to private
-	public String getAccessToken(){
+	private String getAccessToken(){
 		String token = googleCredential.getAccessToken();
 		if(StringUtils.isEmpty(token)){
 			try {
@@ -81,6 +80,11 @@ public class FcmProvider {
 			}
 		}
 		return token;
+	}
+	
+	//TODO: remove test
+	public String testAccessToken(){
+		return getAccessToken();
 	}
 
 	@PostConstruct

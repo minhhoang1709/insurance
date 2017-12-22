@@ -14,6 +14,6 @@ public class TestController {
 	@GetMapping("/test/token")
 	@ResponseBody
 	public String googleToken(){
-		return fcmprovider.getAccessToken();
+		return fcmprovider.testAccessToken();
 	}
 }

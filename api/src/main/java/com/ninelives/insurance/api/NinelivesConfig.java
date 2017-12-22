@@ -37,7 +37,6 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 				"/error");
 	}
 	
-	//test
 	@PostConstruct
 	public void configInfo() {
 		logger.info("Auto configuration, Datasource is {}", dataSource);

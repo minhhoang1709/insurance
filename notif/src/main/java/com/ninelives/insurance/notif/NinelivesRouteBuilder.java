@@ -37,7 +37,6 @@ public class NinelivesRouteBuilder extends SpringRouteBuilder{
 
 	@Override
 	public void configure() throws Exception {
-		// TODO Auto-generated method stub
 		from(EndPointRef.QUEUE_FCM_NOTIFICATION).bean(fcmProcessor,"process");
 	}
 	

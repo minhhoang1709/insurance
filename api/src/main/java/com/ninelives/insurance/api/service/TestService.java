@@ -31,7 +31,6 @@ public class TestService {
 	}
 
 	public OrderDto changeOrderStatus(String authUserId, OrderDto orderDto) {
-		// TODO Auto-generated method stub
 		//PolicyStatus status = orderDto.getStatus();
 		PolicyOrder order = new PolicyOrder();
 		order.setUserId(authUserId);

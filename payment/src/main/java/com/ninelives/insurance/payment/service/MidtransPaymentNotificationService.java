@@ -119,7 +119,6 @@ public class MidtransPaymentNotificationService {
 		boolean isValidForProcessing = true;
 		if(notifDto.getPaymentSeq() < order.getPayment().getPaymentSeq()){
 			logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error late notification", notifDto, order.getPayment());	
-			//TODO: insert this
 			notifLog.setProcessingStatus(PaymentNotificationProcessStatus.LATE_NOTIF);
 			isValidForProcessing = false;
 		}else if(notifDto.getPaymentSeq().equals(order.getPayment().getPaymentSeq())){

@@ -23,7 +23,6 @@ public class FcmProcessor {
 		try {
 			fcmProvider.sendNotification(messageDto);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			logger.error("error",e);
 		}
 	}
