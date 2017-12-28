@@ -47,18 +47,18 @@ public class FcmProvider {
 	
 	public void sendNotification(FcmNotifMessageDto messageDto){
 		logger.debug("Sending fcm notification to <{}> with data <{}> and access <{}>", fcmUrl, messageDto, getAccessToken());
-		
+	
 		HttpHeaders restHeader = new HttpHeaders();
 		restHeader.setContentType(MediaType.APPLICATION_JSON);
 		restHeader.set("Authorization", "Bearer " + getAccessToken());
 		
 		HttpEntity<FcmNotifMessageDto> entity = new HttpEntity<>(messageDto, restHeader);
 		
-		logger.debug("To be send <{}>", entity);
+		//logger.debug("To be send <{}>", entity);
 		
 		ResponseEntity<String> resp = null;
 		try{
-			resp = template.exchange(fcmUrl, HttpMethod.POST, entity, String.class);
+			resp = template.exchange(fcmUrl, HttpMethod.POST, entity, String.class);			
 		}catch(HttpClientErrorException e){
 			String errorResponseBody = e.getResponseBodyAsString();
 			logger.error("Error on sending fcm <{}> with response <{}> and exception <{}>", messageDto, errorResponseBody, e.getMessage());
@@ -67,20 +67,38 @@ public class FcmProvider {
 		logger.debug("Receive charge response with entity {}", resp);
 		
 	}
-	
+
 	private String getAccessToken(){
-		String token = googleCredential.getAccessToken();
-		if(StringUtils.isEmpty(token)){
+		//String token = googleCredential.getAccessToken();
+		//logger.debug("Get access token {} with expiry {}",token, googleCredential.getExpiresInSeconds());
+		if(googleCredential.getExpiresInSeconds() < 60L){
 			try {
 				googleCredential.refreshToken();
-				token = googleCredential.getAccessToken();
+				logger.debug("token refreshed with expiry <{}>", googleCredential.getExpiresInSeconds());
+				//logger.debug("Get empty access token, try again get {}",token);
 			} catch (IOException e) {
 				logger.error("Error on refresh token with message: {}", e.getMessage());
 				logger.error("Error on refresh token", e);
 			}
 		}
-		return token;
+		return googleCredential.getAccessToken();
 	}
+
+//	private String getAccessToken(){
+//		String token = googleCredential.getAccessToken();
+//		logger.debug("Get access token {} with expiry {}",token, googleCredential.getExpiresInSeconds());
+//		if(StringUtils.isEmpty(token)){
+//			try {
+//				googleCredential.refreshToken();
+//				token = googleCredential.getAccessToken();
+//				logger.debug("Get empty access token, try again get {}",token);
+//			} catch (IOException e) {
+//				logger.error("Error on refresh token with message: {}", e.getMessage());
+//				logger.error("Error on refresh token", e);
+//			}
+//		}
+//		return token;
+//	}
 	
 	//TODO: remove test
 	public String testAccessToken(){
@@ -92,6 +110,12 @@ public class FcmProvider {
 		googleCredential = GoogleCredential.fromStream(new FileInputStream(privateKeyLocation))
 				.createScoped(Arrays.asList("https://www.googleapis.com/auth/firebase.messaging"));
 		googleCredential.refreshToken();
+		
+		//String refreshToken = googleCredential.getRefreshToken();
+		//Long expiry = googleCredential.getExpiresInSeconds();
+		
+		//TODO remove test
+		//logger.debug("Start with refresh token <{}> and expiry <{}>, the object itself is <{}>", refreshToken, expiry, googleCredential);
 		
 		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 		cm.setMaxTotal(config.getFcm().getConnectionPoolSize());
