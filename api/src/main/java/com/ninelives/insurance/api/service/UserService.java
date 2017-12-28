@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.camel.FluentProducerTemplate;
@@ -10,6 +11,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,7 @@ import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.model.UserFile;
+import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.UserStatus;
@@ -47,6 +50,8 @@ public class UserService {
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	@Autowired FluentProducerTemplate producerTemplate;
+	
+	@Autowired MessageSource messageSource;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	
@@ -106,6 +111,7 @@ public class UserService {
 			user.setName(registrationDto.getGoogleName());
 			user.setGoogleAuthCode(registrationDto.getGoogleServerAuth());
 			user.setGoogleUserId(registrationDto.getGoogleId());
+			user.setFcmToken(registrationDto.getFcmToken());
 			user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
 			user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
 			user.setStatus(UserStatus.ACTIVE);
@@ -121,9 +127,19 @@ public class UserService {
 		registerResult.setIsNew(isNew);
 		registerResult.setUserDto(userDto);
 		
-//		if(isNew){
-//			producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(body, type);
-//		}
+		if(isNew && !StringUtils.isEmpty(registrationDto.getFcmToken())){
+			FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
+			notifMessage.setTitle(messageSource.getMessage("message.notification.welcome.title", null, Locale.ROOT));
+			notifMessage.setBody(messageSource.getMessage("message.notification.welcome.body", new Object[]{"9Lives"}, Locale.ROOT));
+			
+			FcmNotifMessageDto messageDto = new FcmNotifMessageDto();
+			messageDto.setMessage(new FcmNotifMessageDto.Message());
+			messageDto.getMessage().setToken(user.getFcmToken());
+			messageDto.getMessage().setNotification(notifMessage);
+			
+			logger.debug("sending notif for new user <{}>", messageDto);
+			producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		}
 		
 		return registerResult;
 	}

@@ -8,6 +8,7 @@ public class RegistrationDto {
 	String googleEmail;
 	String googleServerAuth;
 	String googleToken;
+	String fcmToken;
 	String password;
 	Boolean isSyncGmailEnabled;
 	
@@ -52,6 +53,12 @@ public class RegistrationDto {
 	}
 	public void setGoogleToken(String googleToken) {
 		this.googleToken = googleToken;
+	}	
+	public String getFcmToken() {
+		return fcmToken;
+	}
+	public void setFcmToken(String fcmToken) {
+		this.fcmToken = fcmToken;
 	}
 	public String getPassword() {
 		return password;
@@ -69,7 +76,7 @@ public class RegistrationDto {
 	public String toString() {
 		return "RegistrationDto [source=" + source + ", deviceId=" + deviceId + ", googleId=" + googleId
 				+ ", googleName=" + googleName + ", googleEmail=" + googleEmail + ", googleServerAuth="
-				+ googleServerAuth + ", googleToken=" + googleToken + ", password=" + password + ", isSyncGmailEnabled="
+				+ googleServerAuth + ", googleToken=" + googleToken + ", fcmToken=" + fcmToken + ", isSyncGmailEnabled="
 				+ isSyncGmailEnabled + "]";
 	}
 	

@@ -19,7 +19,7 @@ public class FcmProcessor {
 //		logger.debug("Dapet nih message nya {}", messageDto);
 //	}
 	public void process(@Body FcmNotifMessageDto messageDto){
-		logger.debug("Dapet nih message nya {}", messageDto);
+		//logger.debug("Dapet nih message nya {}", messageDto);
 		try {
 			fcmProvider.sendNotification(messageDto);
 		} catch (Exception e) {

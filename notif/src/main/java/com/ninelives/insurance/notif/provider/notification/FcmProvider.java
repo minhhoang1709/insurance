@@ -41,6 +41,9 @@ public class FcmProvider {
 	@Value("${ninelives-notif.fcm.project-id}")
 	String projectId;
 
+	@Value("${ninelives-notif.fcm.default-ttl}")
+	String defaultTtl;
+	
 	private GoogleCredential googleCredential;
 	private RestTemplate template;
 	private String fcmUrl;
@@ -48,6 +51,17 @@ public class FcmProvider {
 	public void sendNotification(FcmNotifMessageDto messageDto){
 		logger.debug("Sending fcm notification to <{}> with data <{}> and access <{}>", fcmUrl, messageDto, getAccessToken());
 	
+		if(messageDto == null || messageDto.getMessage()==null){
+			logger.error("Empty message");
+			return;
+		}		
+		if(messageDto.getMessage().getAndroid()==null){
+			messageDto.getMessage().setAndroid(new FcmNotifMessageDto.Android());			
+		}
+		if(StringUtils.isEmpty(messageDto.getMessage().getAndroid().getTtl())){
+			messageDto.getMessage().getAndroid().setTtl(defaultTtl);
+		}
+		
 		HttpHeaders restHeader = new HttpHeaders();
 		restHeader.setContentType(MediaType.APPLICATION_JSON);
 		restHeader.set("Authorization", "Bearer " + getAccessToken());
@@ -64,7 +78,7 @@ public class FcmProvider {
 			logger.error("Error on sending fcm <{}> with response <{}> and exception <{}>", messageDto, errorResponseBody, e.getMessage());
 		}	
 		
-		logger.debug("Receive charge response with entity {}", resp);
+		logger.debug("Receive notification response with entity {}", resp);
 		
 	}
 

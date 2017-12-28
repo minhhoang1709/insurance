@@ -109,6 +109,16 @@ public class TestController {
 		return "ok-2";
 	}
 	
+	@PostMapping("/test/notifs/simulate")
+	@ResponseBody
+	public String simulateNotif(@RequestBody String requestBody){
+				
+		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
+		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		logger.debug("terima simulate dengan request <{}>",requestBody);
+		return "ok-2";
+	}
+	
 	@GetMapping("/test/notifs/token")
 	@ResponseBody
 	public String getGoogleToken(@RequestAttribute("authUserId") String userId){
