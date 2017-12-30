@@ -25,7 +25,7 @@ public class FcmNotifMessageDto implements Serializable {
 		private String token;
 		private Notification notification;
 		private Android android;
-		private Map<String, String> data;
+		private Data data;
 		public String getToken() {
 			return token;
 		}
@@ -44,10 +44,10 @@ public class FcmNotifMessageDto implements Serializable {
 		public void setAndroid(Android android) {
 			this.android = android;
 		}
-		public Map<String, String> getData() {
+		public Data getData() {
 			return data;
 		}
-		public void setData(Map<String, String> data) {
+		public void setData(Data data) {
 			this.data = data;
 		}
 		@Override
@@ -57,6 +57,7 @@ public class FcmNotifMessageDto implements Serializable {
 		}
 	}
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Notification implements Serializable{
 		private static final long serialVersionUID = 3654449977709641143L;
 		private String title;
@@ -80,6 +81,7 @@ public class FcmNotifMessageDto implements Serializable {
 		
 	}
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Android implements Serializable{
 		private static final long serialVersionUID = 4467459811291062255L;
 		private String ttl;
@@ -92,6 +94,30 @@ public class FcmNotifMessageDto implements Serializable {
 		@Override
 		public String toString() {
 			return "Android [ttl=" + ttl + "]";
+		}
+		
+	}
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class Data implements Serializable{
+		private static final long serialVersionUID = -1871098927029223331L;
+		private String action;
+		private String actionData;
+		public String getAction() {
+			return action;
+		}
+		public void setAction(String action) {
+			this.action = action;
+		}
+		public String getActionData() {
+			return actionData;
+		}
+		public void setActionData(String actionData) {
+			this.actionData = actionData;
+		}
+		@Override
+		public String toString() {
+			return "Data [action=" + action + ", actionData=" + actionData + "]";
 		}
 		
 	}
