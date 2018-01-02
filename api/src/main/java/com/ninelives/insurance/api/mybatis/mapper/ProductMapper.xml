@@ -6,8 +6,10 @@
     <result column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
     <result column="period_id" jdbcType="VARCHAR" property="periodId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="premi" jdbcType="INTEGER" property="premi" />
     <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="product_type" jdbcType="VARCHAR" property="productType" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <association property="period" resultMap="PeriodResultMap" />
@@ -46,7 +48,7 @@
   </resultMap>
   
   <sql id="NestedProductColumnList">
-  	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
+  	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.premi as base_premi, a.status, a.product_type, a.created_date, a.update_date,
 	b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
 	c.coverage_id as coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
 	c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
@@ -65,12 +67,12 @@
   	left outer join public.claim_doc_type f on f.claim_doc_type_id=e.claim_doc_type_id
   </sql>
   
-  <select id="selectByStatusActive" resultMap="NestedProductResultMap">
+  <select id="selectByTypeNormalAndStatusActive" resultMap="NestedProductResultMap">
   	select
   		<include refid="NestedProductColumnList"/>
   	from
   		<include refid="NestedProductTableJoinList"/>
-  	where a.status='A'
+  	where a.status='A' and a.product_type='NORMAL'
   	order by a.product_id
   </select>
   
@@ -83,7 +85,7 @@
   </select>
   
   <select id="selectByProductIds" resultMap="NestedProductResultMap">
-  	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.created_date, a.update_date,
+  	select a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.status, a.product_type, a.created_date, a.update_date,
   		b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
   		c.coverage_id as coverage_coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
   		c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,

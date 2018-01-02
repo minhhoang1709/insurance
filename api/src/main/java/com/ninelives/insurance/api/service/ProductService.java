@@ -37,8 +37,8 @@ public class ProductService {
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	@Cacheable("ProductDtos")
-	public List<ProductDto> fetchProductDtosWithStatusActive(){
-		List<Product> products = fetchProductsWithStatusActive();
+	public List<ProductDto> fetchProductDtosWithTypeNormalAndStatusActive(){
+		List<Product> products = fetchProductsWithTypeNormalAndStatusActive();
 		List<ProductDto> dtoList = new ArrayList<>();
 		for(Product p: products){
 			dtoList.add(modelMapperAdapter.toDto(p));
@@ -91,8 +91,8 @@ public class ProductService {
 		return claimDocTypeMapper.selectByClaimDocTypeId(claimDocTypeId);
 	}
 
-	public List<Product> fetchProductsWithStatusActive(){
-		return productMapper.selectByStatusActive();
+	public List<Product> fetchProductsWithTypeNormalAndStatusActive(){
+		return productMapper.selectByTypeNormalAndStatusActive();
 	}
 	
 	public List<Coverage> fetchCoveragesWithStatusActive(){

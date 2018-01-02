@@ -1,15 +1,11 @@
 package com.ninelives.insurance.api.controller;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,7 +25,7 @@ public class ProductController {
 			method=RequestMethod.GET)	
 	@ResponseBody
 	public List<ProductDto> getProducts(){
-		return productService.fetchProductDtosWithStatusActive();
+		return productService.fetchProductDtosWithTypeNormalAndStatusActive();
 	}
 	
 	@RequestMapping(value="/coverages",
@@ -39,10 +35,10 @@ public class ProductController {
 		return productService.fetchCoverageDtosWithStatusActive();
 	}
 	
-	@RequestMapping(value="/periods",
-			method=RequestMethod.GET)	
-	@ResponseBody
-	public List<PeriodDto> getPeriods(){		
-		return productService.fetchPeriodDtosWithStatusActive();				
-	}
+//	@RequestMapping(value="/periods",
+//			method=RequestMethod.GET)	
+//	@ResponseBody
+//	public List<PeriodDto> getPeriods(){		
+//		return productService.fetchPeriodDtosWithStatusActive();				
+//	}
 }

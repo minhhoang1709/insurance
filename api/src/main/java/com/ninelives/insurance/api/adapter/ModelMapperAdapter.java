@@ -27,6 +27,7 @@ import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
+import com.ninelives.insurance.api.dto.VoucherDto;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -44,6 +45,7 @@ import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserFile;
+import com.ninelives.insurance.model.Voucher;
 
 @Component
 public class ModelMapperAdapter {
@@ -54,6 +56,32 @@ public class ModelMapperAdapter {
 	String policyImgUrl;
 	@Value("${ninelives.order.policy-title}")
 	String policyTitle;
+	
+	public VoucherDto toDto(Voucher m) {
+		VoucherDto dto = null;
+		if(m!=null){
+			dto = new VoucherDto();
+			dto.setCode(m.getCode());
+			dto.setHasBeneficiary(m.getHasBeneficiary());
+			dto.setPeriod(toDto(m.getPeriod()));			
+			dto.setPolicyStartDate(m.getPolicyStartDate()!=null?m.getPolicyStartDate().atStartOfDay():null);
+			dto.setPolicyEndDate(m.getPolicyEndDate()!=null?m.getPolicyEndDate().atTime(LocalTime.MAX):null);
+			dto.setProductCount(m.getProductCount());
+			if(!CollectionUtils.isEmpty(m.getProducts())){
+				List<ProductDto> productDtos = new ArrayList<>();
+				for(Product p: m.getProducts()){
+					productDtos.add(toDto(p));					
+				}
+				dto.setProducts(productDtos);
+			}
+			dto.setTitle(m.getTitle());
+			dto.setSubtitle(m.getSubtitle());
+			dto.setDescription(m.getDescription());
+			dto.setTotalPremi(m.getTotalPremi());
+		}
+		return dto;
+	}
+	
 	
 	public UserDto toDto(User m){
 		UserDto dto = null;
@@ -345,5 +373,5 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
-	
+
 }

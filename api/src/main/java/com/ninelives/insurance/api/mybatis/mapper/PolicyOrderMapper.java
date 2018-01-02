@@ -33,6 +33,7 @@ public interface PolicyOrderMapper {
 //    })
 //	PolicyOrder selectByOrderId(String orderId);
 	
+	Boolean selectPaidOrderExists(@Param ("userId") String userId);
 	
 	List<PolicyOrderCoverage> selectCoverageWithConflictedPolicyDate(@Param ("userId") String userId, 
 			@Param ("policyStartDate") LocalDate policyStartDate, 

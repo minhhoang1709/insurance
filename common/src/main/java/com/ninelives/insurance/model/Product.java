@@ -3,6 +3,8 @@ package com.ninelives.insurance.model;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.ninelives.insurance.ref.ProductType;
+
 public class Product {
     private String productId;
 
@@ -13,8 +15,12 @@ public class Product {
     private String name;
 
     private Integer premi;
+    
+    private Integer basePremi;
 
     private String status;
+    
+    private ProductType productType;
 
     private LocalDateTime createdDate;
 
@@ -63,16 +69,32 @@ public class Product {
     public void setPremi(Integer premi) {
         this.premi = premi;
     }
+    
+    public Integer getBasePremi() {
+		return basePremi;
+	}
 
-    public String getStatus() {
+	public void setBasePremi(Integer basePremi) {
+		this.basePremi = basePremi;
+	}
+
+	public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    public ProductType getProductType() {
+		return productType;
+	}
 
-    public LocalDateTime getCreatedDate() {
+	public void setProductType(ProductType productType) {
+		this.productType = productType;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
@@ -106,14 +128,9 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [" + (productId != null ? "productId=" + productId + ", " : "")
-				+ (coverageId != null ? "coverageId=" + coverageId + ", " : "")
-				+ (periodId != null ? "periodId=" + periodId + ", " : "") + (name != null ? "name=" + name + ", " : "")
-				+ (premi != null ? "premi=" + premi + ", " : "") + (status != null ? "status=" + status + ", " : "")
-				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
-				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
-				+ (period != null ? "period=" + period + ", " : "") + (coverage != null ? "coverage=" + coverage : "")
-				+ "]";
+		return "Product [productId=" + productId + ", coverageId=" + coverageId + ", periodId=" + periodId + ", name="
+				+ name + ", premi=" + premi + ", basePremi=" + basePremi + ", status=" + status + ", createdDate="
+				+ createdDate + ", updateDate=" + updateDate + ", period=" + period + ", coverage=" + coverage + "]";
 	}
 
 

@@ -252,6 +252,14 @@
     	<include refid="NestedPolicyOrderTableJoinList"/>  
   </select>
   
+  <select id="selectPaidOrderExists" resultType="boolean">
+  	select exists (
+	  	select 1 from public.policy_order a
+	  	where a.user_id=#{userId,jdbcType=VARCHAR}
+	  		and a.status != 'SUBMITTED'
+  	)
+  </select>
+  
   <select id="selectCoverageWithConflictedPolicyDate" resultType="com.ninelives.insurance.model.PolicyOrderCoverage">
   	select a.order_id, b.coverage_id, b.coverage_name, a.order_date, a.policy_start_date, a.policy_end_date
   	from public.policy_order as a, public.policy_order_product as b 

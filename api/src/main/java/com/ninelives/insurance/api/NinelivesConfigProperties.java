@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -26,6 +27,9 @@ public class NinelivesConfigProperties {
 	
 	@Valid
 	private Payment payment = new Payment();
+	
+	@Valid
+	private Promo promo = new Promo();
 
 //	public String getPolicyTitle() {
 //		return policyTitle;
@@ -67,6 +71,63 @@ public class NinelivesConfigProperties {
 		this.payment = payment;
 	}
 
+	public Promo getPromo() {
+		return promo;
+	}
+
+	public void setPromo(Promo promo) {
+		this.promo = promo;
+	}
+
+	public static class Promo {		
+		private Boolean isPromoAvailable = false;
+		
+		@NotNull
+		private Integer inviteVoucherId;
+		
+		@NotNull
+		private Integer voucherMinimumAggregatePayment;
+		
+		private int voucherCodeLength = 20;
+
+		public Boolean getIsPromoAvailable() {
+			return isPromoAvailable;
+		}
+
+		public void setIsPromoAvailable(Boolean isPromoAvailable) {
+			this.isPromoAvailable = isPromoAvailable;
+		}
+
+		public Integer getInviteVoucherId() {
+			return inviteVoucherId;
+		}
+
+		public void setInviteVoucherId(Integer inviteVoucherId) {
+			this.inviteVoucherId = inviteVoucherId;
+		}
+
+		public Integer getVoucherMinimumAggregatePayment() {
+			return voucherMinimumAggregatePayment;
+		}
+
+		public void setVoucherMinimumAggregatePayment(Integer voucherMinimumAggregatePayment) {
+			this.voucherMinimumAggregatePayment = voucherMinimumAggregatePayment;
+		}		
+
+		public int getVoucherCodeLength() {
+			return voucherCodeLength;
+		}
+
+		public void setVoucherCodeLength(int voucherCodeLength) {
+			this.voucherCodeLength = voucherCodeLength;
+		}
+
+		@Override
+		public String toString() {
+			return "Promo [isPromoAvailable=" + isPromoAvailable + ", inviteVoucherId=" + inviteVoucherId + "]";
+		}
+		
+	}
 	public static class Payment {
 		@NotEmpty
 		private String midtransEnvironment;

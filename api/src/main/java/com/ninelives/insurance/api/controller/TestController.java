@@ -26,6 +26,7 @@ import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.UserDto;
+import com.ninelives.insurance.api.dto.VoucherDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
@@ -37,6 +38,7 @@ import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
 import com.ninelives.insurance.api.service.TestService;
 import com.ninelives.insurance.api.service.UserService;
+import com.ninelives.insurance.api.service.VoucherService;
 import com.ninelives.insurance.api.util.GsonUtil;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -46,6 +48,7 @@ import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.route.EndPointRef;
@@ -59,12 +62,14 @@ public class TestController {
 	@Autowired OrderService orderService;
 	@Autowired ClaimService claimService;
 	@Autowired TestService testService;
+	@Autowired VoucherService voucherService;
 	
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	
 	@Autowired UserService userService;
 	@Autowired UserMapper userMapper;
+	
 	
 	@Autowired FluentProducerTemplate producerTemplate;
 	
@@ -73,6 +78,14 @@ public class TestController {
 	
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
+	
+	@RequestMapping(value="/test/full/vouchers/{code}",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public Voucher getVoucher(@RequestAttribute ("authUserId") String authUserId,
+			@PathVariable("code") String code) throws ApiNotFoundException{
+		return voucherService.fetchVoucherByCode(code);
+	}
 	
 	@RequestMapping("/test/error/generic")
 	public String errorGeneric() throws Exception{

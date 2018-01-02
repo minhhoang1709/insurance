@@ -1,6 +1,5 @@
 package com.ninelives.insurance.api.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,6 +46,8 @@ public class OrderDto {
     private PeriodDto period;
     
     private UserDto user;
+    
+    private VoucherDto voucher;
 
 	public String getOrderId() {
 		return orderId;
@@ -183,24 +184,23 @@ public class OrderDto {
 	public void setUser(UserDto user) {
 		this.user = user;
 	}
+	
+	public VoucherDto getVoucher() {
+		return voucher;
+	}
+
+	public void setVoucher(VoucherDto voucher) {
+		this.voucher = voucher;
+	}
 
 	@Override
 	public String toString() {
-		return "OrderDto [" + (orderId != null ? "orderId=" + orderId + ", " : "")
-				+ (orderDate != null ? "orderDate=" + orderDate + ", " : "")
-				+ (title != null ? "title=" + title + ", " : "")
-				+ (subtitle != null ? "subtitle=" + subtitle + ", " : "")
-				+ (imgUrl != null ? "imgUrl=" + imgUrl + ", " : "")
-				+ (policyNumber != null ? "policyNumber=" + policyNumber + ", " : "")
-				+ (policyStartDate != null ? "policyStartDate=" + policyStartDate + ", " : "")
-				+ (policyEndDate != null ? "policyEndDate=" + policyEndDate + ", " : "")
-				+ (totalPremi != null ? "totalPremi=" + totalPremi + ", " : "")
-				+ (hasBeneficiary != null ? "hasBeneficiary=" + hasBeneficiary + ", " : "")
-				+ (productCount != null ? "productCount=" + productCount + ", " : "")
-				+ (status != null ? "status=" + status + ", " : "")
-				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
-				+ (products != null ? "products=" + products + ", " : "")
-				+ (period != null ? "period=" + period + ", " : "") + (user != null ? "user=" + user : "") + "]";
+		return "OrderDto [orderId=" + orderId + ", orderDate=" + orderDate + ", title=" + title + ", subtitle="
+				+ subtitle + ", imgUrl=" + imgUrl + ", policyNumber=" + policyNumber + ", policyStartDate="
+				+ policyStartDate + ", policyEndDate=" + policyEndDate + ", totalPremi=" + totalPremi
+				+ ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount + ", status=" + status
+				+ ", createdDate=" + createdDate + ", products=" + products + ", coverageCategory=" + coverageCategory
+				+ ", period=" + period + ", user=" + user + ", voucher=" + voucher + "]";
 	}
 
     

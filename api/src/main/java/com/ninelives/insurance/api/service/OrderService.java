@@ -284,11 +284,11 @@ public class OrderService {
 		
 		List<Product> products = productIdSet.stream().map(productService::fetchProductByProductId).collect(Collectors.toList());
 		//List<Product> products = productService.fetchProductByProductIds(productIdSet);
-		if(products.isEmpty() || products.size()!=submitOrderDto.getProducts().size()){
+		if(CollectionUtils.isEmpty(products)||products.get(0)==null|| products.size()!=submitOrderDto.getProducts().size()){
 			logger.debug("Process order for {} with order {} with result: exception product not found", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4003_ORDER_PRODUCT_NOTFOUND, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
 		}
-		
+		//logger.debug("products is not empty? empty is {}, and the products <{}> and the size is {}",products.isEmpty(),products, products.size());
 		String periodId = products.get(0).getPeriodId();
 		String coverageCategoryId = products.get(0).getCoverage().getCoverageCategoryId();
 		int calculatedTotalPremi = 0;
@@ -433,9 +433,11 @@ public class OrderService {
 				policyOrderProducts.add(pop);
 			}
 			
-			policyOrder.setPolicyOrderProducts(policyOrderProducts);			
+			policyOrder.setPolicyOrderProducts(policyOrderProducts);
 			
 			policyOrderTrxService.registerPolicyOrder(policyOrder);
+			
+			//TODO: check if free voucher, if yes, then mark as APPROVED instead of SUBMITTED
 			
 		}
 		logger.debug("Process order isValidateOnly {} for {} with order {}, result update profile: {}, update phone: {}, order: {} with result success",
@@ -472,6 +474,10 @@ public class OrderService {
 			result = false;
 		}
 		return result;
+	}
+	
+	protected Boolean hasPaidOrder(String userId){
+		return policyOrderMapper.selectPaidOrderExists(userId); 
 	}
 	
 	protected boolean isOverCoverageInSamePeriodLimit(String userId, LocalDate policyStartDate, LocalDate policyEndDate,

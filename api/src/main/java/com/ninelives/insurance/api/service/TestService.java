@@ -22,7 +22,7 @@ public class TestService {
 	}
 	
 	public List<Product> fetchProductsWithStatusActive(){
-		return productService.fetchProductsWithStatusActive();
+		return productService.fetchProductsWithTypeNormalAndStatusActive();
 	}
 	
 	public Product fetchProduct(String productId){
