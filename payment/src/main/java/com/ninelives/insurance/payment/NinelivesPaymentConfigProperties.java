@@ -1,6 +1,7 @@
 package com.ninelives.insurance.payment;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,12 +13,23 @@ public class NinelivesPaymentConfigProperties {
 	@Valid
 	private Midtrans midtrans = new Midtrans();
 	
+	@Valid
+	private Promo promo = new Promo();
+		
 	public Midtrans getMidtrans() {
 		return midtrans;
 	}
 
 	public void setMidtrans(Midtrans midtrans) {
 		this.midtrans = midtrans;
+	}
+	
+	public Promo getPromo() {
+		return promo;
+	}
+
+	public void setPromo(Promo promo) {
+		this.promo = promo;
 	}
 
 	public static class Midtrans {
@@ -31,5 +43,19 @@ public class NinelivesPaymentConfigProperties {
 		public void setServerKey(String serverKey) {
 			this.serverKey = serverKey;
 		}		
+	}
+	
+	public static class Promo {
+		@NotNull
+		private Integer voucherMinimumAggregatePayment;
+
+		public Integer getVoucherMinimumAggregatePayment() {
+			return voucherMinimumAggregatePayment;
+		}
+
+		public void setVoucherMinimumAggregatePayment(Integer voucherMinimumAggregatePayment) {
+			this.voucherMinimumAggregatePayment = voucherMinimumAggregatePayment;
+		}
+		
 	}
 }

@@ -34,6 +34,7 @@ public class MidtransPaymentNotificationService {
 	
 	@Autowired NinelivesPaymentConfigProperties config;
 	@Autowired OrderService orderService;
+	@Autowired InviteService inviteService;
 	@Autowired PaymentNotificationServiceTrx paymentNotificationServiceTrx;
 	
 	private static final class MidtransSuccessCondition{
@@ -60,8 +61,6 @@ public class MidtransPaymentNotificationService {
 	
 	public void processNotification(MidtransNotificationDto notifDto) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
-
-		
 		logger.debug("Process notification notif:<{}> ", notifDto);
 		
 		if(notifDto==null || StringUtils.isEmpty(notifDto.getOrderId())){
@@ -202,11 +201,23 @@ public class MidtransPaymentNotificationService {
 				if(!order.getStatus().equals(orderUpdate.getStatus())
 						|| !order.getPayment().getStatus().equals(orderUpdate.getPayment().getStatus())){
 					paymentNotificationServiceTrx.updateOrderAndPayment(orderUpdate);
-				}				
-			}
+				}
+				
+				if (PolicyStatus.PAID.equals(orderUpdate.getStatus())
+						&& PaymentStatus.SUCCESS.equals(orderUpdate.getPayment().getStatus())) {
+					try{
+						inviteService.updateInviteOnSuccessPayment(order);
+					}catch(Exception e){
+						logger.error("Generic exception on updating invite",e);
+					}
+				}
+			}			
 		}
 		
+		//update agg stat for user		
+		
 		//TODO: send notif to queue to be picked up and send to aswata
+		//TODO: maybe move agg stat to aswata process (after queue)
 		
 	}
 	
