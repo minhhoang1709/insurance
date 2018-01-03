@@ -22,14 +22,17 @@
     <result column="inviter_reward_count" jdbcType="INTEGER" property="inviterRewardCount" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
-	<association property="inviter" javaType="com.ninelives.insurance.model.User">
-	  	<id column="user_id" jdbcType="VARCHAR" property="userId" />
-    </association>
+    <result column="user_id" jdbcType="VARCHAR" property="inviterUserId" />
     <collection property="products" ofType="com.ninelives.insurance.model.Product">
 	    <id column="product_id" jdbcType="VARCHAR" property="productId" />
 	    <result column="premi" jdbcType="INTEGER" property="premi" />
 	</collection>
   </resultMap>
+  
+<!--   	<association property="inviter" javaType="com.ninelives.insurance.model.User"> -->
+<!-- 	  	<id column="user_id" jdbcType="VARCHAR" property="userId" /> -->
+<!--     </association> -->
+  
   <sql id="Base_Column_List">
     id, code, title, subtitle, description, policy_start_date, policy_end_date, use_start_date, 
     use_end_date, base_premi, total_premi, has_beneficiary, product_count, period_id, 

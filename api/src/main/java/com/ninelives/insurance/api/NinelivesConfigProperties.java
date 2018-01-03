@@ -88,7 +88,7 @@ public class NinelivesConfigProperties {
 		@NotNull
 		private Integer voucherMinimumAggregatePayment;
 		
-		private int voucherCodeLength = 20;
+		private int voucherCodeLength = 10;
 
 		public Boolean getIsPromoAvailable() {
 			return isPromoAvailable;

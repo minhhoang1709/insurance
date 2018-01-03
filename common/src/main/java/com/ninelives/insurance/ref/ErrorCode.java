@@ -29,6 +29,12 @@ public enum ErrorCode {
 	ERR4008_ORDER_PRODUCT_UNSUPPORTED("ERR4008"), //only day-based product is supported
 	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009"), //only limited number of same coverage can be active at the same time
 	ERR4010_ORDER_PROFILE_INVALID("ERR4010"), //empty or incomplete profile
+	ERR4011_ORDER_VOUCHER_NOTFOUND("ERR4011"), //voucher not found, or incase of b2b it might already expired
+	ERR4012_ORDER_VOUCHER_NOTELIGIBLE("ERR4012"), //voucher is not eligible, user has non-paid trx
+	ERR4013_ORDER_VOUCHER_PREMI_MISMATCH("ERR4013"), //voucher premi doesnt match order
+	ERR4014_ORDER_VOUCHER_DATE_MISMATCH("ERR4014"), //voucher policy start/end date doesnt match order
+	ERR4015_ORDER_VOUCHER_PRODUCT_MISMATCH("ERR4015"), //voucher product not match order
+	ERR4016_ORDER_VOUCHER_REQUIRED("ERR4016"), //voucher is required for certain product (e.g. free)
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary
@@ -60,7 +66,8 @@ public enum ErrorCode {
 	ERR8201_PAYMENT_NOTIF_SIGNATURE_INVALID("ERR8201"), //
 	ERR8202_PAYMENT_NOTIF_ORDER_NOT_FOUND("ERR8202"),
 	
-	ERR9001_VOUCHER_NOT_FOUND("ERR9001")
+	ERR9001_VOUCHER_NOT_FOUND("ERR9001"),
+	ERR9002_VOUCHER_EXPIRED("ERR9002") //voucher expired, b2b case
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

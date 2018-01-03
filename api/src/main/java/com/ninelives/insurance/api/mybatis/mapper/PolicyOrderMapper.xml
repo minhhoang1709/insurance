@@ -14,6 +14,7 @@
     <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
     <result column="product_count" jdbcType="INTEGER" property="productCount" />
+    <result column="has_voucher" jdbcType="BIT" property="hasVoucher" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -23,6 +24,15 @@
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
     </association>
     <association property="payment" resultMap="PolicyPaymentResultMap" />
+    <association property="policyOrderVoucher" javaType="com.ninelives.insurance.model.PolicyOrderVoucher">
+    	 <id column="pov_id" jdbcType="BIGINT" property="id" />
+    	 <association property="voucher" javaType="com.ninelives.insurance.model.Voucher">
+    	 	<id column="pov_voucher_id" jdbcType="INTEGER" property="id" />
+    	 	<result column="pov_code" jdbcType="VARCHAR" property="code" />
+    		<result column="pov_inviter_user_id" jdbcType="VARCHAR" property="inviterUserId" />
+    		<result column="pov_voucher_type" jdbcType="VARCHAR" property="voucherType" />
+    	 </association>
+    </association>
     <collection property="policyOrderProducts" ofType="com.ninelives.insurance.model.PolicyOrderProduct">
     	<id column="order_product_id" jdbcType="BIGINT" property="orderProductId" />
 	    <result column="order_product_coverage_id" jdbcType="VARCHAR" property="coverageId" />
@@ -99,13 +109,13 @@
       
   <sql id="Base_Column_List">
     order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
-    policy_start_date, policy_end_date, base_premi, total_premi, product_count, status, created_date, 
+    policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, status, created_date, 
     update_date
   </sql>
   
   <sql id="NestedPolicyOrderColumnList">
     a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
-   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.status, a.created_date,
+   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.status, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
    	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 
    	b.coverage_max_limit as order_product_coverage_max_limit, 
@@ -129,7 +139,12 @@
 	pp.notif_pending_time as payment_notif_pending_time, 
 	pp.notif_success_time as payment_notif_success_time, 
 	pp.notif_failed_time as payment_notif_failed_time,
-    pp.notif_expired_time as payment_notif_expired_time    
+    pp.notif_expired_time as payment_notif_expired_time,
+    pov.id as pov_id,
+    pov.voucher_id as pov_voucher_id,
+    pov.code as pov_code,
+    pov.voucher_type as pov_voucher_type,
+    pov.inviter_user_id as pov_inviter_user_id
   </sql>
 
 <!--      	
@@ -142,6 +157,7 @@
     inner join public.period c on c.period_id=a.period_id
     inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
     left outer join public.policy_payment pp on pp.order_id=a.order_id
+    left outer join public.policy_order_voucher pov on pov.order_id=a.order_id and a.has_voucher=true    
   </sql>
 
 <!--     

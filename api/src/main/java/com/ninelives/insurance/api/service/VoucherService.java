@@ -52,21 +52,29 @@ public class VoucherService {
 		return voucherMapper.selectVoucherForInviteByUserId(userId);
 	}
 	
-	
 	public Voucher fetchVoucherByCode(String code) throws ApiNotFoundException{
+		return fetchVoucherByCode(code, null);
+	}
+	
+	public Voucher fetchVoucherByCode(String code, VoucherType voucherType) throws ApiNotFoundException{
 		//TODO return voucher from cache for B2B (non-invite)
+		LocalDate today = LocalDate.now();
 		
 		if(StringUtils.isEmpty(code)){
 			throw new ApiNotFoundException(ErrorCode.ERR9001_VOUCHER_NOT_FOUND, "Asuransi gratis tidak ditemukan");
 		}
-		String upper = code.toUpperCase();
 		
-		Voucher voucher = voucherMapper.selectByCode(upper);
+		Voucher voucher = null;
 		
-		if(voucher ==null){
-			voucher = voucherMapper.selectByInviteCode(upper);
-		}		
-		
+		if(voucherType!=null && VoucherType.INVITE.equals(voucherType)){
+			voucher = voucherMapper.selectByInviteCode(code);
+		}else{
+			voucher = voucherMapper.selectByCode(code);
+			
+			if(voucher ==null){
+				voucher = voucherMapper.selectByInviteCode(code);
+			}
+		}
 		if(voucher!=null){
 			if(!CollectionUtils.isEmpty(voucher.getProducts())){
 				for(Product p: voucher.getProducts()){
@@ -86,13 +94,16 @@ public class VoucherService {
 			
 			//incase of invite voucher, set the code from parameter since the code is not stored in table voucher
 			if(StringUtils.isEmpty(voucher.getCode())){
-				voucher.setCode(upper);
+				voucher.setCode(code);
 			}
 			
-			if(voucher.getVoucherType().equals(VoucherType.INVITE)){
-				LocalDate today = LocalDate.now();
+			if(voucher.getVoucherType().equals(VoucherType.INVITE)){				
 				voucher.setPolicyStartDate(today);
 				voucher.setPolicyEndDate(orderService.calculatePolicyEndDate(today, voucher.getPeriod()));
+			}else if(voucher.getVoucherType().equals(VoucherType.B2B)){
+				if(today.isBefore(voucher.getUseStartDate()) || today.isAfter(voucher.getUseEndDate())){
+					throw new ApiNotFoundException(ErrorCode.ERR9002_VOUCHER_EXPIRED, "Asuransi gratis ini telah habis masa penawarannya");
+				}
 			}
 		}
 		

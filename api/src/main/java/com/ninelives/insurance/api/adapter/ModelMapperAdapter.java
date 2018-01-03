@@ -74,6 +74,7 @@ public class ModelMapperAdapter {
 				}
 				dto.setProducts(productDtos);
 			}
+			dto.setVoucherType(m.getVoucherType());
 			dto.setTitle(m.getTitle());
 			dto.setSubtitle(m.getSubtitle());
 			dto.setDescription(m.getDescription());
@@ -144,6 +145,11 @@ public class ModelMapperAdapter {
 				dto.setProducts(productDtos);
 			}
 			dto.setUser(toDto(m.getPolicyOrderUsers(), m.getUserId()));
+			
+			if(m.getPolicyOrderVoucher()!=null){
+				dto.setVoucher(toDto(m.getPolicyOrderVoucher().getVoucher()));
+			}
+			
 		}
 		return dto;
 	}

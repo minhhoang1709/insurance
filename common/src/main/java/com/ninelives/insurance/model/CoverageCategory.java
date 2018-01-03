@@ -53,5 +53,11 @@ public class CoverageCategory {
 		this.updateDate = updateDate;
 	}
 
+	@Override
+	public String toString() {
+		return "CoverageCategory [coverageCategoryId=" + coverageCategoryId + ", name=" + name + ", description="
+				+ description + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
+	}
+
 
 }

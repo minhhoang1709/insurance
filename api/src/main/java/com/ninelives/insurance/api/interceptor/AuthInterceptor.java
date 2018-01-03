@@ -1,8 +1,6 @@
 package com.ninelives.insurance.api.interceptor;
 
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,16 +31,16 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		logger.debug("cek interceptor {} {} {}", request.getRequestURL(), request.getMethod(), request.getRequestURI());
-		if(logger.isDebugEnabled()){
+		logger.trace("cek interceptor {} {} {}", request.getRequestURL(), request.getMethod(), request.getRequestURI());
+		if(logger.isTraceEnabled()){
 			Enumeration<String> e = request.getHeaderNames();
 			while(e.hasMoreElements()){
 				String header = e.nextElement();
-				logger.debug("Header {}: {}", header, request.getHeader(header));
+				logger.trace("Header {}: {}", header, request.getHeader(header));
 				
 			}
 		}
-		logger.debug("--- interceptor");
+		logger.trace("--- interceptor");
 		
 		String tokenId = request.getHeader(HEADER_AUTHENTICATION);
 

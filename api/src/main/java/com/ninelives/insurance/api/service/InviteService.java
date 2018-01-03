@@ -49,7 +49,6 @@ public class InviteService {
 				inviterVoucherDto = newVoucherDto;
 			}				
 		}
-		//Voucher inviterVoucher =  
 		dto.setInviterVoucher(inviterVoucherDto);
 		return dto;
 	}
@@ -63,8 +62,6 @@ public class InviteService {
 	}
 	
 	public UserInviteVoucher generateInviteVoucher(String userId, int voucherId){
-		//random text
-		//insert into database, return not voucher but userinvite?
 		String text = RandomStringUtil.generate(config.getPromo().getVoucherCodeLength());
 		
 		UserInviteVoucher inviteVoucher = new UserInviteVoucher();

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
+import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderVoucherMapper;
 import com.ninelives.insurance.model.PolicyOrder;
 
 @Service
@@ -18,12 +19,16 @@ public class PolicyOrderTrxService {
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
+	@Autowired PolicyOrderVoucherMapper policyOrderVoucherMapper;
 	
 	@Transactional
 	public void registerPolicyOrder(PolicyOrder policyOrder){
 		policyOrderMapper.insert(policyOrder);
 		policyOrderUserMapper.insert(policyOrder.getPolicyOrderUsers());
 		policyOrderProductMapper.insertList(policyOrder.getPolicyOrderProducts());
+		if(policyOrder.getPolicyOrderVoucher()!=null && policyOrder.getPolicyOrderVoucher().getVoucher()!=null){
+			policyOrderVoucherMapper.insert(policyOrder.getPolicyOrderVoucher());
+		}
 	}
 
 }

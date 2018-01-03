@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.ref.VoucherType;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VoucherDto {
@@ -33,6 +34,8 @@ public class VoucherDto {
     private PeriodDto period;
     
     private String description;
+    
+    private VoucherType voucherType;
 
 	public String getCode() {
 		return code;
@@ -129,7 +132,12 @@ public class VoucherDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-    
-    
-    
+
+	public VoucherType getVoucherType() {
+		return voucherType;
+	}
+
+	public void setVoucherType(VoucherType voucherType) {
+		this.voucherType = voucherType;
+	}
 }

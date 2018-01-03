@@ -4,16 +4,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -24,25 +27,34 @@ import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
 import com.ninelives.insurance.api.service.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.Coverage;
+import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
+import com.ninelives.insurance.model.PolicyOrderVoucher;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
+import com.ninelives.insurance.model.Voucher;
+import com.ninelives.insurance.provider.notification.message.FcmNotifAction;
+import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
+import com.ninelives.insurance.ref.ProductType;
+import com.ninelives.insurance.ref.VoucherType;
+import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class OrderService {
@@ -52,8 +64,10 @@ public class OrderService {
 	
 	@Autowired ProductService productService;
 	@Autowired UserService userService;
+	@Autowired VoucherService voucherService;
+	@Autowired InviteService inviteService;
 	@Autowired PolicyOrderTrxService policyOrderTrxService;
-	
+		
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
@@ -61,7 +75,10 @@ public class OrderService {
 	
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
-	@Value("${ninelives.order.policy-startdate-period:60}")
+	@Autowired MessageSource messageSource;
+	@Autowired FluentProducerTemplate producerTemplate;
+	
+	@Value("${ninelives.order.policy-startdate-period:366}")
 	int policyStartDatePeriod;
 	
 	@Value("${ninelives.order.policy-duedate-period:30}")
@@ -244,9 +261,9 @@ public class OrderService {
 	 * @throws ApiBadRequestException
 	 */
 	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto, final boolean isValidateOnly) throws ApiBadRequestException{
-		logger.debug("Process isvalidationonly {} order for {} with order {}", isValidateOnly, userId, submitOrderDto);
+		logger.debug("Process order isvalidationonly <{}> user: <{}> with order: <{}>", isValidateOnly, userId, submitOrderDto);
 		
-		LocalDate today = LocalDate.now();
+		LocalDate today = LocalDate.now();		
 		
 		if (submitOrderDto == null || submitOrderDto.getProducts() == null
 				|| submitOrderDto.getPolicyStartDate() == null || submitOrderDto.getTotalPremi() == null) {
@@ -256,8 +273,49 @@ public class OrderService {
 					"Permintaan tidak dapat diproses, silahkan cek kembali pesanan");
 		}
 		
+		//order with voucher
+		Voucher voucher = null;
+		Map<String, Product> voucherProductMap = null;
+		Set<String> voucherProductIdSet = null;
+		if(submitOrderDto.getVoucher()!=null){
+			try {
+				voucher = voucherService.fetchVoucherByCode(submitOrderDto.getVoucher().getCode(), submitOrderDto.getVoucher().getVoucherType());
+			} catch (ApiNotFoundException e) {
+				logger.debug("Process order for user: <{}> with order <{}> with result: voucher not found <{}>", 
+						userId,	submitOrderDto, e.getCode());
+				throw new ApiBadRequestException(ErrorCode.ERR4011_ORDER_VOUCHER_NOTFOUND,
+						"Permintaan tidak dapat diproses, silahkan cek kode asuransi gratis Anda");
+			}
+			if(VoucherType.INVITE.equals(voucher.getVoucherType())){
+				//verify that user is eligible
+				if(!inviteService.hasInvite(userId)){
+					logger.debug("Process order for user: <{}> with order <{}> with result: voucher not eligible", 
+							userId,	submitOrderDto);
+					throw new ApiBadRequestException(ErrorCode.ERR4012_ORDER_VOUCHER_NOTELIGIBLE,
+							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru");
+				}
+			}
+			if(!voucher.getTotalPremi().equals(submitOrderDto.getTotalPremi())){
+				logger.debug("Process order for user: <{}> with order <{}> with result: voucher premi not match, voucher: <{}>", 
+						userId,	submitOrderDto, voucher.getTotalPremi());
+				throw new ApiBadRequestException(ErrorCode.ERR4013_ORDER_VOUCHER_PREMI_MISMATCH,
+						"Permintaan tidak dapat diproses, premi voucher tidak sesuai dengan pemesanan");
+			}
+			if(!voucher.getPolicyStartDate().isEqual(submitOrderDto.getPolicyStartDate().toLocalDate())||
+					!voucher.getPolicyEndDate().isEqual(submitOrderDto.getPolicyEndDate().toLocalDate())){
+				throw new ApiBadRequestException(ErrorCode.ERR4014_ORDER_VOUCHER_DATE_MISMATCH,
+						"Permintaan tidak dapat diproses, tanggal asuransi voucher tidak sesuai dengan pemesanan");
+			}
+			
+			//voucherProductIdSet = voucher.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
+			voucherProductMap = voucher.getProducts().stream().collect(Collectors.toMap(Product::getProductId, item -> item)); 
+			voucherProductIdSet = voucherProductMap.keySet();
+			
+			//logger.debug("voucher with productMap <{}> and productIdSet <{}>", map, voucherProductIdSet);
+		}
+				
 		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
-		
+				
 		if(CollectionUtils.isEmpty(productIdSet)){
 			logger.debug("Process order for {} with order {} with result: exception empty product", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4001_ORDER_PRODUCT_EMPTY, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
@@ -265,6 +323,12 @@ public class OrderService {
 		if(submitOrderDto.getProducts().size()!= productIdSet.size()){
 			logger.debug("Process order for {} with order {} with result: exception duplicate product", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4002_ORDER_PRODUCT_DUPLICATE, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
+		}
+		if(!CollectionUtils.isEmpty(voucherProductIdSet)){
+			if(!voucherProductIdSet.equals(productIdSet)){
+				logger.debug("Process order for user <{}> with order <{}> with result: exception voucher product mismatch, voucher:<{}>", userId, submitOrderDto, voucherProductIdSet);
+				throw new ApiBadRequestException(ErrorCode.ERR4015_ORDER_VOUCHER_PRODUCT_MISMATCH, "Permintaan tidak dapat diproses, produk voucher tidak sesuai dengan pemesanan");	
+			}
 		}
 		
 		LocalDate limitPolicyStartDate = today.plusDays(this.policyStartDatePeriod);
@@ -275,7 +339,7 @@ public class OrderService {
 							+ limitPolicyStartDate.format(formatter));			
 		}
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isBefore(today)){
-			logger.debug("Process order for {} with order {} with result: exception policy start-date before today {}", userId, submitOrderDto, this.policyStartDatePeriod);
+			logger.debug("Process order for {} with order {} with result: exception policy start-date before today", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
 							+ limitPolicyStartDate.format(formatter));
@@ -305,15 +369,24 @@ public class OrderService {
 				logger.debug("Process order for {} with order {} with result: exception coverage mismatch", userId, submitOrderDto);
 				throw new ApiBadRequestException(ErrorCode.ERR4006_ORDER_COVERAGE_MISMATCH, "Permintaan tidak dapat diproses, pembelian lebih dari satu tipe asuransi belum didukung");
 			}
+			//cannot by free product without voucher
+			if(ProductType.FREE.equals(p.getProductType()) && voucher==null){
+				logger.debug("Process order for {} with order {} with result: exception voucher needed", userId, submitOrderDto);
+				throw new ApiBadRequestException(ErrorCode.ERR4016_ORDER_VOUCHER_REQUIRED, "Permintaan tidak dapat diproses, produk ini hanya dapat dibeli lewat undangan");
+			}
 			calculatedTotalPremi += p.getPremi();
 			calculatedTotalBasePremi += p.getBasePremi();
 			hasBeneficiary = hasBeneficiary || p.getCoverage().getHasBeneficiary();
 			coverageIds.add(p.getCoverageId());
 		}
-		if(calculatedTotalPremi!=submitOrderDto.getTotalPremi()){
-			logger.debug("Process order for {} with order {} with result: exception calculated premi {} ", userId, submitOrderDto, calculatedTotalPremi);
-			throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
-		}				
+		if(voucher == null){
+			if(calculatedTotalPremi!=submitOrderDto.getTotalPremi()){
+				logger.debug("Process order for {} with order {} with result: exception calculated premi {} ", userId, submitOrderDto, calculatedTotalPremi);
+				throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
+			}
+		}else{
+			calculatedTotalPremi = voucher.getTotalPremi();
+		}
 		
 		Period period = products.get(0).getPeriod();
 //		if(!period.getUnit().equals(PeriodUnit.DAY)){
@@ -431,7 +504,11 @@ public class OrderService {
 				pop.setCoverageName(p.getCoverage().getName());
 				pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
 				pop.setBasePremi(p.getBasePremi());
-				pop.setPremi(p.getPremi());
+				if(voucher!=null){
+					pop.setPremi(voucherProductMap.get(p.getProductId()).getPremi());
+				}else{
+					pop.setPremi(p.getPremi());
+				}				
 				pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
 				pop.setPeriod(p.getPeriod());
 				policyOrderProducts.add(pop);
@@ -439,12 +516,69 @@ public class OrderService {
 			
 			policyOrder.setPolicyOrderProducts(policyOrderProducts);
 			
-			policyOrderTrxService.registerPolicyOrder(policyOrder);
+			//Set for policy voucher
+			if(voucher!=null){
+				PolicyOrderVoucher pov = new PolicyOrderVoucher();
+				pov.setOrderId(policyOrder.getOrderId());
+				pov.setVoucher(voucher);
+//				pov.setVoucherId(voucher.getId());
+//				pov.setCode(voucher.getCode());
+//				if(voucher.getInviter()!=null){
+//					pov.setInviterUserId(voucher.getInviter().getUserId());
+//				}
+				policyOrder.setPolicyOrderVoucher(pov);
+				policyOrder.setHasVoucher(true);
+				
+				//check if INVITE free voucher, if yes, then mark as APPROVED instead of SUBMITTED
+				if(voucher.getTotalPremi().equals(0)){
+					if(voucher.getVoucherType().equals(VoucherType.INVITE)){
+						policyOrder.setStatus(PolicyStatus.APPROVED);
+					}else if(voucher.getVoucherType().equals(VoucherType.B2B )){
+						policyOrder.setStatus(PolicyStatus.PAID);
+					}
+				}				
+			}else{
+				policyOrder.setHasVoucher(false);
+			}
 			
-			//TODO: check if free voucher, if yes, then mark as APPROVED instead of SUBMITTED
+			policyOrderTrxService.registerPolicyOrder(policyOrder);
+						
+			if(voucher!=null){
+				//if product is active now, send the notification
+				if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
+						&& !policyOrder.getPolicyStartDate().isAfter(today) 
+						&& !policyOrder.getPolicyEndDate().isBefore(today)){
+					try{
+						CoverageCategory covCat = products.get(0).getCoverage().getCoverageCategory();
+						
+						if(covCat!=null 
+								&& !StringUtils.isEmpty(covCat.getName())
+								&& !StringUtils.isEmpty(existingUser.getFcmToken())
+								){
+							FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
+							notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",  new Object[]{covCat.getName()}, Locale.ROOT));
+							notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body", new Object[]{covCat.getName()}, Locale.ROOT));
+							
+							FcmNotifMessageDto messageDto = new FcmNotifMessageDto();
+							messageDto.setMessage(new FcmNotifMessageDto.Message());
+							messageDto.getMessage().setToken(existingUser.getFcmToken());
+							messageDto.getMessage().setNotification(notifMessage);
+							messageDto.getMessage().setData(new FcmNotifMessageDto.Data());
+							messageDto.getMessage().getData().setAction(FcmNotifAction.order);
+							messageDto.getMessage().getData().setActionData(policyOrder.getOrderId());
+							
+							logger.debug("sending notif for active order <{}>", messageDto);
+							producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+						}
+						
+					}catch(Exception e){
+						logger.error("Failed to send message notif for register order",e);
+					}
+				}
+			}
 			
 		}
-		logger.debug("Process order isValidateOnly {} for {} with order {}, result update profile: {}, update phone: {}, order: {} with result success",
+		logger.debug("Process registerOrder isValidateOnly <{}> for <{}> with order <{}>, result update profile: <{}>, update phone: <{}>, order: <{}> with result success",
 				isValidateOnly, userId, submitOrderDto, isAllProfileInfoUpdated, isPhoneInfoUpdated, policyOrder);
 		
 		return policyOrder;
@@ -574,6 +708,7 @@ public class OrderService {
 			}
 		}
 	}
+		
 	
 	protected OrderDtoFilterStatus getFetchOrderFilterType(String[] status){
 		OrderDtoFilterStatus filterType = OrderDtoFilterStatus.ALL;

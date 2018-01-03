@@ -45,7 +45,9 @@ public class Voucher {
     
     private Integer inviterRewardLimit;
     
-    private User inviter;    
+    private String inviterUserId;
+    
+    //private User inviter;    
     
     private Integer inviterRewardCount;
 
@@ -198,12 +200,12 @@ public class Voucher {
 		this.period = period;
 	}
 	
-	public User getInviter() {
-		return inviter;
+	public String getInviterUserId() {
+		return inviterUserId;
 	}
 
-	public void setInviter(User inviter) {
-		this.inviter = inviter;
+	public void setInviterUserId(String inviterUserId) {
+		this.inviterUserId = inviterUserId;
 	}
 
 	public Integer getInviterRewardLimit() {

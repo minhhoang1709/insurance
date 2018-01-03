@@ -30,6 +30,8 @@ public class PolicyOrder {
     private Integer totalPremi;
 
     private Integer productCount;
+    
+    private Boolean hasVoucher;
 
     private PolicyStatus status;
 
@@ -48,6 +50,8 @@ public class PolicyOrder {
     private Period period;
 
     private PolicyPayment payment;
+    
+    private PolicyOrderVoucher policyOrderVoucher;
     
 	public String getOrderId() {
 		return orderId;
@@ -144,6 +148,14 @@ public class PolicyOrder {
 	public void setProductCount(Integer productCount) {
 		this.productCount = productCount;
 	}
+	
+	public Boolean getHasVoucher() {
+		return hasVoucher;
+	}
+
+	public void setHasVoucher(Boolean hasVoucher) {
+		this.hasVoucher = hasVoucher;
+	}
 
 	public PolicyStatus getStatus() {
 		return status;
@@ -217,17 +229,28 @@ public class PolicyOrder {
 		this.payment = payment;
 	}
 
+	public PolicyOrderVoucher getPolicyOrderVoucher() {
+		return policyOrderVoucher;
+	}
+
+	public void setPolicyOrderVoucher(PolicyOrderVoucher policyOrderVoucher) {
+		this.policyOrderVoucher = policyOrderVoucher;
+	}
+
 	@Override
 	public String toString() {
 		return "PolicyOrder [orderId=" + orderId + ", orderDate=" + orderDate + ", userId=" + userId
 				+ ", coverageCategoryId=" + coverageCategoryId + ", hasBeneficiary=" + hasBeneficiary + ", periodId="
 				+ periodId + ", policyNumber=" + policyNumber + ", policyStartDate=" + policyStartDate
 				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
-				+ ", productCount=" + productCount + ", status=" + status + ", createdDate=" + createdDate
-				+ ", updateDate=" + updateDate + ", coverageCategory=" + coverageCategory + ", policyOrderUsers="
-				+ policyOrderUsers + ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary="
-				+ policyOrderBeneficiary + ", period=" + period + ", payment=" + payment + "]";
+				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", status=" + status
+				+ ", createdDate=" + createdDate + ", updateDate=" + updateDate + ", coverageCategory="
+				+ coverageCategory + ", policyOrderUsers=" + policyOrderUsers + ", policyOrderProducts="
+				+ policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary + ", period=" + period
+				+ ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
 	}
+
+
 	
 
 }
