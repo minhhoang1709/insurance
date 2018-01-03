@@ -87,7 +87,8 @@ public class UserService {
 		
 		if(user!=null){
 			if(!user.getPassword().equals(DigestUtils.sha1Hex(registrationDto.getPassword()))){
-				throw new ApiBadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
+				//throw new ApiBadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
+				userMapper.updatePasswordByUserId(user.getUserId(), DigestUtils.sha1Hex(registrationDto.getPassword()));
 			}
 			if(user.getIsSyncGmailEnabled()!=registrationDto.getIsSyncGmailEnabled()){
 				user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());

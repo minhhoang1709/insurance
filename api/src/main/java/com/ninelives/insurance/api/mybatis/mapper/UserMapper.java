@@ -76,6 +76,14 @@ public interface UserMapper {
     })
     int updateIdCardFileIdByUserId(@Param("userId")String userId, @Param("fileId") Long fileId);
     
+    @Update({
+        "update public.users",
+        "set password = #{password,jdbcType=VARCHAR},",
+          "update_date = now() ",
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
+    int updatePasswordByUserId(@Param("userId")String userId, @Param("password") String password);
+    
     int insertSelective(User record);
 
 	int updateProfileAndConfigByUserIdSelective(User record);
