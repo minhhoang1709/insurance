@@ -25,6 +25,8 @@ public class PolicyOrder {
 
     private LocalDate policyEndDate;
 
+    private Integer basePremi;
+    
     private Integer totalPremi;
 
     private Integer productCount;
@@ -118,6 +120,14 @@ public class PolicyOrder {
 	public void setPolicyEndDate(LocalDate policyEndDate) {
 		this.policyEndDate = policyEndDate;
 	}
+	
+	public Integer getBasePremi() {
+		return basePremi;
+	}
+
+	public void setBasePremi(Integer basePremi) {
+		this.basePremi = basePremi;
+	}
 
 	public Integer getTotalPremi() {
 		return totalPremi;
@@ -209,26 +219,14 @@ public class PolicyOrder {
 
 	@Override
 	public String toString() {
-		return "PolicyOrder [" + (orderId != null ? "orderId=" + orderId + ", " : "")
-				+ (orderDate != null ? "orderDate=" + orderDate + ", " : "")
-				+ (userId != null ? "userId=" + userId + ", " : "")
-				+ (coverageCategoryId != null ? "coverageCategoryId=" + coverageCategoryId + ", " : "")
-				+ (hasBeneficiary != null ? "hasBeneficiary=" + hasBeneficiary + ", " : "")
-				+ (periodId != null ? "periodId=" + periodId + ", " : "")
-				+ (policyNumber != null ? "policyNumber=" + policyNumber + ", " : "")
-				+ (policyStartDate != null ? "policyStartDate=" + policyStartDate + ", " : "")
-				+ (policyEndDate != null ? "policyEndDate=" + policyEndDate + ", " : "")
-				+ (totalPremi != null ? "totalPremi=" + totalPremi + ", " : "")
-				+ (productCount != null ? "productCount=" + productCount + ", " : "")
-				+ (status != null ? "status=" + status + ", " : "")
-				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
-				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
-				+ (coverageCategory != null ? "coverageCategory=" + coverageCategory + ", " : "")
-				+ (policyOrderUsers != null ? "policyOrderUsers=" + policyOrderUsers + ", " : "")
-				+ (policyOrderProducts != null ? "policyOrderProducts=" + policyOrderProducts + ", " : "")
-				+ (policyOrderBeneficiary != null ? "policyOrderBeneficiary=" + policyOrderBeneficiary + ", " : "")
-				+ (period != null ? "period=" + period + ", " : "") + (payment != null ? "payment=" + payment : "")
-				+ "]";
+		return "PolicyOrder [orderId=" + orderId + ", orderDate=" + orderDate + ", userId=" + userId
+				+ ", coverageCategoryId=" + coverageCategoryId + ", hasBeneficiary=" + hasBeneficiary + ", periodId="
+				+ periodId + ", policyNumber=" + policyNumber + ", policyStartDate=" + policyStartDate
+				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
+				+ ", productCount=" + productCount + ", status=" + status + ", createdDate=" + createdDate
+				+ ", updateDate=" + updateDate + ", coverageCategory=" + coverageCategory + ", policyOrderUsers="
+				+ policyOrderUsers + ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary="
+				+ policyOrderBeneficiary + ", period=" + period + ", payment=" + payment + "]";
 	}
 	
 

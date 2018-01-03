@@ -21,6 +21,8 @@ public class PolicyOrderProduct {
 
     private Integer premi;
     
+    private Integer basePremi;
+    
     private Period period;
     
     //transient
@@ -100,6 +102,14 @@ public class PolicyOrderProduct {
     public void setPremi(Integer premi) {
         this.premi = premi;
     }
+    
+	public Integer getBasePremi() {
+		return basePremi;
+	}
+
+	public void setBasePremi(Integer basePremi) {
+		this.basePremi = basePremi;
+	}
 
 	public Period getPeriod() {
 		return period;
@@ -127,17 +137,11 @@ public class PolicyOrderProduct {
 
 	@Override
 	public String toString() {
-		return "PolicyOrderProduct [" + (orderProductId != null ? "orderProductId=" + orderProductId + ", " : "")
-				+ (orderId != null ? "orderId=" + orderId + ", " : "")
-				+ (coverageId != null ? "coverageId=" + coverageId + ", " : "")
-				+ (periodId != null ? "periodId=" + periodId + ", " : "")
-				+ (productId != null ? "productId=" + productId + ", " : "")
-				+ (coverageName != null ? "coverageName=" + coverageName + ", " : "")
-				+ (coverageMaxLimit != null ? "coverageMaxLimit=" + coverageMaxLimit + ", " : "")
-				+ (coverageHasBeneficiary != null ? "coverageHasBeneficiary=" + coverageHasBeneficiary + ", " : "")
-				+ (premi != null ? "premi=" + premi + ", " : "") + (period != null ? "period=" + period + ", " : "")
-				+ (coverageClaimDocTypes != null ? "coverageClaimDocTypes=" + coverageClaimDocTypes + ", " : "")
-				+ "coverageDisplayRank=" + coverageDisplayRank + "]";
+		return "PolicyOrderProduct [orderProductId=" + orderProductId + ", orderId=" + orderId + ", coverageId="
+				+ coverageId + ", periodId=" + periodId + ", productId=" + productId + ", coverageName=" + coverageName
+				+ ", coverageMaxLimit=" + coverageMaxLimit + ", coverageHasBeneficiary=" + coverageHasBeneficiary
+				+ ", premi=" + premi + ", basePremi=" + basePremi + ", period=" + period + ", coverageClaimDocTypes="
+				+ coverageClaimDocTypes + ", coverageDisplayRank=" + coverageDisplayRank + "]";
 	}
 	
 }

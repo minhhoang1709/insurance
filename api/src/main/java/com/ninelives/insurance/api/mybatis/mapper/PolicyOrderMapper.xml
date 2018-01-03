@@ -11,6 +11,7 @@
     <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
     <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
     <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
     <result column="product_count" jdbcType="INTEGER" property="productCount" />
     <result column="status" jdbcType="VARCHAR" property="status" />
@@ -31,7 +32,7 @@
 	    <result column="order_product_coverage_max_limit" jdbcType="BIGINT" property="coverageMaxLimit" />
 	    <result column="order_product_coverage_has_beneficiary" jdbcType="BIT" property="coverageHasBeneficiary" />
 	    <result column="order_product_premi" jdbcType="INTEGER" property="premi" />
-	    <result column="order_product_premi" jdbcType="INTEGER" property="premi" />
+	    <result column="order_product_base_premi" jdbcType="INTEGER" property="basePremi" />
 <!-- 	    <result column="order_product_coverage_display_rank" jdbcType="INTEGER" property="coverageDisplayRank" /> -->
 <!-- 	    <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.model.CoverageClaimDocType"> -->
 <!-- 	    	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" /> -->
@@ -65,6 +66,7 @@
     <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
     <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
     <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
     <result column="product_count" jdbcType="INTEGER" property="productCount" />
     <result column="status" jdbcType="VARCHAR" property="status" />
@@ -97,18 +99,18 @@
       
   <sql id="Base_Column_List">
     order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
-    policy_start_date, policy_end_date, total_premi, product_count, status, created_date, 
+    policy_start_date, policy_end_date, base_premi, total_premi, product_count, status, created_date, 
     update_date
   </sql>
   
   <sql id="NestedPolicyOrderColumnList">
     a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
-   	a.policy_start_date, a.policy_end_date, a.total_premi, a.product_count, a.status, a.created_date,
+   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.status, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
    	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 
    	b.coverage_max_limit as order_product_coverage_max_limit, 
    	b.coverage_has_beneficiary as order_product_coverage_has_beneficiary, 
-   	b.premi as order_product_premi,
+   	b.premi as order_product_premi, b.base_premi as order_product_base_premi,
    	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, 
    	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name,
    	pp.id as payment_id, 
@@ -280,7 +282,7 @@
 
   <select id="selectWithBeneficiaryByUserIdAndOrderId" resultMap="NestedPolicyOrderWithBeneficiaryResultMap">
   	select a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
-   		a.policy_start_date, a.policy_end_date, a.total_premi, a.product_count, a.status, a.created_date,
+   		a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.status, a.created_date,
    		b.order_beneficiary_id
    	from public.policy_order as a 
    		left outer join public.policy_order_beneficiary as b

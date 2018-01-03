@@ -14,12 +14,12 @@ public interface PolicyOrderProductMapper {
         "coverage_id, period_id, ",
         "product_id, coverage_name, ",
         "coverage_max_limit, coverage_has_beneficiary, ",
-        "premi)",
+        "base_premi, premi)",
         "values (#{orderProductId,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, ",
         "#{coverageId,jdbcType=VARCHAR}, #{periodId,jdbcType=VARCHAR}, ",
         "#{productId,jdbcType=VARCHAR}, #{coverageName,jdbcType=VARCHAR}, ",
         "#{coverageMaxLimit,jdbcType=BIGINT}, #{coverageHasBeneficiary,jdbcType=BIT}, ",
-        "#{premi,jdbcType=INTEGER})"
+        "#{basePremi,jdbcType=INTEGER}, #{premi,jdbcType=INTEGER})"
     })
     int insert(PolicyOrderProduct record);
     

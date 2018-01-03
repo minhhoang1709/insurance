@@ -10,18 +10,19 @@
     <result column="coverage_name" jdbcType="VARCHAR" property="coverageName" />
     <result column="coverage_max_limit" jdbcType="BIGINT" property="coverageMaxLimit" />
     <result column="coverage_has_beneficiary" jdbcType="BIT" property="coverageHasBeneficiary" />
-    <result column="premi" jdbcType="INTEGER" property="premi" />
+    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
+    <result column="premi" jdbcType="INTEGER" property="premi" />    
   </resultMap>
   <sql id="Base_Column_List">
     order_product_id, order_id, coverage_id, period_id, product_id, coverage_name, coverage_max_limit, 
-    coverage_has_beneficiary, premi
+    coverage_has_beneficiary, base_premi, premi
   </sql>
   <insert id="insertList">
   	insert into public.policy_order_product (order_id,
     	coverage_id, period_id, 
     	product_id, coverage_name,
         coverage_max_limit, coverage_has_beneficiary, 
-        premi )
+        base_premi, premi )
     values
     <foreach item="item" index="index" collection="list" separator=",">
     	(
@@ -29,7 +30,7 @@
 		#{item.coverageId,jdbcType=VARCHAR}, #{item.periodId,jdbcType=VARCHAR},
 		#{item.productId,jdbcType=VARCHAR}, #{item.coverageName,jdbcType=VARCHAR},
 		#{item.coverageMaxLimit,jdbcType=BIGINT}, #{item.coverageHasBeneficiary,jdbcType=BIT},
-		#{item.premi,jdbcType=INTEGER}
+		#{item.basePremi,jdbcType=INTEGER}, #{item.premi,jdbcType=INTEGER}
 		)
     </foreach>
   </insert>

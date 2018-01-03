@@ -292,6 +292,7 @@ public class OrderService {
 		String periodId = products.get(0).getPeriodId();
 		String coverageCategoryId = products.get(0).getCoverage().getCoverageCategoryId();
 		int calculatedTotalPremi = 0;
+		int calculatedTotalBasePremi = 0;
 		boolean hasBeneficiary = false;
 		List<String> coverageIds = new ArrayList<>();
 		for(Product p: products){
@@ -305,6 +306,7 @@ public class OrderService {
 				throw new ApiBadRequestException(ErrorCode.ERR4006_ORDER_COVERAGE_MISMATCH, "Permintaan tidak dapat diproses, pembelian lebih dari satu tipe asuransi belum didukung");
 			}
 			calculatedTotalPremi += p.getPremi();
+			calculatedTotalBasePremi += p.getBasePremi();
 			hasBeneficiary = hasBeneficiary || p.getCoverage().getHasBeneficiary();
 			coverageIds.add(p.getCoverageId());
 		}
@@ -384,6 +386,7 @@ public class OrderService {
 			policyOrder.setPeriodId(periodId);
 			policyOrder.setPolicyStartDate(submitOrderDto.getPolicyStartDate().toLocalDate());
 			policyOrder.setPolicyEndDate(policyEndDate);
+			policyOrder.setBasePremi(calculatedTotalBasePremi);
 			policyOrder.setTotalPremi(calculatedTotalPremi);
 			policyOrder.setProductCount(products.size());
 			policyOrder.setPeriod(period);
@@ -427,6 +430,7 @@ public class OrderService {
 				pop.setProductId(p.getProductId());
 				pop.setCoverageName(p.getCoverage().getName());
 				pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
+				pop.setBasePremi(p.getBasePremi());
 				pop.setPremi(p.getPremi());
 				pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
 				pop.setPeriod(p.getPeriod());
