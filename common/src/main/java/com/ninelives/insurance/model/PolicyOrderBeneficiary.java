@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.ninelives.insurance.ref.BeneficiaryRelationship;
 
-public class PolicyOrderBeneficiary {
-    private Long orderBeneficiaryId;
+public class PolicyOrderBeneficiary implements Serializable{
+    private static final long serialVersionUID = -5461832608607460940L;
+
+	private Long orderBeneficiaryId;
 
     private String orderId;
 

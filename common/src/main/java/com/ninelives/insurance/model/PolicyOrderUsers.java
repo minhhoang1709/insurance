@@ -1,12 +1,15 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 
 import com.ninelives.insurance.ref.Gender;
 
-public class PolicyOrderUsers {
-    private Long policyOrderUsersId;
+public class PolicyOrderUsers implements Serializable{
+	private static final long serialVersionUID = 4903160912260642857L;
+
+	private Long policyOrderUsersId;
 
     private String orderId;
 

@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-public class Coverage {
-    private String coverageId;
+public class Coverage implements Serializable{
+    private static final long serialVersionUID = -6140177440706720507L;
+
+	private String coverageId;
 
     private String coverageCategoryId;
 

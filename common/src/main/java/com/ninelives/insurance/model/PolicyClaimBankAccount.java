@@ -1,9 +1,12 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class PolicyClaimBankAccount {
-    private String claimId;
+public class PolicyClaimBankAccount implements Serializable{
+    private static final long serialVersionUID = 8454531576763934669L;
+
+	private String claimId;
 
     private String accountName;
 

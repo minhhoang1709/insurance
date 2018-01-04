@@ -37,4 +37,5 @@ public class NotificationService {
 		logger.debug("sending notif for active order <{}>", messageDto);
 		producerTemplate.to(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
 	}
+	
 }

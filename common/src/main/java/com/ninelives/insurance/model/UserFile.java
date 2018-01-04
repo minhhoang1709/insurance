@@ -1,5 +1,6 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -7,8 +8,10 @@ import java.util.Date;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.UserFileStatus;
 
-public class UserFile {
-    private Long fileId;
+public class UserFile implements Serializable{
+	private static final long serialVersionUID = -1479117497582010023L;
+
+	private Long fileId;
 
     private String userId;
 

@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.ninelives.insurance.ref.PeriodUnit;
 
-public class Period {
-    private String periodId;
+public class Period implements Serializable{
+	private static final long serialVersionUID = 8655120355423167463L;
+
+	private String periodId;
 
     private String name;
 

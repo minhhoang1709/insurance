@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
+import com.ninelives.insurance.api.route.DirectEndPointRef;
 import com.ninelives.insurance.api.service.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -53,6 +55,7 @@ import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.ProductType;
 import com.ninelives.insurance.ref.VoucherType;
+import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class OrderService {
@@ -76,6 +79,7 @@ public class OrderService {
 	
 	@Autowired MessageSource messageSource;
 	
+	@Autowired FluentProducerTemplate producerTemplate;
 	
 	@Value("${ninelives.order.policy-startdate-period:366}")
 	int policyStartDatePeriod;
@@ -563,7 +567,7 @@ public class OrderService {
 						policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardCount() < 
 						policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardLimit()){
 					try {
-						registerOrderForInviter(policyOrder);
+						asyncRegisterOrderForInviter(policyOrder);
 					} catch (Exception e) {
 						logger.error("Failed to register order for inviter", e);
 					}
@@ -576,8 +580,13 @@ public class OrderService {
 		
 		return policyOrder;
 	}
+	private void asyncRegisterOrderForInviter(final PolicyOrder policyOrder){
+		logger.debug("Async called");
+		//producerTemplate.to(EndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
+		producerTemplate.to(DirectEndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
+	}
 	
-	private void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		
+	public void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		
 		logger.debug("Process registerOrder for inviter, order: <{}> with result success",
 				policyOrder);
 		
@@ -596,9 +605,6 @@ public class OrderService {
 		if(inviterUser==null){
 			throw new Exception("Failed to register order for inviter cause user not found");
 		}
-		
-
-		
 		
 		PolicyOrder inviterPolicy = new PolicyOrder();
 		inviterPolicy.setOrderId(generateOrderId());

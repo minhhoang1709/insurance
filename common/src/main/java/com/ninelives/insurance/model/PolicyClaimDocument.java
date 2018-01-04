@@ -1,9 +1,12 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class PolicyClaimDocument {
-    private Long claimDocumentId;
+public class PolicyClaimDocument implements Serializable{
+	private static final long serialVersionUID = 3491295335883450965L;
+
+	private Long claimDocumentId;
 
     private String claimId;
 

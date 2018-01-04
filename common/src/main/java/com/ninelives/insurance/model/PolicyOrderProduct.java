@@ -1,9 +1,12 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PolicyOrderProduct {
-    private Long orderProductId;
+public class PolicyOrderProduct implements Serializable{
+	private static final long serialVersionUID = -2135909670093224081L;
+
+	private Long orderProductId;
 
     private String orderId;
 

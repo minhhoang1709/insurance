@@ -1,7 +1,11 @@
 package com.ninelives.insurance.model;
 
-public class PolicyOrderVoucher {
-    private Long id;
+import java.io.Serializable;
+
+public class PolicyOrderVoucher implements Serializable{
+    private static final long serialVersionUID = 838880159192804470L;
+
+	private Long id;
 
     private String orderId;
 

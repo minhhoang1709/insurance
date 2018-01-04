@@ -1,13 +1,16 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 
 import com.ninelives.insurance.ref.Gender;
 import com.ninelives.insurance.ref.UserStatus;
 
-public class User {
-    private String userId;
+public class User implements Serializable{
+	private static final long serialVersionUID = 134746234530187692L;
+
+	private String userId;
 
     private String password;
 

@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.ninelives.insurance.ref.BeneficiaryRelationship;
 
-public class UserBeneficiary {
-    private Long userBeneficiaryId;
+public class UserBeneficiary implements Serializable{
+    private static final long serialVersionUID = 4265401272276073437L;
+
+	private Long userBeneficiaryId;
 
     private String userId;
 

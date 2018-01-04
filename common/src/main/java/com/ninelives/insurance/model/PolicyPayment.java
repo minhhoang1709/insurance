@@ -1,12 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import com.ninelives.insurance.ref.PaymentStatus;
 
-public class PolicyPayment {
-    private String id;
+public class PolicyPayment implements Serializable{
+	private static final long serialVersionUID = 8935081305897219608L;
+
+	private String id;
 
     private String orderId;
 

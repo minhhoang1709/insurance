@@ -1,16 +1,25 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class CoverageCategory {
-    private String coverageCategoryId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CoverageCategory implements Serializable{
+	private static final long serialVersionUID = 2339420457405989204L;
+
+	private String coverageCategoryId;
 
     private String name;
 
     private String description;
 
+    @JsonIgnore
     private LocalDateTime createdDate;
 
+    @JsonIgnore
     private LocalDateTime updateDate;
 
     public String getCoverageCategoryId() {

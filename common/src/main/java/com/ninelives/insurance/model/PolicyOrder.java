@@ -1,14 +1,22 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.PolicyStatus;
 
-public class PolicyOrder {
-    private String orderId;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PolicyOrder implements Serializable{
+	private static final long serialVersionUID = 592941652403498857L;
 
+	private String orderId;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
 
     private String userId;
@@ -21,8 +29,10 @@ public class PolicyOrder {
 
     private String policyNumber;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate policyStartDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate policyEndDate;
 
     private Integer basePremi;
@@ -35,8 +45,10 @@ public class PolicyOrder {
 
     private PolicyStatus status;
 
+    @JsonIgnore
     private LocalDateTime createdDate;
 
+    @JsonIgnore
     private LocalDateTime updateDate;
         
     private CoverageCategory coverageCategory;

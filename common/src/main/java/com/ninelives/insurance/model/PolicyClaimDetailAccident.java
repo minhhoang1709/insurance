@@ -1,8 +1,11 @@
 package com.ninelives.insurance.model;
 
-public class PolicyClaimDetailAccident extends PolicyClaimDetail{
+import java.io.Serializable;
 
-    private String accidentAddressCountry;
+public class PolicyClaimDetailAccident extends PolicyClaimDetail implements Serializable{
+	private static final long serialVersionUID = -9221104013960691431L;
+
+	private String accidentAddressCountry;
 
     private String accidentAddressProvince;
 

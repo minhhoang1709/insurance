@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.ninelives.insurance.ref.ClaimCoverageStatus;
 
-public class PolicyClaimCoverage {
-    private Long claimCoverageId;
+public class PolicyClaimCoverage implements Serializable{
+    private static final long serialVersionUID = -3758379387603727084L;
+
+	private Long claimCoverageId;
 
     private String claimId;
 

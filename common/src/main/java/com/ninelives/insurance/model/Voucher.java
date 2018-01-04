@@ -1,13 +1,16 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ninelives.insurance.ref.VoucherType;
 
-public class Voucher {
-    private Integer id;
+public class Voucher implements Serializable{
+	private static final long serialVersionUID = -5288164944287308416L;
+
+	private Integer id;
 
     private String code;
 

@@ -1,9 +1,12 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ClaimDocType {
-    private String claimDocTypeId;
+public class ClaimDocType implements Serializable{
+    private static final long serialVersionUID = -1030025360604205678L;
+
+	private String claimDocTypeId;
 
     private String name;
 

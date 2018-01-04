@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.ninelives.insurance.ref.InviteVoucherStatus;
 
-public class UserInviteVoucher {
-    private String userId;
+public class UserInviteVoucher implements Serializable{
+	private static final long serialVersionUID = -5237213337016145478L;
+
+	private String userId;
 
     private String code;
 
