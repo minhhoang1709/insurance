@@ -4,8 +4,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.camel.FluentProducerTemplate;
-import org.apache.camel.ProducerTemplate;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
@@ -35,7 +33,6 @@ import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.UserStatus;
-import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class UserService {
@@ -49,7 +46,7 @@ public class UserService {
 	@Autowired FileUploadService fileUploadService;
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
-	@Autowired FluentProducerTemplate producerTemplate;
+	@Autowired NotificationService notificationService;
 	
 	@Autowired MessageSource messageSource;
 	
@@ -133,13 +130,11 @@ public class UserService {
 			notifMessage.setTitle(messageSource.getMessage("message.notification.welcome.title", null, Locale.ROOT));
 			notifMessage.setBody(messageSource.getMessage("message.notification.welcome.body", new Object[]{"9Lives"}, Locale.ROOT));
 			
-			FcmNotifMessageDto messageDto = new FcmNotifMessageDto();
-			messageDto.setMessage(new FcmNotifMessageDto.Message());
-			messageDto.getMessage().setToken(user.getFcmToken());
-			messageDto.getMessage().setNotification(notifMessage);
-			
-			logger.debug("sending notif for new user <{}>", messageDto);
-			producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+			try {
+				notificationService.sendFcmNotification(user.getFcmToken(), notifMessage);
+			} catch (Exception e) {
+				logger.error("Failed to send message notif for register user",e);
+			}
 		}
 		
 		return registerResult;

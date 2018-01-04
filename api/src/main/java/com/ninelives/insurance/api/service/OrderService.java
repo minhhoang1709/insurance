@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.camel.FluentProducerTemplate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,6 @@ import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.ProductType;
 import com.ninelives.insurance.ref.VoucherType;
-import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class OrderService {
@@ -67,7 +65,8 @@ public class OrderService {
 	@Autowired VoucherService voucherService;
 	@Autowired InviteService inviteService;
 	@Autowired PolicyOrderTrxService policyOrderTrxService;
-		
+	@Autowired NotificationService notificationService;
+	
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
@@ -76,7 +75,7 @@ public class OrderService {
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	@Autowired MessageSource messageSource;
-	@Autowired FluentProducerTemplate producerTemplate;
+	
 	
 	@Value("${ninelives.order.policy-startdate-period:366}")
 	int policyStartDatePeriod;
@@ -551,26 +550,13 @@ public class OrderService {
 					try{
 						CoverageCategory covCat = products.get(0).getCoverage().getCoverageCategory();
 						
-						if(covCat!=null 
-								&& !StringUtils.isEmpty(covCat.getName())
-								&& !StringUtils.isEmpty(existingUser.getFcmToken())
-								){
+						if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(existingUser.getFcmToken())){
 							FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
 							notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",  new Object[]{covCat.getName()}, Locale.ROOT));
 							notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body", new Object[]{covCat.getName()}, Locale.ROOT));
 							
-							FcmNotifMessageDto messageDto = new FcmNotifMessageDto();
-							messageDto.setMessage(new FcmNotifMessageDto.Message());
-							messageDto.getMessage().setToken(existingUser.getFcmToken());
-							messageDto.getMessage().setNotification(notifMessage);
-							messageDto.getMessage().setData(new FcmNotifMessageDto.Data());
-							messageDto.getMessage().getData().setAction(FcmNotifAction.order);
-							messageDto.getMessage().getData().setActionData(policyOrder.getOrderId());
-							
-							logger.debug("sending notif for active order <{}>", messageDto);
-							producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
-						}
-						
+							notificationService.sendFcmNotification(existingUser.getFcmToken(), notifMessage, FcmNotifAction.order, policyOrder.getOrderId());
+						}						
 					}catch(Exception e){
 						logger.error("Failed to send message notif for register order",e);
 					}
