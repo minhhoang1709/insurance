@@ -520,11 +520,6 @@ public class OrderService {
 				PolicyOrderVoucher pov = new PolicyOrderVoucher();
 				pov.setOrderId(policyOrder.getOrderId());
 				pov.setVoucher(voucher);
-//				pov.setVoucherId(voucher.getId());
-//				pov.setCode(voucher.getCode());
-//				if(voucher.getInviter()!=null){
-//					pov.setInviterUserId(voucher.getInviter().getUserId());
-//				}
 				policyOrder.setPolicyOrderVoucher(pov);
 				policyOrder.setHasVoucher(true);
 				
@@ -547,18 +542,30 @@ public class OrderService {
 				if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
 						&& !policyOrder.getPolicyStartDate().isAfter(today) 
 						&& !policyOrder.getPolicyEndDate().isBefore(today)){
-					try{
-						CoverageCategory covCat = products.get(0).getCoverage().getCoverageCategory();
-						
-						if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(existingUser.getFcmToken())){
-							FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
-							notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",  new Object[]{covCat.getName()}, Locale.ROOT));
-							notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body", new Object[]{covCat.getName()}, Locale.ROOT));
-							
-							notificationService.sendFcmNotification(existingUser.getFcmToken(), notifMessage, FcmNotifAction.order, policyOrder.getOrderId());
-						}						
-					}catch(Exception e){
-						logger.error("Failed to send message notif for register order",e);
+					CoverageCategory covCat = products.get(0).getCoverage().getCoverageCategory();
+					
+					if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(existingUser.getFcmToken())){
+						FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
+						notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",
+								new Object[] { covCat.getName() }, Locale.ROOT));
+						notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body",
+								new Object[] { covCat.getName() }, Locale.ROOT));
+						try {
+							notificationService.sendFcmNotification(existingUser.getFcmToken(), notifMessage,
+									FcmNotifAction.order, policyOrder.getOrderId());
+						} catch (Exception e) {
+							logger.error("Failed to send message notif for register order", e);
+						}
+					}	
+				}				
+				//process for inviter
+				if(voucher.getVoucherType().equals(VoucherType.INVITE) &&
+						policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardCount() < 
+						policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardLimit()){
+					try {
+						registerOrderForInviter(policyOrder);
+					} catch (Exception e) {
+						logger.error("Failed to register order for inviter", e);
 					}
 				}
 			}
@@ -570,6 +577,112 @@ public class OrderService {
 		return policyOrder;
 	}
 	
+	private void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		
+		logger.debug("Process registerOrder for inviter, order: <{}> with result success",
+				policyOrder);
+		
+		if (policyOrder == null || policyOrder.getPolicyOrderVoucher() == null
+				|| policyOrder.getPolicyOrderVoucher().getVoucher() == null) {
+			throw new Exception("Failed to register order for inviter cause empty voucher");
+		}
+		
+		//return if there is no more reward available
+		if (policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardCount() >= 
+				policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardLimit()) {
+			return;
+		}
+		
+		final User inviterUser = userService.fetchByUserId(policyOrder.getPolicyOrderVoucher().getVoucher().getInviterUserId());		
+		if(inviterUser==null){
+			throw new Exception("Failed to register order for inviter cause user not found");
+		}
+		
+
+		
+		
+		PolicyOrder inviterPolicy = new PolicyOrder();
+		inviterPolicy.setOrderId(generateOrderId());
+		inviterPolicy.setOrderDate(policyOrder.getOrderDate());
+		inviterPolicy.setUserId(inviterUser.getUserId());
+		inviterPolicy.setCoverageCategoryId(policyOrder.getCoverageCategoryId());
+		inviterPolicy.setCoverageCategory(policyOrder.getCoverageCategory());
+		inviterPolicy.setHasBeneficiary(policyOrder.getHasBeneficiary());
+		inviterPolicy.setHasVoucher(policyOrder.getHasVoucher());
+		inviterPolicy.setPeriodId(policyOrder.getPeriodId());
+		inviterPolicy.setBasePremi(policyOrder.getBasePremi());
+		inviterPolicy.setTotalPremi(policyOrder.getTotalPremi());
+		inviterPolicy.setProductCount(policyOrder.getProductCount());
+		inviterPolicy.setPeriod(policyOrder.getPeriod());
+		inviterPolicy.setStatus(PolicyStatus.APPROVED);
+		
+		
+		PolicyOrderUsers inviterPolicyUser = new PolicyOrderUsers();
+		inviterPolicyUser.setOrderId(inviterPolicy.getOrderId());
+		inviterPolicyUser.setEmail(inviterUser.getEmail());
+		inviterPolicyUser.setIdCardFileId(inviterUser.getIdCardFileId());
+		inviterPolicyUser.setName(inviterUser.getName());
+		inviterPolicyUser.setGender(inviterUser.getGender());
+		inviterPolicyUser.setBirthDate(inviterUser.getBirthDate());
+		inviterPolicyUser.setBirthPlace(inviterUser.getBirthPlace());
+		inviterPolicyUser.setAddress(inviterUser.getAddress());
+		inviterPolicyUser.setPhone(inviterUser.getPhone());
+		
+		inviterPolicy.setPolicyOrderUsers(inviterPolicyUser);
+		
+		List<PolicyOrderProduct> policyOrderProducts = new ArrayList<>();
+		List<String> coverageIds = new ArrayList<>();
+		for(PolicyOrderProduct p: policyOrder.getPolicyOrderProducts()){
+			PolicyOrderProduct inviterPop = new PolicyOrderProduct();
+			inviterPop.setOrderId(inviterPolicy.getOrderId());
+			inviterPop.setCoverageId(p.getCoverageId());
+			inviterPop.setPeriodId(p.getPeriodId());
+			inviterPop.setProductId(p.getProductId());
+			inviterPop.setCoverageName(p.getCoverageName());
+			inviterPop.setCoverageMaxLimit(p.getCoverageMaxLimit());
+			inviterPop.setBasePremi(p.getBasePremi());
+			inviterPop.setPremi(p.getPremi());
+			inviterPop.setCoverageHasBeneficiary(p.getCoverageHasBeneficiary());
+			inviterPop.setPeriod(p.getPeriod());
+			policyOrderProducts.add(inviterPop);
+			
+			coverageIds.add(p.getCoverageId());
+		}
+		inviterPolicy.setPolicyOrderProducts(policyOrderProducts);
+		
+		PolicyOrderVoucher inviterVoucher = new PolicyOrderVoucher();
+		inviterVoucher.setOrderId(inviterPolicy.getOrderId());
+		inviterVoucher.setVoucher(policyOrder.getPolicyOrderVoucher().getVoucher());
+		inviterPolicy.setPolicyOrderVoucher(inviterVoucher);
+		
+		//get start date and end date
+		LocalDate today = LocalDate.now();		
+		LocalDate maxExistingPolicyEndDate = fetchMaxPolicyEndDateByCoverage(inviterUser.getUserId(), today, coverageIds);
+		LocalDate inviterPolicyStartDate = null;
+		if(maxExistingPolicyEndDate==null){
+			inviterPolicyStartDate = today;
+		}else{
+			inviterPolicyStartDate = maxExistingPolicyEndDate.plusDays(1);
+		}
+		LocalDate inviterPolicyEndDate = calculatePolicyEndDate(inviterPolicyStartDate, policyOrder.getPeriod());
+		
+		inviterPolicy.setPolicyStartDate(inviterPolicyStartDate);
+		inviterPolicy.setPolicyEndDate(inviterPolicyEndDate);
+
+		
+		// TODO Hit ASWATA for insurance register for inviter
+		
+		policyOrderTrxService.registerPolicyOrder(inviterPolicy);
+		
+		//increase success counter
+		voucherService.increaseInviterRewardCounter(inviterVoucher.getVoucher().getCode(), inviterUser.getUserId());
+		
+		logger.debug("Process registerOrder for inviter, from <{}> to order: <{}> with result success",
+				policyOrder, inviterPolicy);
+	}
+	protected LocalDate fetchMaxPolicyEndDateByCoverage(String userId, LocalDate policyEndDate,
+			List<String> coverageIds){
+		return policyOrderMapper.selectMaxPolicyEndDateByCoverage(userId, policyEndDate, coverageIds);
+	}
 	protected LocalDate calculatePolicyEndDate(LocalDate localDate, Period period) {
 		LocalDate calculatedDate = null;
 		if(period!=null && period.getValue()!=null){

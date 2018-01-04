@@ -2,12 +2,10 @@ package com.ninelives.insurance.api.mybatis.mapper;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
@@ -66,4 +64,8 @@ public interface PolicyOrderMapper {
 	List<PolicyOrder> selectWhereStatusBeforeApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
 	
 	PolicyOrder selectWithBeneficiaryByUserIdAndOrderId(@Param("userId") String userId, @Param("orderId") String orderId);
+	
+	LocalDate selectMaxPolicyEndDateByCoverage(@Param ("userId") String userId, 
+			@Param ("policyEndDate") LocalDate policyEndDate,
+			@Param ("coverageIds") List<String> coverageIds);
 }

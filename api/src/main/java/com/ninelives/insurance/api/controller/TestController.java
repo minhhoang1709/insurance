@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.http.HttpEntity;
@@ -167,12 +168,29 @@ public class TestController {
 //		return orderService.submitOrder(authUserId, submitOrderDto);
 //	}
 //	
+	@RequestMapping(value="/test/maxpolicyenddate",  method=RequestMethod.GET)
+	@ResponseBody
+	public String testGetMaxPolicyEndDate(@RequestAttribute("authUserId") String authUserId, 
+			@RequestParam("userId") String userId,
+			@RequestParam("policyEndDate") String policyEndDate,
+			@RequestParam("coverageId") String coverageId
+			) throws Exception{		
+		return testService.testGetMaxPolicyEndDate(userId, policyEndDate, coverageId);		
+	}
 	
 	@RequestMapping(value="/test/order/status",  method=RequestMethod.PUT)
 	@ResponseBody
 	public OrderDto testChangeOrderStatus(@RequestAttribute("authUserId") String authUserId, 
 			@RequestBody(required=false) OrderDto orderDto) throws Exception{		
 		return testService.changeOrderStatus(authUserId, orderDto);		
+	}
+	
+	@RequestMapping(value="/test/spend",  method=RequestMethod.PUT)
+	@ResponseBody
+	public String testChangeOrderStatus(@RequestAttribute("authUserId") String authUserId, 
+			@RequestBody(required=false) Map<String, Integer> spend) throws Exception{		
+		testService.updatespend(authUserId, spend.get("spend"));
+		return "ok";
 	}
 	
 	@RequestMapping(value="/test/fullorder", method=RequestMethod.POST)

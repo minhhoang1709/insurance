@@ -11,5 +11,5 @@ public interface UserAggStatMapper {
     	"from public.user_agg_stat ",
     	"where user_id=#{userId,jdbcType=VARCHAR}"
     })
-    Integer selecSuccessPaymentAmounttByUserId(String userId);
+    Integer selecSuccessPaymentAmountByUserId(String userId);
 }

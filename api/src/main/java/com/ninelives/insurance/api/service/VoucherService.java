@@ -40,6 +40,7 @@ public class VoucherService {
 		return modelMapperAdapter.toDto(fetchVoucherForInviteByUserId(userId));
 	}
 	
+	@Cacheable("InviteVoucher")
 	public Voucher fetchVoucherForInviteById(int voucherId){
 		Voucher voucher = voucherMapper.selectVoucherForInviteById(voucherId);
 		if(voucher!=null && StringUtils.isEmpty(voucher.getCode())){
@@ -114,4 +115,7 @@ public class VoucherService {
 		return voucher;
 	}
 	
+	public void increaseInviterRewardCounter(String code, String userId){
+		voucherMapper.increamentInviterRewardCount(code, userId);
+	}
 }

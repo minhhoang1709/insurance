@@ -35,7 +35,7 @@ public class InviteService {
 			inviterVoucherDto  = voucherService.fetchVoucherDtoForInviteById(config.getPromo().getInviteVoucherId());
 			
 			//check spend, if enough spend, generate code, otherwise return generic
-			Integer totalSpend = userAggStatMapper.selecSuccessPaymentAmounttByUserId(userId);
+			Integer totalSpend = userAggStatMapper.selecSuccessPaymentAmountByUserId(userId);
 			
 			if(totalSpend!=null && totalSpend >= config.getPromo().getVoucherMinimumAggregatePayment()){
 				UserInviteVoucher inviteVoucher = generateInviteVoucher(userId, config.getPromo().getInviteVoucherId());

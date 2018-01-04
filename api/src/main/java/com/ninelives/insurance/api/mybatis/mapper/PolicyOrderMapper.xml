@@ -307,4 +307,16 @@
     	and a.user_id=#{userId,jdbcType=VARCHAR}  	
   </select>
 
+  <select id="selectMaxPolicyEndDateByCoverage" resultType="java.time.LocalDate">
+  	select max(a.policy_end_date)
+  	from public.policy_order as a, public.policy_order_product as b 
+  	where a.user_id=#{userId,jdbcType=VARCHAR}
+  	     and a.policy_end_date &gt;= #{policyEndDate,jdbcType=DATE}
+  	     and b.order_id=a.order_id
+  	     and b.coverage_id in	
+  		 <foreach item="item" index="index" collection="coverageIds"
+      		open="(" separator="," close=")">#{item}
+         </foreach>
+  </select>
+	
 </mapper>

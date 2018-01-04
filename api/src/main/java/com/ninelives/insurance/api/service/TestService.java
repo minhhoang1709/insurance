@@ -1,5 +1,8 @@
 package com.ninelives.insurance.api.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +13,15 @@ import com.ninelives.insurance.api.mybatis.mapper.TestMapper;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
-import com.ninelives.insurance.ref.PolicyStatus;
+import com.ninelives.insurance.model.UserAggStat;
 
 @Service
 public class TestService {
 	@Autowired ProductService productService;
 	@Autowired TestMapper testMapper;
+	@Autowired OrderService orderService;
+	
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	public CoverageCategory fetchCoverageCategoryByCoverageCategoryId(String coverageCategoryId){
 		return productService.fetchCoverageCategoryByCoverageCategoryId(coverageCategoryId);
@@ -38,5 +44,25 @@ public class TestService {
 		order.setStatus(orderDto.getStatus());
 		testMapper.updateStatus(order);
 		return orderDto;
+	}
+	
+	public void updatespend(String authUserId, int spend){
+		UserAggStat stat = new UserAggStat();
+		stat.setUserId(authUserId);
+		stat.setSuccessPaymentAmount(spend);
+		testMapper.updateByUserId(stat);
+	}
+
+	public String testGetMaxPolicyEndDate(String userId, String policyEndDateStr, String coverage) {
+		LocalDate policyEndDate = LocalDate.parse(policyEndDateStr, formatter);
+		List<String> covIds = new ArrayList<>();
+		covIds.add(coverage);
+		
+		LocalDate result = orderService.fetchMaxPolicyEndDateByCoverage(userId, policyEndDate, covIds);
+		if(result!=null){
+			return result.format(formatter);
+		}else{
+			return "kagak ketemu";
+		}	
 	}
 }
