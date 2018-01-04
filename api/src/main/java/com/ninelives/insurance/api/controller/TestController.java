@@ -34,6 +34,7 @@ import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
+import com.ninelives.insurance.api.route.DirectEndPointRef;
 import com.ninelives.insurance.api.service.ClaimService;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
@@ -119,7 +120,7 @@ public class TestController {
 	public String sendNotif(@RequestAttribute("authUserId") String userId, @RequestBody FcmNotifMessageDto messageDto){
 				
 		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
-		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		producerTemplate.to(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
 		return "ok-2";
 	}
 	

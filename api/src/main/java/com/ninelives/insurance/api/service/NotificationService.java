@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ninelives.insurance.api.route.DirectEndPointRef;
 import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
-import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class NotificationService {
@@ -35,6 +35,6 @@ public class NotificationService {
 			}
 		}	
 		logger.debug("sending notif for active order <{}>", messageDto);
-		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		producerTemplate.to(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
 	}
 }

@@ -15,9 +15,10 @@ public class FcmProcessor {
 	
 	@Autowired FcmProvider fcmProvider;
 	
-//	public void process(@Body FcmNotifMessageDto messageDto){
+//	public void process(@Body String messageDto){
 //		logger.debug("Dapet nih message nya {}", messageDto);
 //	}
+	
 	public void process(@Body FcmNotifMessageDto messageDto){
 		//logger.debug("Dapet nih message nya {}", messageDto);
 		try {
