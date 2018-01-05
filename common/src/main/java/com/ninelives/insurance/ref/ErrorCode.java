@@ -35,6 +35,7 @@ public enum ErrorCode {
 	ERR4014_ORDER_VOUCHER_DATE_MISMATCH("ERR4014"), //voucher policy start/end date doesnt match order
 	ERR4015_ORDER_VOUCHER_PRODUCT_MISMATCH("ERR4015"), //voucher product not match order
 	ERR4016_ORDER_VOUCHER_REQUIRED("ERR4016"), //voucher is required for certain product (e.g. free)
+	ERR4017_ORDER_IDCARD_NOTFOUND("ERR4017"), //KTP is mandatory
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary

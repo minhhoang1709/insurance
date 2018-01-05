@@ -338,14 +338,19 @@ public class OrderService {
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isAfter(limitPolicyStartDate)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, this.policyStartDatePeriod);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
-							+ limitPolicyStartDate.format(formatter));			
+					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda");			
+//
+//			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
+//					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
+//							+ limitPolicyStartDate.format(formatter));			
 		}
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isBefore(today)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date before today", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
-							+ limitPolicyStartDate.format(formatter));
+					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda");			
+//			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
+//					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
+//							+ limitPolicyStartDate.format(formatter));
 			
 		}
 		
@@ -418,7 +423,13 @@ public class OrderService {
 			final User existingUser = userService.fetchByUserId(userId);
 
 			boolean isExistingUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
-
+			
+			if(existingUser.getIdCardFileId()==null){
+				logger.debug("Process order for <{}> with order <{}> with result: id card not found", userId, submitOrderDto);
+				throw new ApiBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
+						"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan");
+			}
+			
 			User newUserProfile = null;
 			if(!isExistingUserProfileCompleteForOrder){
 				if(submitOrderDto.getUser()==null){
@@ -712,7 +723,7 @@ public class OrderService {
 				|| user.getGender()==null
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
-				|| StringUtils.isEmpty(user.getPhone())				
+				|| StringUtils.isEmpty(user.getPhone())	
 				){
 			result = false;
 		}
