@@ -582,8 +582,8 @@ public class OrderService {
 	}
 	private void asyncRegisterOrderForInviter(final PolicyOrder policyOrder){
 		logger.debug("Async called");
-		//producerTemplate.to(EndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
-		producerTemplate.to(DirectEndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
+		producerTemplate.to(EndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
+		//producerTemplate.to(DirectEndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
 	}
 	
 	public void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		

@@ -25,10 +25,10 @@ public class NinelivesRouteBuilder extends SpringRouteBuilder {
 	 */
 	@Override
 	public void configure() throws Exception {
-		from(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).marshal().json(JsonLibrary.Jackson)
-				.to(EndPointRef.QUEUE_FCM_NOTIFICATION);
-
-		from(DirectEndPointRef.QUEUE_ORDER).to(EndPointRef.QUEUE_ORDER);
+//		from(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).marshal().json(JsonLibrary.Jackson)
+//				.to(EndPointRef.QUEUE_FCM_NOTIFICATION);
+//
+//		from(DirectEndPointRef.QUEUE_ORDER).to(EndPointRef.QUEUE_ORDER);
 		
 		from(EndPointRef.QUEUE_ORDER).bean(orderProcessor,"process");
 

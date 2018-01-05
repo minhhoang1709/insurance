@@ -37,10 +37,10 @@ dependencies {
 	
 	//queue
 	compile('org.apache.camel:camel-spring-boot-starter:2.20.1')
-	compile('org.apache.camel:camel-jackson-starter:2.20.1')	
+	//compile('org.apache.camel:camel-jackson-starter:2.20.1')	
 	compile('org.springframework.boot:spring-boot-starter-activemq')
 	compile('org.apache.activemq:activemq-camel:5.15.2')
-	compile('org.apache.camel:camel-jackson:2.20.1')
+	//compile('org.apache.camel:camel-jackson:2.20.1')
 	
 	//redis	
 	//compile('redis.clients:jedis:2.9.0')

@@ -39,7 +39,7 @@ public class NinelivesNotifRouteBuilder extends SpringRouteBuilder{
 
 	@Override
 	public void configure() throws Exception {
-		from(EndPointRef.QUEUE_FCM_NOTIFICATION).unmarshal().json(JsonLibrary.Jackson,FcmNotifMessageDto.class).bean(fcmProcessor,"process");
+		from(EndPointRef.QUEUE_FCM_NOTIFICATION).bean(fcmProcessor,"process");
 	}
 	
 	
