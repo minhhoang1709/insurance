@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ninelives.insurance.api.NinelivesConfigProperties;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
 
@@ -22,6 +23,9 @@ public class OrderServiceCoverageLimitTest {
 	
 	@Test
 	public void testConflict(){
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyConflictPeriodLimit(3);
+		
 		List<PolicyOrderCoverage> conflictList = new ArrayList<>();
 		
 		List<String> coverageIds = Arrays.asList(new String[]{"101001", "101002", "101003"});
@@ -34,7 +38,7 @@ public class OrderServiceCoverageLimitTest {
 		
 		OrderService orderService = new OrderService();
 		orderService.policyOrderMapper = policyOrderMapper;
-		orderService.policyConflictPeriodLimit=3;
+		orderService.config=config;
 		
 		conflictList.add(new PolicyOrderCoverage());
 		conflictList.get(0).setCoverageId("101001");

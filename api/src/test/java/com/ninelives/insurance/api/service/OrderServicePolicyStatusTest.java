@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ninelives.insurance.api.NinelivesConfigProperties;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.ref.PolicyStatus;
 
@@ -18,8 +19,11 @@ public class OrderServicePolicyStatusTest {
 	
 	@Test
 	public void testPolicyStatusMappingSubmitted(){
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyDueDatePeriod(5);
+				
 		OrderService orderService = new OrderService();
-		orderService.policyDueDatePeriod = 5;
+		orderService.config=config;
 		
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setStatus(PolicyStatus.SUBMITTED);
@@ -41,8 +45,11 @@ public class OrderServicePolicyStatusTest {
 	
 	@Test
 	public void testPolicyStatusMappingOverdue(){
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyDueDatePeriod(5);
+				
 		OrderService orderService = new OrderService();
-		orderService.policyDueDatePeriod = 5;
+		orderService.config=config;
 				
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setStatus(PolicyStatus.SUBMITTED);
@@ -78,8 +85,11 @@ public class OrderServicePolicyStatusTest {
 	
 	@Test
 	public void testPolicyStatusMappingApproved(){
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyDueDatePeriod(5);
+				
 		OrderService orderService = new OrderService();
-		orderService.policyDueDatePeriod = 5;
+		orderService.config=config;
 				
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setStatus(PolicyStatus.APPROVED);
@@ -92,8 +102,11 @@ public class OrderServicePolicyStatusTest {
 	
 	@Test
 	public void testPolicyStatusMappingActive(){
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyDueDatePeriod(5);
+				
 		OrderService orderService = new OrderService();
-		orderService.policyDueDatePeriod = 5;
+		orderService.config=config;
 				
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setStatus(PolicyStatus.APPROVED);
@@ -122,8 +135,11 @@ public class OrderServicePolicyStatusTest {
 	
 	@Test
 	public void testPolicyStatusMappingExpired(){
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyDueDatePeriod(5);
+				
 		OrderService orderService = new OrderService();
-		orderService.policyDueDatePeriod = 5;
+		orderService.config=config;
 				
 		PolicyOrder policyOrder = new PolicyOrder();
 		policyOrder.setStatus(PolicyStatus.APPROVED);
