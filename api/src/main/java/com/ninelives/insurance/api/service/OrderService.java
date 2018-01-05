@@ -20,6 +20,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.ninelives.insurance.api.NinelivesConfigProperties;
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
@@ -63,6 +64,7 @@ public class OrderService {
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
+	@Autowired NinelivesConfigProperties config;
 	@Autowired ProductService productService;
 	@Autowired UserService userService;
 	@Autowired VoucherService voucherService;
@@ -81,14 +83,14 @@ public class OrderService {
 	
 	@Autowired FluentProducerTemplate producerTemplate;
 	
-	@Value("${ninelives.order.policy-startdate-period:366}")
-	int policyStartDatePeriod;
-	
-	@Value("${ninelives.order.policy-duedate-period:30}")
-	int policyDueDatePeriod;
-	
-	@Value("${ninelives.order.policy-conflict-period-limit:3}")
-	int policyConflictPeriodLimit;
+//	@Value("${ninelives.order.policy-startdate-period:366}")
+//	int policyStartDatePeriod;
+//	
+//	@Value("${ninelives.order.policy-duedate-period:30}")
+//	int policyDueDatePeriod;
+//	
+//	@Value("${ninelives.order.policy-conflict-period-limit:3}")
+//	int policyConflictPeriodLimit;
 	
 	//TODO: Replace hardcoded policytitles and imgurl
 	
@@ -334,9 +336,9 @@ public class OrderService {
 			}
 		}
 		
-		LocalDate limitPolicyStartDate = today.plusDays(this.policyStartDatePeriod);
+		LocalDate limitPolicyStartDate = today.plusDays(config.getOrder().getPolicyStartDatePeriod());
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isAfter(limitPolicyStartDate)){
-			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, this.policyStartDatePeriod);
+			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, config.getOrder().getPolicyStartDatePeriod());
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda");			
 //
@@ -405,7 +407,7 @@ public class OrderService {
 		//LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
 		
 		LocalDate policyEndDate = calculatePolicyEndDate(submitOrderDto.getPolicyStartDate().toLocalDate(), products.get(0).getPeriod());
-		LocalDate dueOrderDate = today.minusDays(policyDueDatePeriod);
+		LocalDate dueOrderDate = today.minusDays(config.getOrder().getPolicyDueDatePeriod());
 		
 		boolean isOverLimit = isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
 		if(isOverLimit){
@@ -741,7 +743,7 @@ public class OrderService {
 		
 		Map<String, Long> conflictCoverageMap = conflictList.stream().collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
 		
-		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=policyConflictPeriodLimit);
+		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getPolicyConflictPeriodLimit());
 	}
 	
 	public PolicyOrder fetchOrderWithBeneficiaryByOrderId(final String userId, final String orderId){
@@ -810,7 +812,7 @@ public class OrderService {
 	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null){
 			if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
-				if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
+				if(policyOrder.getOrderDate().plusDays(config.getOrder().getPolicyDueDatePeriod()).isBefore(today)){
 					policyOrder.setStatus(PolicyStatus.OVERDUE);
 				}else if(policyOrder.getPolicyStartDate().isBefore(today)){
 					policyOrder.setStatus(PolicyStatus.OVERDUE);
