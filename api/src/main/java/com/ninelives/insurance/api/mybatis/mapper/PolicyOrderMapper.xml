@@ -102,6 +102,7 @@
     <result column="payment_provider_transaction_status" jdbcType="VARCHAR" property="providerTransactionStatus" />
     <result column="payment_provider_status_code" jdbcType="INTEGER" property="providerStatusCode" />
     <result column="payment_charge_time" jdbcType="TIMESTAMP" property="chargeTime" />
+    <result column="payment_charge_expiry_time" jdbcType="TIMESTAMP" property="chargeExpiryTime" />
     <result column="payment_notif_pending_time" jdbcType="TIMESTAMP" property="notifPendingTime" />
     <result column="payment_notif_success_time" jdbcType="TIMESTAMP" property="notifSuccessTime" />
     <result column="payment_notif_failed_time" jdbcType="TIMESTAMP" property="notifFailedTime" />
@@ -136,7 +137,8 @@
    	pp.provider_transaction_id as payment_provider_transaction_id, 
     pp.provider_transaction_status as payment_provider_transaction_status, 
     pp.provider_status_code as payment_provider_status_code, 
-	pp.charge_time as payment_charge_time, 
+	pp.charge_time as payment_charge_time,
+	pp.charge_expiry_time as payment_charge_expiry_time, 
 	pp.notif_pending_time as payment_notif_pending_time, 
 	pp.notif_success_time as payment_notif_success_time, 
 	pp.notif_failed_time as payment_notif_failed_time,

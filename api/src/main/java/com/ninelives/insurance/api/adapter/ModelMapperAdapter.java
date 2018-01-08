@@ -22,12 +22,14 @@ import com.ninelives.insurance.api.dto.CoverageCategoryDto;
 import com.ninelives.insurance.api.dto.CoverageClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.OrderDto;
+import com.ninelives.insurance.api.dto.PaymentDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.dto.VoucherDto;
+import com.ninelives.insurance.api.util.DateTimeFormatUtil;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -42,10 +44,12 @@ import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
+import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.model.Voucher;
+import com.ninelives.insurance.ref.PolicyStatus;
 
 @Component
 public class ModelMapperAdapter {
@@ -82,7 +86,20 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
-	
+	public PaymentDto toDto(PolicyPayment m){
+		PaymentDto dto = null;
+		if(m!=null){
+			dto = new PaymentDto();
+			dto.setPaymentChargeDate(m.getChargeTime());
+			dto.setPaymentExpiryDate(m.getChargeExpiryTime());
+			try{
+				dto.setExpiryDuration(DateTimeFormatUtil.timeBetween(m.getChargeTime(),m.getChargeExpiryTime()));
+			}catch(Exception e){
+				logger.error("error convert duration <{}>", m);
+			}			
+		}
+		return dto;
+	}
 	
 	public UserDto toDto(User m){
 		UserDto dto = null;
@@ -150,6 +167,9 @@ public class ModelMapperAdapter {
 				dto.setVoucher(toDto(m.getPolicyOrderVoucher().getVoucher()));
 			}
 			
+			if(m.getStatus().equals(PolicyStatus.INPAYMENT)){
+				dto.setPayment(toDto(m.getPayment()));
+			}			
 		}
 		return dto;
 	}

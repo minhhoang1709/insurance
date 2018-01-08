@@ -1,7 +1,6 @@
 package com.ninelives.insurance.provider.notification.message;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -101,8 +100,23 @@ public class FcmNotifMessageDto implements Serializable {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Data implements Serializable{
 		private static final long serialVersionUID = -1871098927029223331L;
+		private String title;
+		private String body;
 		private String action;
 		private String actionData;
+		
+		public String getTitle() {
+			return title;
+		}
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		public String getBody() {
+			return body;
+		}
+		public void setBody(String body) {
+			this.body = body;
+		}
 		public String getAction() {
 			return action;
 		}
@@ -114,10 +128,11 @@ public class FcmNotifMessageDto implements Serializable {
 		}
 		public void setActionData(String actionData) {
 			this.actionData = actionData;
-		}
+		}		
 		@Override
 		public String toString() {
-			return "Data [action=" + action + ", actionData=" + actionData + "]";
+			return "Data [title=" + title + ", body=" + body + ", action=" + action + ", actionData=" + actionData
+					+ "]";
 		}
 		
 	}

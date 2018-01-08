@@ -48,6 +48,8 @@ public class OrderDto {
     private UserDto user;
     
     private VoucherDto voucher;
+    
+    private PaymentDto payment;
 
 	public String getOrderId() {
 		return orderId;
@@ -191,6 +193,14 @@ public class OrderDto {
 
 	public void setVoucher(VoucherDto voucher) {
 		this.voucher = voucher;
+	}
+
+	public PaymentDto getPayment() {
+		return payment;
+	}
+
+	public void setPayment(PaymentDto payment) {
+		this.payment = payment;
 	}
 
 	@Override

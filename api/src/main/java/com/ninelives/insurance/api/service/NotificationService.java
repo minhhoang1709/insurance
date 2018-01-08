@@ -18,6 +18,7 @@ public class NotificationService {
 	public void sendFcmNotification(String fcmToken, FcmNotifMessageDto.Notification notifMessage) throws Exception{
 		sendFcmNotification(fcmToken, notifMessage, null, null);
 	}
+	
 	public void sendFcmNotification(String fcmToken, FcmNotifMessageDto.Notification notifMessage, String action, String actionData) throws Exception{
 		if(fcmToken==null||notifMessage==null){
 			throw new Exception("token and notification is required");
@@ -26,9 +27,12 @@ public class NotificationService {
 		messageDto.setMessage(new FcmNotifMessageDto.Message());
 		messageDto.getMessage().setToken(fcmToken);
 		messageDto.getMessage().setNotification(notifMessage);
-				
-		if(action!=null){
-			messageDto.getMessage().setData(new FcmNotifMessageDto.Data());
+			
+		messageDto.getMessage().setData(new FcmNotifMessageDto.Data());
+		messageDto.getMessage().getData().setTitle(notifMessage.getTitle());
+		messageDto.getMessage().getData().setBody(notifMessage.getBody());
+		
+		if(action!=null){			
 			messageDto.getMessage().getData().setAction(action);
 			if(actionData!=null){
 				messageDto.getMessage().getData().setActionData(actionData);

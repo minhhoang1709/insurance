@@ -124,15 +124,16 @@ public class PaymentService {
 		midtransChargeDto.getExpiry().setUnit(config.getPayment().getMidtransPaymentExpiryUnit());
 		
 		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getBillingAddress()!=null){
-			if(midtransChargeDto.getCustomerDetails().getBillingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
-				midtransChargeDto.getCustomerDetails().getBillingAddress().setCountryCode("ID");
-			}
-			
+			midtransChargeDto.getCustomerDetails().getBillingAddress().setCountryCode("IDN");
+//			if(midtransChargeDto.getCustomerDetails().getBillingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
+//				
+//			}			
 		}
 		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getShippingAddress()!=null){
-			if(midtransChargeDto.getCustomerDetails().getShippingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
-				midtransChargeDto.getCustomerDetails().getShippingAddress().setCountryCode("ID");
-			}
+			midtransChargeDto.getCustomerDetails().getShippingAddress().setCountryCode("IDN");
+//			if(midtransChargeDto.getCustomerDetails().getShippingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
+//				
+//			}
 		}
 		
 		PaymentChargeLog chargeLog = new PaymentChargeLog();

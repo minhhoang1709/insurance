@@ -33,6 +33,8 @@ public class PolicyPayment implements Serializable{
     private LocalDateTime startTime;
 
     private LocalDateTime chargeTime;
+    
+    private LocalDateTime chargeExpiryTime;
 
     private LocalDateTime notifPendingTime;
 
@@ -150,7 +152,15 @@ public class PolicyPayment implements Serializable{
         this.chargeTime = chargeTime;
     }
 
-    public LocalDateTime getNotifPendingTime() {
+    public LocalDateTime getChargeExpiryTime() {
+		return chargeExpiryTime;
+	}
+
+	public void setChargeExpiryTime(LocalDateTime chargeExpiryTime) {
+		this.chargeExpiryTime = chargeExpiryTime;
+	}
+
+	public LocalDateTime getNotifPendingTime() {
         return notifPendingTime;
     }
 
