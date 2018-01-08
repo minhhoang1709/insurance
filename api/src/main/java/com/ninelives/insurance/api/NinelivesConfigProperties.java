@@ -21,70 +21,126 @@ public class NinelivesConfigProperties {
 //	 */
 //	private String policyImageUrl;
 	
-//	private Order order = new Order();
-	
+	private Order order = new Order();	
+	@Valid
 	private Storage storage = new Storage();
-	
 	@Valid
 	private Payment payment = new Payment();
-	
 	@Valid
 	private Promo promo = new Promo();
+	@Valid
+	private Insurance insurance = new Insurance();
 
-//	public String getPolicyTitle() {
-//		return policyTitle;
-//	}
-//
-//	public void setPolicyTitle(String policyTitle) {
-//		this.policyTitle = policyTitle;
-//	}
-//
-//	public String getPolicyImageUrl() {
-//		return policyImageUrl;
-//	}
-//
-//	public void setPolicyImageUrl(String policyImageUrl) {
-//		this.policyImageUrl = policyImageUrl;
-//	}
-//
-//	public Order getOrder() {
-//		return order;
-//	}
-//
-//	public void setOrder(Order order) {
-//		this.order = order;
-//	}
-
+	public Order getOrder() {
+		return order;
+	}
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 	public Storage getStorage() {
 		return storage;
 	}
-
 	public void setStorage(Storage storage) {
 		this.storage = storage;
 	}
-	
 	public Payment getPayment() {
 		return payment;
 	}
-
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
-
 	public Promo getPromo() {
 		return promo;
 	}
-
 	public void setPromo(Promo promo) {
 		this.promo = promo;
+	}
+	public Insurance getInsurance() {
+		return insurance;
+	}
+	public void setInsurance(Insurance insurance) {
+		this.insurance = insurance;
+	}
+
+	public static class Insurance {
+		@NotEmpty
+		private String aswataClientCode;
+		@NotEmpty
+		private String aswataClientKey;
+		@NotEmpty
+		private String aswataProductCode;
+		@NotEmpty
+		private String aswataPackageType;
+		@NotEmpty
+		private String aswataUrl;
+		
+		private int aswataConnectionPoolSize = 32;
+		private int aswataPoolTimeout = 5000;
+		private int aswataConnectTimeout = 5000;
+		private int aswataSocketTimeout = 30000;
+		
+		public String getAswataClientCode() {
+			return aswataClientCode;
+		}
+		public void setAswataClientCode(String aswataClientCode) {
+			this.aswataClientCode = aswataClientCode;
+		}
+		public String getAswataClientKey() {
+			return aswataClientKey;
+		}
+		public void setAswataClientKey(String aswataClientKey) {
+			this.aswataClientKey = aswataClientKey;
+		}		
+		public String getAswataProductCode() {
+			return aswataProductCode;
+		}
+		public void setAswataProductCode(String aswataProductCode) {
+			this.aswataProductCode = aswataProductCode;
+		}
+		public String getAswataPackageType() {
+			return aswataPackageType;
+		}
+		public void setAswataPackageType(String aswataPackageType) {
+			this.aswataPackageType = aswataPackageType;
+		}		
+		public String getAswataUrl() {
+			return aswataUrl;
+		}
+		public void setAswataUrl(String aswataUrl) {
+			this.aswataUrl = aswataUrl;
+		}
+		public int getAswataConnectionPoolSize() {
+			return aswataConnectionPoolSize;
+		}
+		public void setAswataConnectionPoolSize(int aswataConnectionPoolSize) {
+			this.aswataConnectionPoolSize = aswataConnectionPoolSize;
+		}
+		public int getAswataPoolTimeout() {
+			return aswataPoolTimeout;
+		}
+		public void setAswataPoolTimeout(int aswataPoolTimeout) {
+			this.aswataPoolTimeout = aswataPoolTimeout;
+		}
+		public int getAswataConnectTimeout() {
+			return aswataConnectTimeout;
+		}
+		public void setAswataConnectTimeout(int aswataConnectTimeout) {
+			this.aswataConnectTimeout = aswataConnectTimeout;
+		}
+		public int getAswataSocketTimeout() {
+			return aswataSocketTimeout;
+		}
+		public void setAswataSocketTimeout(int aswataSocketTimeout) {
+			this.aswataSocketTimeout = aswataSocketTimeout;
+		}
+		
+		
 	}
 
 	public static class Promo {		
 		private Boolean isPromoAvailable = false;
-		
 		@NotNull
 		private Integer inviteVoucherId;
-		
 		@NotNull
 		private Integer voucherMinimumAggregatePayment;
 		
@@ -131,29 +187,23 @@ public class NinelivesConfigProperties {
 	public static class Payment {
 		@NotEmpty
 		private String midtransEnvironment;
-		
 		@NotEmpty
 		private String midtransSandboxServerKey;
-		
 		@NotEmpty
 		private String midtransSandboxClientKey;
-		
 		@NotEmpty
 		private String midtransSandboxUrl;
-		
 		@NotEmpty
 		private String midtransProductionServerKey;
-		
 		@NotEmpty
 		private String midtransProductionClientKey;
-		
 		@NotEmpty
 		private String midtransProductionUrl;
 		
 		private int midtransConnectionPoolSize = 16;
 		private int midtransPoolTimeout = 5000;
 		private int midtransConnectTimeout = 5000;
-		private int midtransSocketTimeout = 20000;
+		private int midtransSocketTimeout = 30000;
 		
 		private int midtransPaymentExpiryDuration = 3;
 		private String midtransPaymentExpiryUnit = "hours";
@@ -243,6 +293,7 @@ public class NinelivesConfigProperties {
 		/**
 	     * Folder location for storing files
 	     */
+		@NotEmpty
 	    private String location;
 
 	    public String getLocation() {
@@ -264,7 +315,7 @@ public class NinelivesConfigProperties {
 		/**
 		 * Allowed policy-start-date should not exceed the specified period
 		 */
-	    private int policyStartDatePeriod = 60;
+	    private int policyStartDatePeriod = 365;
 	    
 	    /**
 		 * Payment should be made within specified period (inclusive)
@@ -275,6 +326,9 @@ public class NinelivesConfigProperties {
 		 * Specify number of coverage that allowed to be active at the same period 
 		 */
 	    private int policyConflictPeriodLimit = 3;
+	    
+	    private int minimumAge = 17;
+	    private int maximumAge = 60;
 
 		public int getPolicyStartDatePeriod() {
 			return policyStartDatePeriod;
@@ -298,12 +352,29 @@ public class NinelivesConfigProperties {
 
 		public void setPolicyConflictPeriodLimit(int policyConflictPeriodLimit) {
 			this.policyConflictPeriodLimit = policyConflictPeriodLimit;
+		}		
+
+		public int getMinimumAge() {
+			return minimumAge;
+		}
+
+		public void setMinimumAge(int minimumAge) {
+			this.minimumAge = minimumAge;
+		}
+
+		public int getMaximumAge() {
+			return maximumAge;
+		}
+
+		public void setMaximumAge(int maximumAge) {
+			this.maximumAge = maximumAge;
 		}
 
 		@Override
 		public String toString() {
 			return "Order [policyStartDatePeriod=" + policyStartDatePeriod + ", policyDueDatePeriod="
-					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit + "]";
+					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit + ", minimumAge="
+					+ minimumAge + ", maximumAge=" + maximumAge + "]";
 		}
 		
 	}

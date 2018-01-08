@@ -40,13 +40,13 @@ public interface PolicyOrderMapper {
 			@Param ("coverageIds") List<String> coverageIds);
 	
 	@Insert({
-        "insert into public.policy_order (order_id, order_date, ",
+        "insert into public.policy_order (order_id, order_date, order_time, ",
         "user_id, coverage_category_id, ",
         "has_beneficiary, period_id, ",
         "policy_number, policy_start_date, ",
         "policy_end_date, base_premi, total_premi, ",
         "product_count, has_voucher, status)",
-        "values (#{orderId,jdbcType=VARCHAR}, #{orderDate,jdbcType=DATE}, ",
+        "values (#{orderId,jdbcType=VARCHAR}, #{orderDate,jdbcType=DATE}, #{orderTime,jdbcType=TIMESTAMP}, ",
         "#{userId,jdbcType=VARCHAR}, #{coverageCategoryId,jdbcType=VARCHAR}, ",
         "#{hasBeneficiary,jdbcType=BIT}, #{periodId,jdbcType=VARCHAR}, ",
         "#{policyNumber,jdbcType=VARCHAR}, #{policyStartDate,jdbcType=DATE}, ",

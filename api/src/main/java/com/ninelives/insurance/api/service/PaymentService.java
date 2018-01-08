@@ -123,6 +123,18 @@ public class PaymentService {
 		midtransChargeDto.getExpiry().setDuration(String.valueOf(config.getPayment().getMidtransPaymentExpiryDuration()));
 		midtransChargeDto.getExpiry().setUnit(config.getPayment().getMidtransPaymentExpiryUnit());
 		
+		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getBillingAddress()!=null){
+			if(midtransChargeDto.getCustomerDetails().getBillingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
+				midtransChargeDto.getCustomerDetails().getBillingAddress().setCountryCode("ID");
+			}
+			
+		}
+		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getShippingAddress()!=null){
+			if(midtransChargeDto.getCustomerDetails().getShippingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
+				midtransChargeDto.getCustomerDetails().getShippingAddress().setCountryCode("ID");
+			}
+		}
+		
 		PaymentChargeLog chargeLog = new PaymentChargeLog();
 		chargeLog.setChargeDate(today);
 		chargeLog.setPolicyPaymentId(payment.getId());

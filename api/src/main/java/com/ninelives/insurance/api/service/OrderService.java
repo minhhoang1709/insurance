@@ -1,7 +1,9 @@
 package com.ninelives.insurance.api.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +35,6 @@ import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderUsersMapper;
-import com.ninelives.insurance.api.route.DirectEndPointRef;
 import com.ninelives.insurance.api.service.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -268,7 +269,8 @@ public class OrderService {
 	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto, final boolean isValidateOnly) throws ApiBadRequestException{
 		logger.debug("Process order isvalidationonly <{}> user: <{}> with order: <{}>", isValidateOnly, userId, submitOrderDto);
 		
-		LocalDate today = LocalDate.now();		
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate today = now.toLocalDate();		
 		
 		if (submitOrderDto == null || submitOrderDto.getProducts() == null
 				|| submitOrderDto.getPolicyStartDate() == null || submitOrderDto.getTotalPremi() == null) {
@@ -432,8 +434,26 @@ public class OrderService {
 						"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan");
 			}
 			
-			User newUserProfile = null;
+			//verify age
+			LocalDate birthDate = existingUser.getBirthDate();
+			if(birthDate == null){
+				if(submitOrderDto.getUser()!=null && submitOrderDto.getUser().getBirthDate()!=null){
+					birthDate = submitOrderDto.getUser().getBirthDate().toLocalDate();
+				}
+			}
+			//boolean isAgeAllowed = DAYS.
+			long age = ChronoUnit.YEARS.between(birthDate, today);
+			if(age > config.getOrder().getMaximumAge()||
+					age < config.getOrder().getMinimumAge()){
+				logger.debug("Process order for {} with order {} with result: age invalie", userId, submitOrderDto);
+				throw new ApiBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+						"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun");
+			}
+			
+			
+			User newUserProfile = null;			
 			if(!isExistingUserProfileCompleteForOrder){
+				//in case existing profile is not complete, check the submit data
 				if(submitOrderDto.getUser()==null){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
@@ -468,6 +488,7 @@ public class OrderService {
 			policyOrder = new PolicyOrder();
 			policyOrder.setOrderId(generateOrderId());
 			policyOrder.setOrderDate(today);
+			policyOrder.setOrderTime(now);
 			policyOrder.setUserId(userId);
 			policyOrder.setCoverageCategoryId(coverageCategoryId);
 			policyOrder.setCoverageCategory(productService.fetchCoverageCategoryByCoverageCategoryId(coverageCategoryId));

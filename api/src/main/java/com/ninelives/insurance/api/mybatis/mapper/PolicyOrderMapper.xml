@@ -4,6 +4,7 @@
   <resultMap id="NestedPolicyOrderResultMap" type="com.ninelives.insurance.model.PolicyOrder">
     <id column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="order_date" jdbcType="DATE" property="orderDate" />
+    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
