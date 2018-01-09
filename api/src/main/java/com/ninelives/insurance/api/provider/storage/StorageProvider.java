@@ -20,6 +20,8 @@ public interface StorageProvider {
 
     Path load(String filename);
 
+    Resource loadAsResource(UserFile userFile) throws StorageException;
+    
     Resource loadAsResource(String filename) throws StorageException;
 
     //void deleteAll();

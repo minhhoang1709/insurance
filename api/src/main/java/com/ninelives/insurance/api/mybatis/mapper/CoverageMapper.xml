@@ -10,6 +10,7 @@
     <result column="max_limit" jdbcType="BIGINT" property="maxLimit" />
     <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
     <result column="is_recommended" jdbcType="BIT" property="isRecommended" />
+    <result column="provider_code" jdbcType="VARCHAR" property="providerCode" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="display_rank" jdbcType="INTEGER" property="displayRank" />
     <association property="coverageCategory" javaType="com.ninelives.insurance.model.CoverageCategory">
@@ -29,7 +30,7 @@
   
   <sql id="NestedCoverageColumnList">
 	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, 
-	a.has_beneficiary, a.status, a.display_rank, a.is_recommended,
+	a.has_beneficiary, a.status, a.display_rank, a.is_recommended, a.provider_code,
 	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name,
 	c.coverage_claim_doc_type_id, c.is_mandatory,
 	d.claim_doc_type_id, d.name as claim_doc_type_name

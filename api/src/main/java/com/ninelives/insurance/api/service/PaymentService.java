@@ -41,31 +41,6 @@ public class PaymentService {
 	
 	
 	public ChargeResponseDto charge(final String userId, final ChargeDto chargeDto) throws ApiException{
-		//v send reqeust to payment provider
-		//x log or get unique sequence id for payment? and payment provider log this unique sequence? or let this responsibility of payment provider?
-		//x update order table?
-		//v insert/update log also
-		//v test
-		//v insert payment table (+token response), kalo belum ada entry berarti belom ada success charge toh
-		//v test
-		//v retrieve order + payment obj
-		//v if payment object is not exists, then insert else update
-		//v test valid order trus valid  trus invalid trus valid 
-		//v test invalid order trus order valid
-		//? hit midtrans to check latest status?
-		//v kalo latest payment status is not charge dan charge result in error, then dont update policy_payment?
-		//    the thing is we want to know the latest payment status?
-		//    incase of pending-fail, then we allow charge and then error 'cannot reuse id' then the latest status charging will be error
-		//v check that chargedto is valid (no null pointer)
-		//v validate that grossamount is same
-		//v validate order is valid in db
-		//v validate order is submitted
-		//v validate order is not overdue
-		//x validate order is ??? (any else?) policystart date other field?, check the possible status, check the property
-		//x check or validate payment info
-		//check the coverage claim limit, check also other limit in orderservice (since we might need to prevent charge after free insurance cases)
-		//rethink whether to update order table
-		
 		LocalDateTime now = LocalDateTime.now();
 		LocalDate today = now.toLocalDate();
 
@@ -125,15 +100,9 @@ public class PaymentService {
 		
 		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getBillingAddress()!=null){
 			midtransChargeDto.getCustomerDetails().getBillingAddress().setCountryCode("IDN");
-//			if(midtransChargeDto.getCustomerDetails().getBillingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
-//				
-//			}			
 		}
 		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getShippingAddress()!=null){
 			midtransChargeDto.getCustomerDetails().getShippingAddress().setCountryCode("IDN");
-//			if(midtransChargeDto.getCustomerDetails().getShippingAddress().getCountryCode().equalsIgnoreCase("indonesia")){
-//				
-//			}
 		}
 		
 		PaymentChargeLog chargeLog = new PaymentChargeLog();

@@ -12,6 +12,9 @@ public class DateTimeFormatUtil {
 		if(start == null || end == null){
 			return null;
 		}
+		if(!end.isAfter(start)){
+			return "0 jam 0 menit";
+		}
 		return DurationFormatUtils.formatDuration(Duration.between(start, end).toMillis(), DURATION_FORMAT);
 	}
 }

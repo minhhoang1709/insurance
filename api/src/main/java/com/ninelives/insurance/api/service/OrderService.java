@@ -30,6 +30,7 @@ import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
@@ -72,6 +73,7 @@ public class OrderService {
 	@Autowired InviteService inviteService;
 	@Autowired PolicyOrderTrxService policyOrderTrxService;
 	@Autowired NotificationService notificationService;
+	@Autowired InsuranceService insuranceService;
 	
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
@@ -117,7 +119,7 @@ public class OrderService {
 		return modelMapperAdapter.toDto(policyOrderBeneficiary);
 	}
 	
-	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiBadRequestException{
+	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiException{
 		PolicyOrder policyOrder = registerOrder(userId, orderDto, isValidateOnly);
 		return modelMapperAdapter.toDto(policyOrder);
 	}
@@ -264,9 +266,9 @@ public class OrderService {
 	 * @param submitOrderDto
 	 * @param isValidateOnly Dry-run. Validate if order is valid (without validation to the user's profile).
 	 * @return
-	 * @throws ApiBadRequestException
+	 * @throws ApiException 
 	 */
-	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto, final boolean isValidateOnly) throws ApiBadRequestException{
+	protected PolicyOrder registerOrder(final String userId, final OrderDto submitOrderDto, final boolean isValidateOnly) throws ApiException{
 		logger.debug("Process order isvalidationonly <{}> user: <{}> with order: <{}>", isValidateOnly, userId, submitOrderDto);
 		
 		LocalDateTime now = LocalDateTime.now();
@@ -422,8 +424,6 @@ public class OrderService {
 		boolean isAllProfileInfoUpdated = false;
 		boolean isPhoneInfoUpdated = false;		
 		if(!isValidateOnly){
-			//TODO: submit order to ASWATA
-			
 			final User existingUser = userService.fetchByUserId(userId);
 
 			boolean isExistingUserProfileCompleteForOrder = isUserProfileCompleteForOrder(existingUser);
@@ -573,29 +573,20 @@ public class OrderService {
 				policyOrder.setHasVoucher(false);
 			}
 			
+			try {
+				insuranceService.orderPolicy(policyOrder);
+			} catch (ApiInternalServerErrorException e) {
+				logger.error("Process registerOrder for user:<{}> with order:<{}>, result: exception provider <{}>",
+						userId, submitOrderDto, e.getCode());
+				throw e;
+			}
+			
 			policyOrderTrxService.registerPolicyOrder(policyOrder);
 						
 			if(voucher!=null){
 				//if product is active now, send the notification
-				if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
-						&& !policyOrder.getPolicyStartDate().isAfter(today) 
-						&& !policyOrder.getPolicyEndDate().isBefore(today)){
-					CoverageCategory covCat = products.get(0).getCoverage().getCoverageCategory();
-					
-					if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(existingUser.getFcmToken())){
-						FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
-						notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",
-								new Object[] { covCat.getName() }, Locale.ROOT));
-						notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body",
-								new Object[] { covCat.getName() }, Locale.ROOT));
-						try {
-							notificationService.sendFcmNotification(existingUser.getFcmToken(), notifMessage,
-									FcmNotifAction.order, policyOrder.getOrderId());
-						} catch (Exception e) {
-							logger.error("Failed to send message notif for register order", e);
-						}
-					}	
-				}				
+				sendSuccessNotification(existingUser.getFcmToken(), policyOrder, today);
+				
 				//process for inviter
 				if(voucher.getVoucherType().equals(VoucherType.INVITE) &&
 						policyOrder.getPolicyOrderVoucher().getVoucher().getInviterRewardCount() < 
@@ -614,14 +605,37 @@ public class OrderService {
 		
 		return policyOrder;
 	}
+	private void sendSuccessNotification(String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){
+		if(policyOrder!=null && policyOrder.getCoverageCategory()!=null){
+			if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
+					&& !policyOrder.getPolicyStartDate().isAfter(today) 
+					&& !policyOrder.getPolicyEndDate().isBefore(today)){
+				CoverageCategory covCat = policyOrder.getCoverageCategory();
+				
+				if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(receiverFcmToken)){
+					FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
+					notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",
+							new Object[] { covCat.getName() }, Locale.ROOT));
+					notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body",
+							new Object[] { covCat.getName() }, Locale.ROOT));
+					try {
+						notificationService.sendFcmNotification(receiverFcmToken, notifMessage,
+								FcmNotifAction.order, policyOrder.getOrderId());
+					} catch (Exception e) {
+						logger.error("Failed to send message notif for register order", e);
+					}
+				}	
+			}
+		}
+	}
 	private void asyncRegisterOrderForInviter(final PolicyOrder policyOrder){
-		logger.debug("Async called");
+		logger.debug("Async register order for inviter with order <{}>", policyOrder);
 		producerTemplate.to(EndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
 		//producerTemplate.to(DirectEndPointRef.QUEUE_ORDER).withBodyAs(policyOrder, PolicyOrder.class).send();
 	}
 	
 	public void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		
-		logger.debug("Process registerOrder for inviter, order: <{}> with result success",
+		logger.debug("Process registerOrder for inviter, order: <{}>",
 				policyOrder);
 		
 		if (policyOrder == null || policyOrder.getPolicyOrderVoucher() == null
@@ -709,7 +723,7 @@ public class OrderService {
 		inviterPolicy.setPolicyEndDate(inviterPolicyEndDate);
 
 		
-		// TODO Hit ASWATA for insurance register for inviter
+		// TODO Hit ASWATA for insurance register for inviter		
 		
 		policyOrderTrxService.registerPolicyOrder(inviterPolicy);
 		

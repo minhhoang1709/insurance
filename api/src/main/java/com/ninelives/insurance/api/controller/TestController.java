@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,8 @@ import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
+import com.ninelives.insurance.api.provider.insurance.AswataInsuranceProvider;
+import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.route.DirectEndPointRef;
 import com.ninelives.insurance.api.service.ClaimService;
 import com.ninelives.insurance.api.service.OrderService;
@@ -66,6 +69,8 @@ public class TestController {
 	@Autowired TestService testService;
 	@Autowired VoucherService voucherService;
 	
+	@Autowired AswataInsuranceProvider aswata;
+	
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	
@@ -80,6 +85,15 @@ public class TestController {
 	
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
+	
+	@GetMapping("/test/aswata/order")
+	@ResponseBody
+	public String testAswataOrder(@RequestAttribute ("authUserId") String authUserId) throws ApiNotFoundException, IOException, StorageException{
+		aswata.orderPolicy(null);
+		return "ok";
+	}
+	
+
 	
 	@RequestMapping(value="/test/full/vouchers/{code}",
 			method={ RequestMethod.GET })

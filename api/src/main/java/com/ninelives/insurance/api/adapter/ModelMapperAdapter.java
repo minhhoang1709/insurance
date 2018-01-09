@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.adapter;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class ModelMapperAdapter {
 			dto.setPaymentChargeDate(m.getChargeTime());
 			dto.setPaymentExpiryDate(m.getChargeExpiryTime());
 			try{
-				dto.setExpiryDuration(DateTimeFormatUtil.timeBetween(m.getChargeTime(),m.getChargeExpiryTime()));
+				dto.setExpiryDuration(DateTimeFormatUtil.timeBetween(LocalDateTime.now(),m.getChargeExpiryTime()));
 			}catch(Exception e){
 				logger.error("error convert duration <{}>", m);
 			}			

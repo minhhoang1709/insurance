@@ -2,7 +2,6 @@ package com.ninelives.insurance.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class Coverage implements Serializable{
@@ -31,6 +30,8 @@ public class Coverage implements Serializable{
     private int displayRank;
     
     private Boolean isRecommended;
+    
+    private String providerCode;
     
     private List<CoverageClaimDocType> coverageClaimDocTypes;
     
@@ -130,6 +131,14 @@ public class Coverage implements Serializable{
 
 	public void setIsRecommended(Boolean isRecommended) {
 		this.isRecommended = isRecommended;
+	}	
+
+	public String getProviderCode() {
+		return providerCode;
+	}
+
+	public void setProviderCode(String providerCode) {
+		this.providerCode = providerCode;
 	}
 
 	public List<CoverageClaimDocType> getCoverageClaimDocTypes() {
@@ -150,19 +159,12 @@ public class Coverage implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Coverage [" + (coverageId != null ? "coverageId=" + coverageId + ", " : "")
-				+ (coverageCategoryId != null ? "coverageCategoryId=" + coverageCategoryId + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (recommendation != null ? "recommendation=" + recommendation + ", " : "")
-				+ (description != null ? "description=" + description + ", " : "")
-				+ (maxLimit != null ? "maxLimit=" + maxLimit + ", " : "")
-				+ (hasBeneficiary != null ? "hasBeneficiary=" + hasBeneficiary + ", " : "")
-				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
-				+ (updateDate != null ? "updateDate=" + updateDate + ", " : "")
-				+ (status != null ? "status=" + status + ", " : "") + "displayRank=" + displayRank + ", "
-				+ (isRecommended != null ? "isRecommended=" + isRecommended + ", " : "")
-				+ (coverageClaimDocTypes != null ? "coverageClaimDocType=" + coverageClaimDocTypes + ", " : "")
-				+ (coverageCategory != null ? "coverageCategory=" + coverageCategory : "") + "]";
+		return "Coverage [coverageId=" + coverageId + ", coverageCategoryId=" + coverageCategoryId + ", name=" + name
+				+ ", recommendation=" + recommendation + ", description=" + description + ", maxLimit=" + maxLimit
+				+ ", hasBeneficiary=" + hasBeneficiary + ", createdDate=" + createdDate + ", updateDate=" + updateDate
+				+ ", status=" + status + ", displayRank=" + displayRank + ", isRecommended=" + isRecommended
+				+ ", providerCode=" + providerCode + ", coverageClaimDocTypes=" + coverageClaimDocTypes
+				+ ", coverageCategory=" + coverageCategory + "]";
 	}
 
 	

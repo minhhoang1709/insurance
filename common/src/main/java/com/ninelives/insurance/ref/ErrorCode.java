@@ -36,12 +36,15 @@ public enum ErrorCode {
 	ERR4015_ORDER_VOUCHER_PRODUCT_MISMATCH("ERR4015"), //voucher product not match order
 	ERR4016_ORDER_VOUCHER_REQUIRED("ERR4016"), //voucher is required for certain product (e.g. free)
 	ERR4017_ORDER_IDCARD_NOTFOUND("ERR4017"), //KTP is mandatory
-	ERR4018_ORDER_PROFILE_AGE_INVALID("ERR4018"), //invalid age
+	ERR4018_ORDER_PROFILE_AGE_INVALID("ERR4018"), //invalid age	
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary
 	ERR4103_BENEFICIARY_NOTACCEPTED("ERR4103"), //order hasbeneficiary is false
 	ERR4104_BENEFICIARY_ORDER_STATUS("ERR4104"), //order status is not valid for beneficiary update
+	
+	ERR4201_ORDER_PROVIDER_FAIL("ERR4201"), //fail to submit policy to provider
+	ERR4201_ORDER_PROVIDER_FILE_ERROR("ERR4202"), //fail to read document/file to be sent
 	
 	ERR5001_ORDER_NOT_FOUND("ERR5001"), //get order with given id not found
 	ERR6001_UPLOAD_EMPTY("ERR6001"), //upload with empty file

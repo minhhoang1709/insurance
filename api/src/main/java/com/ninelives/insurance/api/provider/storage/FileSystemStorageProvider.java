@@ -88,6 +88,11 @@ public class FileSystemStorageProvider implements StorageProvider {
     }
 
     @Override
+    public Resource loadAsResource(UserFile userFile) throws StorageException {
+    	return loadAsResource(userFile.getFilePath());
+    }
+    
+    @Override
     public Resource loadAsResource(String filename) throws StorageException {
         try {
             Path file = load(filename);

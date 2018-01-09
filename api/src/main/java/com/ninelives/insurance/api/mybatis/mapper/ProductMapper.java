@@ -14,5 +14,5 @@ public interface ProductMapper {
 	Product selectByProductId(@Param("productId") String productId);
 	List<Product> select();
 	List<Product> selectByTypeNormalAndStatusActive();	
-	List<Product> selectByProductIds(@Param("productIds") Set<String> productIds);	
+	//List<Product> selectByProductIds(@Param("productIds") Set<String> productIds);	
 }

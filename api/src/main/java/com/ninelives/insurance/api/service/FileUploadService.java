@@ -136,4 +136,8 @@ public class FileUploadService {
 	private Long generateFileId(){
 		return userFileMapper.selectNextFileId();
 	}
+
+	public UserFile fetchUserFileById(Long fileId) {
+		return  userFileMapper.selectByPrimaryKey(fileId);
+	}
 }
