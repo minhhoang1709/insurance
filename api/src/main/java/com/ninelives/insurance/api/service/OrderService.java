@@ -449,7 +449,11 @@ public class OrderService {
 				throw new ApiBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
 						"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun");
 			}
-			
+			//modify phone
+			String modifiedPhone = null;
+			if(submitOrderDto.getUser()!=null && !StringUtils.isEmpty(submitOrderDto.getUser().getPhone())){
+				modifiedPhone = submitOrderDto.getUser().getPhone().replaceAll("\\D+", "");
+			}
 			
 			User newUserProfile = null;			
 			if(!isExistingUserProfileCompleteForOrder){
@@ -459,13 +463,14 @@ public class OrderService {
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
 							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan");
 				}
+				 
 				newUserProfile = new User();
 				newUserProfile.setUserId(userId);;
 				newUserProfile.setName(submitOrderDto.getUser().getName());
 				newUserProfile.setGender(submitOrderDto.getUser().getGender());
 				newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate().toLocalDate());
 				newUserProfile.setBirthPlace(submitOrderDto.getUser().getBirthPlace());
-				newUserProfile.setPhone(submitOrderDto.getUser().getPhone());
+				newUserProfile.setPhone(modifiedPhone);
 				
 				if(!isUserProfileCompleteForOrder(newUserProfile)){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
@@ -478,8 +483,8 @@ public class OrderService {
 				isAllProfileInfoUpdated = true;
 			}else{
 				if(submitOrderDto.getUser()!=null 
-						&& !existingUser.getPhone().equals(submitOrderDto.getUser().getPhone())){
-					userService.updatePhoneInfo(userId, submitOrderDto.getUser().getPhone());
+						&& !existingUser.getPhone().equals(modifiedPhone)){
+					userService.updatePhoneInfo(userId, modifiedPhone);
 					isPhoneInfoUpdated = true;
 				}			
 				
