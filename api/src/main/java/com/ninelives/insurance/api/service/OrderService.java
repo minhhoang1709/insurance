@@ -643,6 +643,9 @@ public class OrderService {
 		logger.debug("Process registerOrder for inviter, order: <{}>",
 				policyOrder);
 		
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate today = now.toLocalDate();
+		
 		if (policyOrder == null || policyOrder.getPolicyOrderVoucher() == null
 				|| policyOrder.getPolicyOrderVoucher().getVoucher() == null) {
 			throw new Exception("Failed to register order for inviter cause empty voucher");
@@ -659,9 +662,11 @@ public class OrderService {
 			throw new Exception("Failed to register order for inviter cause user not found");
 		}
 		
+		
 		PolicyOrder inviterPolicy = new PolicyOrder();
 		inviterPolicy.setOrderId(generateOrderId());
-		inviterPolicy.setOrderDate(policyOrder.getOrderDate());
+		inviterPolicy.setOrderDate(today);
+		inviterPolicy.setOrderTime(now);
 		inviterPolicy.setUserId(inviterUser.getUserId());
 		inviterPolicy.setCoverageCategoryId(policyOrder.getCoverageCategoryId());
 		inviterPolicy.setCoverageCategory(policyOrder.getCoverageCategory());
@@ -713,8 +718,7 @@ public class OrderService {
 		inviterVoucher.setVoucher(policyOrder.getPolicyOrderVoucher().getVoucher());
 		inviterPolicy.setPolicyOrderVoucher(inviterVoucher);
 		
-		//get start date and end date
-		LocalDate today = LocalDate.now();		
+		//get start date and end date			
 		LocalDate maxExistingPolicyEndDate = fetchMaxPolicyEndDateByCoverage(inviterUser.getUserId(), today, coverageIds);
 		LocalDate inviterPolicyStartDate = null;
 		if(maxExistingPolicyEndDate==null){
@@ -727,8 +731,13 @@ public class OrderService {
 		inviterPolicy.setPolicyStartDate(inviterPolicyStartDate);
 		inviterPolicy.setPolicyEndDate(inviterPolicyEndDate);
 
-		
-		// TODO Hit ASWATA for insurance register for inviter		
+		try {
+			insuranceService.orderPolicy(inviterPolicy);
+		} catch (ApiInternalServerErrorException e) {
+			logger.error("Process registerOrder for inviter, user:<{}>, order:<{}>, result: exception provider <{}>",
+					policyOrder, inviterUser, e.getCode());
+			throw e;
+		}		
 		
 		policyOrderTrxService.registerPolicyOrder(inviterPolicy);
 		

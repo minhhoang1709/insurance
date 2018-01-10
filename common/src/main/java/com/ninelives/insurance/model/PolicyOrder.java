@@ -37,6 +37,8 @@ public class PolicyOrder implements Serializable{
     private Integer productCount;
     
     private Boolean hasVoucher;
+    
+    private String providerOrderNumber;
 
     private PolicyStatus status;
 
@@ -170,6 +172,14 @@ public class PolicyOrder implements Serializable{
 		this.hasVoucher = hasVoucher;
 	}
 
+	public String getProviderOrderNumber() {
+		return providerOrderNumber;
+	}
+
+	public void setProviderOrderNumber(String providerOrderNumber) {
+		this.providerOrderNumber = providerOrderNumber;
+	}
+
 	public PolicyStatus getStatus() {
 		return status;
 	}
@@ -256,14 +266,10 @@ public class PolicyOrder implements Serializable{
 				+ userId + ", coverageCategoryId=" + coverageCategoryId + ", hasBeneficiary=" + hasBeneficiary
 				+ ", periodId=" + periodId + ", policyNumber=" + policyNumber + ", policyStartDate=" + policyStartDate
 				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
-				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", status=" + status
-				+ ", createdDate=" + createdDate + ", updateDate=" + updateDate + ", coverageCategory="
-				+ coverageCategory + ", policyOrderUsers=" + policyOrderUsers + ", policyOrderProducts="
-				+ policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary + ", period=" + period
-				+ ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
+				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", providerOrderNumber="
+				+ providerOrderNumber + ", status=" + status + ", createdDate=" + createdDate + ", updateDate="
+				+ updateDate + ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
+				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
+				+ ", period=" + period + ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
 	}
-
-
-	
-
 }

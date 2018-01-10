@@ -134,7 +134,7 @@ public class TestController {
 	public String sendNotif(@RequestAttribute("authUserId") String userId, @RequestBody FcmNotifMessageDto messageDto){
 				
 		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
-		producerTemplate.to(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
 		return "ok-2";
 	}
 	
