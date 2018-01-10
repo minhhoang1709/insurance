@@ -26,6 +26,7 @@ public class InsuranceService {
 			ResponseDto<OrderResponseDto> result = insuranceProvider.orderPolicy(order);
 			if(insuranceProvider.isSuccess(result)){
 				order.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
+				order.setProviderOrderNumber(result.getResponse().getResponseParam().getOderNumber());
 			}else{
 				throw new ApiInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
 			}

@@ -82,7 +82,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		OrderRequestDto requestDto = new OrderRequestDto();
 		requestDto.setServiceCode(ServiceCode.POLICY_ORDER);
-		requestDto.setUserRefNo(order.getUserId());		
+		requestDto.setUserRefNo(order.getUserId());
 		requestDto.setClientCode(clientCode);
 		requestDto.setRequestTime(order.getOrderTime().format(timeFormatter));
 		
@@ -200,6 +200,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
 					&& responseResult.getResponse().getResponseCode()!=null
 					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+					&& responseResult.getResponse().getResponseParam()!=null
 					){
 				return true;
 			}
