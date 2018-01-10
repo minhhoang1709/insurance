@@ -75,6 +75,13 @@ public class PaymentConfirmResponseDto  implements Serializable{
 		this.authCode = authCode;
 	}
 
+	@Override
+	public String toString() {
+		return "PaymentConfirmResponseDto [serviceCode=" + serviceCode + ", userRefNo=" + userRefNo + ", clientCode="
+				+ clientCode + ", responseTime=" + responseTime + ", responseCode=" + responseCode + ", errorDesc="
+				+ errorDesc + ", responseParam=" + responseParam + ", authCode=" + authCode + "]";
+	}
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class ResponseParam implements Serializable{
 		private static final long serialVersionUID = 7160004215699497232L;
@@ -111,6 +118,11 @@ public class PaymentConfirmResponseDto  implements Serializable{
 		}
 		public void setPolicyDocument(String policyDocument) {
 			this.policyDocument = policyDocument;
+		}
+		@Override
+		public String toString() {
+			return "ResponseParam [policyNumber=" + policyNumber + ", oderNumber=" + oderNumber + ", downloadUrl="
+					+ downloadUrl + ", policyDocument=" + policyDocument + "]";
 		}
 		
 	}

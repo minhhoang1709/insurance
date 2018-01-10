@@ -117,7 +117,7 @@
   </sql>
   
   <sql id="NestedPolicyOrderColumnList">
-    a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
+    a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
    	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.status, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
    	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 

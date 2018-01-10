@@ -2,7 +2,7 @@ package com.ninelives.insurance.model;
 
 import java.time.LocalDateTime;
 
-public class ProviderOrderLog {
+public class InsurerOrderLog {
     private Long id;
 
     private String coverageCategoryId;

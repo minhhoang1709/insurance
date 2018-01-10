@@ -31,18 +31,19 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.ninelives.insurance.api.NinelivesConfigProperties;
-import com.ninelives.insurance.api.mybatis.mapper.ProviderOrderLogMapper;
+import com.ninelives.insurance.api.mybatis.mapper.InsurerOrderLogMapper;
 import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.api.service.FileUploadService;
 import com.ninelives.insurance.api.service.ProductService;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
-import com.ninelives.insurance.model.ProviderOrderLog;
+import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
+import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
 
 @Service
 public class AswataInsuranceProvider implements InsuranceProvider{	
@@ -53,12 +54,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	@Autowired ProductService productService;
 	@Autowired FileUploadService fileUploadService;
 	
-	@Autowired ProviderOrderLogMapper providerOrderLogMapper; 
-	
-	public static class ServiceCode{
-		public static final String POLICY_ORDER = "POLICY_ORDER"; 
-	}
-	
+	@Autowired InsurerOrderLogMapper insurerOrderLogMapper; 
+
 	public static final class AswataResultSuccessCondition{
 		public static final String responseCode="000000";
 		public static final int httpStatus=200;
@@ -114,6 +111,9 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		//requestDto.getRequestParam().setBeneficiaryRelation("ayah");
 		//requestDto.getRequestParam().setIndustry("");		
 		
+		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
+		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
+						
 		logger.debug("Sending to aswata with request <{}>", requestDto);
 		
 		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
@@ -132,11 +132,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		}
 		if(base64IdCard!=null){
 			requestDto.getRequestParam().setIdCard(base64IdCard);
-		}
+		}		
 		
-		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
-		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
-				
 		HttpHeaders restHeader = new HttpHeaders();
 		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		restHeader.setContentType(MediaType.APPLICATION_JSON);
@@ -158,7 +155,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		}
 		LocalDateTime responseTime = LocalDateTime.now();
 		
-		ProviderOrderLog orderLog = new ProviderOrderLog();
+		InsurerOrderLog orderLog = new InsurerOrderLog();
 		orderLog.setCoverageCategoryId(order.getCoverageCategoryId());
 		orderLog.setServiceCode(requestDto.getServiceCode());
 		orderLog.setUserRefNo(requestDto.getUserRefNo());
@@ -187,7 +184,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 			orderLog.setOrderId(order.getOrderId());
 		}
 		
-		providerOrderLogMapper.insertSelective(orderLog);
+		insurerOrderLogMapper.insertSelective(orderLog);
 		
 		logger.debug("Receive aswata response with request: <{}>, entity: <{}> and result <{}>", requestDto, resp == null ? null : resp.toString(),
 				result == null ? null : result);		

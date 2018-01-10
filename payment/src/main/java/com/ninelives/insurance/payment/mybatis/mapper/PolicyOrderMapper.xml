@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ninelives.insurance.payment.mybatis.mapper.PolicyOrderMapper">
   <resultMap id="NestedPolicyOrderResultMap" type="com.ninelives.insurance.model.PolicyOrder">
-    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+        <id column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="order_date" jdbcType="DATE" property="orderDate" />
+    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
@@ -11,11 +12,12 @@
     <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
     <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
     <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
     <result column="product_count" jdbcType="INTEGER" property="productCount" />
+    <result column="has_voucher" jdbcType="BIT" property="hasVoucher" />
+    <result column="provider_order_number" jdbcType="VARCHAR" property="providerOrderNumber" />
     <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
-    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <association property="period" resultMap="PeriodResultMap" />
     <association property="payment" resultMap="PolicyPaymentResultMap" />
   </resultMap>
@@ -47,15 +49,10 @@
     <result column="payment_notif_expired_time" jdbcType="TIMESTAMP" property="notifExpiredTime" />
   </resultMap>
       
-  <sql id="Base_Column_List">
-    order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
-    policy_start_date, policy_end_date, total_premi, product_count, status, created_date, 
-    update_date
-  </sql>
   
   <sql id="NestedPolicyOrderColumnList">
-    a.order_id, a.order_date, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
-   	a.policy_start_date, a.policy_end_date, a.total_premi, a.product_count, a.status, a.created_date,
+   	a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
+   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.status, a.created_date,   	
    	pr.period_id as period_period_id, pr.name as period_name, pr.value as period_value, pr.unit as period_unit, 
    	pp.id as payment_id, 
    	pp.start_time as payment_start_time,

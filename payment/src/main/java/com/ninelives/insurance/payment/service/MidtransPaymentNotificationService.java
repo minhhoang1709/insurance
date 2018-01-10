@@ -2,6 +2,7 @@ package com.ninelives.insurance.payment.service;
 
 import java.time.LocalDateTime;
 
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PaymentNotificationProcessStatus;
 import com.ninelives.insurance.ref.PaymentStatus;
 import com.ninelives.insurance.ref.PolicyStatus;
+import com.ninelives.insurance.route.EndPointRef;
 
 @Service
 public class MidtransPaymentNotificationService {
@@ -36,6 +38,8 @@ public class MidtransPaymentNotificationService {
 	@Autowired OrderService orderService;
 	@Autowired InviteService inviteService;
 	@Autowired PaymentNotificationServiceTrx paymentNotificationServiceTrx;
+	
+	@Autowired FluentProducerTemplate producerTemplate;
 	
 	private static final class MidtransSuccessCondition{
 		public static final String statusCodeOk="200";
@@ -133,8 +137,10 @@ public class MidtransPaymentNotificationService {
 		}				
 
 		//(capture, settlement, pending, cancel, expired) + (deny)
+		boolean isPaymentSuccess = false;
 		if(isValidForProcessing){
-			if(isPaymentSuccess(notifDto)){
+			isPaymentSuccess = isPaymentSuccess(notifDto);
+			if(isPaymentSuccess){
 				orderUpdate.getPayment().setStatus(PaymentStatus.SUCCESS);
 				orderUpdate.getPayment().setNotifSuccessTime(now);
 				orderUpdate.setStatus(PolicyStatus.PAID);
@@ -203,10 +209,25 @@ public class MidtransPaymentNotificationService {
 					paymentNotificationServiceTrx.updateOrderAndPayment(orderUpdate);
 				}
 				
-				if (PolicyStatus.PAID.equals(orderUpdate.getStatus())
-						&& PaymentStatus.SUCCESS.equals(orderUpdate.getPayment().getStatus())) {
+				if (isPaymentSuccess) {
 					try{
-						inviteService.updateInviteOnSuccessPayment(order);
+						//send notif						
+						PolicyOrder successPaymentOrder = new PolicyOrder();
+						successPaymentOrder.setOrderId(order.getOrderId());
+						successPaymentOrder.setUserId(order.getUserId());
+						successPaymentOrder.setOrderTime(order.getOrderTime());
+						successPaymentOrder.setCoverageCategoryId(order.getCoverageCategoryId());
+						successPaymentOrder.setProviderOrderNumber(order.getProviderOrderNumber());
+						successPaymentOrder.setTotalPremi(order.getTotalPremi());
+						successPaymentOrder.setPayment(new PolicyPayment());
+						successPaymentOrder.getPayment().setProviderTransactionId(orderUpdate.getPayment().getProviderTransactionId());
+						
+						logger.debug("Send success payment order to insurance provider <{}>", successPaymentOrder);
+						producerTemplate.to(EndPointRef.QUEUE_SUCCESS_PAYMENT_TO_INSURER).withBodyAs(successPaymentOrder,PolicyOrder.class).send();
+						
+								
+						//update spend total for invite voucher
+						inviteService.updateUserAggStatOnSuccessPayment(order);
 					}catch(Exception e){
 						logger.error("Generic exception on updating invite",e);
 					}
