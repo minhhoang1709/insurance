@@ -168,9 +168,9 @@ public class ModelMapperAdapter {
 				dto.setVoucher(toDto(m.getPolicyOrderVoucher().getVoucher()));
 			}
 			
-			if(m.getStatus().equals(PolicyStatus.INPAYMENT)){
+			if(m.getStatus()!=null && m.getStatus().equals(PolicyStatus.INPAYMENT)){
 				dto.setPayment(toDto(m.getPayment()));
-			}			
+			}
 		}
 		return dto;
 	}
