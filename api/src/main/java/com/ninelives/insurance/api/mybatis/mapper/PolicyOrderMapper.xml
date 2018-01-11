@@ -111,8 +111,8 @@
   </resultMap>
       
   <sql id="Base_Column_List">
-    order_id, order_date, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
-    policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, status, created_date, 
+    order_id, order_date, order_time, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
+    policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, provider_order_number, status, created_date, 
     update_date
   </sql>
   

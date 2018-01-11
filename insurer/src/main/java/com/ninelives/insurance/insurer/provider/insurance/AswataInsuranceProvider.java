@@ -29,6 +29,7 @@ import com.ninelives.insurance.insurer.NinelivesInsurerConfigProperties;
 import com.ninelives.insurance.insurer.mybatis.mapper.InsurerPaymentConfirmLogMapper;
 import com.ninelives.insurance.model.InsurerPaymentConfirmLog;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
@@ -44,6 +45,11 @@ public class AswataInsuranceProvider {
 	
 	DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+	
+	public static final class AswataResultSuccessCondition{
+		public static final String responseCode="000000";
+		public static final int httpStatus=200;
+	}
 	
 	private RestTemplate template;
 	private String providerUrl;	
@@ -125,6 +131,19 @@ public class AswataInsuranceProvider {
 				result == null ? null : result);	
 		
 		return result;
+	}
+	
+	public boolean isSuccess(ResponseDto<PaymentConfirmResponseDto> responseResult){
+		if(responseResult!=null && responseResult.getResponse()!=null){
+			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
+					&& responseResult.getResponse().getResponseCode()!=null
+					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+					&& responseResult.getResponse().getResponseParam()!=null
+					){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@PostConstruct
