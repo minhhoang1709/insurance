@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.ninelives.insurance.payment.dto.MidtransNotificationDto;
 import com.ninelives.insurance.payment.exception.PaymentNotificationException;
 import com.ninelives.insurance.payment.service.MidtransPaymentNotificationService;
+import com.ninelives.insurance.provider.payment.midtrans.dto.MidtransNotificationDto;
 
 @Controller
 public class MidtransPaymentController {

@@ -1,4 +1,4 @@
-package com.ninelives.insurance.payment.dto;
+package com.ninelives.insurance.provider.payment.midtrans.dto;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ninelives.insurance.payment.dto.ErrorDto;
+import com.ninelives.insurance.provider.payment.midtrans.dto.ErrorDto;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
@@ -39,7 +39,7 @@ public class ErrorController extends BasicErrorController{
 		if(StringUtils.isEmpty(message)){
 			message = (String)body.get("message");
 		}
-		ErrorDto errorDto = new com.ninelives.insurance.payment.dto.ErrorDto(status.value(), ErrorCode.ERR8200_PAYMENT_NOTIF_GENERIC_ERROR, message);
+		ErrorDto errorDto = new com.ninelives.insurance.provider.payment.midtrans.dto.ErrorDto(status.value(), ErrorCode.ERR8200_PAYMENT_NOTIF_GENERIC_ERROR, message);
 		
 		Map<String, Object> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);		

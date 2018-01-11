@@ -1,4 +1,4 @@
-package com.ninelives.insurance.payment.dto;
+package com.ninelives.insurance.provider.payment.midtrans.dto;
 
 import com.ninelives.insurance.ref.ErrorCode;
 

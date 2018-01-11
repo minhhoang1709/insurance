@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.ninelives.insurance.payment.dto.ErrorDto;
 import com.ninelives.insurance.payment.exception.PaymentNotificationException;
 import com.ninelives.insurance.payment.exception.PaymentNotificationInternalException;
 import com.ninelives.insurance.payment.exception.PaymentNotificationBadRequestException;
 import com.ninelives.insurance.payment.exception.PaymentNotificationNotAuthorizedException;
+import com.ninelives.insurance.provider.payment.midtrans.dto.ErrorDto;
 
 @ControllerAdvice
 public class PaymentNotificationExceptionHandler {
