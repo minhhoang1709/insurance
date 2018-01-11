@@ -297,12 +297,13 @@ public class OrderService {
 			}
 			if(VoucherType.INVITE.equals(voucher.getVoucherType())){
 				//verify that user is eligible
-				if(!inviteService.hasInvite(userId)){
+				if(hasPaidOrder(userId)){
 					logger.debug("Process order for user: <{}> with order <{}> with result: voucher not eligible", 
 							userId,	submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4012_ORDER_VOUCHER_NOTELIGIBLE,
 							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru");
 				}
+				
 			}
 			if(!voucher.getTotalPremi().equals(submitOrderDto.getTotalPremi())){
 				logger.debug("Process order for user: <{}> with order <{}> with result: voucher premi not match, voucher: <{}>", 
