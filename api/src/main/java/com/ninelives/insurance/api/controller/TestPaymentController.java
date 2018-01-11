@@ -121,7 +121,6 @@ public class TestPaymentController {
 ////			response.setStatus(responseDto.getHttpStatus().value());
 ////		}
 ////		
-//		//TODO: return paymentTokenDto atau String as it is from midtrans
 //		
 //		return responseDto;
 //	}

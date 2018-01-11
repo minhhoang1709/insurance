@@ -1001,7 +1001,7 @@ public class OrderService {
 //	}
 	
 	
-//	//TODO remove test
+//	
 //	public List<PolicyOrderCoverage> testConflict(String userId, final OrderDto submitOrderDto){
 //		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
 //		List<Product> products = productService.fetchProductByProductIds(productIdSet);
@@ -1022,7 +1022,7 @@ public class OrderService {
 //		return checklist;
 //	}
 	
-//	//TODO remove test
+//	
 //	public List<PolicyOrder> tesFetch(String userId, final FilterDto filter){
 //		int offset = this.defaultOrdersFilterOffset;
 //		int limit = this.defaultOrdersFilterLimit;

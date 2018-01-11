@@ -128,7 +128,6 @@ public class FcmProvider {
 		//String refreshToken = googleCredential.getRefreshToken();
 		//Long expiry = googleCredential.getExpiresInSeconds();
 		
-		//TODO remove test
 		//logger.debug("Start with refresh token <{}> and expiry <{}>, the object itself is <{}>", refreshToken, expiry, googleCredential);
 		
 		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
