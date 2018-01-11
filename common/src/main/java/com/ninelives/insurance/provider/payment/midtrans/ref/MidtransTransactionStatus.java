@@ -1,4 +1,4 @@
-package com.ninelives.insurance.payment.ref;
+package com.ninelives.insurance.provider.payment.midtrans.ref;
 
 //capture, settlement, pending, cancel, expired) + (denied?
 public class MidtransTransactionStatus {

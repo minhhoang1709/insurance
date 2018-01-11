@@ -19,9 +19,9 @@ import com.ninelives.insurance.payment.exception.PaymentNotificationBadRequestEx
 import com.ninelives.insurance.payment.exception.PaymentNotificationException;
 import com.ninelives.insurance.payment.exception.PaymentNotificationNotAuthorizedException;
 import com.ninelives.insurance.payment.mybatis.mapper.PaymentNotificationLogMapper;
-import com.ninelives.insurance.payment.ref.MidtransFraudStatus;
-import com.ninelives.insurance.payment.ref.MidtransTransactionStatus;
 import com.ninelives.insurance.payment.service.trx.PaymentNotificationServiceTrx;
+import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransFraudStatus;
+import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransTransactionStatus;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PaymentNotificationProcessStatus;
 import com.ninelives.insurance.ref.PaymentStatus;

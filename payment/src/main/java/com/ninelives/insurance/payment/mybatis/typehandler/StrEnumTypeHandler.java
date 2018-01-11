@@ -11,7 +11,7 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedTypes;
 
-import com.ninelives.insurance.payment.ref.MidtransTransactionStatus;
+import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransTransactionStatus;
 import com.ninelives.insurance.ref.PaymentChargeStatus;
 import com.ninelives.insurance.ref.PaymentStatus;
 import com.ninelives.insurance.ref.PeriodUnit;
