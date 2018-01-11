@@ -1,4 +1,4 @@
-package com.ninelives.insurance.provider.notification.message;
+package com.ninelives.insurance.provider.notification.fcm.dto;
 
 import java.io.Serializable;
 

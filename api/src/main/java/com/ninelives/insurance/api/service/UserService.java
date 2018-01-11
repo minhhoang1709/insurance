@@ -29,7 +29,7 @@ import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.model.UserFile;
-import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
+import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.UserStatus;

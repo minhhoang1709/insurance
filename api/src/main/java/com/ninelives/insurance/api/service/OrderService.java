@@ -50,8 +50,8 @@ import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.model.Voucher;
-import com.ninelives.insurance.provider.notification.message.FcmNotifAction;
-import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
+import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
+import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.ref.PeriodUnit;
@@ -578,6 +578,7 @@ public class OrderService {
 				policyOrder.setHasVoucher(false);
 			}
 			
+			//TODO: reeanble aswata
 			try {
 				insuranceService.orderPolicy(policyOrder);
 			} catch (ApiInternalServerErrorException e) {
@@ -731,6 +732,7 @@ public class OrderService {
 		inviterPolicy.setPolicyStartDate(inviterPolicyStartDate);
 		inviterPolicy.setPolicyEndDate(inviterPolicyEndDate);
 
+		//TOOD: Reenable aswata
 		try {
 			insuranceService.orderPolicy(inviterPolicy);
 		} catch (ApiInternalServerErrorException e) {

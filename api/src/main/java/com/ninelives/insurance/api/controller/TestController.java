@@ -54,7 +54,7 @@ import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.Voucher;
-import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
+import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.route.EndPointRef;
 

@@ -1,4 +1,4 @@
-package com.ninelives.insurance.provider.notification.message;
+package com.ninelives.insurance.provider.notification.fcm.ref;
 
 public class FcmNotifAction {
 	public static final String order = "order";

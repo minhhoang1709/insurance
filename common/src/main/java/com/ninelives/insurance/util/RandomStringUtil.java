@@ -1,4 +1,4 @@
-package com.ninelives.insurance.model.util;
+package com.ninelives.insurance.util;
 
 import org.apache.commons.text.RandomStringGenerator;
 

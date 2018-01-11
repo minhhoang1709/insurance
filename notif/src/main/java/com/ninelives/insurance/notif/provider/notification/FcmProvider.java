@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.ninelives.insurance.notif.NinelivesNotifConfigProperties;
-import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
+import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 
 @Component
 public class FcmProvider {

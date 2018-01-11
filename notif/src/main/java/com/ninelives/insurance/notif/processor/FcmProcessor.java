@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ninelives.insurance.notif.provider.notification.FcmProvider;
-import com.ninelives.insurance.provider.notification.message.FcmNotifMessageDto;
+import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 
 @Component
 public class FcmProcessor {

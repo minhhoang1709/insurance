@@ -12,8 +12,8 @@ import com.ninelives.insurance.api.mybatis.mapper.UserAggStatMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserInviteVoucherMapper;
 import com.ninelives.insurance.model.UserInviteVoucher;
 import com.ninelives.insurance.model.Voucher;
-import com.ninelives.insurance.model.util.RandomStringUtil;
 import com.ninelives.insurance.ref.InviteVoucherStatus;
+import com.ninelives.insurance.util.RandomStringUtil;
 
 @Service
 public class InviteService {
