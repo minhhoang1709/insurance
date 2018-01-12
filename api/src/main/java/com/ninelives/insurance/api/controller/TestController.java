@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.FluentProducerTemplate;
-import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
-import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.FilterDto;
+import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.UserDto;
-import com.ninelives.insurance.api.dto.VoucherDto;
-import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
@@ -37,7 +34,6 @@ import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.api.provider.storage.StorageException;
-import com.ninelives.insurance.api.route.DirectEndPointRef;
 import com.ninelives.insurance.api.service.ClaimService;
 import com.ninelives.insurance.api.service.OrderService;
 import com.ninelives.insurance.api.service.ProductService;
@@ -48,7 +44,6 @@ import com.ninelives.insurance.api.util.GsonUtil;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyClaim;
-import com.ninelives.insurance.model.PolicyClaimDetail;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
@@ -59,6 +54,7 @@ import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.route.EndPointRef;
 
 @Controller
+@Profile("dev")
 public class TestController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TestController.class);
@@ -138,24 +134,24 @@ public class TestController {
 		return "ok-2";
 	}
 	
-	@PostMapping("/test/notifs/simulate")
-	@ResponseBody
-	public String simulateNotif(@RequestBody String requestBody){
-				
-		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
-		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
-		logger.debug("terima simulate dengan request <{}>",requestBody);
-		return "ok-2";
-	}
+//	@PostMapping("/test/notifs/simulate")
+//	@ResponseBody
+//	public String simulateNotif(@RequestBody String requestBody){
+//				
+//		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
+//		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+//		logger.debug("terima simulate dengan request <{}>",requestBody);
+//		return "ok-2";
+//	}
 	
-	@GetMapping("/test/notifs/token")
-	@ResponseBody
-	public String getGoogleToken(@RequestAttribute("authUserId") String userId){
-		RestTemplate restTemplate = new RestTemplate();				
-		ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:9643/test/token", String.class);
-		return response.getBody();
-	}
-	
+//	@GetMapping("/test/notifs/token")
+//	@ResponseBody
+//	public String getGoogleToken(@RequestAttribute("authUserId") String userId){
+//		RestTemplate restTemplate = new RestTemplate();				
+//		ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:9643/test/token", String.class);
+//		return response.getBody();
+//	}
+//	
 //	@RequestMapping(value="/test/products",
 //			method={ RequestMethod.GET })
 //	@ResponseBody

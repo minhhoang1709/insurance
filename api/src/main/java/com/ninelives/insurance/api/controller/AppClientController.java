@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ninelives.insurance.api.service.ConfigService;
 
 @Controller
-//@Produces({ MediaType.APPLICATION_JSON })
+@RequestMapping("/api")
 public class AppClientController {
 	
 	@Autowired ConfigService configService;

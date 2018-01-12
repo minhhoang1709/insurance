@@ -29,6 +29,7 @@ import com.ninelives.insurance.api.util.GsonUtil;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
+@RequestMapping("/api")
 public class ClaimController {
 	private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
 

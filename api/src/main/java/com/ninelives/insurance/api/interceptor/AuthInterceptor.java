@@ -24,33 +24,28 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	
 	private static final String HEADER_AUTHENTICATION = "Authorization";
 	
-	//Pattern paymentUrlPattern = Pattern.compile("/payment/.*");
-	
 	@Autowired AuthService authService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		logger.trace("cek interceptor {} {} {}", request.getRequestURL(), request.getMethod(), request.getRequestURI());
 		if(logger.isTraceEnabled()){
+			logger.trace("cek interceptor {} {} {}", request.getRequestURL(), request.getMethod(), request.getRequestURI());
+			
 			Enumeration<String> e = request.getHeaderNames();
 			while(e.hasMoreElements()){
 				String header = e.nextElement();
 				logger.trace("Header {}: {}", header, request.getHeader(header));
 				
 			}
+			logger.trace("--- interceptor");
 		}
-		logger.trace("--- interceptor");
 		
 		String tokenId = request.getHeader(HEADER_AUTHENTICATION);
 
-		// request.getRequestURI().equals("/payment/charge")
-		//else if(paymentUrlPattern.matcher(request.getRequestURI()).matches()){
-		//return true;
-	
 		if(StringUtils.isEmpty(tokenId)){
 			//allow POST to user without authentication
-			if (request.getRequestURI().equals("/users")
+			if (request.getRequestURI().equals("/api/users")
 					&& request.getMethod().equals(HttpMethod.POST.toString())) {
 				return true;
 			}else{
@@ -59,7 +54,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 		}else{
 			ApiSessionData sessionData = authService.validateAuthToken(tokenId);
 			if(sessionData!=null){
-				logger.debug("sessionData {}", sessionData);
+				if(logger.isTraceEnabled()){
+					logger.trace("sessionData {}", sessionData);
+				}
 				request.setAttribute(AuthService.AUTH_USER_ID, sessionData.getUserId());
 			}else{
 				return false;

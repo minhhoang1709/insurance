@@ -59,8 +59,8 @@ public class ModelMapperAdapter {
 	//TODO: replace the hardcoded imgurl and title
 	@Value("${ninelives.order.policy-imgUrl}")
 	String policyImgUrl;
-	@Value("${ninelives.order.policy-title}")
-	String policyTitle;
+//	@Value("${ninelives.order.policy-title}")
+//	String policyTitle;
 	
 	public VoucherDto toDto(Voucher m) {
 		VoucherDto dto = null;

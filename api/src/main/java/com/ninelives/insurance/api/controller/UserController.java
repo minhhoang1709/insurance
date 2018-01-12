@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +22,11 @@ import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.service.UserService;
 
 @Controller
-//@Produces({ MediaType.APPLICATION_JSON })
+@RequestMapping("/api")
 public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	

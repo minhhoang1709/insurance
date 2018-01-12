@@ -16,6 +16,7 @@ import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.service.ProductService;
 
 @Controller
+@RequestMapping("/api")
 public class ProductController {
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	

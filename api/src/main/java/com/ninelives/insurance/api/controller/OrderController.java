@@ -34,6 +34,7 @@ import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
+@RequestMapping("/api")
 public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 			

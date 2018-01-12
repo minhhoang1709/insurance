@@ -30,15 +30,17 @@ public class AuthService {
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 		
-	public AuthToken loginByEmail(String email, String password, String fcmToken) throws ApiNotAuthorizedException{
+	public AuthToken loginByEmail(String email, String password, String fcmToken) throws ApiNotAuthorizedException{		
 		AuthToken token = null;
 		
 		if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)||StringUtils.isEmpty(fcmToken)){
+			logger.info("Process login result:<{}>, reason:<Empty>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
 			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
 		
 		User user = userMapper.selectByEmail(email);
 		if(user==null || !user.getPassword().equals(DigestUtils.sha1Hex(password))){
+			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
 			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}else{
 			token = generateAuthToken();
@@ -53,12 +55,13 @@ public class AuthService {
 			if(!StringUtils.isEmpty(fcmToken) && !fcmToken.equals(user.getFcmToken())){
 				userMapper.updateFcmTokenByUserId(user.getUserId(), fcmToken);
 			}
+			logger.info("Process login result:<Success>, reason:<>, email:<{}>, userId:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email, user.getUserId());
 		}
 
 		return token;
 	}
 	
-	public ApiSessionData validateAuthToken(String tokenId) throws ApiNotAuthorizedException{		
+	public ApiSessionData validateAuthToken(String tokenId) throws ApiNotAuthorizedException{
 		if(StringUtils.isEmpty(tokenId)){
 			throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 		}		

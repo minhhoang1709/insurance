@@ -14,6 +14,7 @@ import com.ninelives.insurance.api.service.InviteService;
 import com.ninelives.insurance.api.service.VoucherService;
 
 @Controller
+@RequestMapping("/api")
 public class InviteController {
 	private static final Logger logger = LoggerFactory.getLogger(InviteController.class);
 	

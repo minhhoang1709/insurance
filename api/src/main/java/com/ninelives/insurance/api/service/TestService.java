@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.ninelives.insurance.api.dto.OrderDto;
@@ -16,6 +17,7 @@ import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.UserAggStat;
 
 @Service
+@Profile("dev")
 public class TestService {
 	@Autowired ProductService productService;
 	@Autowired TestMapper testMapper;

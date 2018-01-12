@@ -23,17 +23,13 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@Autowired DataSource dataSource;
 	//@Autowired TransactionManager trxManager;
 		
-	//TODO: Remove /test/payment dan /charge from excluded path pattern
-	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(authInterceptor).excludePathPatterns(
-				"/login",
-				"/configs",
-				"/products",
-				"/payment/*",
-				"/test/payment/*",
-				"/charge",
+				"/api/login",
+				"/api/configs",
+				"/api/products",
+				"/api/payment/*",
 				"/error");
 	}
 	

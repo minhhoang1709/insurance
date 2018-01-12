@@ -14,16 +14,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.service.AuthService;
-import com.ninelives.insurance.api.service.UserService;
-import com.ninelives.insurance.model.User;
 
 @Controller
+@RequestMapping("/api")
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
@@ -33,7 +30,6 @@ public class AuthController {
 			method=RequestMethod.POST)	
 	@ResponseBody
 	public Map<String, String> login( @RequestBody Map<String, String> loginData) throws ApiNotAuthorizedException{
-		
 		AuthToken authToken = authService.loginByEmail(loginData.get("email"), 
 				loginData.get("password"), 
 				loginData.get("fcmToken"));
@@ -45,12 +41,12 @@ public class AuthController {
 			result.put("accessToken", authToken.getTokenId());
 		}
 		
-		if(logger.isDebugEnabled()){
-			logger.debug("Terima /login POST");
+		if(logger.isTraceEnabled()){
+			logger.trace("Terima /login POST");
 			if( loginData!=null&&loginData.size()>0 ){
-				loginData.forEach((k,v)->logger.debug("Param : " + k + " | Value : " + v));
+				loginData.forEach((k,v)->logger.trace("Param : " + k + " | Value : " + v));
 			}
-			logger.debug("---");
+			logger.trace("---");
 		}
 		
 		return result;
