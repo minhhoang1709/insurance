@@ -47,18 +47,18 @@ public interface UserMapper {
     })
     int updateSyncGmailEnabledByUserId(User record);
     
-    @Update({
-        "update public.users",
-        "set name = #{name,jdbcType=VARCHAR},",
-          "gender = #{gender,jdbcType=VARCHAR},",
-          "birth_date = #{birthDate,jdbcType=DATE},",
-          "birth_place = #{birthPlace,jdbcType=VARCHAR},",
-          "phone = #{phone,jdbcType=VARCHAR},",
-          "address = #{address,jdbcType=VARCHAR},",
-          "update_date = now() ",
-        "where user_id = #{userId,jdbcType=VARCHAR}"
-    })
-    int updateProfileByUserId(User record);
+//    @Update({
+//        "update public.users",
+//        "set name = #{name,jdbcType=VARCHAR},",
+//          "gender = #{gender,jdbcType=VARCHAR},",
+//          "birth_date = #{birthDate,jdbcType=DATE},",
+//          "birth_place = #{birthPlace,jdbcType=VARCHAR},",
+//          "phone = #{phone,jdbcType=VARCHAR},",
+//          "address = #{address,jdbcType=VARCHAR},",
+//          "update_date = now() ",
+//        "where user_id = #{userId,jdbcType=VARCHAR}"
+//    })
+//    int updateProfileByUserId(User record);
     
     @Update({
         "update public.users",

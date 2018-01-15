@@ -423,7 +423,8 @@ public class OrderService {
 				
 		PolicyOrder policyOrder = null;
 		boolean isAllProfileInfoUpdated = false;
-		boolean isPhoneInfoUpdated = false;		
+		boolean isPhoneInfoUpdated = false;
+		boolean isAddressInfoUpdated = false;
 		if(!isValidateOnly){
 			final User existingUser = userService.fetchByUserId(userId);
 
@@ -442,13 +443,15 @@ public class OrderService {
 					birthDate = submitOrderDto.getUser().getBirthDate().toLocalDate();
 				}
 			}
-			//boolean isAgeAllowed = DAYS.
-			long age = ChronoUnit.YEARS.between(birthDate, today);
-			if(age > config.getOrder().getMaximumAge()||
-					age < config.getOrder().getMinimumAge()){
-				logger.debug("Process order for {} with order {} with result: age invalie", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
-						"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun");
+			//logger.debug("Going to check birthdate {}", birthDate);
+			if(birthDate != null){
+				long age = ChronoUnit.YEARS.between(birthDate, today);
+				if(age > config.getOrder().getMaximumAge()||
+						age < config.getOrder().getMinimumAge()){
+					logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
+					throw new ApiBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+							"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun");
+				}				
 			}
 			//modify phone
 			String modifiedPhone = null;
@@ -471,6 +474,7 @@ public class OrderService {
 				newUserProfile.setGender(submitOrderDto.getUser().getGender());
 				newUserProfile.setBirthDate(submitOrderDto.getUser().getBirthDate().toLocalDate());
 				newUserProfile.setBirthPlace(submitOrderDto.getUser().getBirthPlace());
+				newUserProfile.setAddress(submitOrderDto.getUser().getAddress());
 				newUserProfile.setPhone(modifiedPhone);
 				
 				if(!isUserProfileCompleteForOrder(newUserProfile)){
@@ -483,10 +487,21 @@ public class OrderService {
 				
 				isAllProfileInfoUpdated = true;
 			}else{
-				if(submitOrderDto.getUser()!=null 
-						&& !existingUser.getPhone().equals(modifiedPhone)){
-					userService.updatePhoneInfo(userId, modifiedPhone);
-					isPhoneInfoUpdated = true;
+				if(submitOrderDto.getUser()!=null){
+					User updateUser = new User();
+					updateUser.setUserId(userId);
+					
+					if(!existingUser.getPhone().equals(modifiedPhone)){
+						updateUser.setPhone(modifiedPhone);
+						isPhoneInfoUpdated = true;
+					}
+					if(!existingUser.getAddress().equals(submitOrderDto.getUser().getAddress())){
+						updateUser.setAddress(submitOrderDto.getUser().getAddress());
+						isAddressInfoUpdated = true;
+					}
+					if(isPhoneInfoUpdated || isAddressInfoUpdated){
+						userService.updateProfileInfo(updateUser);
+					}					
 				}			
 				
 			}		
@@ -525,10 +540,14 @@ public class OrderService {
 				policyOrderUser.setName(existingUser.getName());
 				policyOrderUser.setGender(existingUser.getGender());
 				policyOrderUser.setBirthDate(existingUser.getBirthDate());
-				policyOrderUser.setBirthPlace(existingUser.getBirthPlace());
-				policyOrderUser.setAddress(existingUser.getAddress());
+				policyOrderUser.setBirthPlace(existingUser.getBirthPlace());				
+				if(isAddressInfoUpdated){
+					policyOrderUser.setPhone(submitOrderDto.getUser().getAddress());
+				}else{
+					policyOrderUser.setAddress(existingUser.getAddress());
+				}
 				if(isPhoneInfoUpdated){
-					policyOrderUser.setPhone(submitOrderDto.getUser().getPhone());
+					policyOrderUser.setPhone(modifiedPhone);
 				}else{
 					policyOrderUser.setPhone(existingUser.getPhone());
 				}
@@ -778,6 +797,7 @@ public class OrderService {
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
 				|| StringUtils.isEmpty(user.getPhone())	
+				|| StringUtils.isEmpty(user.getAddress())	
 				){
 			result = false;
 		}

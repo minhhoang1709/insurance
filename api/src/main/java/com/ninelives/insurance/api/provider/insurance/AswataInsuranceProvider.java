@@ -102,7 +102,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
 
 		//TODO: remove hardcoded addresss for testing
-		requestDto.getRequestParam().setInsuredAddress("alamat jalan no rt rw kodepos");
+		//requestDto.getRequestParam().setInsuredAddress("alamat jalan no rt rw kodepos");
 		requestDto.setUserRefNo("test1234");
 		requestDto.getRequestParam().setBeneficiary("beneficiary");
 		requestDto.getRequestParam().setBeneficiaryRelation("ayah");

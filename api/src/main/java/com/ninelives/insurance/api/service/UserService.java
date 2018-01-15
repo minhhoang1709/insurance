@@ -145,7 +145,7 @@ public class UserService {
 	}
 	
 	public int updateProfileInfo(User user) {
-		return userMapper.updateProfileByUserId(user);
+		return userMapper.updateProfileAndConfigByUserIdSelective(user);
 	}
 
 	public int updatePhoneInfo(String userId, String phone) {
@@ -226,6 +226,11 @@ public class UserService {
 			updateUser.setPhone(userDto.getPhone());
 			existingProfile.setPhone(userDto.getPhone());
 		}
+		if(!StringUtils.isEmpty(userDto.getAddress()) 
+				&& !userDto.getAddress().equals(existingProfile.getAddress())){
+			updateUser.setAddress(userDto.getAddress());
+			existingProfile.setAddress(userDto.getAddress());
+		}
 		if(!MapUtils.isEmpty(userDto.getConfig())){
 			Boolean isNotifEnabledFromDto = (Boolean) userDto.getConfig().get(UserDto.CONFIG_KEY_IS_NOTIFICATION_ENABLED);
 			Boolean isGmailSyncEnabledFromDto = (Boolean) userDto.getConfig().get(UserDto.CONFIG_KEY_IS_SYNC_GMAIL_ENABLED);
@@ -262,7 +267,8 @@ public class UserService {
 				|| user.getGender()==null
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
-				|| StringUtils.isEmpty(user.getPhone())				
+				|| StringUtils.isEmpty(user.getPhone())
+				|| StringUtils.isEmpty(user.getAddress())
 				){
 			result = false;
 		}
@@ -275,7 +281,8 @@ public class UserService {
 				|| user.getGender()==null
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
-				|| StringUtils.isEmpty(user.getPhone())				
+				|| StringUtils.isEmpty(user.getPhone())	
+				|| StringUtils.isEmpty(user.getAddress())
 				){
 			result = false;
 		}
