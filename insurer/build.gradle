@@ -24,7 +24,8 @@ repositories {
 }
 
 
-dependencies {	
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')	
 	compile('org.springframework.boot:spring-boot-starter-cache')	
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
@@ -49,13 +50,13 @@ dependencies {
 	compile project(':common')		
 	
 	runtime('org.postgresql:postgresql')
-	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+	//providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 		
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 war {
-    baseName='ninelives-payment'
+    archiveName='ninelives-insurer.war'
    	from('src/main/java') {
 		include '**/*.xml'
 		into 'WEB-INF/classes'
@@ -64,4 +65,8 @@ war {
 
 bootRun {
     systemProperties = System.properties
+}
+
+springBoot {
+    executable = true
 }

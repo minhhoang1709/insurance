@@ -26,7 +26,7 @@ repositories {
 
 
 dependencies {
-	//compile('org.springframework.boot:spring-boot-starter-jersey')
+	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-redis')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
@@ -37,13 +37,10 @@ dependencies {
 	
 	//queue
 	compile('org.apache.camel:camel-spring-boot-starter:2.20.1')
-	//compile('org.apache.camel:camel-jackson-starter:2.20.1')	
 	compile('org.springframework.boot:spring-boot-starter-activemq')
 	compile('org.apache.activemq:activemq-camel:5.15.2')
 	//compile('org.apache.camel:camel-jackson:2.20.1')
-	
-	//redis	
-	//compile('redis.clients:jedis:2.9.0')
+	//compile('org.apache.camel:camel-jackson-starter:2.20.1')	
 	
 	//ehcache	
 	compile('net.sf.ehcache:ehcache:2.10.4')
@@ -68,13 +65,13 @@ dependencies {
 	compile project(':common')	
 		
 	runtime('org.postgresql:postgresql')
-	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+	//providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 war {
-	baseName='ninelives-api'
+	archiveName='ninelives-api.war'
    	from('src/main/java') {
 		include '**/*.xml'
 		into 'WEB-INF/classes'
@@ -84,3 +81,8 @@ war {
 bootRun {
     systemProperties = System.properties
 }
+
+springBoot {
+    executable = true
+}
+

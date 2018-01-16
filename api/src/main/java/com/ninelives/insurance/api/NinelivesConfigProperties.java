@@ -134,7 +134,6 @@ public class NinelivesConfigProperties {
 			this.aswataSocketTimeout = aswataSocketTimeout;
 		}
 		
-		
 	}
 
 	public static class Promo {		
