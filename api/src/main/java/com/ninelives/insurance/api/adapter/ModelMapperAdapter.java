@@ -193,6 +193,7 @@ public class ModelMapperAdapter {
 			dto = new AccidentClaimDto();
 			dto.setClaimId(m.getClaimId());
 			dto.setClaimDate(m.getClaimDate()!=null?m.getClaimDate().atStartOfDay():null);
+			dto.setAccidentDate(m.getIncidentDateTime());
 			dto.setAccidentSummary(m.getIncidentSummary());
 			dto.setStatus(m.getStatus());
 			dto.setAccidentAddress(toDto(m.getPolicyClaimDetail()));
