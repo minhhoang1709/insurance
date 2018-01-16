@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.ninelives.insurance.provider.payment.midtrans.dto.ErrorDto;
 import com.ninelives.insurance.ref.ErrorCode;
@@ -48,5 +51,13 @@ public class ErrorController extends BasicErrorController{
 		return new ResponseEntity<Map<String, Object>>(errorDtoResp, status);
 	}
 	
+	@RequestMapping(produces = "text/html")
+	@Override
+	public ModelAndView errorHtml(HttpServletRequest request,
+			HttpServletResponse response) {				
+		return null;
+		
+	}
+
 }
 
