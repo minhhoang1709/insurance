@@ -36,9 +36,9 @@ import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.api.service.FileUploadService;
 import com.ninelives.insurance.api.service.ProductService;
+import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
-import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
@@ -72,9 +72,10 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	private String productCode;
 	private final String coverageSeparator = "|";
 	
+	
 	@Override
 	public ResponseDto<OrderResponseDto> orderPolicy(PolicyOrder order) throws IOException, StorageException{
-		
+
 		ResponseDto<OrderResponseDto> result = new ResponseDto<>();
 		
 		OrderRequestDto requestDto = new OrderRequestDto();
@@ -229,7 +230,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		clientCode = config.getInsurance().getAswataClientCode();
 		clientKey = config.getInsurance().getAswataClientKey();
 		productCode = config.getInsurance().getAswataProductCode();
-		packageType = config.getInsurance().getAswataPackageType();
-		
+		packageType = config.getInsurance().getAswataPackageType();		
 	}
+	
+	
 }
