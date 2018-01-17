@@ -14,9 +14,11 @@ import org.springframework.util.StringUtils;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
+import com.ninelives.insurance.api.mybatis.mapper.UserLoginMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.model.UserLogin;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Service
@@ -26,6 +28,7 @@ public class AuthService {
 	public static final String AUTH_USER_ID = "authUserId";
 	
 	@Autowired UserMapper userMapper;
+	@Autowired UserLoginMapper loginMapper;
 	@Autowired RedisService redisService;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -45,17 +48,27 @@ public class AuthService {
 		}else{
 			token = generateAuthToken();
 			
+			UserLogin newLogin = new UserLogin();
+			newLogin.setUserId(user.getUserId());
+			newLogin.setTokenId(token.getTokenId());
+			
+			UserLogin login = loginMapper.selectByUserId(user.getUserId());
+			if(login!=null){
+				redisService.deleteAuthToken(login.getTokenId());
+				loginMapper.updateByUserId(newLogin);
+			}else{
+				loginMapper.insert(newLogin);
+			}						
+			
 			ApiSessionData sessionData = new ApiSessionData();
 			sessionData.setUserId(user.getUserId());
 			sessionData.setTokenCreatedDateTimeStr(token.getCreatedDateTimeStr());
 			
 			redisService.saveAuthToken(token, sessionData);
-			//test
-			//redisService.touchAuthToken(token.getTokenId());
 			if(!StringUtils.isEmpty(fcmToken) && !fcmToken.equals(user.getFcmToken())){
 				userMapper.updateFcmTokenByUserId(user.getUserId(), fcmToken);
 			}
-			logger.info("Process login result:<Success>, reason:<>, email:<{}>, userId:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email, user.getUserId());
+			logger.info("Process login result:<Success>, reason:<>, email:<{}>, userId:<{}>", email, user.getUserId());
 		}
 
 		return token;
@@ -65,21 +78,42 @@ public class AuthService {
 		if(StringUtils.isEmpty(tokenId)){
 			throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 		}		
-		ApiSessionData sessionData = redisService.getApiSessionData(tokenId);
+		final ApiSessionData sessionData = redisService.getApiSessionData(tokenId);
 		if(sessionData==null || StringUtils.isEmpty(sessionData.getUserId())){
-			throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
-		}		
-		return sessionData;
+			UserLogin login = loginMapper.selectByTokenId(tokenId);
+			if(login==null){
+				throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+			}
+			String createdDateTimeStr = login.getCreatedDate().format(formatter);
+			
+			AuthToken newToken =  new AuthToken();
+			newToken.setTokenId(login.getTokenId());
+			newToken.setCreatedDateTimeStr(createdDateTimeStr);
+			
+			ApiSessionData newSessionData = new ApiSessionData();
+			newSessionData.setUserId(login.getUserId());
+			newSessionData.setTokenCreatedDateTimeStr(createdDateTimeStr);
+			
+			redisService.saveAuthToken(newToken, newSessionData);
+			
+			logger.info("Fetch session from db, login:<{}>",login);
+			
+			return newSessionData;
+		}else{
+			return sessionData;
+		}
+		
 	}
 	
 	public void logout(String tokenId) {
 		redisService.deleteAuthToken(tokenId);
+		loginMapper.deleteByTokenId(tokenId);
 	}
 	
 	private AuthToken generateAuthToken(){
 		AuthToken token = new AuthToken();
 		token.setTokenId(generateTokenId());
-		token.setCreatedDateTimeStr(LocalDateTime.now().format(formatter));		
+		token.setCreatedDateTimeStr(LocalDateTime.now().format(formatter));
 		
 		return token;
 	}

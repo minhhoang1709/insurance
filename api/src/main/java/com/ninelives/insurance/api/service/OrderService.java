@@ -95,14 +95,12 @@ public class OrderService {
 //	@Value("${ninelives.order.policy-conflict-period-limit:3}")
 //	int policyConflictPeriodLimit;
 	
-	//TODO: Replace hardcoded policytitles and imgurl
-	
-	@Value("${ninelives.order.policy-title}")
-	String policyTitle;
-	
-	@Value("${ninelives.order.policy-imgUrl}")
-	String policyImgUrl;
-	
+//	@Value("${ninelives.order.policy-title}")
+//	String policyTitle;
+//	
+//	@Value("${ninelives.order.policy-imgUrl}")
+//	String policyImgUrl;
+//	
 	@Value("${ninelives.order.filter-limit:100}")
 	int defaultOrdersFilterLimit;
 	

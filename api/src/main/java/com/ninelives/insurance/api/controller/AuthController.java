@@ -56,7 +56,7 @@ public class AuthController {
 	@ResponseBody
 	public void logout(@RequestHeader("Authorization") String tokenId,
 			HttpServletResponse response){
-		logger.info("tokenid is {}", tokenId);
+		logger.debug("tokenid is {}", tokenId);
 
 		authService.logout(tokenId);				
 	}
