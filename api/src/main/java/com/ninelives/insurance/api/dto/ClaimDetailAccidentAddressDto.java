@@ -1,15 +1,18 @@
 package com.ninelives.insurance.api.dto;
 
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClaimDetailAccidentAddressDto{
+	@Size(max=255)
     private String country;
-
+	@Size(max=255)
     private String province;
-
+	@Size(max=255)
     private String city;
-
+	@Size(max=255)
     private String address;
 
 	public String getCountry() {

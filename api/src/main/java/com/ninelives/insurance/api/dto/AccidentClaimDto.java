@@ -1,12 +1,13 @@
 package com.ninelives.insurance.api.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.ref.ClaimStatus;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,12 +21,15 @@ public class AccidentClaimDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime accidentDate;
 
+    @Size(max=2500)
     private String accidentSummary;
-
+    
+    @Valid
     private ClaimDetailAccidentAddressDto accidentAddress;
-
+   
     private List<ClaimCoverageDto> claimCoverages;
-
+    
+    @Valid
     private ClaimBankAccountDto claimBankAccount;
     
     private List<ClaimDocumentDto> claimDocuments;

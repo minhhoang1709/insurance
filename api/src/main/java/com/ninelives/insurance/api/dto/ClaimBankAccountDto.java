@@ -1,13 +1,19 @@
 package com.ninelives.insurance.api.dto;
 
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClaimBankAccountDto {
+	@Size(max=255)
 	private String name;
+	@Size(max=255)
 	private String account;
+	@Size(max=255)
 	private String bankName;
 	//private String bankSwitt;
+	@Size(max=255)
 	private String bankSwiftCode;
 	
 	public String getName() {

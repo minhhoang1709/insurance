@@ -180,32 +180,34 @@ public class ClaimService {
 	
 	public PolicyClaim<PolicyClaimDetailAccident> registerAccidentalClaim(final String userId, final AccidentClaimDto claimDto, final boolean isValidateOnly) throws ApiException{
 
-		logger.debug("Process isvalidationonly {} claim for user {} with claim {}", isValidateOnly, userId, claimDto);
+		logger.info("Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>", isValidateOnly, userId, claimDto);
 		
 		LocalDate today = LocalDate.now();
 		
 		if(claimDto==null || claimDto.getOrder() == null || StringUtils.isEmpty(claimDto.getOrder().getOrderId())){
-			logger.debug("Process isvalidationonly {} claim for user {} with claim {} result: exception {} ", isValidateOnly, userId, claimDto, ErrorCode.ERR7000_CLAIM_INVALID);
+			logger.debug("Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty data>, exception:<{}>", isValidateOnly, userId, claimDto, ErrorCode.ERR7000_CLAIM_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR7000_CLAIM_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali data klaim Anda");
 		}
 		
 		PolicyOrder order = orderService.fetchOrderByOrderId(userId, claimDto.getOrder().getOrderId());
 		
 		if(order==null){
-			logger.debug("Process isvalidationonly {} claim for user {} with claim {} result: exception {} ", isValidateOnly, userId, claimDto, ErrorCode.ERR7002_CLAIM_ORDER_INVALID);
+			logger.debug("Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error order not found>, exception:<{}>", isValidateOnly, userId, claimDto, ErrorCode.ERR7002_CLAIM_ORDER_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, asuransi Anda tidak ditemukan");
 		}
 		
 		if(!order.getStatus().equals(PolicyStatus.ACTIVE)
 				&& !order.getStatus().equals(PolicyStatus.EXPIRED)){
 			logger.debug(
-					"Process isvalidationonly {} claim for user {} with claim {} result: exception {}, status order not valid",
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error status not valid>, exception:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7002_CLAIM_ORDER_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, status asuransi Anda tidak valid");
 		}
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimCoverages())){
-			logger.debug("Process isvalidationonly {} claim for user {} with claim {} result: exception {} ", isValidateOnly, userId, claimDto, ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID);
+			logger.debug(
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty claim coverage>, exception:<{}>",
+					isValidateOnly, userId, claimDto, ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali pilihan jaminan Anda");
 		}
 		
@@ -215,14 +217,16 @@ public class ClaimService {
 			if(c.getCoverage()==null
 					|| !orderCoverageSet.contains(c.getCoverage().getCoverageId())){
 				logger.debug(
-						"Process isvalidationonly {} claim for user {} with claim {} result: exception {}, selected coverage is not in order",
+						"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error selected coverage is not in order>, exception:<{}>",
 						isValidateOnly, userId, claimDto, ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID);
 				throw new ApiBadRequestException(ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali pilihan jaminan Anda");
 			}
 		}
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimDocuments())){
-			logger.debug("Process isvalidationonly {} claim for user {} with claim {} result: exception {} ", isValidateOnly, userId, claimDto, ErrorCode.ERR7004_CLAIM_DOCUMENT_EMPTY);
+			logger.debug(
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty document>, exception:<{}>",
+					isValidateOnly, userId, claimDto, ErrorCode.ERR7004_CLAIM_DOCUMENT_EMPTY);
 			throw new ApiBadRequestException(ErrorCode.ERR7004_CLAIM_DOCUMENT_EMPTY, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 		}
 		//logger.debug("Policyproducts from order adalah {}", order.getPolicyOrderProducts());
@@ -233,11 +237,15 @@ public class ClaimService {
 		int claimDocCount = 0;
 		for(ClaimDocumentDto cd: claimDto.getClaimDocuments()){
 			if(cd.getClaimDocType()==null || StringUtils.isEmpty(cd.getClaimDocType().getClaimDocTypeId())){
-				logger.debug("Process isvalidationonly {} claim for user {} with claim {} result: exception {} ", isValidateOnly, userId, claimDto, ErrorCode.ERR7005_CLAIM_DOCUMENT_INVALID);
+				logger.debug(
+						"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty claim doc type>, exception:<{}>",
+						isValidateOnly, userId, claimDto, ErrorCode.ERR7005_CLAIM_DOCUMENT_INVALID);
 				throw new ApiBadRequestException(ErrorCode.ERR7005_CLAIM_DOCUMENT_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 			}
 			else if(cd.getFile()==null||cd.getFile().getFileId()==null){
-				logger.debug("Process isvalidationonly {} claim for user {} with claim {} result: exception {} ", isValidateOnly, userId, claimDto, ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID);
+				logger.debug(
+						"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty file-id>, exception:<{}>",
+						isValidateOnly, userId, claimDto, ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID);
 				throw new ApiBadRequestException(ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 			}
 			docFromClaimSet.add(cd.getClaimDocType().getClaimDocTypeId());
@@ -251,7 +259,7 @@ public class ClaimService {
 			if(doc.getValue()==true){
 				if(!docFromClaimSet.contains(doc.getKey())){
 					logger.debug(
-							"Process isvalidationonly {} claim for user {} with claim {} result: exception {}, missing doc {} ",
+							"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error missing mandatory doc>, exception:<{}>, doc:<{}>",
 							isValidateOnly, userId, claimDto, ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY, doc.getKey());
 					throw new ApiBadRequestException(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 				}
@@ -263,7 +271,7 @@ public class ClaimService {
 		List<UserFile> userFiles = fileUploadService.selectUploadedTempFile(userId, fileIds);
 		if(userFiles.size()!=claimDocCount){
 			logger.debug(
-					"Process isvalidationonly {} claim for user {} with claim {} result: exception {} found {} declared {}",
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error doc count not match>, exception:<{}>, found:<{}>, declared:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, userFiles.size(), claimDocCount);
 			throw new ApiBadRequestException(ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 		}
@@ -271,14 +279,14 @@ public class ClaimService {
 		
 		if(!isPolicyClaimAccidentDetailIsValid(claimDto.getAccidentAddress())){
 			logger.debug(
-					"Process isvalidationonly {} claim for user {} with claim {} result: exception {}",
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error address>, exception:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7008_CLAIM_DETAIL_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR7008_CLAIM_DETAIL_INVALID, "Permintaan tidak dapat diproses, silahkan cek alamat Anda");
 		}
 		
 		if(!isPolicyClaimBankAccountIsValid(claimDto.getClaimBankAccount())){
 			logger.debug(
-					"Process isvalidationonly {} claim for user {} with claim {} result: exception {}",
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error bank info>, exception:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7009_CLAIM_BANK_ACCOUNT_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR7009_CLAIM_BANK_ACCOUNT_INVALID, "Permintaan tidak dapat diproses, silahkan info bank Anda");
 		}
@@ -348,7 +356,7 @@ public class ClaimService {
 		}
 		
 		logger.debug(
-				"Process isvalidationonly {} claim for user {} with claim {}, insert {} result: sucess",
+				"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<success>, insert:<{}>",
 				isValidateOnly, userId, claimDto, claim==null?"null":claim);
 		
 		return claim;

@@ -2,6 +2,8 @@ package com.ninelives.insurance.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,7 @@ public class ClaimController {
 	@ResponseBody
 	public AccidentClaimDto submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
-			@RequestBody AccidentClaimDto claimDto) throws ApiException{
+			@RequestBody @Valid AccidentClaimDto claimDto) throws ApiException{
 		
 		return claimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
 	}
@@ -74,7 +76,7 @@ public class ClaimController {
 	public AccidentClaimDto submitClaimAccidentWithOrderId (@RequestAttribute ("authUserId") String authUserId,
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
 			@PathVariable("orderId") String orderId,
-			@RequestBody AccidentClaimDto claimDto) throws ApiException{
+			@RequestBody @Valid AccidentClaimDto claimDto) throws ApiException{
 
 		if (!StringUtils.isEmpty(orderId)) {
 			if (claimDto != null){
