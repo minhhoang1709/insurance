@@ -3,6 +3,8 @@ package com.ninelives.insurance.api.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.PolicyStatus;
@@ -45,6 +47,7 @@ public class OrderDto {
     
     private PeriodDto period;
     
+    @Valid
     private UserDto user;
     
     private VoucherDto voucher;

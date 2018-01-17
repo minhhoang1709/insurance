@@ -1,5 +1,9 @@
 package com.ninelives.insurance.api.dto;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.BeneficiaryRelationship;
 
@@ -9,10 +13,13 @@ public class PolicyOrderBeneficiaryDto {
 
     private String orderId;
 
+    @Size(max=255)
     private String name;
 
+    @Size(max=50)
     private String phone;
 
+    @Email
     private String email;
 
     private BeneficiaryRelationship relationship;

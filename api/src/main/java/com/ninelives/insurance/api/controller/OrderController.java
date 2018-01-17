@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ public class OrderController {
 	@ResponseBody
 	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId,
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
-			@RequestBody(required=false) OrderDto submitOrder, 
+			@RequestBody(required=false) @Valid OrderDto submitOrder, 
 			HttpServletResponse response) throws ApiException{
 		
 		logger.debug("POST submitOrder with request {} and validate-only {}", submitOrder, isValidateOnly);
@@ -88,7 +89,7 @@ public class OrderController {
 	@ResponseBody
 	public PolicyOrderBeneficiaryDto updateBeneficiary(@RequestAttribute("authUserId") String authUserId,
 			@PathVariable("orderId") String orderId,
-			@RequestBody PolicyOrderBeneficiaryDto beneficiaryDto, 
+			@RequestBody @Valid PolicyOrderBeneficiaryDto beneficiaryDto, 
 			HttpServletResponse response) throws ApiException{
 		
 		logger.debug("PUT beneficiary userid is {} with order {} beneficiary {}", authUserId, orderId, beneficiaryDto);
