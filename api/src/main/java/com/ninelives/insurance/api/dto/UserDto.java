@@ -3,6 +3,8 @@ package com.ninelives.insurance.api.dto;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.Gender;
@@ -16,6 +18,7 @@ public class UserDto {
 
     private String email;
 
+    @Size(max=255)
     private String name;
 
     private Gender gender;
@@ -23,10 +26,13 @@ public class UserDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime birthDate;
 
+    @Size(max=255)
     private String birthPlace;
 
+    @Size(max=50)
     private String phone;
 
+    @Size(max=255)
     private String address;
 
     //private Long idCardFileId;

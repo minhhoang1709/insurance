@@ -1,11 +1,11 @@
 package com.ninelives.insurance.api.controller;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +36,7 @@ public class UserController {
 			method=RequestMethod.POST)
 	@ResponseBody
 	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{		
-		logger.debug("register with {}", registrationDto);
+		logger.debug("Register with dto:<{}>", registrationDto);
 		
 		RegisterUsersResult registerResult = userService.registerUserByGoogleAccount(registrationDto);
 		
@@ -51,7 +51,7 @@ public class UserController {
 			method={ RequestMethod.PATCH, RequestMethod.PUT })
 	@ResponseBody
 	public UserDto updateUsers(@RequestAttribute("authUserId") String authUserId, @PathVariable("userId") String userId,
-			@RequestBody UserDto userDto) throws ApiException {
+			@RequestBody @Valid UserDto userDto) throws ApiException {
 
 		UserDto result = userService.updateUser(authUserId, userDto);
 		

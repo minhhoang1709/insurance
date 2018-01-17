@@ -73,6 +73,7 @@ public class UserService {
 		 * TODO: verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
 		 * TODO: get access token and refresh token incase the isSyncGmailEnabled is true
 		 */
+		logger.info("Register with registration:<{}>", registrationDto);
 			
 		boolean isNew;
 		
@@ -99,6 +100,7 @@ public class UserService {
 					|| StringUtils.isEmpty(registrationDto.getGoogleId())
 					|| StringUtils.isEmpty(registrationDto.getPassword())
 					){
+				logger.error("Register with error:<{}>, registration:<{}>", ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, registrationDto);
 				throw new ApiBadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
 			}
 			
@@ -179,7 +181,7 @@ public class UserService {
 	}
 	
 	/**
-	 * If existing profile is not empty, user is only allowed to edit phone number or configuration
+	 * If existing profile is not empty, user is only allowed to edit phone number or address or configuration
 	 * 
 	 * @param userId
 	 * @param userDto
@@ -187,7 +189,7 @@ public class UserService {
 	 * @throws ApiException
 	 */
 	public UserDto updateUser(String userId, UserDto userDto) throws ApiException{
-		logger.debug("Update user {} with dto {} ", userId, userDto);
+		logger.info("Update user profile, userId:<{}>, dto:<{}>", userId, userDto);
 		if(userDto==null){
 			throw new ApiBadRequestException(ErrorCode.ERR2004_USER_EMPTY,
 					"Permintaan tidak dapat diproses, periksa kembali data pribadi Anda");
@@ -195,6 +197,8 @@ public class UserService {
 		User existingProfile = fetchByUserId(userId);
 		
 		if(existingProfile==null){
+			logger.error("Update profile:<{}>, result:<error user not found>, error:<{}>", userDto,
+					ErrorCode.ERR2003_USER_NOT_FOUND);
 			throw new ApiNotFoundException(ErrorCode.ERR2003_USER_NOT_FOUND, "User not found");
 		}
 		
@@ -204,7 +208,8 @@ public class UserService {
 			//submitted profile has include name (means modify profile)
 			if(!StringUtils.isEmpty(userDto.getName())){
 				if(!isUserProfileComplete(userDto)){
-					logger.error("Update profile {} with result: error profile not complete", userDto);
+					logger.error("Update profile:<{}>, result:<error profile not complete>, error:<{}>", userDto,
+							ErrorCode.ERR2005_USER_PROFILE_INVALID);
 					throw new ApiBadRequestException(ErrorCode.ERR2005_USER_PROFILE_INVALID,
 							"Permintaan tidak dapat diproses, periksa kembali data pribadi Anda");
 				}
