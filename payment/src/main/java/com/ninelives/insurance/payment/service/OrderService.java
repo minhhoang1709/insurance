@@ -42,10 +42,27 @@ public class OrderService {
 		}		
 	}
 	
+//	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
+//		if(policyOrder!=null){
+//			if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
+//				if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
+//					policyOrder.setStatus(PolicyStatus.OVERDUE);
+//				}
+//			}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
+//				if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
+//					policyOrder.setStatus(PolicyStatus.ACTIVE);
+//				}else if(policyOrder.getPolicyEndDate().isBefore(today)){
+//					policyOrder.setStatus(PolicyStatus.EXPIRED);
+//				}
+//			}		
+//		}
+//	}
 	protected void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null){
 			if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
 				if(policyOrder.getOrderDate().plusDays(this.policyDueDatePeriod).isBefore(today)){
+					policyOrder.setStatus(PolicyStatus.OVERDUE);
+				}else if(policyOrder.getPolicyStartDate().isBefore(today)){
 					policyOrder.setStatus(PolicyStatus.OVERDUE);
 				}
 			}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
@@ -54,7 +71,7 @@ public class OrderService {
 				}else if(policyOrder.getPolicyEndDate().isBefore(today)){
 					policyOrder.setStatus(PolicyStatus.EXPIRED);
 				}
-			}		
+			}
 		}
 	}
 }
