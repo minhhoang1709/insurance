@@ -27,7 +27,6 @@ import com.ninelives.insurance.api.service.PaymentService;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
-@RequestMapping("/api")
 public class PaymentController {
 	private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 	
