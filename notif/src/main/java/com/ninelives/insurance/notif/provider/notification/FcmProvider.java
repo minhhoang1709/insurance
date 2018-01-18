@@ -49,7 +49,7 @@ public class FcmProvider {
 	private String fcmUrl;
 	
 	public void sendNotification(FcmNotifMessageDto messageDto){
-		logger.debug("Sending fcm notification to <{}> with data <{}> and access <{}>", fcmUrl, messageDto, getAccessToken());
+		logger.debug("Sending fcm notification, url:<{}>, message:<{}>, access:<{}>", fcmUrl, messageDto, getAccessToken());
 	
 		if(messageDto == null || messageDto.getMessage()==null){
 			logger.error("Empty message");

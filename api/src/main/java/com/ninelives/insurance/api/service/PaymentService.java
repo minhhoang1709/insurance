@@ -44,7 +44,7 @@ public class PaymentService {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDate today = now.toLocalDate();
 
-		logger.debug("Charge user <{}> with charge <{}>", userId, chargeDto);
+		logger.info("Charge userId:<{}>, chargeDto:<{}>", userId, chargeDto);
 		
 		if(chargeDto==null || chargeDto.getTransactionDetails()==null || StringUtils.isEmpty(chargeDto.getTransactionDetails().getOrderId())){
 			logger.debug("Process charge for user <{}> and charge <{}> result: empty chargeDto or transaction details", userId,	chargeDto);

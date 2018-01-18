@@ -65,7 +65,7 @@ public class MidtransPaymentNotificationService {
 	
 	public void processNotification(MidtransNotificationDto notifDto) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
-		logger.debug("Process notification notif:<{}> ", notifDto);
+		logger.info("Process notification notif:<{}> ", notifDto);
 		
 		if(notifDto==null || StringUtils.isEmpty(notifDto.getOrderId())){
 			logger.error("Receive empty notifDto");

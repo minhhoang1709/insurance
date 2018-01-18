@@ -33,65 +33,65 @@ public class MidtransPaymentController {
 			@RequestHeader(required=false) Map<String,String> headers, 
 			@RequestParam(required=false) Map<String,String> requestParams, 
 			@RequestBody MidtransNotificationDto notifDto) throws PaymentNotificationException{
-		logger.info("---");
-		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
-		logger.info("Body {} ", notifDto);
-		if( headers!=null&&headers.size()>0 ){
-			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
-		}
-		if( requestParams!=null&&requestParams.size()>0 ){
-			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
-		}
+//		logger.info("---");
+//		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
+//		logger.info("Body {} ", notifDto);
+//		if( headers!=null&&headers.size()>0 ){
+//			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
+//		}
+//		if( requestParams!=null&&requestParams.size()>0 ){
+//			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+//		}
 		
 		paymentNotificationService.processNotification(notifDto);
 	}
 	
-	@RequestMapping(value="/payment/midtrans/finish")
-	@ResponseStatus(value = HttpStatus.OK)
-	public void finish(HttpServletRequest request, 
-			@RequestHeader(required=false) Map<String,String> headers, 
-			@RequestParam(required=false) Map<String,String> requestParams, 
-			@RequestBody(required=false) String requestBody){
-		logger.info("---");
-		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
-		logger.info("Body {} ", requestBody);
-		if( headers!=null&&headers.size()>0 ){
-			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
-		}
-		if( requestParams!=null&&requestParams.size()>0 ){
-			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
-		}
-	}
-	@RequestMapping(value="/payment/midtrans/unfinish")
-	@ResponseStatus(value = HttpStatus.OK)
-	public void unfinish(HttpServletRequest request,
-			@RequestHeader(required=false) Map<String,String> headers, 
-			@RequestParam(required=false) Map<String,String> requestParams, 
-			@RequestBody(required=false) String requestBody){
-		logger.info("---");
-		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
-		logger.info("Body {} ", requestBody);
-		if( headers!=null&&headers.size()>0 ){
-			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
-		}
-		if( requestParams!=null&&requestParams.size()>0 ){
-			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
-		}
-	}
-	@RequestMapping(value="/payment/midtrans/error")
-	@ResponseStatus(value = HttpStatus.OK)
-	public void error(HttpServletRequest request,
-			@RequestHeader(required=false) Map<String,String> headers, 
-			@RequestParam(required=false) Map<String,String> requestParams, 
-			@RequestBody(required=false) String requestBody){
-		logger.info("---");
-		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
-		logger.info("Body {} ", requestBody);
-		if( headers!=null&&headers.size()>0 ){
-			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
-		}
-		if( requestParams!=null&&requestParams.size()>0 ){
-			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
-		}
-	}
+//	@RequestMapping(value="/payment/midtrans/finish")
+//	@ResponseStatus(value = HttpStatus.OK)
+//	public void finish(HttpServletRequest request, 
+//			@RequestHeader(required=false) Map<String,String> headers, 
+//			@RequestParam(required=false) Map<String,String> requestParams, 
+//			@RequestBody(required=false) String requestBody){
+//		logger.info("---");
+//		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
+//		logger.info("Body {} ", requestBody);
+//		if( headers!=null&&headers.size()>0 ){
+//			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
+//		}
+//		if( requestParams!=null&&requestParams.size()>0 ){
+//			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+//		}
+//	}
+//	@RequestMapping(value="/payment/midtrans/unfinish")
+//	@ResponseStatus(value = HttpStatus.OK)
+//	public void unfinish(HttpServletRequest request,
+//			@RequestHeader(required=false) Map<String,String> headers, 
+//			@RequestParam(required=false) Map<String,String> requestParams, 
+//			@RequestBody(required=false) String requestBody){
+//		logger.info("---");
+//		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
+//		logger.info("Body {} ", requestBody);
+//		if( headers!=null&&headers.size()>0 ){
+//			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
+//		}
+//		if( requestParams!=null&&requestParams.size()>0 ){
+//			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+//		}
+//	}
+//	@RequestMapping(value="/payment/midtrans/error")
+//	@ResponseStatus(value = HttpStatus.OK)
+//	public void error(HttpServletRequest request,
+//			@RequestHeader(required=false) Map<String,String> headers, 
+//			@RequestParam(required=false) Map<String,String> requestParams, 
+//			@RequestBody(required=false) String requestBody){
+//		logger.info("---");
+//		logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
+//		logger.info("Body {} ", requestBody);
+//		if( headers!=null&&headers.size()>0 ){
+//			headers.forEach((k,v)->logger.info("Header : " + k + " | Value : " + v));
+//		}
+//		if( requestParams!=null&&requestParams.size()>0 ){
+//			requestParams.forEach((k,v)->logger.info("Param : " + k + " | Value : " + v));
+//		}
+//	}
 }
