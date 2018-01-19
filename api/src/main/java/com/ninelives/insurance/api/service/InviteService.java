@@ -4,7 +4,7 @@ import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ninelives.insurance.api.NinelivesConfigProperties;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.InviteDto;
 import com.ninelives.insurance.api.dto.VoucherDto;

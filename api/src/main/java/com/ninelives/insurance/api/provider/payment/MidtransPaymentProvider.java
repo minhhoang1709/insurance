@@ -23,10 +23,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.ninelives.insurance.api.NinelivesConfigProperties;
 import com.ninelives.insurance.api.dto.ChargeDto;
 import com.ninelives.insurance.api.dto.ChargeResponseDto;
 import com.ninelives.insurance.api.util.GsonUtil;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 
 @Service
 public class MidtransPaymentProvider implements PaymentProvider{	

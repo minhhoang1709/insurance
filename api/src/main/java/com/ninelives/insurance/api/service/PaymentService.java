@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.ninelives.insurance.api.NinelivesConfigProperties;
 import com.ninelives.insurance.api.dto.ChargeDto;
 import com.ninelives.insurance.api.dto.ChargeResponseDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
@@ -20,9 +19,11 @@ import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
 import com.ninelives.insurance.api.mybatis.mapper.PaymentChargeLogMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyPaymentMapper;
 import com.ninelives.insurance.api.provider.payment.PaymentProvider;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 import com.ninelives.insurance.model.PaymentChargeLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyPayment;
+import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransDurationUnit;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PaymentChargeStatus;
 import com.ninelives.insurance.ref.PaymentStatus;
@@ -61,7 +62,7 @@ public class PaymentService {
 		}
 		
 		if(!PolicyStatus.SUBMITTED.equals(order.getStatus())){
-			logger.debug("Process charge for user <{}> and charge <{}> result: order not in submitted state", userId, chargeDto);
+			logger.debug("Process charge for user <{}> and charge <{}> result: order not in submitted state, orderStatus:<{}>", userId, chargeDto, order.getStatus());
 			throw new ApiBadRequestException(ErrorCode.ERR8004_CHARGE_ORDER_NOT_VALID,
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
@@ -72,6 +73,7 @@ public class PaymentService {
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
 		
+		LocalDateTime chargeExpiryTime = calculateExpiryDateTime(now, config.getPayment().getMidtransPaymentExpiryUnit(), config.getPayment().getMidtransPaymentExpiryDuration());
 		PolicyPayment payment = order.getPayment();
 		if(payment==null){
 			payment = new PolicyPayment();
@@ -80,10 +82,12 @@ public class PaymentService {
 			payment.setUserId(userId);
 			payment.setStartTime(now);
 			payment.setChargeTime(now);
+			payment.setChargeExpiryTime(chargeExpiryTime);
 			payment.setTotalAmount(chargeDto.getTransactionDetails().getGrossAmount());		
 			payment.setPaymentSeq(1);
 		}else{
 			payment.setChargeTime(now);
+			payment.setChargeExpiryTime(chargeExpiryTime);
 			payment.setPaymentSeq(payment.getPaymentSeq()+1);
 		}
 
@@ -96,7 +100,7 @@ public class PaymentService {
 		midtransChargeDto.setPaymentSeq(String.valueOf(payment.getPaymentSeq()));
 		midtransChargeDto.setExpiry(new ChargeDto.Expiry());
 		midtransChargeDto.getExpiry().setDuration(String.valueOf(config.getPayment().getMidtransPaymentExpiryDuration()));
-		midtransChargeDto.getExpiry().setUnit(config.getPayment().getMidtransPaymentExpiryUnit());
+		midtransChargeDto.getExpiry().setUnit(config.getPayment().getMidtransPaymentExpiryUnit().toString());
 		
 		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getBillingAddress()!=null){
 			midtransChargeDto.getCustomerDetails().getBillingAddress().setCountryCode("IDN");
@@ -152,7 +156,15 @@ public class PaymentService {
 		
 		return chargeResponseDto;
 	}
-	
+	protected LocalDateTime calculateExpiryDateTime(LocalDateTime localDateTime, MidtransDurationUnit periodUnit, long periodValue) {
+		LocalDateTime calculatedDateTime = null;
+		if(periodUnit!=null){
+			if(MidtransDurationUnit.HOURS.equals(periodUnit)){
+				calculatedDateTime = localDateTime.plusHours(periodValue);
+			}
+		}
+		return calculatedDateTime;
+	}
 	private String generatePolicyPaymentId(){
 		return UUID.randomUUID().toString();
 	}

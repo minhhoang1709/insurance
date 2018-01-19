@@ -1,15 +1,13 @@
-package com.ninelives.insurance.api;
+package com.ninelives.insurance.config;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
+
+import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransDurationUnit;
 
 
-@ConfigurationProperties("ninelives")
-@Validated
 public class NinelivesConfigProperties {
 //	/**
 //	 * Default policy title if not specified by coverage category
@@ -205,7 +203,7 @@ public class NinelivesConfigProperties {
 		private int midtransSocketTimeout = 30000;
 		
 		private int midtransPaymentExpiryDuration = 3;
-		private String midtransPaymentExpiryUnit = "hours";
+		private MidtransDurationUnit midtransPaymentExpiryUnit = MidtransDurationUnit.HOURS;
 		
 		public String getMidtransSandboxServerKey() {
 			return midtransSandboxServerKey;
@@ -279,13 +277,13 @@ public class NinelivesConfigProperties {
 		public void setMidtransPaymentExpiryDuration(int midtransPaymentExpiryDuration) {
 			this.midtransPaymentExpiryDuration = midtransPaymentExpiryDuration;
 		}
-		public String getMidtransPaymentExpiryUnit() {
+		public MidtransDurationUnit getMidtransPaymentExpiryUnit() {
 			return midtransPaymentExpiryUnit;
 		}
-		public void setMidtransPaymentExpiryUnit(String midtransPaymentExpiryUnit) {
+		public void setMidtransPaymentExpiryUnit(MidtransDurationUnit midtransPaymentExpiryUnit) {
 			this.midtransPaymentExpiryUnit = midtransPaymentExpiryUnit;
 		}
-		
+	
 	}
 
 	public static class Storage {

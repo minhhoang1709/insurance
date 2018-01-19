@@ -21,7 +21,7 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	maven { url 'http://jcenter.bintray.com' }
+	//maven { url 'http://jcenter.bintray.com' }
 }
 
 
@@ -59,7 +59,7 @@ dependencies {
 	compile('org.apache.commons:commons-lang3:3.7')
 	
 	//payment midtrans
-	compile('id.co.veritrans:vt-java-client:1.5.0')
+	//compile('id.co.veritrans:vt-java-client:1.5.0')
 	
 	//module
 	compile project(':common')	

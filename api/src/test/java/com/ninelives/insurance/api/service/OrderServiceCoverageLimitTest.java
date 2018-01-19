@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ninelives.insurance.api.NinelivesConfigProperties;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
 

@@ -205,8 +205,8 @@ public class UserService {
 		User updateUser = new User();
 		updateUser.setUserId(userId);
 		if(!isUserProfileComplete(existingProfile)){
-			//submitted profile has include name (means modify profile)
 			if(!StringUtils.isEmpty(userDto.getName())){
+				//first time modifying profile, case submitted profile has include name (means modify full profile and not setting)
 				if(!isUserProfileComplete(userDto)){
 					logger.error("Update profile:<{}>, result:<error profile not complete>, error:<{}>", userDto,
 							ErrorCode.ERR2005_USER_PROFILE_INVALID);
@@ -273,7 +273,6 @@ public class UserService {
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
 				|| StringUtils.isEmpty(user.getPhone())
-				|| StringUtils.isEmpty(user.getAddress())
 				){
 			result = false;
 		}
@@ -286,8 +285,7 @@ public class UserService {
 				|| user.getGender()==null
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
-				|| StringUtils.isEmpty(user.getPhone())	
-				|| StringUtils.isEmpty(user.getAddress())
+				|| StringUtils.isEmpty(user.getPhone())
 				){
 			result = false;
 		}

@@ -22,7 +22,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.ninelives.insurance.api.NinelivesConfigProperties;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
@@ -485,6 +485,7 @@ public class OrderService {
 				
 				isAllProfileInfoUpdated = true;
 			}else{
+				//incase existing profile exists, allow update phone or address
 				if(submitOrderDto.getUser()!=null){
 					User updateUser = new User();
 					updateUser.setUserId(userId);
@@ -794,8 +795,7 @@ public class OrderService {
 				|| user.getGender()==null
 				|| user.getBirthDate()==null
 				|| StringUtils.isEmpty(user.getBirthPlace())
-				|| StringUtils.isEmpty(user.getPhone())	
-				|| StringUtils.isEmpty(user.getAddress())	
+				|| StringUtils.isEmpty(user.getPhone())		
 				){
 			result = false;
 		}

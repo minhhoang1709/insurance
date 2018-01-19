@@ -6,22 +6,26 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 
 @Configuration
-@EnableConfigurationProperties(NinelivesConfigProperties.class)
+@EnableConfigurationProperties
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
 			
 	@Autowired AuthInterceptor authInterceptor;
-	@Autowired NinelivesConfigProperties config;
 	@Autowired DataSource dataSource;
 	//@Autowired TransactionManager trxManager;
+	//@Autowired NinelivesConfigProperties config;
 		
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -36,9 +40,17 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@PostConstruct
 	public void configInfo() {
 		logger.info("Auto configuration, Datasource is {}", dataSource);
-		logger.info("Ninelives config is {}", config);
+		//logger.info("Ninelives config is {}", config);
 		//logger.info("Auto configuration, TransactionManagement is {}", dataSource);
 	}
+	
+	@Bean
+	@ConfigurationProperties(prefix="ninelives")
+	@Validated
+	public NinelivesConfigProperties config(){
+		return new NinelivesConfigProperties();
+	}
+	//
 	
 //	@Autowired RedisConnectionFactory redisConnectionFactory; 
 //	
