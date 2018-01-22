@@ -142,7 +142,7 @@ public class OrderService {
 	protected PolicyOrderBeneficiary registerBeneficiary(String userId, String orderId,
 			PolicyOrderBeneficiaryDto beneficiaryDto) throws ApiException{
 
-		logger.debug("Start process registerBeneficiary for {} with order {} and beneficiary {}", userId,
+		logger.info("Process start registerBeneficiary, userId:<{}>, orderId:<{}> , beneficiary:<{}>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto);
 		
 		if (beneficiaryDto == null 
@@ -151,33 +151,33 @@ public class OrderService {
 				|| StringUtils.isEmpty(beneficiaryDto.getPhone())
 				|| StringUtils.isEmpty(beneficiaryDto.getRelationship())
 				) {
-			logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} with result: exception invalid beneficiary", userId,
-					orderId, beneficiaryDto==null?"":beneficiaryDto);
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception invalid beneficiary>, error:<{}>", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4101_BENEFICIARY_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR4101_BENEFICIARY_INVALID,
 					"Permintaan tidak dapat diproses, silahkan cek kembali data penerima");
 		}
 		PolicyOrder policyOrder = fetchOrderWithBeneficiaryByOrderId(userId, orderId);
 		if(policyOrder == null){
-			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {} with result: order not found", userId,
-					orderId, beneficiaryDto);
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception order not found>, error:<{}>", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR5001_ORDER_NOT_FOUND);
 			throw new ApiBadRequestException(ErrorCode.ERR5001_ORDER_NOT_FOUND,
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}		
 		if(!policyOrder.getHasBeneficiary()){
-			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {} with result: order doesnot require beneficiary", userId,
-					orderId, beneficiaryDto);
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception order doesnt require beneficiary>, error:<{}>", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4103_BENEFICIARY_NOTACCEPTED);
 			throw new ApiBadRequestException(ErrorCode.ERR4103_BENEFICIARY_NOTACCEPTED,
 					"Permintaan tidak dapat diproses, pemesanan Anda tidak membutuhkan data penerima");
 		}
 		if(policyOrder.getPolicyOrderBeneficiary()!=null){
-			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {}  with result: beneficiary already exists", userId,
-					orderId, beneficiaryDto);
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception beneficiary already exists>, error:<{}>", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4102_BENEFICIARY_EXISTS);
 			throw new ApiBadRequestException(ErrorCode.ERR4102_BENEFICIARY_EXISTS,
 					"Permintaan tidak dapat diproses, daftar penerima sudah didaftarkan untuk asuransi ini");
 		}
 		if(policyOrder.getStatus().equals(PolicyStatus.TERMINATED)||policyOrder.getStatus().equals(PolicyStatus.EXPIRED)){
-			logger.debug("Process registerBeneficiary for user {} and order {} and beneficiary {}  with result: cannot update expired/terminated order", userId,
-					orderId, beneficiaryDto);
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<cannot update expired/terminated order>, error:<{}>", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4102_BENEFICIARY_EXISTS);
 			throw new ApiBadRequestException(ErrorCode.ERR4104_BENEFICIARY_ORDER_STATUS,
 					"Permintaan tidak dapat diproses, masa aktif asuransi Anda telah melewati periode");
 		}
@@ -193,7 +193,7 @@ public class OrderService {
 		
 		UserBeneficiary userBeneficiary = userService.fetchUserBeneficiaryByUserId(userId);
 		if(userBeneficiary==null){
-			logger.debug("Start process registerBeneficiary for {} with order {} and beneficiary {} to insert user beneficiary", userId,
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<success insert>, error:<>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto);
 
 			userBeneficiary = new UserBeneficiary();
@@ -207,8 +207,8 @@ public class OrderService {
 			
 			
 		}else if(!isEquals(beneficiary, userBeneficiary)){
-			logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} and old beneficiary {} to update user beneficiary", userId,
-					orderId, beneficiaryDto==null?"":beneficiaryDto, userBeneficiary) ;
+			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<success update>, error:<>", userId,
+					orderId, beneficiaryDto==null?"":beneficiaryDto);
 
 			userBeneficiary.setName(beneficiaryDto.getName());
 			userBeneficiary.setEmail(beneficiaryDto.getEmail());
@@ -219,8 +219,8 @@ public class OrderService {
 			
 		}
 		
-		logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} finish", userId,
-				orderId, beneficiaryDto==null?"":beneficiaryDto) ;
+//		logger.debug("Process registerBeneficiary for {} with order {} and beneficiary {} finish", userId,
+//				orderId, beneficiaryDto==null?"":beneficiaryDto) ;
 		
 		return beneficiary;
 	}
@@ -490,11 +490,12 @@ public class OrderService {
 					User updateUser = new User();
 					updateUser.setUserId(userId);
 					
-					if(!existingUser.getPhone().equals(modifiedPhone)){
+					if(modifiedPhone!=null && !existingUser.getPhone().equals(modifiedPhone)){
 						updateUser.setPhone(modifiedPhone);
 						isPhoneInfoUpdated = true;
 					}
-					if(!existingUser.getAddress().equals(submitOrderDto.getUser().getAddress())){
+					if(!StringUtils.isEmpty(submitOrderDto.getUser().getAddress()) 
+							&& !submitOrderDto.getUser().getAddress().equals(existingUser.getAddress())){
 						updateUser.setAddress(submitOrderDto.getUser().getAddress());
 						isAddressInfoUpdated = true;
 					}
@@ -660,7 +661,7 @@ public class OrderService {
 	}
 	
 	public void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		
-		logger.debug("Process registerOrder for inviter, order: <{}>",
+		logger.debug("Process registerOrder for inviter, orderInvitee: <{}>",
 				policyOrder);
 		
 		LocalDateTime now = LocalDateTime.now();
