@@ -108,7 +108,7 @@ public class UserService {
 			user.setUserId(generateUserId());
 			user.setEmail(registrationDto.getGoogleEmail());
 			user.setPassword(DigestUtils.sha1Hex(registrationDto.getPassword()));
-			user.setName(registrationDto.getGoogleName());
+			user.setGoogleName(registrationDto.getGoogleName());
 			user.setGoogleAuthCode(registrationDto.getGoogleServerAuth());
 			user.setGoogleUserId(registrationDto.getGoogleId());
 			user.setFcmToken(registrationDto.getFcmToken());

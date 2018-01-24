@@ -5,6 +5,7 @@
     <id column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="google_name" jdbcType="VARCHAR" property="googleName" />
     <result column="google_refresh_token" jdbcType="VARCHAR" property="googleRefreshToken" />
     <result column="google_auth_code" jdbcType="VARCHAR" property="googleAuthCode" />
     <result column="google_access_token" jdbcType="VARCHAR" property="googleAccessToken" />
@@ -39,6 +40,9 @@
       </if>
       <if test="email != null">
         email,
+      </if>
+      <if test="googleName != null">
+        google_name,
       </if>
       <if test="googleRefreshToken != null">
         google_refresh_token,
@@ -101,6 +105,9 @@
       </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="googleName != null">
+        #{googleName,jdbcType=VARCHAR},
       </if>
       <if test="googleRefreshToken != null">
         #{googleRefreshToken,jdbcType=VARCHAR},

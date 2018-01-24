@@ -16,6 +16,8 @@ public class User implements Serializable{
 
     private String email;
 
+    private String googleName;
+    
     private String googleRefreshToken;
 
     private String googleAuthCode;
@@ -72,9 +74,17 @@ public class User implements Serializable{
 
     public void setEmail(String email) {
         this.email = email;
-    }
+    }        
 
-    public String getGoogleRefreshToken() {
+    public String getGoogleName() {
+		return googleName;
+	}
+
+	public void setGoogleName(String googleName) {
+		this.googleName = googleName;
+	}
+
+	public String getGoogleRefreshToken() {
         return googleRefreshToken;
     }
 
@@ -210,6 +220,15 @@ public class User implements Serializable{
 		this.isNotificationEnabled = isNotificationEnabled;
 	}
 
-
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", password=***" + ", email=" + email + ", googleName=" + googleName
+				+ ", googleRefreshToken=***" + ", googleAuthCode=***"
+				+ ", googleAccessToken=***" + ", googleUserId=" + googleUserId + ", fcmToken=***" 
+				+ ", name=" + name + ", gender=" + gender + ", birthDate=" + birthDate + ", birthPlace="
+				+ birthPlace + ", phone=" + phone + ", address=" + address + ", idCardFileId=" + idCardFileId
+				+ ", status=" + status + ", isSyncGmailEnabled=" + isSyncGmailEnabled + ", isNotificationEnabled="
+				+ isNotificationEnabled + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
+	}	
     
 }
