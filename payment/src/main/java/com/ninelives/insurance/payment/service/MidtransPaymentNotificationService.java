@@ -235,9 +235,6 @@ public class MidtransPaymentNotificationService {
 			}			
 		}
 		
-		//update agg stat for user		
-		
-		//TODO: send notif to queue to be picked up and send to aswata
 		//TODO: maybe move agg stat to aswata process (after queue)
 		
 	}

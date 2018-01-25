@@ -114,10 +114,9 @@ public class FcmProvider {
 //		return token;
 //	}
 	
-	//TODO: remove test
-	public String testAccessToken(){
-		return getAccessToken();
-	}
+//	public String testAccessToken(){
+//		return getAccessToken();
+//	}
 
 	@PostConstruct
 	private void init() throws IOException {

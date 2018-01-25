@@ -598,7 +598,6 @@ public class OrderService {
 				policyOrder.setHasVoucher(false);
 			}
 			
-			//TODO: reeanble aswata
 			try {
 				insuranceService.orderPolicy(policyOrder);
 			} catch (ApiInternalServerErrorException e) {

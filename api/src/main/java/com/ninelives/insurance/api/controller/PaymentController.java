@@ -68,8 +68,7 @@ public class PaymentController {
 //			@RequestParam(required=false) Map<String,String> requestParams, 
 //			@RequestBody(required=false) String requestBody){
 //		
-//		//TODO: Tidy the logging
-//		//TODO: Return 201 created
+//		
 //		if(logger.isDebugEnabled()){
 //			logger.info("---");
 //			logger.info("Terima callback {} {}", request.getMethod(), request.getRequestURI());
