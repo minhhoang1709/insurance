@@ -99,9 +99,9 @@ public class ClaimController {
 	@ResponseBody
 	public AccidentClaimDto getClaimAccidentByClaimId (@RequestAttribute ("authUserId") String authUserId,
 			@PathVariable("claimId") String claimId) throws ApiNotFoundException{
-		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
-		logger.debug("param data: {}", claimId);
-		logger.debug("---");		
+//		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
+//		logger.debug("param data: {}", claimId);
+//		logger.debug("---");		
 		
 		AccidentClaimDto claimDto = claimService.fetchClaimDtoByClaimId(authUserId, claimId);
 		if(claimDto==null){
@@ -115,9 +115,9 @@ public class ClaimController {
 	@ResponseBody
 	public List<AccidentClaimDto> getClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
 			@RequestParam(value="filter",required=false) String filter){
-		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
-		logger.debug("param data: {}", filter);
-		logger.debug("---");
+//		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
+//		logger.debug("param data: {}", filter);
+//		logger.debug("---");
 		
 		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
@@ -130,9 +130,9 @@ public class ClaimController {
 	public List<AccidentClaimDto> getClaimAccidentByOrderId (@RequestAttribute ("authUserId") String authUserId,  
 			@PathVariable("orderId") String orderId,
 			@RequestParam(value="filter",required=false) String filter){
-		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
-		logger.debug("param data: {} and order: {}", filter, orderId);
-		logger.debug("---");
+//		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
+//		logger.debug("param data: {} and order: {}", filter, orderId);
+//		logger.debug("---");
 		
 		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
