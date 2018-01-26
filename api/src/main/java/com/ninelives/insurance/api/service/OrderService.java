@@ -40,6 +40,7 @@ import com.ninelives.insurance.api.service.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.Period;
+import com.ninelives.insurance.model.PolicyClaimCoverage;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
@@ -874,6 +875,10 @@ public class OrderService {
 					pop.setCoverageClaimDocTypes(c.getCoverageClaimDocTypes());
 					pop.setCoverageDisplayRank(c.getDisplayRank());
 				}
+				List<PolicyOrderProduct> sortedList = policyOrder.getPolicyOrderProducts().stream().sorted(
+						(o1, o2) -> Integer.compare(o1.getCoverageDisplayRank(), o2.getCoverageDisplayRank()))
+						.collect(Collectors.toList());
+				policyOrder.setPolicyOrderProducts(sortedList);
 			}
 		}		
 		
