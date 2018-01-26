@@ -92,7 +92,7 @@ public class ClaimService {
 	}
 	public List<AccidentClaimDto> fetchClaimDtos(String userId, FilterDto filterDto){
 		List<PolicyClaim<PolicyClaimDetailAccident>> policyClaims = fetchClaims(userId, filterDto);
-		logger.debug("dapat policy claims size {}",policyClaims.size());
+		//logger.debug("dapat policy claims size {}",policyClaims.size());
 		List<AccidentClaimDto> dtoList = new ArrayList<>();
 		if(policyClaims!=null){
 			for(PolicyClaim<PolicyClaimDetailAccident> c: policyClaims){
@@ -100,7 +100,7 @@ public class ClaimService {
 				dtoList.add(dto);
 			}
 		}
-		logger.debug("dapat dto size {}",dtoList.size());
+		//logger.debug("dapat dto size {}",dtoList.size());
 		return dtoList;
 	}
 	
@@ -108,8 +108,13 @@ public class ClaimService {
 		PolicyClaim<PolicyClaimDetailAccident> policyClaim = policyClaimMapper.selectByUserIdAndClaimId(userId, claimId);
 		if(policyClaim!=null){
 			for(PolicyClaimCoverage c: policyClaim.getPolicyClaimCoverages()){
-				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));		
+				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));
+				
 			}
+			List<PolicyClaimCoverage> sortedList = policyClaim.getPolicyClaimCoverages().stream().sorted(
+					(o1, o2) -> Integer.compare(o1.getCoverage().getDisplayRank(), o2.getCoverage().getDisplayRank()))
+					.collect(Collectors.toList());
+			policyClaim.setPolicyClaimCoverages(sortedList);
 			if(policyClaim.getPolicyOrder()!=null){
 				orderService.mapPolicyOrderStatus(policyClaim.getPolicyOrder(), LocalDate.now());
 			}
@@ -140,6 +145,10 @@ public class ClaimService {
 			for(PolicyClaimCoverage c: p.getPolicyClaimCoverages()){
 				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));				
 			}
+			List<PolicyClaimCoverage> sortedList = p.getPolicyClaimCoverages().stream().sorted(
+					(o1, o2) -> Integer.compare(o1.getCoverage().getDisplayRank(), o2.getCoverage().getDisplayRank()))
+					.collect(Collectors.toList());
+			p.setPolicyClaimCoverages(sortedList);
 			if(p.getPolicyOrder()!=null){
 				orderService.mapPolicyOrderStatus(p.getPolicyOrder(), today);
 			}
@@ -171,6 +180,10 @@ public class ClaimService {
 			for(PolicyClaimCoverage c: p.getPolicyClaimCoverages()){
 				c.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverageId()));				
 			}
+			List<PolicyClaimCoverage> sortedList = p.getPolicyClaimCoverages().stream().sorted(
+					(o1, o2) -> Integer.compare(o1.getCoverage().getDisplayRank(), o2.getCoverage().getDisplayRank()))
+					.collect(Collectors.toList());
+			p.setPolicyClaimCoverages(sortedList);
 			if(p.getPolicyOrder()!=null){
 				orderService.mapPolicyOrderStatus(p.getPolicyOrder(), today);
 			}
