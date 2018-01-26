@@ -89,8 +89,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setPackageType(packageType);
 		requestDto.getRequestParam().setInsuredName(StringUtils.abbreviate(order.getPolicyOrderUsers().getName(), 50));
 		requestDto.getRequestParam().setDateOfBirth(order.getPolicyOrderUsers().getBirthDate().format(dateFormatter));
-		requestDto.getRequestParam().setGender(order.getPolicyOrderUsers().getGender().toStr());
-		requestDto.getRequestParam().setInsuredAddress(StringUtils.abbreviate(order.getPolicyOrderUsers().getAddress(), 250));
+		requestDto.getRequestParam().setGender(order.getPolicyOrderUsers().getGender().toStr());		
 		requestDto.getRequestParam().setInsuranceStartDate(order.getPolicyStartDate().format(dateFormatter));
 		requestDto.getRequestParam().setInsuranceEndDate(order.getPolicyEndDate().format(dateFormatter));
 		StringJoiner joiner = new StringJoiner(coverageSeparator);
@@ -102,11 +101,14 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setMobileNumber(order.getPolicyOrderUsers().getPhone());
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
 
+		//Insured address is hardcoded into empty string
+		requestDto.getRequestParam().setInsuredAddress("-");
+		
 		//TODO: remove hardcoded addresss for testing
 		//requestDto.getRequestParam().setInsuredAddress("alamat jalan no rt rw kodepos");
-		requestDto.setUserRefNo("test1234");
-		requestDto.getRequestParam().setBeneficiary("beneficiary");
-		requestDto.getRequestParam().setBeneficiaryRelation("ayah");
+		//requestDto.setUserRefNo("test1234");		
+		//requestDto.getRequestParam().setBeneficiary("beneficiary");
+		//requestDto.getRequestParam().setBeneficiaryRelation("ayah");
 		//no beneficiary since its optional and done after payment
 		//requestDto.getRequestParam().setBeneficiary("beneficiary");
 		//requestDto.getRequestParam().setBeneficiaryRelation("ayah");
@@ -116,6 +118,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
 						
 		logger.debug("Sending to aswata with request <{}>", requestDto);
+		//todo: remove test
+		//logger.debug("Sending to aswata with requestparam <{}>", requestDto.getRequestParam());
 		
 		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
 		
@@ -174,7 +178,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 				orderLog.setProviderResponseTime(result.getResponse().getResponseTime());
 				if(result.getResponse().getResponseParam()!=null){
 					orderLog.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
-					orderLog.setOrderNumber(result.getResponse().getResponseParam().getOderNumber());
+					orderLog.setOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
 					orderLog.setDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());			
 				}
 			}
