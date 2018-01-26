@@ -17,6 +17,7 @@
     <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
     <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
     <result column="policy_document" jdbcType="VARCHAR" property="policyDocument" />
+    <result column="download_url" jdbcType="VARCHAR" property="downloadUrl" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -69,6 +70,9 @@
       <if test="policyDocument != null">
         policy_document,
       </if>
+      <if test="downloadUrl != null">
+        download_url,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="coverageCategoryId != null">
@@ -112,6 +116,9 @@
       </if>
       <if test="policyDocument != null">
         #{policyDocument,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadUrl != null">
+        #{downloadUrl,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert> 

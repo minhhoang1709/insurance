@@ -19,11 +19,18 @@ public class InsuranceService {
 	@Autowired AswataInsuranceProvider insuranceProvider;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	
-	public void paymentConfirm(PolicyOrder policyOrder){		
+	public void paymentConfirm(PolicyOrder policyOrder){
+		logger.info("Process payment confirm, order:<{}>", policyOrder);
 		ResponseDto<PaymentConfirmResponseDto>  result = insuranceProvider.paymentConfirm(policyOrder);
 		if(insuranceProvider.isSuccess(result)){
-			logger.debug("Update order status to approved, order:<{}>", policyOrder.getOrderId());
-			policyOrderMapper.updateStatusByOrderId(policyOrder.getOrderId(), PolicyStatus.APPROVED.toString());
+			PolicyOrder updateOrder = new PolicyOrder();
+			updateOrder.setOrderId(policyOrder.getOrderId());
+			updateOrder.setStatus(PolicyStatus.APPROVED);
+			if(result.getResponse().getResponseParam().getDownloadUrl()!=null){
+				updateOrder.setProviderDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+			}
+			logger.debug("Update order status to approved, order:<{}>", updateOrder);
+			policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(updateOrder);
 		}
 		
 	}

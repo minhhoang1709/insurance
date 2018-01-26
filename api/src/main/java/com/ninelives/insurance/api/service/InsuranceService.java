@@ -34,6 +34,9 @@ public class InsuranceService {
 				if(insuranceProvider.isSuccess(result)){
 					order.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
 					order.setProviderOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
+					if(result.getResponse().getResponseParam().getDownloadUrl()!=null){
+						order.setProviderDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+					}
 				}else{
 					throw new ApiInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
 				}

@@ -72,9 +72,6 @@ public class AswataInsuranceProvider {
 		requestDto.getRequestParam().setPaymentToken(order.getPayment().getProviderTransactionId());
 		requestDto.getRequestParam().setPaymentAmount(String.valueOf(order.getTotalPremi()));
 		
-		//TODO: remove test
-		//requestDto.getRequestParam().setOrderNumber("123");
-		
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
 				
@@ -120,7 +117,8 @@ public class AswataInsuranceProvider {
 				if(result.getResponse().getResponseParam()!=null){
 					insurerLog.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
 					insurerLog.setOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
-					insurerLog.setPolicyDocument(result.getResponse().getResponseParam().getPolicyDocument());			
+					insurerLog.setPolicyDocument(result.getResponse().getResponseParam().getPolicyDocument());
+					insurerLog.setDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
 				}
 			}
 		}		

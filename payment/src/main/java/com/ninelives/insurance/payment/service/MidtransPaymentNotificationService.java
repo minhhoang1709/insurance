@@ -211,7 +211,7 @@ public class MidtransPaymentNotificationService {
 				
 				if (isPaymentSuccess) {
 					try{
-						//send notif						
+						//send payment confirm to aswata			
 						PolicyOrder successPaymentOrder = new PolicyOrder();
 						successPaymentOrder.setOrderId(order.getOrderId());
 						successPaymentOrder.setUserId(order.getUserId());

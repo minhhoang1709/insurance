@@ -9,12 +9,13 @@ import com.ninelives.insurance.model.PolicyOrder;
 @Mapper
 public interface PolicyOrderMapper {
 
-	@Update({
-        "update public.policy_order",
-        "set status = #{status,jdbcType=VARCHAR},",
-          "update_date = now ()",
-        "where order_id = #{orderId,jdbcType=VARCHAR}"
-    })
-	int updateStatusByOrderId(@Param("orderId")String orderId, @Param("status") String status);
+//	@Update({
+//        "update public.policy_order",
+//        "set status = #{status,jdbcType=VARCHAR},",
+//          "update_date = now ()",
+//        "where order_id = #{orderId,jdbcType=VARCHAR}"
+//    })
+//	int updateStatusByOrderId(@Param("orderId")String orderId, @Param("status") String status);
 	
+	int updateStatusAndProviderResponseByOrderIdSelective(PolicyOrder record);
 }

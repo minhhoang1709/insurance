@@ -17,6 +17,7 @@
     <result column="product_count" jdbcType="INTEGER" property="productCount" />
     <result column="has_voucher" jdbcType="BIT" property="hasVoucher" />
     <result column="provider_order_number" jdbcType="VARCHAR" property="providerOrderNumber" />
+    <result column="provider_download_url" jdbcType="VARCHAR" property="providerDownloadUrl" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -112,13 +113,14 @@
       
   <sql id="Base_Column_List">
     order_id, order_date, order_time, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
-    policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, provider_order_number, status, created_date, 
-    update_date
+    policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, provider_order_number, provider_download_url,
+    status, created_date, update_date
   </sql>
   
   <sql id="NestedPolicyOrderColumnList">
     a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
-   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.status, a.created_date,
+   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.provider_download_url, 
+   	a.status, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
    	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 
    	b.coverage_max_limit as order_product_coverage_max_limit, 

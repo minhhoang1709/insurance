@@ -59,6 +59,13 @@ public class PaymentConfirmRequestDto  implements Serializable{
 	public void setAuthCode(String authCode) {
 		this.authCode = authCode;
 	}
+	
+	@Override
+	public String toString() {
+		return "PaymentConfirmRequestDto [serviceCode=" + serviceCode + ", userRefNo=" + userRefNo + ", clientCode="
+				+ clientCode + ", requestTime=" + requestTime + ", requestParam=" + requestParam + ", authCode="
+				+ authCode + "]";
+	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class RequestParam implements Serializable{
@@ -89,6 +96,10 @@ public class PaymentConfirmRequestDto  implements Serializable{
 		public void setPaymentAmount(String paymentAmount) {
 			this.paymentAmount = paymentAmount;
 		}
-		
+		@Override
+		public String toString() {
+			return "RequestParam [orderNumber=" + orderNumber + ", paymentToken=" + paymentToken + ", paymentAmount="
+					+ paymentAmount + "]";
+		}		
 	}
 }

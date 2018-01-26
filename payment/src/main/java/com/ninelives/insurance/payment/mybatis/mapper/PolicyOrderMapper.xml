@@ -17,6 +17,7 @@
     <result column="product_count" jdbcType="INTEGER" property="productCount" />
     <result column="has_voucher" jdbcType="BIT" property="hasVoucher" />
     <result column="provider_order_number" jdbcType="VARCHAR" property="providerOrderNumber" />
+    <result column="provider_download_url" jdbcType="VARCHAR" property="providerDownloadUrl" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <association property="period" resultMap="PeriodResultMap" />
     <association property="payment" resultMap="PolicyPaymentResultMap" />
@@ -52,7 +53,8 @@
   
   <sql id="NestedPolicyOrderColumnList">
    	a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
-   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.status, a.created_date,   	
+   	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.provider_download_url,
+   	a.status, a.created_date,   	
    	pr.period_id as period_period_id, pr.name as period_name, pr.value as period_value, pr.unit as period_unit, 
    	pp.id as payment_id, 
    	pp.start_time as payment_start_time,

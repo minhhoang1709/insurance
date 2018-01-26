@@ -32,6 +32,8 @@ public class InsurerPaymentConfirmLog {
     private String orderNumber;
 
     private String policyDocument;
+    
+    private String downloadUrl;
 
     private LocalDateTime createdDate;
 
@@ -154,8 +156,16 @@ public class InsurerPaymentConfirmLog {
     public void setPolicyDocument(String policyDocument) {
         this.policyDocument = policyDocument;
     }
+    
+    public String getDownloadUrl() {
+		return downloadUrl;
+	}
 
-    public LocalDateTime getCreatedDate() {
+	public void setDownloadUrl(String downloadUrl) {
+		this.downloadUrl = downloadUrl;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 

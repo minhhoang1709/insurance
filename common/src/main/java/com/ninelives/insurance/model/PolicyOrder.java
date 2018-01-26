@@ -39,6 +39,8 @@ public class PolicyOrder implements Serializable{
     private Boolean hasVoucher;
     
     private String providerOrderNumber;
+    
+    private String providerDownloadUrl;
 
     private PolicyStatus status;
 
@@ -179,6 +181,14 @@ public class PolicyOrder implements Serializable{
 	public void setProviderOrderNumber(String providerOrderNumber) {
 		this.providerOrderNumber = providerOrderNumber;
 	}
+	
+	public String getProviderDownloadUrl() {
+		return providerDownloadUrl;
+	}
+
+	public void setProviderDownloadUrl(String providerDownloadUrl) {
+		this.providerDownloadUrl = providerDownloadUrl;
+	}
 
 	public PolicyStatus getStatus() {
 		return status;
@@ -267,9 +277,24 @@ public class PolicyOrder implements Serializable{
 				+ ", periodId=" + periodId + ", policyNumber=" + policyNumber + ", policyStartDate=" + policyStartDate
 				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
 				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", providerOrderNumber="
-				+ providerOrderNumber + ", status=" + status + ", createdDate=" + createdDate + ", updateDate="
-				+ updateDate + ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
-				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
-				+ ", period=" + period + ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
+				+ providerOrderNumber + ", providerDownloadUrl=" + providerDownloadUrl + ", status=" + status
+				+ ", createdDate=" + createdDate + ", updateDate=" + updateDate + ", coverageCategory="
+				+ coverageCategory + ", policyOrderUsers=" + policyOrderUsers + ", policyOrderProducts="
+				+ policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary + ", period=" + period
+				+ ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
 	}
+
+	
+//	@Override
+//	public String toString() {
+//		return "PolicyOrder [orderId=" + orderId + ", orderDate=" + orderDate + ", orderTime=" + orderTime + ", userId="
+//				+ userId + ", coverageCategoryId=" + coverageCategoryId + ", hasBeneficiary=" + hasBeneficiary
+//				+ ", periodId=" + periodId + ", policyNumber=" + policyNumber + ", policyStartDate=" + policyStartDate
+//				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
+//				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", providerOrderNumber="
+//				+ providerOrderNumber + ", status=" + status + ", createdDate=" + createdDate + ", updateDate="
+//				+ updateDate + ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
+//				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
+//				+ ", period=" + period + ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
+//	}
 }

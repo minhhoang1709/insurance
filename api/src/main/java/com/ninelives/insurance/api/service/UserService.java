@@ -38,7 +38,7 @@ import com.ninelives.insurance.ref.UserStatus;
 public class UserService {
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 	
-	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = false;
+	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = true;
 	
 	@Autowired UserMapper userMapper;
 	@Autowired UserBeneficiaryMapper userBeneficiaryMapper;
