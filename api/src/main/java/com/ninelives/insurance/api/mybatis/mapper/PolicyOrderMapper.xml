@@ -292,7 +292,7 @@
 		  (#{policyEndDate,jdbcType=DATE} between a.policy_start_date and a.policy_end_date)
 		) 
 		and a.order_date &gt;= #{dueOrderDate,jdbcType=DATE}
-		and a.status != 'TERMINATED' 
+		and a.status not in ('TERMINATED','OVERDUE') 
         and b.order_id=a.order_id
         and b.coverage_id in
         <foreach item="item" index="index" collection="coverageIds"
