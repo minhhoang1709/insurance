@@ -1,7 +1,11 @@
 package com.ninelives.insurance.provider.insurance.aswata.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,6 +29,8 @@ public class PaymentConfirmResponseDto  implements Serializable{
 	private ResponseParam responseParam;
 	@JsonProperty("auth_code")
 	private String authCode;
+	
+	public Map<String, Object> other = new HashMap<>();
 	
 	public String getServiceCode() {
 		return serviceCode;
@@ -74,12 +80,29 @@ public class PaymentConfirmResponseDto  implements Serializable{
 	public void setAuthCode(String authCode) {
 		this.authCode = authCode;
 	}
+	@JsonAnyGetter
+	public Map<String, Object> any() {
+		return other;
+	}
+	@JsonAnySetter
+	public void set(String name, Object value) {
+		other.put(name, value);
+	}
+	public boolean hasUnknowProperties() {
+		return !other.isEmpty();
+	}		
+	public Map<String, Object> getOther() {
+		return other;
+	}
+	public void setOther(Map<String, Object> other) {
+		this.other = other;
+	}
 
 	@Override
 	public String toString() {
 		return "PaymentConfirmResponseDto [serviceCode=" + serviceCode + ", userRefNo=" + userRefNo + ", clientCode="
 				+ clientCode + ", responseTime=" + responseTime + ", responseCode=" + responseCode + ", errorDesc="
-				+ errorDesc + ", responseParam=" + responseParam + ", authCode=" + authCode + "]";
+				+ errorDesc + ", responseParam=" + responseParam + ", authCode=" + authCode + ", other=" + other + "]";
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -88,12 +111,14 @@ public class PaymentConfirmResponseDto  implements Serializable{
 		
 		@JsonProperty("policy_number")
 		private String policyNumber;
-		@JsonProperty("oder_number")
-		private String oderNumber;
+		@JsonProperty("order_number")
+		private String orderNumber;
 		@JsonProperty("download_url")
 		private String downloadUrl;
 		@JsonProperty("policy_document")
 		private String policyDocument;
+		
+		public Map<String, Object> other = new HashMap<>();
 		
 		public String getPolicyNumber() {
 			return policyNumber;
@@ -101,11 +126,11 @@ public class PaymentConfirmResponseDto  implements Serializable{
 		public void setPolicyNumber(String policyNumber) {
 			this.policyNumber = policyNumber;
 		}
-		public String getOderNumber() {
-			return oderNumber;
+		public String getOrderNumber() {
+			return orderNumber;
 		}
-		public void setOderNumber(String oderNumber) {
-			this.oderNumber = oderNumber;
+		public void setOrderNumber(String orderNumber) {
+			this.orderNumber = orderNumber;
 		}
 		public String getDownloadUrl() {
 			return downloadUrl;
@@ -119,10 +144,27 @@ public class PaymentConfirmResponseDto  implements Serializable{
 		public void setPolicyDocument(String policyDocument) {
 			this.policyDocument = policyDocument;
 		}
+		@JsonAnyGetter
+		public Map<String, Object> any() {
+			return other;
+		}
+		@JsonAnySetter
+		public void set(String name, Object value) {
+			other.put(name, value);
+		}
+		public boolean hasUnknowProperties() {
+			return !other.isEmpty();
+		}		
+		public Map<String, Object> getOther() {
+			return other;
+		}
+		public void setOther(Map<String, Object> other) {
+			this.other = other;
+		}
 		@Override
 		public String toString() {
-			return "ResponseParam [policyNumber=" + policyNumber + ", oderNumber=" + oderNumber + ", downloadUrl="
-					+ downloadUrl + ", policyDocument=" + policyDocument + "]";
+			return "ResponseParam [policyNumber=" + policyNumber + ", orderNumber=" + orderNumber + ", downloadUrl="
+					+ downloadUrl + ", policyDocument=" + policyDocument + ", other=" + other + "]";
 		}
 		
 	}
