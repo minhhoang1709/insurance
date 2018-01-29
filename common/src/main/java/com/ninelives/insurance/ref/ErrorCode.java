@@ -44,7 +44,11 @@ public enum ErrorCode {
 	ERR4104_BENEFICIARY_ORDER_STATUS("ERR4104"), //order status is not valid for beneficiary update
 	
 	ERR4201_ORDER_PROVIDER_FAIL("ERR4201"), //fail to submit policy to provider
-	ERR4201_ORDER_PROVIDER_FILE_ERROR("ERR4202"), //fail to read document/file to be sent
+	ERR4202_ORDER_PROVIDER_FILE_ERROR("ERR4202"), //fail to read document/file to be sent
+	
+	ERR4301_DOWNLOAD_NO_URL("ERR4301"), //fail to submit policy to provider
+	ERR4302_DOWNLOAD_NOT_ELIGIBLE("ERR4302"), //fail to read document/file to be sent
+	ERR4303_DOWNLOAD_PROVIDER_ERROR("ERR4303"), //fail to stream from aswata
 	
 	ERR5001_ORDER_NOT_FOUND("ERR5001"), //get order with given id not found
 	ERR6001_UPLOAD_EMPTY("ERR6001"), //upload with empty file

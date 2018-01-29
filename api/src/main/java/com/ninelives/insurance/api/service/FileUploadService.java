@@ -65,7 +65,7 @@ public class FileUploadService {
 				storageProvider.move(userFileTemp, userFileDst);
 			} catch (StorageException e) {
 				logger.error("Error move file {} to {} with message {}", userFileTemp, userFileDst, e.getMessage());
-				throw new ApiInternalServerErrorException(ErrorCode.ERR6002_UPLOAD_SYSTEM_ERROR, "Permintaan tidak dapat diproses, terjadi error pada sistem"); 
+				throw new ApiInternalServerErrorException(ErrorCode.ERR6002_UPLOAD_SYSTEM_ERROR, "Permintaan tidak dapat diproses, terjadi kesalahan pada sistem"); 
 			}
 			
 			userFileMapper.updateUseTypeAndPathByFileId(userFileDst);

@@ -41,7 +41,7 @@ public class InsuranceService {
 					throw new ApiInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
 				}
 			} catch (IOException | StorageException e) {
-				throw new ApiInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FILE_ERROR,
+				throw new ApiInternalServerErrorException(ErrorCode.ERR4202_ORDER_PROVIDER_FILE_ERROR,
 						"Permintaan tidak dapat diproses, terjadi error pada sistem");
 			}
 		}		

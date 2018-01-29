@@ -9,16 +9,6 @@ import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransDurationUni
 
 
 public class NinelivesConfigProperties {
-//	/**
-//	 * Default policy title if not specified by coverage category
-//	 */
-//	private String policyTitle;
-//	
-//	/**
-//	 * Default policy image url if not specified by coverage category
-//	 */
-//	private String policyImageUrl;
-	
 	private Order order = new Order();	
 	@Valid
 	private Storage storage = new Storage();

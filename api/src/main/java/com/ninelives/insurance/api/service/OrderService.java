@@ -31,6 +31,7 @@ import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
+import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
@@ -594,7 +595,7 @@ public class OrderService {
 					}else if(voucher.getVoucherType().equals(VoucherType.B2B )){
 						policyOrder.setStatus(PolicyStatus.PAID);
 					}
-				}				
+				}
 			}else{
 				policyOrder.setHasVoucher(false);
 			}
@@ -661,7 +662,7 @@ public class OrderService {
 	}
 	
 	public void registerOrderForInviter(final PolicyOrder policyOrder) throws Exception {		
-		logger.debug("Process registerOrder for inviter, orderInvitee: <{}>",
+		logger.info("Process registerOrder for inviter, orderInvitee: <{}>",
 				policyOrder);
 		
 		LocalDateTime now = LocalDateTime.now();
@@ -752,7 +753,6 @@ public class OrderService {
 		inviterPolicy.setPolicyStartDate(inviterPolicyStartDate);
 		inviterPolicy.setPolicyEndDate(inviterPolicyEndDate);
 
-		//TOOD: Reenable aswata
 		try {
 			insuranceService.orderPolicy(inviterPolicy);
 		} catch (ApiInternalServerErrorException e) {
@@ -866,6 +866,29 @@ public class OrderService {
 		return orders;
 	}
 	
+	public PolicyOrder fetchOrderForDownload(String userId, String orderId) throws ApiException{		
+		
+		PolicyOrder order = fetchOrderByOrderId(userId, orderId);
+		
+		if (order!=null && (order.getStatus().equals(PolicyStatus.APPROVED) || order.getStatus().equals(PolicyStatus.ACTIVE)
+				|| order.getStatus().equals(PolicyStatus.EXPIRED))) {
+			if(!StringUtils.isEmpty(order.getProviderDownloadUrl())){
+				logger.info("Fetch download, userId:<{}>, orderId:<{}>, downloadUrl<{}>", userId, orderId, order.getProviderDownloadUrl());
+				return order;
+			}else{
+				logger.error("Fetch download, userId:<{}>, orderId:<{}>, result:<exception empty download url>, exception:<{}>",
+						userId, orderId, ErrorCode.ERR4301_DOWNLOAD_NO_URL);
+				throw new ApiInternalServerErrorException(ErrorCode.ERR4301_DOWNLOAD_NO_URL, "Permintaan tidak dapat diproses, terjadi kesalahan pada sistem");
+			}
+		}else{
+			logger.error("Fetch download, userId:<{}>, orderId:<{}>, result:<exception status not valid>, exception:<{}>",
+					userId, orderId, ErrorCode.ERR4302_DOWNLOAD_NOT_ELIGIBLE);
+			throw new ApiBadRequestException(ErrorCode.ERR4302_DOWNLOAD_NOT_ELIGIBLE, "Permintaan tidak dapat diproses, status asuransi tidak valid");
+		}
+		
+		
+	}
+	
 	protected void postRetrieval(PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null){
 			mapPolicyOrderStatus(policyOrder,today);
@@ -924,6 +947,7 @@ public class OrderService {
 		return filterType;
 	}
 	
+
 //	protected OrderDto policyOrderToDto(final PolicyOrder policyOrder){
 //		OrderDto orderDto = null;
 //
