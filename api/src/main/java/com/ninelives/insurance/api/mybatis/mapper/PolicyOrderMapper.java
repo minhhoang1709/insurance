@@ -45,13 +45,15 @@ public interface PolicyOrderMapper {
         "has_beneficiary, period_id, ",
         "policy_number, policy_start_date, ",
         "policy_end_date, base_premi, total_premi, ",
-        "product_count, has_voucher, provider_order_number, status)",
+        "product_count, has_voucher, provider_order_number, ",
+        "provider_download_url, status)",
         "values (#{orderId,jdbcType=VARCHAR}, #{orderDate,jdbcType=DATE}, #{orderTime,jdbcType=TIMESTAMP}, ",
         "#{userId,jdbcType=VARCHAR}, #{coverageCategoryId,jdbcType=VARCHAR}, ",
         "#{hasBeneficiary,jdbcType=BIT}, #{periodId,jdbcType=VARCHAR}, ",
         "#{policyNumber,jdbcType=VARCHAR}, #{policyStartDate,jdbcType=DATE}, ",
         "#{policyEndDate,jdbcType=DATE}, #{basePremi,jdbcType=INTEGER}, #{totalPremi,jdbcType=INTEGER}, ",
-        "#{productCount,jdbcType=INTEGER}, #{hasVoucher,jdbcType=BIT}, #{providerOrderNumber,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
+        "#{productCount,jdbcType=INTEGER}, #{hasVoucher,jdbcType=BIT}, #{providerOrderNumber,jdbcType=VARCHAR}, ",
+        "#{providerDownloadUrl,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
     })
     int insert(PolicyOrder record);
 
