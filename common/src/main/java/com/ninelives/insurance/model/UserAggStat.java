@@ -6,6 +6,8 @@ public class UserAggStat {
     private String userId;
 
     private Integer successPaymentAmount;
+    
+    private Integer voucherB2bUseCnt;
 
     private LocalDateTime createdDate;
 
@@ -27,7 +29,16 @@ public class UserAggStat {
         this.successPaymentAmount = successPaymentAmount;
     }
 
-    public LocalDateTime getCreatedDate() {
+    
+    public Integer getVoucherB2bUseCnt() {
+		return voucherB2bUseCnt;
+	}
+
+	public void setVoucherB2bUseCnt(Integer voucherB2bUseCnt) {
+		this.voucherB2bUseCnt = voucherB2bUseCnt;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 

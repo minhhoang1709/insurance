@@ -10,6 +10,7 @@ import com.ninelives.insurance.api.dto.InviteDto;
 import com.ninelives.insurance.api.dto.VoucherDto;
 import com.ninelives.insurance.api.mybatis.mapper.UserAggStatMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserInviteVoucherMapper;
+import com.ninelives.insurance.model.UserAggStat;
 import com.ninelives.insurance.model.UserInviteVoucher;
 import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.ref.InviteVoucherStatus;
@@ -34,10 +35,9 @@ public class InviteService {
 		if(inviterVoucherDto == null){
 			inviterVoucherDto  = voucherService.fetchVoucherDtoForInviteById(config.getPromo().getInviteVoucherId());
 			
-			//check spend, if enough spend, generate code, otherwise return generic
-			Integer totalSpend = userAggStatMapper.selecSuccessPaymentAmountByUserId(userId);
+			boolean isEligibleGenerateVoucher = isEligibleGenerateVoucher(userId);
 			
-			if(totalSpend!=null && totalSpend >= config.getPromo().getVoucherMinimumAggregatePayment()){
+			if(isEligibleGenerateVoucher){
 				UserInviteVoucher inviteVoucher = generateInviteVoucher(userId, config.getPromo().getInviteVoucherId());
 				
 				VoucherDto newVoucherDto  = new VoucherDto();
@@ -51,6 +51,19 @@ public class InviteService {
 		}
 		dto.setInviterVoucher(inviterVoucherDto);
 		return dto;
+	}
+	
+	public boolean isEligibleGenerateVoucher(String userId){
+		//check spend, if enough spend, generate code, otherwise return generic
+		UserAggStat aggStat = userAggStatMapper.selecSuccessPaymentAmountAndB2BUseCntByUserId(userId);
+		if(aggStat!=null){
+			if ((aggStat.getSuccessPaymentAmount() != null
+					&& aggStat.getSuccessPaymentAmount() >= config.getPromo().getVoucherMinimumAggregatePayment())
+					|| (aggStat.getVoucherB2bUseCnt() != null && aggStat.getVoucherB2bUseCnt() > 0)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean hasInvite(String userId){
