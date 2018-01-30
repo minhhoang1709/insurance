@@ -1,4 +1,4 @@
-package com.ninelives.insurance.api.controller;
+package com.ninelives.insurance.api.dev;
 
 import java.util.Map;
 
