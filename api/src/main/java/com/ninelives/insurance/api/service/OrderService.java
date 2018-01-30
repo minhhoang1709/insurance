@@ -121,7 +121,12 @@ public class OrderService {
 	
 	public OrderDto submitOrder(final String userId, final OrderDto orderDto, final boolean isValidateOnly) throws ApiException{
 		PolicyOrder policyOrder = registerOrder(userId, orderDto, isValidateOnly);
-		return modelMapperAdapter.toDto(policyOrder);
+		
+		if(isValidateOnly){
+			return orderDto;
+		}else{
+			return modelMapperAdapter.toDto(policyOrder);
+		}		
 	}
 	
 	public OrderDto fetchOrderDtoByOrderId(final String userId, final String orderId){
@@ -418,7 +423,7 @@ public class OrderService {
 		if(isOverLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
-					"Permintaan tidak dapat diproses, Anda telah memiliki 3 asuransi yang akan atau telah aktif pada waktu yang sama");
+						"Anda membeli jaminan yang sama lebih dari 3 kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.");
 		}
 				
 		PolicyOrder policyOrder = null;
