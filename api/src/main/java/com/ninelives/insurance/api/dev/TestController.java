@@ -36,6 +36,7 @@ import org.springframework.web.client.RestTemplate;
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
+import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
@@ -43,6 +44,7 @@ import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
+import com.ninelives.insurance.api.provider.account.GoogleAccountProvider;
 import com.ninelives.insurance.api.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
@@ -79,6 +81,7 @@ public class TestController {
 	@Autowired StorageProvider storageService;
 	
 	@Autowired AswataInsuranceProvider aswata;
+	@Autowired GoogleAccountProvider google;
 	
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
@@ -95,7 +98,12 @@ public class TestController {
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
-	
+	@PostMapping("/test/google")
+	@ResponseBody
+	public String testGoogleVerification(@RequestBody RegistrationDto registrationDto) throws Exception{
+		String result = google.verifyEmail(registrationDto);
+		return result;
+	}
 	
 	@GetMapping("/test/aswata/order")
 	@ResponseBody

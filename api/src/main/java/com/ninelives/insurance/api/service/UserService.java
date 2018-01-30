@@ -25,6 +25,7 @@ import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.mybatis.mapper.UserBeneficiaryMapper;
 import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
+import com.ninelives.insurance.api.provider.account.AccountProvider;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
@@ -44,6 +45,7 @@ public class UserService {
 	@Autowired UserBeneficiaryMapper userBeneficiaryMapper;
 	@Autowired RedisService redisService;
 	@Autowired FileUploadService fileUploadService;
+	@Autowired AccountProvider accountProvider;
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	@Autowired NotificationService notificationService;
@@ -67,13 +69,22 @@ public class UserService {
 	 * @return
 	 * @throws ApiNotAuthorizedException
 	 */
-	public RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws ApiBadRequestException {
+	public RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws ApiException {
 		
 		/**
-		 * TODO: verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
+		 * v verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
 		 * TODO: get access token and refresh token incase the isSyncGmailEnabled is true
 		 */
-		logger.info("Register with registration:<{}>", registrationDto);
+		logger.info("Register, registration:<{}>", registrationDto);
+		
+		//verify google login
+		String verifyEmail = accountProvider.verifyEmail(registrationDto);
+		if(verifyEmail==null || !verifyEmail.equals(registrationDto.getGoogleEmail())){
+			logger.error("Register, registration:<{}>, error:<Fail to verify email>, exception:<{}>, email:<{}>",
+					registrationDto, ErrorCode.ERR3001_REGISTER_GOOGLE_FAIL, verifyEmail);
+			throw new ApiNotAuthorizedException(ErrorCode.ERR3001_REGISTER_GOOGLE_FAIL,
+					"Maaf, terjadi kesalahan pada saat verifikasi email Anda");
+		}
 			
 		boolean isNew;
 		

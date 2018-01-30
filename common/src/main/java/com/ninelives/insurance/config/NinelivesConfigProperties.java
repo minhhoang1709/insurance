@@ -1,5 +1,7 @@
 package com.ninelives.insurance.config;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -9,6 +11,7 @@ import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransDurationUni
 
 
 public class NinelivesConfigProperties {
+	
 	private Order order = new Order();	
 	@Valid
 	private Storage storage = new Storage();
@@ -18,7 +21,9 @@ public class NinelivesConfigProperties {
 	private Promo promo = new Promo();
 	@Valid
 	private Insurance insurance = new Insurance();
-
+	@Valid
+	private Account account = new Account();
+	
 	public Order getOrder() {
 		return order;
 	}
@@ -48,8 +53,42 @@ public class NinelivesConfigProperties {
 	}
 	public void setInsurance(Insurance insurance) {
 		this.insurance = insurance;
+	}	
+	public Account getAccount() {
+		return account;
+	}
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
+	public static class Account {
+		@NotEmpty
+		private String googleTokenEndpointUrl;
+		@NotEmpty
+		private List<String> googleOauth2ClientIds;
+		@NotEmpty
+		private List<String> googleIss;
+		
+		public String getGoogleTokenEndpointUrl() {
+			return googleTokenEndpointUrl;
+		}
+		public void setGoogleTokenEndpointUrl(String googleTokenEndpointUrl) {
+			this.googleTokenEndpointUrl = googleTokenEndpointUrl;
+		}
+		public List<String> getGoogleOauth2ClientIds() {
+			return googleOauth2ClientIds;
+		}
+		public void setGoogleOauth2ClientIds(List<String> googleOauth2ClientIds) {
+			this.googleOauth2ClientIds = googleOauth2ClientIds;
+		}
+		public List<String> getGoogleIss() {
+			return googleIss;
+		}
+		public void setGoogleIss(List<String> googleIss) {
+			this.googleIss = googleIss;
+		}
+		
+	}
 	public static class Insurance {
 		@NotEmpty
 		private String aswataClientCode;

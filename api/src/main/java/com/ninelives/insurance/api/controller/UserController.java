@@ -35,7 +35,7 @@ public class UserController {
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiBadRequestException{		
+	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiException{		
 		logger.debug("Register with dto:<{}>", registrationDto);
 		
 		RegisterUsersResult registerResult = userService.registerUserByGoogleAccount(registrationDto);

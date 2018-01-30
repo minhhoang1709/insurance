@@ -47,6 +47,9 @@ dependencies {
 	
 	//json
 	compile('com.google.code.gson:gson:2.8.2')
+
+	//google
+	compile('com.google.api-client:google-api-client:1.23.0')
 	
 	//jackson, javatime
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.2')
