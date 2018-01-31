@@ -42,11 +42,10 @@ public class GoogleAccountProvider implements AccountProvider{
         String emailVerify = null;
 		try {
 			GoogleIdToken token = GoogleIdToken.parse(jacksonFactory, registrationDo.getGoogleToken());
-
-			emailVerify = null;
+			
 			if (googleIdTokenVerifier.verify(token)) {
 			    GoogleIdToken.Payload payload = token.getPayload();
-			    logger.debug("payload is <{}>", payload);
+			    logger.debug("Verify account, payload:<{}>", payload);
 			    if(payload!=null){
 			    	emailVerify = payload.getEmail();
 			    }
