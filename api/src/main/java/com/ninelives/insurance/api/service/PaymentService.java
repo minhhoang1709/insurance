@@ -2,6 +2,8 @@ package com.ninelives.insurance.api.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ public class PaymentService {
 	@Autowired PolicyPaymentMapper policyPaymentMapper;
 	@Autowired PaymentChargeLogMapper paymentChargeLogMapper;
 	
+	private List<String> tier1PaymentChannels = Arrays.asList(new String[]{"credit_card", "echannel", "gopay"}); //payment channel for specific price range
 	
 	public ChargeResponseDto charge(final String userId, final ChargeDto chargeDto) throws ApiException{
 		LocalDateTime now = LocalDateTime.now();
@@ -101,6 +104,11 @@ public class PaymentService {
 		midtransChargeDto.setExpiry(new ChargeDto.Expiry());
 		midtransChargeDto.getExpiry().setDuration(String.valueOf(config.getPayment().getMidtransPaymentExpiryDuration()));
 		midtransChargeDto.getExpiry().setUnit(config.getPayment().getMidtransPaymentExpiryUnit().toString());
+		
+		if (chargeDto.getTransactionDetails().getGrossAmount() >= 5000
+				&& chargeDto.getTransactionDetails().getGrossAmount() < 10000) {
+			midtransChargeDto.setEnabledPayments(tier1PaymentChannels);
+		}
 		
 		if(midtransChargeDto.getCustomerDetails()!=null && midtransChargeDto.getCustomerDetails().getBillingAddress()!=null){
 			midtransChargeDto.getCustomerDetails().getBillingAddress().setCountryCode("IDN");

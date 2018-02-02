@@ -161,32 +161,32 @@ public class OrderService {
 			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception invalid beneficiary>, error:<{}>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4101_BENEFICIARY_INVALID);
 			throw new ApiBadRequestException(ErrorCode.ERR4101_BENEFICIARY_INVALID,
-					"Permintaan tidak dapat diproses, silahkan cek kembali data penerima");
+					"Permintaan tidak dapat diproses, silahkan cek kembali data penerima.");
 		}
 		PolicyOrder policyOrder = fetchOrderWithBeneficiaryByOrderId(userId, orderId);
 		if(policyOrder == null){
 			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception order not found>, error:<{}>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR5001_ORDER_NOT_FOUND);
 			throw new ApiBadRequestException(ErrorCode.ERR5001_ORDER_NOT_FOUND,
-					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
+					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan.");
 		}		
 		if(!policyOrder.getHasBeneficiary()){
 			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception order doesnt require beneficiary>, error:<{}>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4103_BENEFICIARY_NOTACCEPTED);
 			throw new ApiBadRequestException(ErrorCode.ERR4103_BENEFICIARY_NOTACCEPTED,
-					"Permintaan tidak dapat diproses, pemesanan Anda tidak membutuhkan data penerima");
+					"Permintaan tidak dapat diproses, pemesanan Anda tidak membutuhkan data penerima.");
 		}
 		if(policyOrder.getPolicyOrderBeneficiary()!=null){
 			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<exception beneficiary already exists>, error:<{}>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4102_BENEFICIARY_EXISTS);
 			throw new ApiBadRequestException(ErrorCode.ERR4102_BENEFICIARY_EXISTS,
-					"Permintaan tidak dapat diproses, daftar penerima sudah didaftarkan untuk asuransi ini");
+					"Permintaan tidak dapat diproses, daftar penerima sudah didaftarkan untuk asuransi ini.");
 		}
 		if(policyOrder.getStatus().equals(PolicyStatus.TERMINATED)||policyOrder.getStatus().equals(PolicyStatus.EXPIRED)){
 			logger.info("Process registerBeneficiary, userId:<{}>, orderId:<{}>, beneficiary:<{}>, result:<cannot update expired/terminated order>, error:<{}>", userId,
 					orderId, beneficiaryDto==null?"":beneficiaryDto, ErrorCode.ERR4102_BENEFICIARY_EXISTS);
 			throw new ApiBadRequestException(ErrorCode.ERR4104_BENEFICIARY_ORDER_STATUS,
-					"Permintaan tidak dapat diproses, masa aktif asuransi Anda telah melewati periode");
+					"Permintaan tidak dapat diproses, masa aktif asuransi Anda telah melewati periode.");
 		}
 		
 		PolicyOrderBeneficiary beneficiary = new PolicyOrderBeneficiary();
@@ -284,7 +284,7 @@ public class OrderService {
 			logger.debug("Process order for {} with order {} with result: exception empty order or product", 
 					userId,	submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4000_ORDER_INVALID,
-					"Permintaan tidak dapat diproses, silahkan cek kembali pesanan");
+					"Permintaan tidak dapat diproses, silahkan cek kembali pesanan.");
 		}
 		
 		//order with voucher
@@ -298,7 +298,7 @@ public class OrderService {
 				logger.debug("Process order for user: <{}> with order <{}> with result: voucher not found <{}>", 
 						userId,	submitOrderDto, e.getCode());
 				throw new ApiBadRequestException(ErrorCode.ERR4011_ORDER_VOUCHER_NOTFOUND,
-						"Permintaan tidak dapat diproses, silahkan cek kode asuransi gratis Anda");
+						"Permintaan tidak dapat diproses, silahkan cek kode asuransi gratis Anda.");
 			}
 			if(VoucherType.INVITE.equals(voucher.getVoucherType())){
 				//verify that user is eligible
@@ -306,7 +306,7 @@ public class OrderService {
 					logger.debug("Process order for user: <{}> with order <{}> with result: voucher not eligible", 
 							userId,	submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4012_ORDER_VOUCHER_NOTELIGIBLE,
-							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru");
+							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru.");
 				}
 				
 			}
@@ -314,12 +314,12 @@ public class OrderService {
 				logger.debug("Process order for user: <{}> with order <{}> with result: voucher premi not match, voucher: <{}>", 
 						userId,	submitOrderDto, voucher.getTotalPremi());
 				throw new ApiBadRequestException(ErrorCode.ERR4013_ORDER_VOUCHER_PREMI_MISMATCH,
-						"Permintaan tidak dapat diproses, premi voucher tidak sesuai dengan pemesanan");
+						"Permintaan tidak dapat diproses, premi voucher tidak sesuai dengan pemesanan.");
 			}
 			if(!voucher.getPolicyStartDate().isEqual(submitOrderDto.getPolicyStartDate().toLocalDate())||
 					!voucher.getPolicyEndDate().isEqual(submitOrderDto.getPolicyEndDate().toLocalDate())){
 				throw new ApiBadRequestException(ErrorCode.ERR4014_ORDER_VOUCHER_DATE_MISMATCH,
-						"Permintaan tidak dapat diproses, tanggal asuransi voucher tidak sesuai dengan pemesanan");
+						"Permintaan tidak dapat diproses, tanggal asuransi voucher tidak sesuai dengan pemesanan.");
 			}
 			
 			//voucherProductIdSet = voucher.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
@@ -333,16 +333,16 @@ public class OrderService {
 				
 		if(CollectionUtils.isEmpty(productIdSet)){
 			logger.debug("Process order for {} with order {} with result: exception empty product", userId, submitOrderDto);
-			throw new ApiBadRequestException(ErrorCode.ERR4001_ORDER_PRODUCT_EMPTY, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
+			throw new ApiBadRequestException(ErrorCode.ERR4001_ORDER_PRODUCT_EMPTY, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk.");
 		}
 		if(submitOrderDto.getProducts().size()!= productIdSet.size()){
 			logger.debug("Process order for {} with order {} with result: exception duplicate product", userId, submitOrderDto);
-			throw new ApiBadRequestException(ErrorCode.ERR4002_ORDER_PRODUCT_DUPLICATE, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
+			throw new ApiBadRequestException(ErrorCode.ERR4002_ORDER_PRODUCT_DUPLICATE, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk.");
 		}
 		if(!CollectionUtils.isEmpty(voucherProductIdSet)){
 			if(!voucherProductIdSet.equals(productIdSet)){
 				logger.debug("Process order for user <{}> with order <{}> with result: exception voucher product mismatch, voucher:<{}>", userId, submitOrderDto, voucherProductIdSet);
-				throw new ApiBadRequestException(ErrorCode.ERR4015_ORDER_VOUCHER_PRODUCT_MISMATCH, "Permintaan tidak dapat diproses, produk voucher tidak sesuai dengan pemesanan");	
+				throw new ApiBadRequestException(ErrorCode.ERR4015_ORDER_VOUCHER_PRODUCT_MISMATCH, "Permintaan tidak dapat diproses, produk voucher tidak sesuai dengan pemesanan.");	
 			}
 		}
 		
@@ -350,7 +350,7 @@ public class OrderService {
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isAfter(limitPolicyStartDate)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, config.getOrder().getPolicyStartDatePeriod());
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda");			
+					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");			
 //
 //			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 //					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
@@ -359,7 +359,7 @@ public class OrderService {
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isBefore(today)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date before today", userId, submitOrderDto);
 			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda");			
+					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");			
 //			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 //					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
 //							+ limitPolicyStartDate.format(formatter));
@@ -370,7 +370,7 @@ public class OrderService {
 		//List<Product> products = productService.fetchProductByProductIds(productIdSet);
 		if(CollectionUtils.isEmpty(products)||products.get(0)==null|| products.size()!=submitOrderDto.getProducts().size()){
 			logger.debug("Process order for {} with order {} with result: exception product not found", userId, submitOrderDto);
-			throw new ApiBadRequestException(ErrorCode.ERR4003_ORDER_PRODUCT_NOTFOUND, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk");
+			throw new ApiBadRequestException(ErrorCode.ERR4003_ORDER_PRODUCT_NOTFOUND, "Permintaan tidak dapat diproses, silahkan cek kembali daftar produk.");
 		}
 		//logger.debug("products is not empty? empty is {}, and the products <{}> and the size is {}",products.isEmpty(),products, products.size());
 		String periodId = products.get(0).getPeriodId();
@@ -383,16 +383,16 @@ public class OrderService {
 			//logger.debug("CHECK {}", p);
 			if(!periodId.equals(p.getPeriodId())){
 				logger.debug("Process order for {} with order {} with result: exception period mismatch", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4004_ORDER_PERIOD_MISMATCH, "Permintaan tidak dapat diproses, silahkan cek kembali periode asuransi");
+				throw new ApiBadRequestException(ErrorCode.ERR4004_ORDER_PERIOD_MISMATCH, "Permintaan tidak dapat diproses, silahkan cek kembali periode asuransi.");
 			}
 			if(!coverageCategoryId.equals(p.getCoverage().getCoverageCategoryId())){
 				logger.debug("Process order for {} with order {} with result: exception coverage mismatch", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4006_ORDER_COVERAGE_MISMATCH, "Permintaan tidak dapat diproses, pembelian lebih dari satu tipe asuransi belum didukung");
+				throw new ApiBadRequestException(ErrorCode.ERR4006_ORDER_COVERAGE_MISMATCH, "Permintaan tidak dapat diproses, pembelian lebih dari satu tipe asuransi belum didukung.");
 			}
 			//cannot by free product without voucher
 			if(ProductType.FREE.equals(p.getProductType()) && voucher==null){
 				logger.debug("Process order for {} with order {} with result: exception voucher needed", userId, submitOrderDto);
-				throw new ApiBadRequestException(ErrorCode.ERR4016_ORDER_VOUCHER_REQUIRED, "Permintaan tidak dapat diproses, produk ini hanya dapat dibeli lewat undangan");
+				throw new ApiBadRequestException(ErrorCode.ERR4016_ORDER_VOUCHER_REQUIRED, "Permintaan tidak dapat diproses, produk ini hanya dapat dibeli lewat undangan.");
 			}
 			calculatedTotalPremi += p.getPremi();
 			calculatedTotalBasePremi += p.getBasePremi();
@@ -402,7 +402,7 @@ public class OrderService {
 		if(voucher == null){
 			if(calculatedTotalPremi!=submitOrderDto.getTotalPremi()){
 				logger.debug("Process order for {} with order {} with result: exception calculated premi {} ", userId, submitOrderDto, calculatedTotalPremi);
-				throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses");
+				throw new ApiBadRequestException(ErrorCode.ERR4005_ORDER_PREMI_MISMATCH, "Permintaan tidak dapat diproses.");
 			}
 		}else{
 			calculatedTotalPremi = voucher.getTotalPremi();
@@ -415,6 +415,15 @@ public class OrderService {
 //		}
 		
 		//LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
+		
+		//if voucher is empty, then check for the price
+		if(voucher == null){
+			if(calculatedTotalPremi < config.getOrder().getMinimumPayment()){
+				logger.debug("Process order for {} with order {} with result: exception minimum payment", userId, submitOrderDto);
+				throw new ApiBadRequestException(ErrorCode.ERR4019_ORDER_PAYMENT_MINIMUM,
+							"Jumlah minimum transaksi adalah Rp. 5.000.");
+			}
+		}
 		
 		LocalDate policyEndDate = calculatePolicyEndDate(submitOrderDto.getPolicyStartDate().toLocalDate(), products.get(0).getPeriod());
 		LocalDate dueOrderDate = today.minusDays(config.getOrder().getPolicyDueDatePeriod());
@@ -438,7 +447,7 @@ public class OrderService {
 			if(existingUser.getIdCardFileId()==null){
 				logger.debug("Process order for <{}> with order <{}> with result: id card not found", userId, submitOrderDto);
 				throw new ApiBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
-						"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan");
+						"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
 			}
 			
 			//verify age
@@ -455,7 +464,7 @@ public class OrderService {
 						age < config.getOrder().getMinimumAge()){
 					logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
-							"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun");
+							"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun.");
 				}				
 			}
 			//modify phone
@@ -470,7 +479,7 @@ public class OrderService {
 				if(submitOrderDto.getUser()==null){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
-							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan");
+							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan.");
 				}
 				 
 				newUserProfile = new User();
@@ -485,7 +494,7 @@ public class OrderService {
 				if(!isUserProfileCompleteForOrder(newUserProfile)){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new ApiBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
-							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan");
+							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan.");
 				}
 				
 				userService.updateProfileInfo(newUserProfile);
@@ -616,8 +625,8 @@ public class OrderService {
 			policyOrderTrxService.registerPolicyOrder(policyOrder);
 						
 			if(voucher!=null){
-				//if product is active now, send the notification
-				sendSuccessNotification(existingUser.getFcmToken(), policyOrder, today);
+				//no need to send, comment out the success notif
+				//sendSuccessNotification(existingUser.getFcmToken(), policyOrder, today);
 				
 				//process for inviter
 				if(voucher.getVoucherType().equals(VoucherType.INVITE) &&

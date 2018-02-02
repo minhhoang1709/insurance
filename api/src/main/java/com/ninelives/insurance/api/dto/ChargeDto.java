@@ -35,6 +35,9 @@ public class ChargeDto {
 	
 	private Expiry expiry;
 	
+	@JsonProperty("enabled_payments")
+	private List<String> enabledPayments;
+	
 	@JsonIgnore
 	public Map<String, Object> other = new HashMap<>();
 	
@@ -100,6 +103,14 @@ public class ChargeDto {
 
 	public void setExpiry(Expiry expiry) {
 		this.expiry = expiry;
+	}
+	
+	public List<String> getEnabledPayments() {
+		return enabledPayments;
+	}
+
+	public void setEnabledPayments(List<String> enabledPayments) {
+		this.enabledPayments = enabledPayments;
 	}
 
 	@JsonAnyGetter
@@ -445,13 +456,9 @@ public class ChargeDto {
 
 	@Override
 	public String toString() {
-		return "ChargeDto [" + (customerDetails != null ? "customerDetails=" + customerDetails + ", " : "")
-				+ (creditCard != null ? "creditCard=" + creditCard + ", " : "")
-				+ (itemDetails != null ? "itemDetails=" + itemDetails + ", " : "")
-				+ (transactionDetails != null ? "transactionDetails=" + transactionDetails + ", " : "")
-				+ (userId != null ? "userId=" + userId + ", " : "")
-				+ (authToken != null ? "authToken=" + authToken + ", " : "")
-				+ (paymentSeq != null ? "paymentSeq=" + paymentSeq + ", " : "")
-				+ (expiry != null ? "expiry=" + expiry + ", " : "") + (other != null ? "other=" + other : "") + "]";
+		return "ChargeDto [customerDetails=" + customerDetails + ", creditCard=" + creditCard + ", itemDetails="
+				+ itemDetails + ", transactionDetails=" + transactionDetails + ", userId=" + userId + ", authToken="
+				+ authToken + ", paymentSeq=" + paymentSeq + ", expiry=" + expiry + ", enabledPayments="
+				+ enabledPayments + ", other=" + other + "]";
 	}
 }

@@ -355,7 +355,10 @@ public class NinelivesConfigProperties {
 	    
 	    private int minimumAge = 17;
 	    private int maximumAge = 60;
-
+	    
+	    private int minimumPayment = 5000;
+	    
+	    
 		public int getPolicyStartDatePeriod() {
 			return policyStartDatePeriod;
 		}
@@ -394,13 +397,21 @@ public class NinelivesConfigProperties {
 
 		public void setMaximumAge(int maximumAge) {
 			this.maximumAge = maximumAge;
+		}				
+
+		public int getMinimumPayment() {
+			return minimumPayment;
+		}
+
+		public void setMinimumPayment(int minimumPayment) {
+			this.minimumPayment = minimumPayment;
 		}
 
 		@Override
 		public String toString() {
 			return "Order [policyStartDatePeriod=" + policyStartDatePeriod + ", policyDueDatePeriod="
 					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit + ", minimumAge="
-					+ minimumAge + ", maximumAge=" + maximumAge + "]";
+					+ minimumAge + ", maximumAge=" + maximumAge + ", minimumPayment=" + minimumPayment + "]";
 		}
 		
 	}
