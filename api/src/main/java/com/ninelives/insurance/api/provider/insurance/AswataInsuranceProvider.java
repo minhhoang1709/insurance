@@ -43,7 +43,9 @@ import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
+import com.ninelives.insurance.provider.insurance.aswata.ref.PackageType;
 import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
+import com.ninelives.insurance.ref.VoucherType;
 
 @Service
 public class AswataInsuranceProvider implements InsuranceProvider{	
@@ -68,7 +70,6 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	private String providerUrl;	
 	private String clientCode;
 	private String clientKey;
-	private String packageType;
 	private String productCode;
 	private final String coverageSeparator = "|";
 	
@@ -86,7 +87,12 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		requestDto.setRequestParam(new OrderRequestDto.RequestParam());
 		requestDto.getRequestParam().setProductCode(productCode);
-		requestDto.getRequestParam().setPackageType(packageType);
+		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
+				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
+			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
+		}else{
+			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
+		}		
 		requestDto.getRequestParam().setInsuredName(StringUtils.abbreviate(order.getPolicyOrderUsers().getName(), 50));
 		requestDto.getRequestParam().setDateOfBirth(order.getPolicyOrderUsers().getBirthDate().format(dateFormatter));
 		requestDto.getRequestParam().setGender(order.getPolicyOrderUsers().getGender().toStr());		
@@ -233,8 +239,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		providerUrl = config.getInsurance().getAswataUrl();
 		clientCode = config.getInsurance().getAswataClientCode();
 		clientKey = config.getInsurance().getAswataClientKey();
-		productCode = config.getInsurance().getAswataProductCode();
-		packageType = config.getInsurance().getAswataPackageType();		
+		productCode = config.getInsurance().getAswataProductCode();			
 	}
 	
 	
