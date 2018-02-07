@@ -22,6 +22,7 @@ import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
 import com.ninelives.insurance.api.mybatis.mapper.UserFileMapper;
 import com.ninelives.insurance.api.provider.storage.StorageException;
 import com.ninelives.insurance.api.provider.storage.StorageProvider;
+import com.ninelives.insurance.config.NinelivesConfigProperties;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
@@ -34,6 +35,7 @@ public class FileUploadService {
 	@Autowired UserFileMapper userFileMapper;
 	@Autowired StorageProvider storageProvider;
 	@Autowired ModelMapperAdapter modelMapperAdapter;
+	@Autowired NinelivesConfigProperties config;
 	
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 	
@@ -127,8 +129,8 @@ public class FileUploadService {
 		}
 	}
 	
-	private Path generateFileDirectoryPath(LocalDate today, String userId, FileUseType fileUseType){		
-		Path path = Paths.get(fileUseType.toStr(), today.format(formatter), userId);
+	private Path generateFileDirectoryPath(LocalDate today, String userId, FileUseType fileUseType){
+		Path path = Paths.get(config.getStorage().getUserFilePath(), fileUseType.toStr(), today.format(formatter), userId);
 		return path;
 	}	
 	

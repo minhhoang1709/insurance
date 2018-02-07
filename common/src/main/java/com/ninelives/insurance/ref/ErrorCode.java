@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ErrorCode {
 	ERR1001_GENERIC_ERROR("ERR1001"),
+	ERR1002_STORAGE_ERROR("ERR1002"),
 	
 	ERR2001_LOGIN_FAILURE("ERR2001"),
 	ERR2002_NOT_AUTHORIZED("ERR2002"),

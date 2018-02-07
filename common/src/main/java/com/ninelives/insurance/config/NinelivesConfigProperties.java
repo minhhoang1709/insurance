@@ -12,6 +12,9 @@ import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransDurationUni
 
 public class NinelivesConfigProperties {
 	
+	@NotEmpty
+	private String helpPolicyStandardFilePath;
+	
 	private Order order = new Order();	
 	@Valid
 	private Storage storage = new Storage();
@@ -23,7 +26,13 @@ public class NinelivesConfigProperties {
 	private Insurance insurance = new Insurance();
 	@Valid
 	private Account account = new Account();
-	
+		
+	public String getHelpPolicyStandardFilePath() {
+		return helpPolicyStandardFilePath;
+	}
+	public void setHelpPolicyStandardFilePath(String helpPolicyStandardFilePath) {
+		this.helpPolicyStandardFilePath = helpPolicyStandardFilePath;
+	}
 	public Order getOrder() {
 		return order;
 	}
@@ -313,6 +322,12 @@ public class NinelivesConfigProperties {
 	     */
 		@NotEmpty
 	    private String location;
+		
+		/**
+		 * Folder under location for storing user uploaded file
+		 */
+		@NotEmpty
+		private String userFilePath;
 
 	    public String getLocation() {
 	        return location;
@@ -322,9 +337,18 @@ public class NinelivesConfigProperties {
 	        this.location = location;
 	    }
 
+	    
+		public String getUserFilePath() {
+			return userFilePath;
+		}
+
+		public void setUserFilePath(String userFilePath) {
+			this.userFilePath = userFilePath;
+		}
+
 		@Override
 		public String toString() {
-			return "Storage [" + (location != null ? "location=" + location : "") + "]";
+			return "Storage [location=" + location + ", userFilePath=" + userFilePath + "]";
 		}
 	    
 	}

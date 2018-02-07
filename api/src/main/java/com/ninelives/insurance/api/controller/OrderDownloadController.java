@@ -30,7 +30,7 @@ import com.ninelives.insurance.ref.ErrorCode;
 @RequestMapping("/api")
 @Profile("!noaswata")
 public class OrderDownloadController {
-	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+	private static final Logger logger = LoggerFactory.getLogger(OrderDownloadController.class);
 	
 	@Autowired OrderService orderService;
 	
