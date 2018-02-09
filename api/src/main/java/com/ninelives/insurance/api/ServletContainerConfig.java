@@ -21,7 +21,7 @@ public class ServletContainerConfig {
 
 			@Override
 			public void customize(ConfigurableEmbeddedServletContainer container) {
-				if (container instanceof TomcatEmbeddedServletContainerFactory) {
+				if (httpPort!=0 && container instanceof TomcatEmbeddedServletContainerFactory) {
 	                TomcatEmbeddedServletContainerFactory containerFactory =
 	                        (TomcatEmbeddedServletContainerFactory) container;
 

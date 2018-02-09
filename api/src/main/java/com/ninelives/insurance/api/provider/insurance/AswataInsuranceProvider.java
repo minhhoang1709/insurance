@@ -107,25 +107,13 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setMobileNumber(order.getPolicyOrderUsers().getPhone());
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
 
-		//Insured address is hardcoded into empty string
-		requestDto.getRequestParam().setInsuredAddress("-");
-		
-		//TODO: remove hardcoded addresss for testing
-		//requestDto.getRequestParam().setInsuredAddress("alamat jalan no rt rw kodepos");
-		//requestDto.setUserRefNo("test1234");		
-		//requestDto.getRequestParam().setBeneficiary("beneficiary");
-		//requestDto.getRequestParam().setBeneficiaryRelation("ayah");
-		//no beneficiary since its optional and done after payment
-		//requestDto.getRequestParam().setBeneficiary("beneficiary");
-		//requestDto.getRequestParam().setBeneficiaryRelation("ayah");
-		//requestDto.getRequestParam().setIndustry("");		
+		/* Insured address is hardcoded into empty string */
+		requestDto.getRequestParam().setInsuredAddress("-");				
 		
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
 						
 		logger.debug("Sending to aswata with request <{}>", requestDto);
-		//todo: remove test
-		//logger.debug("Sending to aswata with requestparam <{}>", requestDto.getRequestParam());
 		
 		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
 		

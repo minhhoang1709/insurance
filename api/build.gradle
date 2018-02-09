@@ -87,5 +87,6 @@ bootRun {
 
 springBoot {
     executable = true
+    buildInfo()
 }
 
