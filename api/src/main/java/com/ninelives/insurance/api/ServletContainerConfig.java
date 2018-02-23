@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("dev")
 public class ServletContainerConfig {
-	@Value("${server.http.port}")
+	@Value("${server.http.port:0}")
 	private int httpPort;
 
 	@Bean
