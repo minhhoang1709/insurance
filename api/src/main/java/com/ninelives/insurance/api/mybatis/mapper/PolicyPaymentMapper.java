@@ -27,10 +27,11 @@ public interface PolicyPaymentMapper {
     @Insert({
         "insert into public.policy_payment (id, order_id, ",
         "user_id, total_amount, payment_seq, ",
-        "start_time, charge_time, charge_expiry_time, status) ",
+        "start_time, charge_time, charge_expiry_time, provider_transaction_id, status) ",
         "values (#{id,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, ",
         "#{userId,jdbcType=VARCHAR}, #{totalAmount,jdbcType=INTEGER}, #{paymentSeq,jdbcType=INTEGER}, ",
-        "#{startTime,jdbcType=TIMESTAMP}, #{chargeTime,jdbcType=TIMESTAMP}, #{chargeExpiryTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR})"
+        "#{startTime,jdbcType=TIMESTAMP}, #{chargeTime,jdbcType=TIMESTAMP}, #{chargeExpiryTime,jdbcType=TIMESTAMP}, ",
+        "#{providerTransactionId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
     })
     int insertForStatusCharge(PolicyPayment record);
     

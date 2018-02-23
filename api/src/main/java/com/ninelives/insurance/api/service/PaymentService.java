@@ -43,6 +43,7 @@ public class PaymentService {
 	@Autowired PaymentChargeLogMapper paymentChargeLogMapper;
 	
 	private List<String> tier1PaymentChannels = Arrays.asList(new String[]{"credit_card", "echannel", "gopay"}); //payment channel for specific price range
+	private String creditCardProcessingBank = "bni";
 	
 	public ChargeResponseDto charge(final String userId, final ChargeDto chargeDto) throws ApiException{
 		LocalDateTime now = LocalDateTime.now();
@@ -78,7 +79,9 @@ public class PaymentService {
 		
 		LocalDateTime chargeExpiryTime = calculateExpiryDateTime(now, config.getPayment().getMidtransPaymentExpiryUnit(), config.getPayment().getMidtransPaymentExpiryDuration());
 		PolicyPayment payment = order.getPayment();
+		boolean isFirstPayment = false; 
 		if(payment==null){
+			isFirstPayment = true;
 			payment = new PolicyPayment();
 			payment.setId(generatePolicyPaymentId());
 			payment.setOrderId(chargeDto.getTransactionDetails().getOrderId());
@@ -96,7 +99,11 @@ public class PaymentService {
 
 		ChargeDto midtransChargeDto = new ChargeDto();
 		midtransChargeDto.setUserId(userId);
-		midtransChargeDto.setCreditCard(chargeDto.getCreditCard());
+		//midtransChargeDto.setCreditCard(chargeDto.getCreditCard());
+		midtransChargeDto.setCreditCard(new ChargeDto.CreditCard());
+		midtransChargeDto.getCreditCard().setBank(creditCardProcessingBank);
+		midtransChargeDto.getCreditCard().setSaveCard(false);
+		midtransChargeDto.getCreditCard().setSecure(true);
 		midtransChargeDto.setCustomerDetails(chargeDto.getCustomerDetails());
 		midtransChargeDto.setItemDetails(chargeDto.getItemDetails());
 		midtransChargeDto.setTransactionDetails(chargeDto.getTransactionDetails());
@@ -151,7 +158,7 @@ public class PaymentService {
 		if(chargeResponseDto!=null && !StringUtils.isEmpty(chargeResponseDto.getToken())){
 			payment.setStatus(PaymentStatus.CHARGE);
 			payment.setProviderTransactionId(chargeResponseDto.getToken());
-			if(order.getPayment()==null){
+			if(isFirstPayment){
 				policyPaymentMapper.insertForStatusCharge(payment);
 			}else{
 				policyPaymentMapper.updateChargeResponseById(payment);
