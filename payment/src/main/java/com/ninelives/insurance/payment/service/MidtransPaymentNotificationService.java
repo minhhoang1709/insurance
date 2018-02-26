@@ -65,7 +65,7 @@ public class MidtransPaymentNotificationService {
 	
 	public void processNotification(MidtransNotificationDto notifDto) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
-		logger.info("Process notification notif:<{}> ", notifDto);
+		logger.info("Start process notification notif:<{}> ", notifDto);
 		
 		if(notifDto==null || StringUtils.isEmpty(notifDto.getOrderId())){
 			logger.error("Receive empty notifDto");
@@ -84,7 +84,7 @@ public class MidtransPaymentNotificationService {
 		//logger.debug("order is <{}>", order);
 		
 		if(order==null||order.getPayment()==null){
-			logger.error("Process notification notif:<{}> with exception: order not found", notifDto);
+			logger.error("Error process notification notif:<{}> with exception: order not found", notifDto);
 			throw new PaymentNotificationBadRequestException(ErrorCode.ERR8202_PAYMENT_NOTIF_ORDER_NOT_FOUND, "Order or payment not found");
 		}
 
@@ -128,6 +128,10 @@ public class MidtransPaymentNotificationService {
 			if(order.getPayment().getProviderTransactionStatus()!=null && order.getPayment().getProviderTransactionStatus().equals(notifDto.getTransactionStatus())){
 				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error duplicate notif", notifDto, order.getPayment());
 				notifLog.setProcessingStatus(PaymentNotificationProcessStatus.DUPLICATE);
+				isValidForProcessing = false;
+			}else if(order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)){
+				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error success but receive another notif", notifDto, order.getPayment());
+				notifLog.setProcessingStatus(PaymentNotificationProcessStatus.OUT_OF_ORDER);
 				isValidForProcessing = false;
 			}
 		}else if(order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)){
