@@ -29,6 +29,9 @@ public class InsuranceService {
 			if(result.getResponse().getResponseParam().getDownloadUrl()!=null){
 				updateOrder.setProviderDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
 			}
+			if(result.getResponse().getResponseParam().getPolicyNumber()!=null){
+				updateOrder.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
+			}
 			logger.debug("Update order status to approved, order:<{}>", updateOrder);
 			policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(updateOrder);
 		}
