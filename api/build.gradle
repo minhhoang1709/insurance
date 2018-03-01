@@ -16,7 +16,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
 group = 'com.ninelives'
-version = '0.0.3'
+version = '0.0.5'
 sourceCompatibility = 1.8
 
 repositories {
@@ -65,7 +65,8 @@ dependencies {
 	//compile('id.co.veritrans:vt-java-client:1.5.0')
 	
 	//module
-	compile project(':common')	
+	compile project(':common-lib')
+	compile project(':core-lib')
 		
 	runtime('org.postgresql:postgresql')
 	//providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
