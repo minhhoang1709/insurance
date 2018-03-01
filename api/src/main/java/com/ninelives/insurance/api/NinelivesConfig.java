@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
 import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.provider.storage.FileSystemStorageProvider;
+import com.ninelives.insurance.core.provider.storage.StorageProvider;
 
 @Configuration
 @EnableConfigurationProperties
@@ -24,8 +27,6 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 			
 	@Autowired AuthInterceptor authInterceptor;
 	@Autowired DataSource dataSource;
-	//@Autowired TransactionManager trxManager;
-	//@Autowired NinelivesConfigProperties config;
 		
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -50,7 +51,12 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	public NinelivesConfigProperties config(){
 		return new NinelivesConfigProperties();
 	}
-	//
+	
+	@Bean
+	@ConditionalOnProperty(prefix="ninelives", name="storage.location")
+	public StorageProvider storageProvider(@Autowired NinelivesConfigProperties config) {
+		return new FileSystemStorageProvider(config);
+	}
 	
 //	@Autowired RedisConnectionFactory redisConnectionFactory; 
 //	

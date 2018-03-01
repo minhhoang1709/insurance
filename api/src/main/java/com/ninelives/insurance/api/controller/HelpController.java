@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
-import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller

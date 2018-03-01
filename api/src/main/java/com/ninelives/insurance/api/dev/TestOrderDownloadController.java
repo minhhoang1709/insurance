@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.provider.storage.StorageException;
-import com.ninelives.insurance.api.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.provider.storage.StorageException;
+import com.ninelives.insurance.core.provider.storage.StorageProvider;
 
 @Controller
 @RequestMapping("/api")

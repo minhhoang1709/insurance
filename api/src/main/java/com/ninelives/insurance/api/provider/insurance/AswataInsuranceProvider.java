@@ -31,11 +31,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.ninelives.insurance.api.mybatis.mapper.InsurerOrderLogMapper;
-import com.ninelives.insurance.api.provider.storage.StorageException;
-import com.ninelives.insurance.api.provider.storage.StorageProvider;
 import com.ninelives.insurance.api.service.FileUploadService;
 import com.ninelives.insurance.api.service.ProductService;
 import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.provider.storage.StorageException;
+import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;

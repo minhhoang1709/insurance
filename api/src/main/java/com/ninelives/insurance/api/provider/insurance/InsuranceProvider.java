@@ -2,7 +2,7 @@ package com.ninelives.insurance.api.provider.insurance;
 
 import java.io.IOException;
 
-import com.ninelives.insurance.api.provider.storage.StorageException;
+import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
 import com.ninelives.insurance.api.provider.insurance.InsuranceProvider;
-import com.ninelives.insurance.api.provider.storage.StorageException;
+import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
