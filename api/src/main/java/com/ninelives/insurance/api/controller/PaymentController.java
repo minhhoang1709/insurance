@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ninelives.insurance.api.dto.ChargeDto;
-import com.ninelives.insurance.api.dto.ChargeResponseDto;
 import com.ninelives.insurance.api.exception.ApiBadRequestException;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.service.AuthService;
 import com.ninelives.insurance.api.service.PaymentService;
+import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeDto;
+import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeResponseDto;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller

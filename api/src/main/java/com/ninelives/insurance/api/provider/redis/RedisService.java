@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
-import com.ninelives.insurance.api.util.GsonUtil;
+import com.ninelives.insurance.core.util.GsonUtil;
 
 @Service
 public class RedisService {

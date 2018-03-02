@@ -23,7 +23,7 @@ import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.exception.ApiNotFoundException;
 import com.ninelives.insurance.api.service.OrderService;
-import com.ninelives.insurance.api.util.GsonUtil;
+import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller

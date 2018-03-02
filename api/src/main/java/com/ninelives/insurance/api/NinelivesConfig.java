@@ -17,6 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
 import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.provider.payment.MidtransPaymentProvider;
+import com.ninelives.insurance.core.provider.payment.PaymentProvider;
 import com.ninelives.insurance.core.provider.storage.FileSystemStorageProvider;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 
@@ -56,6 +58,12 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@ConditionalOnProperty(prefix="ninelives", name="storage.location")
 	public StorageProvider storageProvider(@Autowired NinelivesConfigProperties config) {
 		return new FileSystemStorageProvider(config);
+	}
+	
+	@Bean
+	@ConditionalOnProperty(prefix="ninelives", name="payment.midtrans-environment")
+	public PaymentProvider paymentProvider(@Autowired NinelivesConfigProperties config) {
+		return new MidtransPaymentProvider(config);
 	}
 	
 //	@Autowired RedisConnectionFactory redisConnectionFactory; 
