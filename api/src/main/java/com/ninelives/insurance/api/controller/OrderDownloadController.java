@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
-import com.ninelives.insurance.api.service.OrderService;
+import com.ninelives.insurance.api.service.ApiOrderService;
+import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.ref.ErrorCode;
 
@@ -32,18 +32,18 @@ import com.ninelives.insurance.ref.ErrorCode;
 public class OrderDownloadController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderDownloadController.class);
 	
-	@Autowired OrderService orderService;
+	@Autowired ApiOrderService apiOrderService;
 	
 	@RequestMapping(value="/orders/{orderId}/policy",
 			method=RequestMethod.GET)	
 	@ResponseBody
 	public void downloadPolicy(@RequestAttribute("authUserId") String authUserId,
 			@PathVariable("orderId") String orderId,
-			HttpServletResponse response) throws ApiException{
+			HttpServletResponse response) throws AppException{
 		
 		logger.debug("GET download policy, userId <{}>, orderId: <{}>", authUserId, orderId);
 		
-		PolicyOrder order = orderService.fetchOrderForDownload(authUserId, orderId);
+		PolicyOrder order = apiOrderService.fetchOrderForDownload(authUserId, orderId);
 		
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -69,7 +69,7 @@ public class OrderDownloadController {
 			    });
 		} catch (RestClientException e) {
 			logger.error("Error on download policy from ASWATA", e);
-			throw new ApiInternalServerErrorException(ErrorCode.ERR4303_DOWNLOAD_PROVIDER_ERROR, "Maaf permintaan Anda belum dapat dilayani, terjadi kesalahan pada sistem");
+			throw new AppInternalServerErrorException(ErrorCode.ERR4303_DOWNLOAD_PROVIDER_ERROR, "Maaf permintaan Anda belum dapat dilayani, terjadi kesalahan pada sistem");
 		}
 		
 	    return;

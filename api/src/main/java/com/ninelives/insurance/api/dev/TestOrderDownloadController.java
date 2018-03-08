@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ninelives.insurance.api.exception.ApiException;
+import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 
@@ -34,7 +34,7 @@ public class TestOrderDownloadController {
 	@ResponseBody
 	public ResponseEntity<Resource> downloadPolicyForTestNoAswata(@RequestAttribute("authUserId") String authUserId,
 			@PathVariable("orderId") String orderId,
-			HttpServletResponse response) throws ApiException, StorageException{
+			HttpServletResponse response) throws AppException, StorageException{
 		
 		logger.debug("GET download policy no aswata, userId <{}>, orderId: <{}>", authUserId, orderId);
 		

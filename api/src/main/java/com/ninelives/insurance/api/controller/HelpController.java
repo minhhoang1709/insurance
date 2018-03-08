@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
-import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.ref.ErrorCode;
 
@@ -33,7 +33,7 @@ public class HelpController {
 	@RequestMapping(value="/help/policyStandard",
 			method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Resource> downloadPolicyStandard(@RequestAttribute("authUserId") String authUserId, HttpServletResponse response) throws ApiException{
+	public ResponseEntity<Resource> downloadPolicyStandard(@RequestAttribute("authUserId") String authUserId, HttpServletResponse response) throws AppException{
 		
 		try {
 			Resource file = storageProvider.loadAsResource(config.getHelpPolicyStandardFilePath());
@@ -44,7 +44,7 @@ public class HelpController {
 
 		} catch (Exception e) {
 			logger.error("Error on loading policy standar", e);
-			throw new ApiInternalServerErrorException(ErrorCode.ERR1002_STORAGE_ERROR, "Maaf, terjadi kesalahan pada sistem.");
+			throw new AppInternalServerErrorException(ErrorCode.ERR1002_STORAGE_ERROR, "Maaf, terjadi kesalahan pada sistem.");
 		}	    
 
 	}

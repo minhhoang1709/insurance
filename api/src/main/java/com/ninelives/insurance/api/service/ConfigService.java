@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.ninelives.insurance.api.mybatis.mapper.ClientAppConfigMapper;
+import com.ninelives.insurance.core.mybatis.mapper.ClientAppConfigMapper;
 import com.ninelives.insurance.model.ClientAppConfig;
 
 @Service

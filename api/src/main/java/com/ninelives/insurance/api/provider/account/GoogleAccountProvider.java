@@ -16,7 +16,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.ninelives.insurance.api.dto.RegistrationDto;
-import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 
 @Service
 public class GoogleAccountProvider implements AccountProvider{

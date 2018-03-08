@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.ninelives.insurance.api.service.AuthService;
-import com.ninelives.insurance.api.service.PaymentService;
+import com.ninelives.insurance.core.service.PaymentService;
 
 @Controller
 @Profile("dev")

@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.ninelives.insurance.api.dto.OrderDto;
-import com.ninelives.insurance.api.mybatis.mapper.TestMapper;
+import com.ninelives.insurance.core.mybatis.mapper.TestMapper;
+import com.ninelives.insurance.core.service.OrderService;
+import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;

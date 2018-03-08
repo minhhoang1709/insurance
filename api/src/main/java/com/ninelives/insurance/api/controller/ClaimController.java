@@ -22,11 +22,11 @@ import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
-import com.ninelives.insurance.api.exception.ApiBadRequestException;
-import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
-import com.ninelives.insurance.api.service.ClaimService;
-import com.ninelives.insurance.api.service.FileUploadService;
+import com.ninelives.insurance.api.service.ApiClaimService;
+import com.ninelives.insurance.api.service.ApiFileUploadService;
+import com.ninelives.insurance.core.exception.AppBadRequestException;
+import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.ref.ErrorCode;
 
@@ -36,8 +36,8 @@ public class ClaimController {
 	private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
 
 	
-	@Autowired FileUploadService fileUploadService;
-	@Autowired ClaimService claimService;
+	@Autowired ApiFileUploadService fileUploadService;
+	@Autowired ApiClaimService apiClaimService;
 			
 //	@RequestMapping(value="/orders/{orderId}/claims",
 //			method=RequestMethod.POST)	
@@ -65,9 +65,9 @@ public class ClaimController {
 	@ResponseBody
 	public AccidentClaimDto submitClaimAccident (@RequestAttribute ("authUserId") String authUserId,
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
-			@RequestBody @Valid AccidentClaimDto claimDto) throws ApiException{
+			@RequestBody @Valid AccidentClaimDto claimDto) throws AppException{
 		
-		return claimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
+		return apiClaimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/claims",
@@ -76,7 +76,7 @@ public class ClaimController {
 	public AccidentClaimDto submitClaimAccidentWithOrderId (@RequestAttribute ("authUserId") String authUserId,
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
 			@PathVariable("orderId") String orderId,
-			@RequestBody @Valid AccidentClaimDto claimDto) throws ApiException{
+			@RequestBody @Valid AccidentClaimDto claimDto) throws AppException{
 
 		if (!StringUtils.isEmpty(orderId)) {
 			if (claimDto != null){
@@ -87,25 +87,25 @@ public class ClaimController {
 				}else if(StringUtils.isEmpty(claimDto.getOrder().getOrderId())){
 					claimDto.getOrder().setOrderId(orderId);
 				}else if(!orderId.equals(claimDto.getOrder().getOrderId())){
-					throw new ApiBadRequestException(ErrorCode.ERR4000_ORDER_INVALID, "Transaksi tidak sesuai dengan data klaim");
+					throw new AppBadRequestException(ErrorCode.ERR4000_ORDER_INVALID, "Transaksi tidak sesuai dengan data klaim");
 				}
 			}
 		}
-		return claimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
+		return apiClaimService.submitAccidentalClaim(authUserId, claimDto, isValidateOnly);
 	}
 	
 	@RequestMapping(value="/claims/{claimId}",
 			method={ RequestMethod.GET })
 	@ResponseBody
 	public AccidentClaimDto getClaimAccidentByClaimId (@RequestAttribute ("authUserId") String authUserId,
-			@PathVariable("claimId") String claimId) throws ApiNotFoundException{
+			@PathVariable("claimId") String claimId) throws AppNotFoundException{
 //		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
 //		logger.debug("param data: {}", claimId);
 //		logger.debug("---");		
 		
-		AccidentClaimDto claimDto = claimService.fetchClaimDtoByClaimId(authUserId, claimId);
+		AccidentClaimDto claimDto = apiClaimService.fetchClaimDtoByClaimId(authUserId, claimId);
 		if(claimDto==null){
-			throw new ApiNotFoundException(ErrorCode.ERR7001_CLAIM_NOT_FOUND,"Klaim tidak ditemukan");
+			throw new AppNotFoundException(ErrorCode.ERR7001_CLAIM_NOT_FOUND,"Klaim tidak ditemukan");
 		}
 		return claimDto;
 	}
@@ -121,7 +121,7 @@ public class ClaimController {
 		
 		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return claimService.fetchClaimDtos(authUserId, filterDto);
+		return apiClaimService.fetchClaimDtos(authUserId, filterDto);
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/claims",
@@ -136,14 +136,14 @@ public class ClaimController {
 		
 		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return claimService.fetchClaimDtosByOrderId(authUserId, orderId, filterDto);
+		return apiClaimService.fetchClaimDtosByOrderId(authUserId, orderId, filterDto);
 	}
 	
 	@RequestMapping(value="/claimDocumentFiles",
 			method=RequestMethod.POST)
 	@ResponseBody
 	public UserFileDto uploadClaimDocumentFile (@RequestAttribute ("authUserId") String authUserId, 
-			@RequestParam("file") MultipartFile file) throws ApiException{
+			@RequestParam("file") MultipartFile file) throws AppException{
 		return fileUploadService.saveTemp(authUserId, file);
 	}	
 }

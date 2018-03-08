@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.dto.InviteDto;
-import com.ninelives.insurance.api.service.InviteService;
-import com.ninelives.insurance.api.service.VoucherService;
+import com.ninelives.insurance.api.service.ApiInviteService;
+import com.ninelives.insurance.api.service.ApiVoucherService;
 
 @Controller
 @RequestMapping("/api")
 public class InviteController {
 	private static final Logger logger = LoggerFactory.getLogger(InviteController.class);
 	
-	@Autowired InviteService inviteService;
+	@Autowired ApiInviteService apiInviteService;
 	
 	@RequestMapping(value="/invites",
 			method={ RequestMethod.GET })
 	@ResponseBody
 	public InviteDto getInvites(@RequestAttribute ("authUserId") String authUserId){
-		return inviteService.fetchInviteDtoByUserId(authUserId);
+		return apiInviteService.fetchInviteDtoByUserId(authUserId);
 	}
 }

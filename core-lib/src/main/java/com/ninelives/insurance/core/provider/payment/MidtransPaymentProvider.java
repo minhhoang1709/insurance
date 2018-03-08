@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeDto;
 import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeResponseDto;

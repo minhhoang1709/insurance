@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
-import com.ninelives.insurance.api.mybatis.mapper.UserLoginMapper;
-import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.redis.RedisService;
+import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
+import com.ninelives.insurance.core.mybatis.mapper.UserLoginMapper;
+import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserLogin;
 import com.ninelives.insurance.ref.ErrorCode;
@@ -33,18 +33,18 @@ public class AuthService {
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 		
-	public AuthToken loginByEmail(String email, String password, String fcmToken) throws ApiNotAuthorizedException{		
+	public AuthToken loginByEmail(String email, String password, String fcmToken) throws AppNotAuthorizedException{		
 		AuthToken token = null;
 		
 		if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)||StringUtils.isEmpty(fcmToken)){
 			logger.info("Process login result:<{}>, reason:<Empty>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
-			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
 		
 		User user = userMapper.selectByEmail(email);
 		if(user==null || !user.getPassword().equals(DigestUtils.sha1Hex(password))){
 			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
-			throw new ApiNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}else{
 			token = generateAuthToken();
 			
@@ -74,15 +74,15 @@ public class AuthService {
 		return token;
 	}
 	
-	public ApiSessionData validateAuthToken(String tokenId) throws ApiNotAuthorizedException{
+	public ApiSessionData validateAuthToken(String tokenId) throws AppNotAuthorizedException{
 		if(StringUtils.isEmpty(tokenId)){
-			throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+			throw new AppNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 		}		
 		final ApiSessionData sessionData = redisService.getApiSessionData(tokenId);
 		if(sessionData==null || StringUtils.isEmpty(sessionData.getUserId())){
 			UserLogin login = loginMapper.selectByTokenId(tokenId);
 			if(login==null){
-				throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+				throw new AppNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 			}
 			String createdDateTimeStr = login.getCreatedDate().format(formatter);
 			

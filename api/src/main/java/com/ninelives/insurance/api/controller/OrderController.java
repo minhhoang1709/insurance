@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
-import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
-import com.ninelives.insurance.api.service.OrderService;
+import com.ninelives.insurance.api.service.ApiOrderService;
+import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.ref.ErrorCode;
 
@@ -31,19 +31,19 @@ import com.ninelives.insurance.ref.ErrorCode;
 public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 			
-	@Autowired OrderService orderService;
+	@Autowired ApiOrderService apiOrderService;
 	
 	@RequestMapping(value="/orders/{orderId}",
 			method=RequestMethod.GET)	
 	@ResponseBody
 	public OrderDto getOrderByOrderId(@RequestAttribute("authUserId") String authUserId, 
-			@PathVariable("orderId") String orderId) throws ApiNotFoundException{
+			@PathVariable("orderId") String orderId) throws AppNotFoundException{
 		
 		logger.debug("GET getOrders userid is {} with orderid {}", authUserId, orderId);
 		
-		OrderDto orderDto = orderService.fetchOrderDtoByOrderId(authUserId, orderId);
+		OrderDto orderDto = apiOrderService.fetchOrderDtoByOrderId(authUserId, orderId);
 		if(orderDto==null){
-			throw new ApiNotFoundException(ErrorCode.ERR5001_ORDER_NOT_FOUND,"Transaksi tidak ditemukan");
+			throw new AppNotFoundException(ErrorCode.ERR5001_ORDER_NOT_FOUND,"Transaksi tidak ditemukan");
 		}
 		
 		return orderDto;
@@ -59,7 +59,7 @@ public class OrderController {
 		
 		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return orderService.fetchOrderDtos(authUserId, orderFilter);
+		return apiOrderService.fetchOrderDtos(authUserId, orderFilter);
 	}
 	
 	@RequestMapping(value="/orders",
@@ -68,11 +68,11 @@ public class OrderController {
 	public OrderDto submitOrder(@RequestAttribute("authUserId") String authUserId,
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
 			@RequestBody(required=false) @Valid OrderDto submitOrder, 
-			HttpServletResponse response) throws ApiException{
+			HttpServletResponse response) throws AppException{
 		
 		logger.debug("POST submitOrder with request {} and validate-only {}", submitOrder, isValidateOnly);
 		
-		return orderService.submitOrder(authUserId, submitOrder, isValidateOnly);
+		return apiOrderService.submitOrder(authUserId, submitOrder, isValidateOnly);
 	}
 	
 	@RequestMapping(value="/orders/{orderId}/beneficiary",
@@ -81,11 +81,11 @@ public class OrderController {
 	public PolicyOrderBeneficiaryDto updateBeneficiary(@RequestAttribute("authUserId") String authUserId,
 			@PathVariable("orderId") String orderId,
 			@RequestBody @Valid PolicyOrderBeneficiaryDto beneficiaryDto, 
-			HttpServletResponse response) throws ApiException{
+			HttpServletResponse response) throws AppException{
 		
 		logger.debug("PUT beneficiary userid is {} with order {} beneficiary {}", authUserId, orderId, beneficiaryDto);
 		
-		return orderService.updateBeneficiary(authUserId, orderId, beneficiaryDto);
+		return apiOrderService.updateBeneficiary(authUserId, orderId, beneficiaryDto);
 			
 	}
 		

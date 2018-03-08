@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.service.AuthService;
+import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Component
@@ -49,7 +49,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 					&& request.getMethod().equals(HttpMethod.POST.toString())) {
 				return true;
 			}else{
-				throw new ApiNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
+				throw new AppNotAuthorizedException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication is required");
 			}
 		}else{
 			ApiSessionData sessionData = authService.validateAuthToken(tokenId);

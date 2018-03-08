@@ -13,27 +13,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.ProductDto;
-import com.ninelives.insurance.api.service.ProductService;
+import com.ninelives.insurance.api.service.ApiProductService;
 
 @Controller
 @RequestMapping("/api")
 public class ProductController {
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	
-	@Autowired public ProductService productService;
+	@Autowired public ApiProductService apiProductService;
 	
 	@RequestMapping(value="/products",
 			method=RequestMethod.GET)	
 	@ResponseBody
 	public List<ProductDto> getProducts(){
-		return productService.fetchProductDtosWithTypeNormalAndStatusActive();
+		return apiProductService.fetchProductDtosWithTypeNormalAndStatusActive();
 	}
 	
 	@RequestMapping(value="/coverages",
 			method=RequestMethod.GET)	
 	@ResponseBody
 	public List<CoverageDto> getCoverages(){
-		return productService.fetchCoverageDtosWithStatusActive();
+		return apiProductService.fetchCoverageDtosWithStatusActive();
 	}
 	
 //	@RequestMapping(value="/periods",

@@ -4,22 +4,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.camel.FluentProducerTemplate;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,30 +20,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
-import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiInternalServerErrorException;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
-import com.ninelives.insurance.api.mybatis.mapper.PolicyOrderMapper;
-import com.ninelives.insurance.api.mybatis.mapper.ProductMapper;
-import com.ninelives.insurance.api.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.api.provider.account.GoogleAccountProvider;
-import com.ninelives.insurance.api.provider.insurance.AswataInsuranceProvider;
-import com.ninelives.insurance.api.service.ClaimService;
-import com.ninelives.insurance.api.service.OrderService;
-import com.ninelives.insurance.api.service.ProductService;
+import com.ninelives.insurance.api.service.ApiClaimService;
+import com.ninelives.insurance.api.service.ApiOrderService;
 import com.ninelives.insurance.api.service.TestService;
-import com.ninelives.insurance.api.service.UserService;
-import com.ninelives.insurance.api.service.VoucherService;
+import com.ninelives.insurance.api.service.ApiUserService;
+import com.ninelives.insurance.api.service.ApiVoucherService;
+import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppNotFoundException;
+import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderMapper;
+import com.ninelives.insurance.core.mybatis.mapper.ProductMapper;
+import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
+import com.ninelives.insurance.core.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -74,9 +62,10 @@ public class TestController {
 	private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 	
 	@Autowired ProductService productService;
-	@Autowired OrderService orderService;
-	@Autowired ClaimService claimService;
+	@Autowired ApiOrderService apiOrderService;
+	@Autowired ApiClaimService apiClaimService;
 	@Autowired TestService testService;
+	@Autowired ApiVoucherService apiVoucherService;
 	@Autowired VoucherService voucherService;
 	@Autowired StorageProvider storageService;
 	
@@ -86,7 +75,7 @@ public class TestController {
 	@Autowired ProductMapper productMapper;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	
-	@Autowired UserService userService;
+	@Autowired ApiUserService apiUserService;
 	@Autowired UserMapper userMapper;
 	
 	
@@ -107,7 +96,7 @@ public class TestController {
 	
 	@GetMapping("/test/aswata/order")
 	@ResponseBody
-	public String testAswataOrder(@RequestAttribute ("authUserId") String authUserId) throws ApiNotFoundException, IOException, StorageException{
+	public String testAswataOrder(@RequestAttribute ("authUserId") String authUserId) throws AppNotFoundException, IOException, StorageException{
 		aswata.orderPolicy(null);
 		return "ok";
 	}
@@ -118,7 +107,7 @@ public class TestController {
 			method={ RequestMethod.GET })
 	@ResponseBody
 	public Voucher getVoucher(@RequestAttribute ("authUserId") String authUserId,
-			@PathVariable("code") String code) throws ApiNotFoundException{
+			@PathVariable("code") String code) throws AppNotFoundException{
 		return voucherService.fetchVoucherByCode(code);
 	}
 	
@@ -130,9 +119,9 @@ public class TestController {
 	}
 
 	@RequestMapping("/test/error/login")
-	public String errorLogin() throws ApiNotFoundException{
+	public String errorLogin() throws AppNotFoundException{
 		
-		throw new ApiNotFoundException(ErrorCode.ERR2001_LOGIN_FAILURE,"olalala login gagal");		
+		throw new AppNotFoundException(ErrorCode.ERR2001_LOGIN_FAILURE,"olalala login gagal");		
 		//return "ok";
 	}
 	
@@ -230,15 +219,15 @@ public class TestController {
 	@RequestMapping(value="/test/fullorder", method=RequestMethod.POST)
 	@ResponseBody
 	public OrderDto order(@RequestAttribute("authUserId") String authUserId, 
-			@RequestBody(required=false) OrderDto orderDto) throws ApiException{	
+			@RequestBody(required=false) OrderDto orderDto) throws AppException{	
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
-		return orderService.submitOrder(authUserId, orderDto, false);
+		return apiOrderService.submitOrder(authUserId, orderDto, false);
 	}
 	
 	@RequestMapping(value="/test/fullorder", method=RequestMethod.GET)
 	@ResponseBody
 	public List<PolicyOrder> getTestFetchOrder(@RequestAttribute("authUserId") String authUserId, 
-			@RequestParam(value="filter",required=false) String filter) throws ApiException{
+			@RequestParam(value="filter",required=false) String filter) throws AppException{
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
 		
 		//return orderService.submitOrder(authUserId, submitOrder);
@@ -248,13 +237,13 @@ public class TestController {
 		
 		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return orderService.fetchOrders(authUserId, orderFilter); 
+		return apiOrderService.fetchOrders(authUserId, orderFilter); 
 	}
 	
 	@RequestMapping(value="/test/order", method=RequestMethod.GET)
 	@ResponseBody
 	public List<OrderDto> getOrder(@RequestAttribute("authUserId") String authUserId, 
-			@RequestParam(value="filter",required=false) String filter) throws ApiException{
+			@RequestParam(value="filter",required=false) String filter) throws AppException{
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
 		
 		//return orderService.submitOrder(authUserId, submitOrder);
@@ -264,13 +253,13 @@ public class TestController {
 		
 		FilterDto orderFilter = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return orderService.fetchOrderDtos(authUserId, orderFilter);
+		return apiOrderService.fetchOrderDtos(authUserId, orderFilter);
 	}
 	
 	@RequestMapping(value="/test/order/{orderId}", method=RequestMethod.GET)
 	@ResponseBody
 	public PolicyOrder getOrderDetail(@RequestAttribute("authUserId") String authUserId,
-			@PathVariable("orderId") String orderId) throws ApiException{
+			@PathVariable("orderId") String orderId) throws AppException{
 		//List<String> productIds = Arrays.asList("P101004102","P101003102","P101006102");
 		
 		//return orderService.submitOrder(authUserId, submitOrder);
@@ -293,11 +282,11 @@ public class TestController {
 	@RequestMapping(value="/test/users/{userId}",
 			method={ RequestMethod.PATCH, RequestMethod.PUT })
 	@ResponseBody
-	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto) throws ApiException{
+	public UserDto updateUsers (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId, @RequestBody UserDto usersDto) throws AppException{
 		logger.debug("Terima /users PUT untuk authuser {} and user {}", authUserId, userId);
 		logger.debug("put data: {}", usersDto);
 		logger.debug("---");
-		UserDto result = userService.getUserDto(userId);
+		UserDto result = apiUserService.getUserDto(userId);
 		if(result==null){
 			result = usersDto;
 		}
@@ -334,9 +323,9 @@ public class TestController {
 			method={ RequestMethod.POST})
 	@ResponseBody
 	public PolicyClaim<PolicyClaimDetailAccident> registerClaimAccident (@RequestAttribute ("authUserId") String authUserId,  
-			@RequestBody AccidentClaimDto claimDto) throws ApiException{
+			@RequestBody AccidentClaimDto claimDto) throws AppException{
 		
-		return claimService.registerAccidentalClaim(authUserId, claimDto,true);
+		return apiClaimService.registerAccidentalClaim(authUserId, claimDto,true);
 	}
 	
 	@RequestMapping(value="/test/covcat",
@@ -382,7 +371,7 @@ public class TestController {
 		
 		FilterDto filterDto = GsonUtil.gson.fromJson(filter, FilterDto.class);
 		
-		return claimService.fetchClaims(authUserId, filterDto);
+		return apiClaimService.fetchClaims(authUserId, filterDto);
 	}
 	
 //	@RequestMapping(value="/claims",

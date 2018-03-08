@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ninelives.insurance.api.exception.ApiBadRequestException;
-import com.ninelives.insurance.api.exception.ApiException;
-import com.ninelives.insurance.api.exception.ApiNotAuthorizedException;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.service.AuthService;
-import com.ninelives.insurance.api.service.PaymentService;
+import com.ninelives.insurance.core.exception.AppBadRequestException;
+import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
+import com.ninelives.insurance.core.service.PaymentService;
 import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeDto;
 import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeResponseDto;
 import com.ninelives.insurance.ref.ErrorCode;
@@ -40,7 +40,7 @@ public class PaymentController {
 			HttpServletResponse response, 
 			@RequestHeader(required=false) Map<String,String> headers, 
 			@RequestParam(required=false) Map<String,String> requestParams, 
-			@RequestBody(required=true) ChargeDto chargeDto) throws ApiException{		
+			@RequestBody(required=true) ChargeDto chargeDto) throws AppException{		
 		logger.debug("Charge received {} ", chargeDto);
 
 		String tokenId = chargeDto.getAuthToken();
@@ -48,8 +48,8 @@ public class PaymentController {
 		ApiSessionData sessionData;
 		try {
 			sessionData = authService.validateAuthToken(tokenId);
-		} catch (ApiNotAuthorizedException e) {
-			throw new ApiBadRequestException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication code not valid");
+		} catch (AppNotAuthorizedException e) {
+			throw new AppBadRequestException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication code not valid");
 		}
 		
 		chargeDto.setAuthToken(null);//dont forward authtoken to midtrans

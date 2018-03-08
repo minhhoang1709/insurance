@@ -15,7 +15,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ninelives.insurance.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.model.UserFile;
 
 public class FileSystemStorageProvider implements StorageProvider {

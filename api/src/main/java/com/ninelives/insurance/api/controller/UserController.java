@@ -20,25 +20,24 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
-import com.ninelives.insurance.api.exception.ApiBadRequestException;
-import com.ninelives.insurance.api.exception.ApiException;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
-import com.ninelives.insurance.api.service.UserService;
+import com.ninelives.insurance.api.service.ApiUserService;
+import com.ninelives.insurance.core.exception.AppException;
 
 @Controller
 @RequestMapping("/api")
 public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
-	@Autowired UserService userService;
+	@Autowired ApiUserService apiUserService;
 	
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
 	@ResponseBody
-	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws ApiException{		
+	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws AppException{		
 		logger.debug("Register with dto:<{}>", registrationDto);
 		
-		RegisterUsersResult registerResult = userService.registerUserByGoogleAccount(registrationDto);
+		RegisterUsersResult registerResult = apiUserService.registerUserByGoogleAccount(registrationDto);
 		
 		if(!registerResult.getIsNew()){
 			response.setStatus(HttpStatus.CONFLICT.value());
@@ -51,9 +50,9 @@ public class UserController {
 			method={ RequestMethod.PATCH, RequestMethod.PUT })
 	@ResponseBody
 	public UserDto updateUsers(@RequestAttribute("authUserId") String authUserId, @PathVariable("userId") String userId,
-			@RequestBody @Valid UserDto userDto) throws ApiException {
+			@RequestBody @Valid UserDto userDto) throws AppException {
 
-		UserDto result = userService.updateUser(authUserId, userDto);
+		UserDto result = apiUserService.updateUser(authUserId, userDto);
 		
 		return result;
 	}
@@ -61,9 +60,9 @@ public class UserController {
 	@RequestMapping(value="/users/{userId}",
 			method=RequestMethod.GET)
 	@ResponseBody
-	public UserDto getUser( @RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId) throws ApiException{		
+	public UserDto getUser( @RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId) throws AppException{		
 		//logger.debug("register with {}", registrationDto);
-		UserDto userDto = userService.getUserDto(authUserId);
+		UserDto userDto = apiUserService.getUserDto(authUserId);
 		
 		return userDto;
 	}
@@ -72,9 +71,9 @@ public class UserController {
 			method=RequestMethod.PUT)
 	@ResponseBody
 	public UserFileDto updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, 
-			@RequestParam("file") MultipartFile file) throws ApiException{
+			@RequestParam("file") MultipartFile file) throws AppException{
 
-		return userService.updateIdCardFile(authUserId, file); 
+		return apiUserService.updateIdCardFile(authUserId, file); 
 	}
 	
 //	@RequestMapping(value="/users/{userId}/idCardFiles",

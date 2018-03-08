@@ -27,11 +27,26 @@ dependencies {
 	compile('org.apache.httpcomponents:httpclient:4.5.3')
 	compile('org.slf4j:slf4j-api:1.7.25')
 	
+	//queue
+	compile('org.apache.activemq:activemq-camel:5.15.2')
+	
 	//json
 	compile('com.google.code.gson:gson:2.8.2')
 	
+	//mybatis
+	compile('org.mybatis:mybatis:3.4.5')	
+	
+	//apache common
+	compile('commons-io:commons-io:2.6')
+	compile('org.apache.commons:commons-collections4:4.1')
+
 	//module
-	compile project(':common-lib')		
+	compile project(':common-lib')
+		
+	//test
+	testCompile('org.springframework:spring-test:4.3.12.RELEASE')
+	testCompile('junit:junit:4.12')
+	testCompile('org.mockito:mockito-core:1.10.19')
 }
 
 jar {

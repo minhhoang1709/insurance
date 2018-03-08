@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.VoucherDto;
-import com.ninelives.insurance.api.exception.ApiNotFoundException;
-import com.ninelives.insurance.api.service.VoucherService;
+import com.ninelives.insurance.api.service.ApiVoucherService;
+import com.ninelives.insurance.core.exception.AppNotFoundException;
 
 @Controller
 @RequestMapping("/api")
 public class VoucherController {
 	private static final Logger logger = LoggerFactory.getLogger(VoucherController.class);
 	
-	@Autowired VoucherService voucherService;	
+	@Autowired ApiVoucherService apiVoucherService;	
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	@RequestMapping(value="/vouchers/{code}",
 			method={ RequestMethod.GET })
 	@ResponseBody
 	public VoucherDto getVoucher(@RequestAttribute ("authUserId") String authUserId,
-			@PathVariable("code") String code) throws ApiNotFoundException{
+			@PathVariable("code") String code) throws AppNotFoundException{
 		
-		return voucherService.fetchVoucherDtoByCode(code);			
+		return apiVoucherService.fetchVoucherDtoByCode(code);			
 	}
 }
