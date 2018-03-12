@@ -47,6 +47,7 @@ import com.ninelives.insurance.provider.insurance.aswata.ref.PackageType;
 import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
 import com.ninelives.insurance.ref.VoucherType;
 
+@Service
 public class AswataInsuranceProvider implements InsuranceProvider{	
 	private static final Logger logger = LoggerFactory.getLogger(InsuranceProvider.class);
 	

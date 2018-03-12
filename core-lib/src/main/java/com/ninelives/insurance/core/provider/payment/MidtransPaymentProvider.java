@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +28,7 @@ import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeDto;
 import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeResponseDto;
 
+@Service
 public class MidtransPaymentProvider implements PaymentProvider{	
 	private static final Logger logger = LoggerFactory.getLogger(MidtransPaymentProvider.class);
 	

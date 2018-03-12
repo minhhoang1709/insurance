@@ -212,6 +212,7 @@ public class NinelivesConfigProperties {
 		
 	}
 	public static class Payment {
+		private boolean enabled;
 		@NotEmpty
 		private String midtransEnvironment;
 		@NotEmpty
@@ -235,6 +236,13 @@ public class NinelivesConfigProperties {
 		private int midtransPaymentExpiryDuration = 3;
 		private MidtransDurationUnit midtransPaymentExpiryUnit = MidtransDurationUnit.HOURS;
 		
+		
+		public boolean isEnabled() {
+			return enabled;
+		}
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
 		public String getMidtransSandboxServerKey() {
 			return midtransSandboxServerKey;
 		}

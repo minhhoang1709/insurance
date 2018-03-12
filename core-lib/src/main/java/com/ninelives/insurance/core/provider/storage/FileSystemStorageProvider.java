@@ -12,12 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.model.UserFile;
 
+@Service
 public class FileSystemStorageProvider implements StorageProvider {
 	private static final Logger logger = LoggerFactory.getLogger(FileSystemStorageProvider.class);
 	

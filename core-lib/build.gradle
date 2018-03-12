@@ -51,5 +51,8 @@ dependencies {
 
 jar {
     baseName='ninelives-core'
+    from('src/main/java') {
+		include '**/*.xml'	
+   	}
 }
 
