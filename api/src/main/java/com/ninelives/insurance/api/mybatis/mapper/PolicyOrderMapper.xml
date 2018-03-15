@@ -293,6 +293,10 @@
   		  (#{policyStartDate,jdbcType=DATE} between a.policy_start_date and a.policy_end_date) or
 		  (#{policyEndDate,jdbcType=DATE} between a.policy_start_date and a.policy_end_date)
 		) 
+		and 
+		(
+		   a.status not in ('SUBMITTED') or a.policy_start_date >= current_date
+		)
 		and a.order_date &gt;= #{dueOrderDate,jdbcType=DATE}
 		and a.status not in ('TERMINATED','OVERDUE') 
         and b.order_id=a.order_id
