@@ -40,6 +40,7 @@ public class NinelivesNotifRouteBuilder extends SpringRouteBuilder{
 	@Override
 	public void configure() throws Exception {
 		from(EndPointRef.QUEUE_FCM_NOTIFICATION).bean(fcmProcessor,"process");
+		from(EndPointRef.QUEUE_FCM_PUSH_NOTIFICATION).bean(fcmProcessor,"process");
 	}
 	
 	

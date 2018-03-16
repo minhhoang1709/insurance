@@ -19,6 +19,10 @@ public class NotificationService {
 		sendFcmNotification(fcmToken, notifMessage, null, null);
 	}
 	
+	public void sendFcmPushNotification(String fcmToken, FcmNotifMessageDto.Notification notifMessage) throws Exception{
+		sendFcmPushNotification(fcmToken, notifMessage, null, null);
+	}
+	
 	public void sendFcmPushNotification(String fcmToken, FcmNotifMessageDto.Notification notifMessage, String action, String actionData) throws Exception{
 		FcmNotifMessageDto messageDto = buildMessageDto(fcmToken, notifMessage, action, actionData);		
 		logger.debug("sending push notif, message:<{}>", messageDto);
