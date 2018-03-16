@@ -39,6 +39,7 @@ public class MidtransPaymentProvider implements PaymentProvider{
 	
 	NinelivesConfigProperties.Payment config;
 	
+	private Boolean enableConnection;
 	private RestTemplate template;
 	private String midtransEnvironment;
 	private String midtransUrl;
@@ -50,6 +51,10 @@ public class MidtransPaymentProvider implements PaymentProvider{
 	}
 	
 	public ChargeResponseDto charge(ChargeDto chargeDto){
+		if(!enableConnection){
+			logger.error("Error on payment provider charge <{}> with exception <{}>", chargeDto, "connection is not enabled");
+			return null;
+		}
 		ChargeResponseDto chargeResponseDto = null;
 		ResponseEntity<String> resp = null;
 		try {
@@ -103,23 +108,27 @@ public class MidtransPaymentProvider implements PaymentProvider{
 	
 	@PostConstruct
 	public void init(){
-		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-		cm.setMaxTotal(config.getMidtransConnectionPoolSize());
-		cm.setDefaultMaxPerRoute(config.getMidtransConnectionPoolSize());
+		enableConnection = config.getEnableConnection();
+		if(enableConnection){
+			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+			cm.setMaxTotal(config.getMidtransConnectionPoolSize());
+			cm.setDefaultMaxPerRoute(config.getMidtransConnectionPoolSize());
+			
+			RequestConfig requestConfig = RequestConfig.custom()
+		            .setConnectionRequestTimeout(config.getMidtransPoolTimeout())
+		            .setConnectTimeout(config.getMidtransConnectTimeout())
+		            .setSocketTimeout(config.getMidtransSocketTimeout())
+		            .build();
 		
-		RequestConfig requestConfig = RequestConfig.custom()
-	            .setConnectionRequestTimeout(config.getMidtransPoolTimeout())
-	            .setConnectTimeout(config.getMidtransConnectTimeout())
-	            .setSocketTimeout(config.getMidtransSocketTimeout())
-	            .build();
-	
-		HttpClient defaultHttpClient = HttpClientBuilder
-				.create()
-				.setConnectionManager(cm)
-				.setDefaultRequestConfig(requestConfig)
-				.build();
+			HttpClient defaultHttpClient = HttpClientBuilder
+					.create()
+					.setConnectionManager(cm)
+					.setDefaultRequestConfig(requestConfig)
+					.build();
 
-		template = new RestTemplate(new HttpComponentsClientHttpRequestFactory(defaultHttpClient));
+			template = new RestTemplate(new HttpComponentsClientHttpRequestFactory(defaultHttpClient));
+		}
+		
 		
 		midtransEnvironment = config.getMidtransEnvironment();
 		

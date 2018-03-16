@@ -99,6 +99,8 @@ public class NinelivesConfigProperties {
 		
 	}
 	public static class Insurance {
+		private Boolean enableConnection = true;
+		
 		@NotEmpty
 		private String aswataClientCode;
 		@NotEmpty
@@ -112,7 +114,13 @@ public class NinelivesConfigProperties {
 		private int aswataPoolTimeout = 5000;
 		private int aswataConnectTimeout = 5000;
 		private int aswataSocketTimeout = 30000;
-		
+				
+		public Boolean getEnableConnection() {
+			return enableConnection;
+		}
+		public void setEnableConnection(Boolean enableConnection) {
+			this.enableConnection = enableConnection;
+		}
 		public String getAswataClientCode() {
 			return aswataClientCode;
 		}
@@ -212,7 +220,8 @@ public class NinelivesConfigProperties {
 		
 	}
 	public static class Payment {
-		private boolean enabled;
+		private Boolean enableConnection = true;
+		
 		@NotEmpty
 		private String midtransEnvironment;
 		@NotEmpty
@@ -237,11 +246,11 @@ public class NinelivesConfigProperties {
 		private MidtransDurationUnit midtransPaymentExpiryUnit = MidtransDurationUnit.HOURS;
 		
 		
-		public boolean isEnabled() {
-			return enabled;
+		public Boolean getEnableConnection() {
+			return enableConnection;
 		}
-		public void setEnabled(boolean enabled) {
-			this.enabled = enabled;
+		public void setEnableConnection(Boolean enableConnection) {
+			this.enableConnection = enableConnection;
 		}
 		public String getMidtransSandboxServerKey() {
 			return midtransSandboxServerKey;

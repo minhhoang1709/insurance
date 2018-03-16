@@ -66,6 +66,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 	
+	private Boolean enableConnection;
+	
 	private RestTemplate template;
 	private String providerUrl;	
 	private String clientCode;
@@ -80,6 +82,11 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	
 	@Override
 	public ResponseDto<OrderResponseDto> orderPolicy(PolicyOrder order) throws IOException, StorageException{
+		
+		if(!enableConnection){
+			logger.error("Error on orderPolicy with exception <connection is not enabled>");
+			throw new IOException("Connection is not enabled");
+		}
 
 		ResponseDto<OrderResponseDto> result = new ResponseDto<>();
 		
@@ -210,24 +217,28 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	
 	@PostConstruct
 	private void init() throws IOException {
-		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-		cm.setMaxTotal(config.getInsurance().getAswataConnectionPoolSize());
-		cm.setDefaultMaxPerRoute(config.getInsurance().getAswataConnectionPoolSize());
+		enableConnection = config.getInsurance().getEnableConnection();
 		
-		RequestConfig requestConfig = RequestConfig.custom()
-	            .setConnectionRequestTimeout(config.getInsurance().getAswataPoolTimeout())
-	            .setConnectTimeout(config.getInsurance().getAswataConnectTimeout())
-	            .setSocketTimeout(config.getInsurance().getAswataSocketTimeout())
-	            .build();
-	
-		HttpClient defaultHttpClient = HttpClientBuilder
-				.create()
-				.setConnectionManager(cm)
-				.setDefaultRequestConfig(requestConfig)
-				.build();
+		if(enableConnection){
+			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+			cm.setMaxTotal(config.getInsurance().getAswataConnectionPoolSize());
+			cm.setDefaultMaxPerRoute(config.getInsurance().getAswataConnectionPoolSize());
+			
+			RequestConfig requestConfig = RequestConfig.custom()
+		            .setConnectionRequestTimeout(config.getInsurance().getAswataPoolTimeout())
+		            .setConnectTimeout(config.getInsurance().getAswataConnectTimeout())
+		            .setSocketTimeout(config.getInsurance().getAswataSocketTimeout())
+		            .build();
+		
+			HttpClient defaultHttpClient = HttpClientBuilder
+					.create()
+					.setConnectionManager(cm)
+					.setDefaultRequestConfig(requestConfig)
+					.build();
 
-		template = new RestTemplate(new HttpComponentsClientHttpRequestFactory(defaultHttpClient));
-		
+			template = new RestTemplate(new HttpComponentsClientHttpRequestFactory(defaultHttpClient));
+		}
+				
 		providerUrl = config.getInsurance().getAswataUrl();
 		clientCode = config.getInsurance().getAswataClientCode();
 		clientKey = config.getInsurance().getAswataClientKey();
