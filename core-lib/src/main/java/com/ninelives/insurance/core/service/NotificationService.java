@@ -19,7 +19,20 @@ public class NotificationService {
 		sendFcmNotification(fcmToken, notifMessage, null, null);
 	}
 	
+	public void sendFcmPushNotification(String fcmToken, FcmNotifMessageDto.Notification notifMessage, String action, String actionData) throws Exception{
+		FcmNotifMessageDto messageDto = buildMessageDto(fcmToken, notifMessage, action, actionData);		
+		logger.debug("sending push notif, message:<{}>", messageDto);
+		producerTemplate.to(EndPointRef.QUEUE_FCM_PUSH_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+	}
+	
 	public void sendFcmNotification(String fcmToken, FcmNotifMessageDto.Notification notifMessage, String action, String actionData) throws Exception{
+		FcmNotifMessageDto messageDto = buildMessageDto(fcmToken, notifMessage, action, actionData);	
+		logger.debug("sending notif, message:<{}>", messageDto);
+		//producerTemplate.to(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();		
+	}
+	
+	public FcmNotifMessageDto buildMessageDto(String fcmToken, FcmNotifMessageDto.Notification notifMessage, String action, String actionData) throws Exception{
 		if(fcmToken==null||notifMessage==null){
 			throw new Exception("token and notification is required");
 		}
@@ -37,10 +50,8 @@ public class NotificationService {
 			if(actionData!=null){
 				messageDto.getMessage().getData().setActionData(actionData);
 			}
-		}	
-		logger.debug("sending notif, message:<{}>", messageDto);
-		//producerTemplate.to(DirectEndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
-		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		}
+		return messageDto;
 	}
 	
 }
