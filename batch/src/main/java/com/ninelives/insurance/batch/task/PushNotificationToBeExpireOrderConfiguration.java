@@ -1,8 +1,5 @@
 package com.ninelives.insurance.batch.task;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.batch.core.Job;
@@ -29,9 +26,11 @@ import org.springframework.core.io.FileSystemResource;
 import com.ninelives.insurance.batch.NinelivesBatchConfigProperties;
 import com.ninelives.insurance.batch.model.PushNotificationData;
 import com.ninelives.insurance.batch.ref.PushNotificationType;
+import com.ninelives.insurance.batch.service.BatchService;
 import com.ninelives.insurance.batch.support.PushNotificationDataFromStringMapper;
 import com.ninelives.insurance.batch.support.PushNotificationDataToStringProcessor;
 import com.ninelives.insurance.batch.support.PushNotificationFcmWriter;
+import com.ninelives.insurance.batch.support.PushNotificationJobListener;
 import com.ninelives.insurance.batch.support.PushNotificationMyBatisReader;
 import com.ninelives.insurance.core.service.NotificationService;
 
@@ -53,13 +52,16 @@ public class PushNotificationToBeExpireOrderConfiguration {
 	@Autowired
 	public StepBuilderFactory stepBuilderFactory;
 	
-	@Autowired 
+	@Autowired
 	public SqlSessionFactory sqlSessionFactory;
 	
 	@Autowired
 	public NinelivesBatchConfigProperties config;
 	
-	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+	@Autowired 
+	public BatchService batchService;
+	
+	//SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	
 	@Bean(PUSH_NOTIFICATION_TO_BE_EXPIRE_ORDER_JOB)
 	public Job pushNotificationActiveOrderJob(
@@ -69,7 +71,7 @@ public class PushNotificationToBeExpireOrderConfiguration {
 			@Qualifier(PUSH_NOTIFICATION_STEP2_WRITER) ItemWriter<PushNotificationData> step2Writer
 			) {
 		return jobBuilderFactory.get(PUSH_NOTIFICATION_TO_BE_EXPIRE_ORDER_JOB).start(step1(step1Reader, step1Writer))
-				.next(step2(step2Reader, step2Writer)).build();
+				.next(step2(step2Reader, step2Writer)).listener(new PushNotificationJobListener(batchService)).build();
 	}
 	
 	public Step step1(ItemStreamReader<PushNotificationData> reader, ItemWriter<String> writer) {
@@ -94,9 +96,9 @@ public class PushNotificationToBeExpireOrderConfiguration {
 
 	@Bean(PUSH_NOTIFICATION_STEP1_WRITER)
 	@StepScope
-    public FlatFileItemWriter<String> writer(@Value("#{jobParameters['targetDate']}") Date targetDate) {
+    public FlatFileItemWriter<String> writer(@Value("#{jobParameters['targetDate']}") String targetDate) {
 		String filepath = FilenameUtils.concat(config.getBaseDir(),
-				"push." + PUSH_NOTIFICATION_TYPE + "." + formatter.format(targetDate) + ".txt");
+				"push." + PUSH_NOTIFICATION_TYPE + "." + targetDate + ".txt");
 		
 		FlatFileItemWriter<String> writer = new FlatFileItemWriter<String>();
 		writer.setResource(new FileSystemResource(filepath));
@@ -107,9 +109,9 @@ public class PushNotificationToBeExpireOrderConfiguration {
 	
 	@Bean(PUSH_NOTIFICATION_STEP2_READER)
 	@StepScope
-	public FlatFileItemReader<PushNotificationData> step2Reader(@Value("#{jobParameters['targetDate']}") Date targetDate) {
+	public FlatFileItemReader<PushNotificationData> step2Reader(@Value("#{jobParameters['targetDate']}") String targetDate) {
 		String filepath = FilenameUtils.concat(config.getBaseDir(),
-				"push." + PUSH_NOTIFICATION_TYPE + "." + formatter.format(targetDate) + ".txt");
+				"push." + PUSH_NOTIFICATION_TYPE + "." + targetDate + ".txt");
 		
 		FlatFileItemReader<PushNotificationData> reader = new FlatFileItemReader<>();
 		reader.setResource(new FileSystemResource(filepath));		
@@ -123,8 +125,7 @@ public class PushNotificationToBeExpireOrderConfiguration {
 	
 	@Bean(PUSH_NOTIFICATION_STEP2_WRITER)
 	@StepScope
-	public PushNotificationFcmWriter step2Writer(@Value("#{jobParameters['targetDate']}") Date targetDate,
-			@Autowired NotificationService notificationService, 
+	public PushNotificationFcmWriter step2Writer(@Autowired NotificationService notificationService, 
 			@Autowired MessageSource messageSource) {
 		PushNotificationFcmWriter writer = new PushNotificationFcmWriter(notificationService, messageSource);
 		return writer;
