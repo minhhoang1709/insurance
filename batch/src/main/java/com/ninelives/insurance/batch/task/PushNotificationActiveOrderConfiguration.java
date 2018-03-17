@@ -29,9 +29,11 @@ import org.springframework.core.io.FileSystemResource;
 import com.ninelives.insurance.batch.NinelivesBatchConfigProperties;
 import com.ninelives.insurance.batch.model.PushNotificationData;
 import com.ninelives.insurance.batch.ref.PushNotificationType;
+import com.ninelives.insurance.batch.service.BatchService;
 import com.ninelives.insurance.batch.support.PushNotificationDataFromStringMapper;
 import com.ninelives.insurance.batch.support.PushNotificationDataToStringProcessor;
 import com.ninelives.insurance.batch.support.PushNotificationFcmWriter;
+import com.ninelives.insurance.batch.support.PushNotificationJobListener;
 import com.ninelives.insurance.batch.support.PushNotificationMyBatisReader;
 import com.ninelives.insurance.core.service.NotificationService;
 
@@ -61,6 +63,9 @@ public class PushNotificationActiveOrderConfiguration {
 	@Autowired
 	public NinelivesBatchConfigProperties config;
 	
+	@Autowired 
+	public BatchService batchService;
+
 	//SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	
 	@Bean(PUSH_NOTIFICATION_ACTIVE_ORDER_JOB)
@@ -71,7 +76,7 @@ public class PushNotificationActiveOrderConfiguration {
 			@Qualifier(PUSH_NOTIFICATION_STEP2_WRITER) ItemWriter<PushNotificationData> step2Writer
 			) {
 		return jobBuilderFactory.get(PUSH_NOTIFICATION_ACTIVE_ORDER_JOB).start(step1(step1Reader, step1Writer))
-				.next(step2(step2Reader, step2Writer)).build();
+				.next(step2(step2Reader, step2Writer)).listener(new PushNotificationJobListener(batchService)).build();
 	}
 	
 	public Step step1(ItemStreamReader<PushNotificationData> reader, ItemWriter<String> writer) {

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.batch.mybatis.mapper.BatchLogMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.BatchLog">
+    <id column="job_execution_id" jdbcType="BIGINT" property="jobExecutionId" />
+    <result column="job_name" jdbcType="VARCHAR" property="jobName" />
+    <result column="job_parameter" jdbcType="VARCHAR" property="jobParameter" />
+    <result column="start_date" jdbcType="DATE" property="startDate" />
+    <result column="process_count" jdbcType="BIGINT" property="processCount" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="job_instance_id" jdbcType="BIGINT" property="jobInstanceId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="exit_code" jdbcType="VARCHAR" property="exitCode" />
+    <result column="exit_message" jdbcType="VARCHAR" property="exitMessage" />
+    <result column="last_updated" jdbcType="TIMESTAMP" property="lastUpdated" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    job_execution_id, job_name, job_parameter, start_date, process_count, version, job_instance_id, 
+    create_time, start_time, end_time, status, exit_code, exit_message, last_updated
+  </sql>
+  <insert id="insertSelective" parameterType="com.ninelives.insurance.model.BatchLog">
+    insert into public.batch_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="jobExecutionId != null">
+        job_execution_id,
+      </if>
+      <if test="jobName != null">
+        job_name,
+      </if>
+      <if test="jobParameter != null">
+        job_parameter,
+      </if>
+      <if test="startDate != null">
+        start_date,
+      </if>
+      <if test="processCount != null">
+        process_count,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="jobInstanceId != null">
+        job_instance_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="exitCode != null">
+        exit_code,
+      </if>
+      <if test="exitMessage != null">
+        exit_message,
+      </if>
+      <if test="lastUpdated != null">
+        last_updated,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="jobExecutionId != null">
+        #{jobExecutionId,jdbcType=BIGINT},
+      </if>
+      <if test="jobName != null">
+        #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="jobParameter != null">
+        #{jobParameter,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=DATE},
+      </if>
+      <if test="processCount != null">
+        #{processCount,jdbcType=BIGINT},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="jobInstanceId != null">
+        #{jobInstanceId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="exitCode != null">
+        #{exitCode,jdbcType=VARCHAR},
+      </if>
+      <if test="exitMessage != null">
+        #{exitMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdated != null">
+        #{lastUpdated,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ninelives.insurance.model.BatchLog">
+    update public.batch_log
+    <set>
+      <if test="jobName != null">
+        job_name = #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="jobParameter != null">
+        job_parameter = #{jobParameter,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        start_date = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="processCount != null">
+        process_count = #{processCount,jdbcType=BIGINT},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="jobInstanceId != null">
+        job_instance_id = #{jobInstanceId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="exitCode != null">
+        exit_code = #{exitCode,jdbcType=VARCHAR},
+      </if>
+      <if test="exitMessage != null">
+        exit_message = #{exitMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdated != null">
+        last_updated = #{lastUpdated,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where job_execution_id = #{jobExecutionId,jdbcType=BIGINT}
+  </update>
+</mapper>
