@@ -1,0 +1,84 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.8.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'war'
+
+group = 'com.ninelives'
+version = '0.0.1'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-batch')
+	compile('org.springframework.boot:spring-boot-starter-jdbc')
+	//compile('org.springframework.boot:spring-boot-starter-cache')
+	
+	//
+	//org.springframework.batch:spring-batch-admin-manager
+	
+	//mybatis
+	compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.1')
+	
+	//embedded-db
+	compile('com.h2database:h2')
+	
+	//queue
+	compile('org.apache.camel:camel-spring-boot-starter:2.20.1')
+	//compile('org.springframework.boot:spring-boot-starter-activemq')
+	//compile('org.apache.activemq:activemq-camel:5.15.2')
+	//compile('org.apache.camel:camel-jackson:2.20.1')
+	//compile('org.apache.camel:camel-jackson-starter:2.20.1')	
+	
+	//ehcache	
+	//compile('net.sf.ehcache:ehcache:2.10.4')
+	
+	//json
+	//compile('com.google.code.gson:gson:2.8.2')
+	
+	//apache-common
+	compile('commons-io:commons-io:2.6')
+	
+	//module
+	compile project(':core-lib')
+	compile project(':common-lib')
+		
+	runtime('org.postgresql:postgresql')
+	
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+war {
+	archiveName='ninelives-batch.war'
+   	from('src/main/java') {
+		include '**/*.xml'
+		into 'WEB-INF/classes'
+   	}
+}
+
+bootRun {
+    systemProperties = System.properties
+}
+
+springBoot {
+    executable = true
+    buildInfo()
+}
+

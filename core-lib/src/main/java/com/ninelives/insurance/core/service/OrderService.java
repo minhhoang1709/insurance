@@ -138,9 +138,10 @@ public class OrderService {
 		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
 				policyStartDate, policyEndDate, dueOrderDate, coverageIds);		
 		
-		Map<String, Long> conflictCoverageMap = conflictList.stream().collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
+		Map<String, Long> conflictCoverageMap = conflictList.stream()
+				.collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
 		
-		return  conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getPolicyConflictPeriodLimit());
+		return conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getPolicyConflictPeriodLimit());
 	}
 	
 	public PolicyOrder fetchOrderWithBeneficiaryByOrderId(final String userId, final String orderId){
@@ -264,22 +265,30 @@ public class OrderService {
 	
 	public void mapPolicyOrderStatus(PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null){
-			if(PolicyStatus.SUBMITTED.equals(policyOrder.getStatus())){
-				if(policyOrder.getOrderDate().plusDays(config.getOrder().getPolicyDueDatePeriod()).isBefore(today)){
-					policyOrder.setStatus(PolicyStatus.OVERDUE);
-				}else if(policyOrder.getPolicyStartDate().isBefore(today)){
-					policyOrder.setStatus(PolicyStatus.OVERDUE);
-				}
-			}else if(PolicyStatus.APPROVED.equals(policyOrder.getStatus())){
-				if(!policyOrder.getPolicyStartDate().isAfter(today) && !policyOrder.getPolicyEndDate().isBefore(today)){
-					policyOrder.setStatus(PolicyStatus.ACTIVE);
-				}else if(policyOrder.getPolicyEndDate().isBefore(today)){
-					policyOrder.setStatus(PolicyStatus.EXPIRED);
-				}
-			}
+			policyOrder.setStatus(parsePolicyStatus(policyOrder.getStatus(), policyOrder.getOrderDate(),
+					policyOrder.getPolicyStartDate(), policyOrder.getPolicyEndDate(), today));			
 		}
 	}
+	
+	private PolicyStatus parsePolicyStatus(PolicyStatus policyStatus, LocalDate policyOrderDate,
+			LocalDate policyStartDate, LocalDate policyEndDate, LocalDate today) {
+		if(PolicyStatus.SUBMITTED.equals(policyStatus)){
+			if(policyOrderDate.plusDays(config.getOrder().getPolicyDueDatePeriod()).isBefore(today)){
+				return PolicyStatus.OVERDUE;
+			}else if(policyStartDate.isBefore(today)){
+				return PolicyStatus.OVERDUE;
+			}
+		}else if(PolicyStatus.APPROVED.equals(policyStatus)){
+			if(!policyStartDate.isAfter(today) && !policyEndDate.isBefore(today)){
+				return PolicyStatus.ACTIVE;
+			}else if(policyEndDate.isBefore(today)){
+				return PolicyStatus.EXPIRED;				
+			}
+		}
 		
+		return policyStatus;
+	}
+
 		
 	public String generateOrderId(){
 		return UUID.randomUUID().toString();
