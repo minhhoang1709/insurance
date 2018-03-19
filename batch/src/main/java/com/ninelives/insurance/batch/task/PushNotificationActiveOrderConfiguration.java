@@ -1,8 +1,5 @@
 package com.ninelives.insurance.batch.task;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.batch.core.Job;

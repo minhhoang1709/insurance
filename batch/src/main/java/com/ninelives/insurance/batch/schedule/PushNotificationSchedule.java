@@ -1,6 +1,5 @@
 package com.ninelives.insurance.batch.schedule;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.ninelives.insurance.batch.NinelivesBatchConfigProperties;
 import com.ninelives.insurance.batch.task.PushNotificationActiveOrderConfiguration;
 import com.ninelives.insurance.batch.task.PushNotificationExpireOrderConfiguration;
 import com.ninelives.insurance.batch.task.PushNotificationToBeExpireOrderConfiguration;
@@ -28,7 +28,10 @@ public class PushNotificationSchedule {
 
 	private static final Logger log = LoggerFactory.getLogger(PushNotificationSchedule.class);
 	
-	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+	
+	@Autowired
+	public NinelivesBatchConfigProperties config;
 	
 	@Autowired
     JobLauncher jobLauncher;
@@ -47,32 +50,45 @@ public class PushNotificationSchedule {
     
     @Scheduled(cron="0 0 8 * * *")
 	public void pushNotificationActiveOrder() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException{
-		log.info("Starting schedule push notification for active order at "+ LocalDate.now());
-		
-		JobParameters jobParam =
-  			  new JobParametersBuilder().addDate("targetDate", Date.valueOf(LocalDate.now())).toJobParameters();
+		if(config.getEnablePushNotificationActiveOrderSchedule()){
+	    	log.info("Starting schedule push notification for active order at "+ LocalDate.now());
+			
+			JobParameters jobParam =
+	  			  new JobParametersBuilder().addString("targetDate", LocalDate.now().format(formatter)).toJobParameters();
 
-		jobLauncher.run(pushNotificationActiveOrderJob, jobParam);
+			jobLauncher.run(pushNotificationActiveOrderJob, jobParam);			
+		}else{
+			log.info("Schedule disabled for push notification for active order at "+ LocalDate.now());
+		}
+    	
 	}
     
     @Scheduled(cron="0 0 8 * * *")
 	public void pushNotificationExpireOrder() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException{
-		log.info("Starting schedule push notification for expire order at "+ LocalDate.now());
-		
-		JobParameters jobParam =
-  			  new JobParametersBuilder().addDate("targetDate", Date.valueOf(LocalDate.now())).toJobParameters();
+    	if(config.getEnablePushNotificationExpireOrderSchedule()){
+    		log.info("Starting schedule push notification for expire order at "+ LocalDate.now());
+    		
+    		JobParameters jobParam =
+    	  			  new JobParametersBuilder().addString("targetDate", LocalDate.now().format(formatter)).toJobParameters();
 
-		jobLauncher.run(pushNotificationExpireOrderJob, jobParam);
+    		jobLauncher.run(pushNotificationExpireOrderJob, jobParam);    		
+    	}else{
+    		log.info("Schedule disabled for push notification for expire order at "+ LocalDate.now());
+    	}
 	}
     
     @Scheduled(cron="0 0 20 * * *")
 	public void pushNotificationToBeExpireOrder() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException{
-		log.info("Starting schedule push notification for to be expire order at "+ LocalDate.now());
-		
-		JobParameters jobParam =
-  			  new JobParametersBuilder().addDate("targetDate", Date.valueOf(LocalDate.now())).toJobParameters();
+    	if(config.getEnablePushNotificationToBeExpireOrderSchedule()){
+    		log.info("Starting schedule push notification for to be expire order at "+ LocalDate.now());
+    		
+    		JobParameters jobParam =
+    	  			  new JobParametersBuilder().addString("targetDate", LocalDate.now().format(formatter)).toJobParameters();
 
-		jobLauncher.run(pushNotificationToBeExpireOrderJob, jobParam);
+    		jobLauncher.run(pushNotificationToBeExpireOrderJob, jobParam);    		
+    	}else{
+    		log.info("Schedule disabled for push notification for to be expire order at "+ LocalDate.now());
+    	}
 	}
     
 //	@Scheduled(cron="0 40 14 * * *")

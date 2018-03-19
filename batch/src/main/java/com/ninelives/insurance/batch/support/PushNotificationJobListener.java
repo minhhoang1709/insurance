@@ -50,6 +50,7 @@ public class PushNotificationJobListener implements JobExecutionListener{
 		batchLog.setExitCode(jobExecution.getExitStatus().getExitCode());
 		batchLog.setExitMessage(jobExecution.getExitStatus().getExitDescription());
 		
+
 		batchService.updateBatchLog(batchLog);
 	}
 
