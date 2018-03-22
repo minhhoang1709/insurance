@@ -3,6 +3,7 @@ package com.ninelives.insurance.batch.model;
 import com.ninelives.insurance.batch.ref.PushNotificationType;
 
 public class PushNotificationData {
+	private String userId;
 	private String email;
 	private String fcmToken;
 	private String orderId;
@@ -10,7 +11,13 @@ public class PushNotificationData {
 	private String coverageCategoryName;
 	
 	private PushNotificationType pushNotificationType;
-	
+		
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 	public String getEmail() {
 		return email;
 	}
@@ -48,11 +55,12 @@ public class PushNotificationData {
 	public void setPushNotificationType(PushNotificationType pushNotificationType) {
 		this.pushNotificationType = pushNotificationType;
 	}
+	
 	@Override
 	public String toString() {
-		return "PushNotificationData [email=" + email + ", fcmToken=" + fcmToken + ", orderId=" + orderId
-				+ ", coverageCategoryId=" + coverageCategoryId + ", coverageCategoryName=" + coverageCategoryName
-				+ ", pushNotificationType=" + pushNotificationType + "]";
+		return "PushNotificationData [userId=" + userId + ", email=" + email + ", fcmToken=" + fcmToken + ", orderId="
+				+ orderId + ", coverageCategoryId=" + coverageCategoryId + ", coverageCategoryName="
+				+ coverageCategoryName + ", pushNotificationType=" + pushNotificationType + "]";
 	}
 	
 }

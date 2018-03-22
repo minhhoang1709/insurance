@@ -28,6 +28,7 @@ import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.provider.account.GoogleAccountProvider;
 import com.ninelives.insurance.api.service.ApiClaimService;
+import com.ninelives.insurance.api.service.ApiNotificationService;
 import com.ninelives.insurance.api.service.ApiOrderService;
 import com.ninelives.insurance.api.service.TestService;
 import com.ninelives.insurance.api.service.ApiUserService;
@@ -40,6 +41,7 @@ import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.core.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.util.GsonUtil;
@@ -66,6 +68,8 @@ public class TestController {
 	@Autowired ApiClaimService apiClaimService;
 	@Autowired TestService testService;
 	@Autowired ApiVoucherService apiVoucherService;
+	@Autowired ApiNotificationService apiNotificationService;
+	@Autowired NotificationService notificationService;
 	@Autowired VoucherService voucherService;
 	@Autowired StorageProvider storageService;
 	
@@ -139,10 +143,11 @@ public class TestController {
 	
 	@PostMapping("/test/notifs")
 	@ResponseBody
-	public String sendNotif(@RequestAttribute("authUserId") String userId, @RequestBody FcmNotifMessageDto messageDto){
+	public String sendNotif(@RequestAttribute("authUserId") String userId, @RequestBody FcmNotifMessageDto messageDto) throws Exception{
 				
 		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs("oi oi 2", String.class).send();
-		producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		//producerTemplate.to(EndPointRef.QUEUE_FCM_NOTIFICATION).withBodyAs(messageDto, FcmNotifMessageDto.class).send();
+		notificationService.sendFcmNotification(userId, messageDto, EndPointRef.QUEUE_FCM_NOTIFICATION);
 		return "ok-2";
 	}
 	

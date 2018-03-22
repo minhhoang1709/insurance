@@ -138,7 +138,7 @@ public class ApiUserService {
 			notifMessage.setBody(messageSource.getMessage("message.notification.welcome.body", new Object[]{"9Lives"}, Locale.ROOT));
 			
 			try {
-				notificationService.sendFcmNotification(user.getFcmToken(), notifMessage);
+				notificationService.sendFcmNotification(user.getUserId(), user.getFcmToken(), notifMessage);
 			} catch (Exception e) {
 				logger.error("Failed to send message notif for register user",e);
 			}

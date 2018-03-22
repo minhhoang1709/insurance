@@ -39,9 +39,9 @@ public class PushNotificationFcmWriter implements ItemWriter<PushNotificationDat
 			notifMessage.setBody(messageSource.getMessage(PREFIX_MESSAGE_BODY+item.getPushNotificationType().toString(), null, Locale.ROOT));
 			
 			if(!StringUtils.isEmpty(item.getOrderId())){
-				notificationService.sendFcmPushNotification(item.getFcmToken(), notifMessage, FcmNotifAction.order, item.getOrderId());
+				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage, FcmNotifAction.order, item.getOrderId());
 			}else{
-				notificationService.sendFcmPushNotification(item.getFcmToken(), notifMessage);
+				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage);
 			}
         }        
     }

@@ -610,7 +610,7 @@ public class ApiOrderService {
 		return policyOrder;
 	}
 	
-	private void sendSuccessNotification(String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){
+	private void sendSuccessNotification(String userId, String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null && policyOrder.getCoverageCategory()!=null){
 			if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
 					&& !policyOrder.getPolicyStartDate().isAfter(today) 
@@ -624,7 +624,7 @@ public class ApiOrderService {
 					notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body",
 							new Object[] { covCat.getName() }, Locale.ROOT));
 					try {
-						notificationService.sendFcmNotification(receiverFcmToken, notifMessage,
+						notificationService.sendFcmNotification(userId, receiverFcmToken, notifMessage,
 								FcmNotifAction.order, policyOrder.getOrderId());
 					} catch (Exception e) {
 						logger.error("Failed to send message notif for register order", e);

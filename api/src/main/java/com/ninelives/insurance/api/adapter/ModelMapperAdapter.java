@@ -29,6 +29,7 @@ import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
+import com.ninelives.insurance.api.dto.UserNotificationDto;
 import com.ninelives.insurance.api.dto.VoucherDto;
 import com.ninelives.insurance.api.util.DateTimeFormatUtil;
 import com.ninelives.insurance.model.ClaimDocType;
@@ -49,6 +50,7 @@ import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserFile;
+import com.ninelives.insurance.model.UserNotification;
 import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.ref.PolicyStatus;
 
@@ -62,6 +64,20 @@ public class ModelMapperAdapter {
 //	@Value("${ninelives.order.policy-title}")
 //	String policyTitle;
 	
+	public UserNotificationDto toDto (UserNotification m){
+		UserNotificationDto dto = null;
+		if(m!=null){
+			dto = new UserNotificationDto();
+			dto.setId(m.getId());
+			dto.setTitle(m.getTitle());
+			dto.setBody(m.getBody());
+			dto.setAction(m.getAction());
+			dto.setActionData(m.getActionData());
+			dto.setCreatedDate(m.getCreatedDate());
+		}
+		
+		return dto;
+	}
 	public VoucherDto toDto(Voucher m) {
 		VoucherDto dto = null;
 		if(m!=null){

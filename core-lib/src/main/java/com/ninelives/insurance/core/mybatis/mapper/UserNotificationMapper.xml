@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.core.mybatis.mapper.UserNotificationMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.UserNotification">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="body" jdbcType="VARCHAR" property="body" />
+    <result column="action" jdbcType="VARCHAR" property="action" />
+    <result column="action_data" jdbcType="VARCHAR" property="actionData" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+  </resultMap> 
+  <sql id="Base_Column_List">
+    id, user_id, title, body, action, action_data, created_date
+  </sql> 
+  <insert id="insertSelective" parameterType="com.ninelives.insurance.model.UserNotification">
+    insert into public.user_notification
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="body != null">
+        body,
+      </if>
+      <if test="action != null">
+        action,
+      </if>
+      <if test="actionData != null">
+        action_data,
+      </if>
+      <if test="createdDate != null">
+        created_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="body != null">
+        #{body,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null">
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="actionData != null">
+        #{actionData,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null">
+        #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>
