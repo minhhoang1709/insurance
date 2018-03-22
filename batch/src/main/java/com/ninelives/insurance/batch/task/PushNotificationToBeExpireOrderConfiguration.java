@@ -40,11 +40,11 @@ public class PushNotificationToBeExpireOrderConfiguration {
 	
 	public static final String PUSH_NOTIFICATION_TO_BE_EXPIRE_ORDER_JOB = "pushNotificationToBeExpireOrderJob";
 	
-	public static final String PUSH_NOTIFICATION_STEP1_READER = "pushNotificationExpireOrderStep1Reader";
-	public static final String PUSH_NOTIFICATION_STEP1_WRITER = "pushNotificationExpireOrderStep1Writer";
+	public static final String PUSH_NOTIFICATION_STEP1_READER = "pushNotificationToBeExpireOrderStep1Reader";
+	public static final String PUSH_NOTIFICATION_STEP1_WRITER = "pushNotificationToBeExpireOrderStep1Writer";
 	
-	public static final String PUSH_NOTIFICATION_STEP2_READER = "pushNotificationExpireOrderStep2Reader";
-	public static final String PUSH_NOTIFICATION_STEP2_WRITER = "pushNotificationExpireOrderStep2Writer";
+	public static final String PUSH_NOTIFICATION_STEP2_READER = "pushNotificationToBeExpireOrderStep2Reader";
+	public static final String PUSH_NOTIFICATION_STEP2_WRITER = "pushNotificationToBeExpireOrderStep2Writer";
 			
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
