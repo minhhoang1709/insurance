@@ -84,7 +84,7 @@ public class RegistrationDto {
 		return "RegistrationDto [source=" + source + ", deviceId=" + deviceId + ", googleId=" + googleId
 				+ ", googleName=" + googleName + ", googleEmail=" + googleEmail + ", googleServerAuth="
 				+ googleServerAuth + ", googleToken=" + googleToken + ", fcmToken=" + fcmToken + ", name=" + name
-				+ ", password=" + password + ", isSyncGmailEnabled=" + isSyncGmailEnabled + "]";
+				+ ", password=***" + "" + ", isSyncGmailEnabled=" + isSyncGmailEnabled + "]";
 	}
 	
 }

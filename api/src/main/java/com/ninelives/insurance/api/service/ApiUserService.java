@@ -124,6 +124,8 @@ public class ApiUserService {
 			userService.insertUser(user);
 
 			isNew = true;
+			
+			logger.info("New register, registration:<{}>, user:<{}>", registrationDto, user);
 		}
 		
 		UserDto userDto = modelMapperAdapter.toDto(user);

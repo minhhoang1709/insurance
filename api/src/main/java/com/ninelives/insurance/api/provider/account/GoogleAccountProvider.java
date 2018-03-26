@@ -29,7 +29,7 @@ public class GoogleAccountProvider implements AccountProvider{
 	
 	@Override
 	public String verifyEmail(RegistrationDto registrationDo) {
-		logger.debug("Verify account, registrationDto:<{}>", registrationDo);
+		logger.debug("Start verify account, registrationDto:<{}>", registrationDo);
 		if(registrationDo==null||registrationDo.getGoogleToken()==null){
 			return null;
 		}
@@ -45,10 +45,19 @@ public class GoogleAccountProvider implements AccountProvider{
 			
 			if (googleIdTokenVerifier.verify(token)) {
 			    GoogleIdToken.Payload payload = token.getPayload();
-			    logger.debug("Verify account, payload:<{}>", payload);
+			    logger.debug("Success verify account, payload:<{}>", payload);
 			    if(payload!=null){
 			    	emailVerify = payload.getEmail();
 			    }
+			}else{
+				if (token !=null){
+					GoogleIdToken.Payload payload = token.getPayload();
+					if(payload!=null){
+						logger.error("Failed verify account, payload: <{}>, registrationDto:<{}>", payload, registrationDo);
+					}else{
+						logger.error("Failed verify account, null payload, registrationDto:<{}>", registrationDo);
+					}
+				}
 			}
 		} catch (IOException | GeneralSecurityException e) {
 			logger.error("Verify account exception", e);
