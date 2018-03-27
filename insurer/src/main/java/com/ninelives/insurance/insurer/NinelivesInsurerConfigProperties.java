@@ -36,7 +36,7 @@ public class NinelivesInsurerConfigProperties {
 		private int aswataConnectionPoolSize = 32;
 		private int aswataPoolTimeout = 5000;
 		private int aswataConnectTimeout = 5000;
-		private int aswataSocketTimeout = 30000;
+		private int aswataSocketTimeout = 60000;
 		
 		public String getAswataClientCode() {
 			return aswataClientCode;
