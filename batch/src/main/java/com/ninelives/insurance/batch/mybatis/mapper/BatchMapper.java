@@ -34,9 +34,9 @@ public interface BatchMapper {
 		"FROM public.policy_order a, public.users b, public.coverage_category c ",
 		"WHERE b.user_id=a.user_id and c.coverage_category_id=a.coverage_category_id ",
 		  "and (",
-		    "(a.policy_end_date=(#{targetDate,jdbcType=DATE}::date + '1 day'::interval) and a.period_id='101') ",
+		    "(a.policy_end_date=(#{targetDate,jdbcType=DATE}::date) and a.period_id='101') ",
 		      "or ",
-		    "(a.policy_end_date=(#{targetDate,jdbcType=DATE}::date + '3 day'::interval) and a.period_id!='101') ",
+		    "(a.policy_end_date=(#{targetDate,jdbcType=DATE}::date + '2 day'::interval) and a.period_id!='101') ",
 		  ") ",
 		  "and a.status in ('APPROVED','ACTIVE')"
 	})
