@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderResponseDto implements Serializable{
+public class OrderResponseDto implements IAswataResponsePayload, Serializable{
 	private static final long serialVersionUID = -9148121133242193040L;
 	@JsonProperty("service_code")
 	private String serviceCode;
@@ -95,6 +95,14 @@ public class OrderResponseDto implements Serializable{
 	}
 	public void setOther(Map<String, Object> other) {
 		this.other = other;
+	}
+	public boolean isSuccess(){
+		if(getResponseCode()!=null
+				&& getResponseCode().equals(ResponseDto.RESPONSE_CODE_SUCCESS)
+				&& getResponseParam()!=null){
+			return true;
+		}
+		return false;
 	}
 	@Override
 	public String toString() {

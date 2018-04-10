@@ -328,5 +328,26 @@
       		open="(" separator="," close=")">#{item}
          </foreach>
   </select>
-	
+  
+  <update id="updateStatusAndProviderResponseByOrderIdSelective" parameterType="com.ninelives.insurance.model.PolicyOrder">
+    update public.policy_order
+    <set>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="policyNumber != null">
+        policy_number = #{policyNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="providerOrderNumber != null">
+        provider_order_number = #{providerOrderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="providerDownloadUrl != null">
+        provider_download_url = #{providerDownloadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+      	update_date= #{updateDate,jdbcType=DATE},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </update>	
 </mapper>

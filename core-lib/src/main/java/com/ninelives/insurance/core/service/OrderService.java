@@ -42,7 +42,8 @@ public class OrderService {
 	
 	@Autowired NinelivesConfigProperties config;
 	
-	@Autowired ProductService productService;	
+	@Autowired ProductService productService;
+	@Autowired InsuranceService insuranceService;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
@@ -57,6 +58,26 @@ public class OrderService {
 	@Value("${ninelives.order.filter-offset:0}")
 	int defaultOrdersFilterOffset;
 	
+	public void orderConfirm(PolicyOrder policyOrder) throws AppException{
+		logger.info("Start process order confirm, order:<{}>", policyOrder);
+		
+		if(StringUtils.isEmpty(policyOrder.getOrderId())){
+			throw new AppBadRequestException(ErrorCode.ERR4000_ORDER_INVALID, "Pesanan tidak ditemukan");
+		}		
+		try {
+			insuranceService.orderConfirm(policyOrder);
+			
+			policyOrder.setStatus(PolicyStatus.APPROVED);
+			
+			policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(policyOrder);
+			
+		} catch (AppInternalServerErrorException e) {
+			logger.error("Error order confirm for user:<{}> with order:<{}>, result: exception <{}>",
+					policyOrder, e.getCode());
+			throw e;
+		}				
+		
+	}
 	public boolean isEquals(PolicyOrderBeneficiary pob, UserBeneficiary ub){
 		if(pob.getName()==null){
 			if(ub.getName()!=null){

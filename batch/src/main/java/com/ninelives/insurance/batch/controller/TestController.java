@@ -22,7 +22,7 @@ import com.ninelives.insurance.batch.task.PushNotificationExpireOrderConfigurati
 import com.ninelives.insurance.batch.task.PushNotificationToBeExpireOrderConfiguration;
 
 @Controller
-@Profile("dev")
+@Profile("localdb")
 public class TestController {
 	@Autowired
     JobLauncher jobLauncher;

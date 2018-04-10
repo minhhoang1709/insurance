@@ -43,7 +43,7 @@ public class PushNotificationFcmWriter implements ItemWriter<PushNotificationDat
 			}else{
 				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage);
 			}
-        }        
+        }
     }
 
 }

@@ -31,15 +31,20 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderConfirmLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderLogMapper;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.core.service.FileUploadService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.model.InsurerOrderConfirmLog;
 import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
+import com.ninelives.insurance.provider.insurance.aswata.dto.IAswataResponsePayload;
+import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRequestDto;
+import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
@@ -56,12 +61,13 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	@Autowired ProductService productService;
 	@Autowired FileUploadService fileUploadService;
 	
-	@Autowired InsurerOrderLogMapper insurerOrderLogMapper; 
+	@Autowired InsurerOrderLogMapper insurerOrderLogMapper;
+	@Autowired InsurerOrderConfirmLogMapper insurerOrderConfirmLogMapper;
 
-	public static final class AswataResultSuccessCondition{
-		public static final String responseCode="000000";
-		public static final int httpStatus=200;
-	}
+//	public static final class AswataResultSuccessCondition{
+//		public static final String responseCode="000000";
+//		public static final int httpStatus=200;
+//	}
 	
 	DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -81,11 +87,11 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	}
 	
 	@Override
-	public ResponseDto<OrderResponseDto> orderPolicy(PolicyOrder order) throws IOException, StorageException{
+	public ResponseDto<OrderResponseDto> orderPolicy(PolicyOrder order) throws IOException, StorageException, InsuranceProviderException{
 		
 		if(!enableConnection){
 			logger.error("Error on orderPolicy with exception <connection is not enabled>");
-			throw new IOException("Connection is not enabled");
+			throw new InsuranceProviderConnectDisabledException("Connection is not enabled");
 		}
 
 		ResponseDto<OrderResponseDto> result = new ResponseDto<>();
@@ -189,7 +195,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 			}
 		}
 		
-		if(isSuccess(result)){
+		if(result!=null && result.isSuccess()){
 			//only set order id on success case since we will not create order if request to aswata fail
 			orderLog.setOrderId(order.getOrderId());
 		}
@@ -200,21 +206,114 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 				result == null ? null : result);		
 
 		return result;
-	}	
-	@Override
-	public boolean isSuccess(ResponseDto<OrderResponseDto> responseResult){
-		if(responseResult!=null && responseResult.getResponse()!=null){
-			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
-					&& responseResult.getResponse().getResponseCode()!=null
-					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
-					&& responseResult.getResponse().getResponseParam()!=null
-					){
-				return true;
-			}
-		}
-		return false;
 	}
 	
+	public ResponseDto<OrderConfirmResponseDto> orderConfirm(PolicyOrder order) throws InsuranceProviderException{
+		if(!enableConnection){
+			logger.error("Error on orderPolicy with exception <connection is not enabled>");
+			throw new InsuranceProviderException ("Connection is not enabled");
+		}
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		ResponseDto<OrderConfirmResponseDto> result = new ResponseDto<>();
+		
+		OrderConfirmRequestDto requestDto = new OrderConfirmRequestDto();
+		requestDto.setServiceCode(ServiceCode.ORDER_CONFIRM);
+		requestDto.setUserRefNo(order.getUserId());
+		requestDto.setClientCode(clientCode);
+		requestDto.setRequestTime(now.format(timeFormatter));
+		
+		requestDto.setRequestParam(new OrderConfirmRequestDto.RequestParam());
+		requestDto.getRequestParam().setOrderNumber(order.getProviderOrderNumber());
+		requestDto.getRequestParam().setPaymentToken("0");
+		requestDto.getRequestParam().setPaymentAmount("0");
+		
+		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
+		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
+				
+		logger.debug("Sending to aswata with request <{}>", requestDto);
+		
+		HttpHeaders restHeader = new HttpHeaders();
+		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		restHeader.setContentType(MediaType.APPLICATION_JSON);
+		
+		HttpEntity<OrderConfirmRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
+		ResponseEntity<OrderConfirmResponseDto> resp = null;
+		LocalDateTime requestTime = LocalDateTime.now();
+		try{
+			resp  = template.exchange(providerUrl, HttpMethod.POST, entity, OrderConfirmResponseDto.class);
+			result.setHttpStatus(resp.getStatusCodeValue());
+			result.setResponse(resp.getBody());
+		}catch(HttpClientErrorException e){
+			result.setHttpStatus(e.getStatusCode().value());
+			result.setErrorMessage(e.getMessage());
+			logger.error("Error on send order request to aswata", e);
+		}catch(Exception e){
+			result.setHttpStatus(-1);
+			logger.error("Error on send order request to aswata", e);
+		}
+		LocalDateTime responseTime = LocalDateTime.now();		
+		
+		InsurerOrderConfirmLog insurerLog = new InsurerOrderConfirmLog();
+		insurerLog.setCoverageCategoryId(order.getCoverageCategoryId());
+		insurerLog.setServiceCode(requestDto.getServiceCode());
+		insurerLog.setOrderId(order.getOrderId());
+		insurerLog.setOrderTime(order.getOrderTime());
+		insurerLog.setUserRefNo(requestDto.getUserRefNo());
+		insurerLog.setProviderRequestTime(requestDto.getRequestTime());
+		insurerLog.setRequestTime(requestTime);
+		insurerLog.setResponseTime(responseTime);
+				
+		if(result!=null){
+			insurerLog.setResponseStatus(result.getHttpStatus());
+			if(result.getResponse()!=null){
+				insurerLog.setResponseCode(result.getResponse().getResponseCode());		
+				insurerLog.setProviderResponseTime(result.getResponse().getResponseTime());
+				if(result.getResponse().getResponseParam()!=null){
+					insurerLog.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
+					insurerLog.setOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
+					insurerLog.setPolicyDocument(result.getResponse().getResponseParam().getPolicyDocument());
+					insurerLog.setDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+				}
+			}
+		}		
+				
+		insurerOrderConfirmLogMapper.insertSelective(insurerLog);
+		
+		logger.debug("Receive aswata response with request: <{}>, entity: <{}> and result <{}>", requestDto, resp == null ? null : resp.toString(),
+				result == null ? null : result);	
+		
+		return result;
+	}
+	
+//	@Override
+//	public boolean isSuccess(ResponseDto<OrderResponseDto> responseResult){
+//		if(responseResult!=null && responseResult.getResponse()!=null){
+//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
+//					&& responseResult.getResponse().getResponseCode()!=null
+//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+//					&& responseResult.getResponse().getResponseParam()!=null
+//					){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	public boolean isSuccess(ResponseDto<IAswataResponsePayload> responseResult){
+//		if(responseResult!=null && responseResult.getResponse()!=null){
+//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
+//					&& responseResult.getResponse().getResponseCode()!=null
+//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+//					&& responseResult.getResponse().getResponseParam()!=null
+//					){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+
 	@PostConstruct
 	private void init() throws IOException {
 		enableConnection = config.getInsurance().getEnableConnection();

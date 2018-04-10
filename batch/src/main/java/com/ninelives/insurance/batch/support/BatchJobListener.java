@@ -11,13 +11,13 @@ import org.springframework.batch.core.JobExecutionListener;
 import com.ninelives.insurance.batch.service.BatchService;
 import com.ninelives.insurance.model.BatchLog;
 
-public class PushNotificationJobListener implements JobExecutionListener{
+public class BatchJobListener implements JobExecutionListener{
 	
-	private static final Logger logger = LoggerFactory.getLogger(PushNotificationJobListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(BatchJobListener.class);
 
 	BatchService batchService;
 	
-	public PushNotificationJobListener (BatchService batchService){
+	public BatchJobListener (BatchService batchService){
 		this.batchService = batchService;
 	}
 	
@@ -49,8 +49,6 @@ public class PushNotificationJobListener implements JobExecutionListener{
 		batchLog.setStatus(jobExecution.getStatus().name());
 		batchLog.setExitCode(jobExecution.getExitStatus().getExitCode());
 		batchLog.setExitMessage(jobExecution.getExitStatus().getExitDescription());
-		
-
 		batchService.updateBatchLog(batchLog);
 	}
 

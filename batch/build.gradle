@@ -16,7 +16,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
 group = 'com.ninelives'
-version = '0.1.0'
+version = '0.1.1'
 sourceCompatibility = 1.8
 
 repositories {
@@ -29,7 +29,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-batch')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
-	//compile('org.springframework.boot:spring-boot-starter-cache')
+	compile('org.springframework.boot:spring-boot-starter-cache')
 	
 	//
 	//org.springframework.batch:spring-batch-admin-manager
@@ -48,7 +48,7 @@ dependencies {
 	//compile('org.apache.camel:camel-jackson-starter:2.20.1')	
 	
 	//ehcache	
-	//compile('net.sf.ehcache:ehcache:2.10.4')
+	compile('net.sf.ehcache:ehcache:2.10.4')
 	
 	//json
 	//compile('com.google.code.gson:gson:2.8.2')

@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PaymentConfirmResponseDto  implements IAswataResponsePayload, Serializable{
-	private static final long serialVersionUID = -4428024174258466906L;
+public class OrderConfirmResponseDto  implements IAswataResponsePayload, Serializable{
+	private static final long serialVersionUID = -7359084190863451904L;
 	
 	@JsonProperty("service_code")
 	private String serviceCode;
@@ -96,7 +96,7 @@ public class PaymentConfirmResponseDto  implements IAswataResponsePayload, Seria
 	}
 	public void setOther(Map<String, Object> other) {
 		this.other = other;
-	}
+	}	
 	public boolean isSuccess(){
 		if(getResponseCode()!=null
 				&& getResponseCode().equals(ResponseDto.RESPONSE_CODE_SUCCESS)
@@ -107,14 +107,14 @@ public class PaymentConfirmResponseDto  implements IAswataResponsePayload, Seria
 	}
 	@Override
 	public String toString() {
-		return "PaymentConfirmResponseDto [serviceCode=" + serviceCode + ", userRefNo=" + userRefNo + ", clientCode="
+		return "OrderConfirmResponseDto [serviceCode=" + serviceCode + ", userRefNo=" + userRefNo + ", clientCode="
 				+ clientCode + ", responseTime=" + responseTime + ", responseCode=" + responseCode + ", errorDesc="
 				+ errorDesc + ", responseParam=" + responseParam + ", authCode=" + authCode + ", other=" + other + "]";
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class ResponseParam implements Serializable{
-		private static final long serialVersionUID = 7160004215699497232L;
+		private static final long serialVersionUID = 1343239523907110553L;
 		
 		@JsonProperty("policy_number")
 		private String policyNumber;

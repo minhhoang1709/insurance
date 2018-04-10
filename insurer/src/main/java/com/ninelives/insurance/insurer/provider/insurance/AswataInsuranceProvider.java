@@ -29,7 +29,6 @@ import com.ninelives.insurance.insurer.NinelivesInsurerConfigProperties;
 import com.ninelives.insurance.insurer.mybatis.mapper.InsurerPaymentConfirmLogMapper;
 import com.ninelives.insurance.model.InsurerPaymentConfirmLog;
 import com.ninelives.insurance.model.PolicyOrder;
-import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
@@ -132,15 +131,18 @@ public class AswataInsuranceProvider {
 	}
 	
 	public boolean isSuccess(ResponseDto<PaymentConfirmResponseDto> responseResult){
-		if(responseResult!=null && responseResult.getResponse()!=null){
-			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
-					&& responseResult.getResponse().getResponseCode()!=null
-					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
-					&& responseResult.getResponse().getResponseParam()!=null
-					){
-				return true;
-			}
+		if(responseResult!=null){
+			return responseResult.isSuccess();
 		}
+//		if(responseResult!=null && responseResult.getResponse()!=null){
+//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
+//					&& responseResult.getResponse().getResponseCode()!=null
+//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+//					&& responseResult.getResponse().getResponseParam()!=null
+//					){
+//				return true;
+//			}
+//		}
 		return false;
 	}
 	

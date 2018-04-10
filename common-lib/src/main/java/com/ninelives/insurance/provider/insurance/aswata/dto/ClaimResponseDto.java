@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClaimResponseDto  implements Serializable{
+public class ClaimResponseDto implements IAswataResponsePayload, Serializable{
 	private static final long serialVersionUID = -7645753993892074153L;
 
 	@JsonProperty("service_code")
@@ -74,6 +74,16 @@ public class ClaimResponseDto  implements Serializable{
 	public void setAuthCode(String authCode) {
 		this.authCode = authCode;
 	}
+	
+	public boolean isSuccess(){
+		if(getResponseCode()!=null
+				&& getResponseCode().equals(ResponseDto.RESPONSE_CODE_SUCCESS)
+				&& getResponseParam()!=null){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() {
 		return "ClaimResponseDto [serviceCode=" + serviceCode + ", userRefNo=" + userRefNo + ", clientCode="

@@ -39,9 +39,12 @@ import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.core.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.core.provider.insurance.AswataInsuranceProvider;
+import com.ninelives.insurance.core.provider.insurance.InsuranceProviderException;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.NotificationService;
+import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.util.GsonUtil;
@@ -53,6 +56,8 @@ import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.Voucher;
+import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
+import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.route.EndPointRef;
@@ -71,6 +76,8 @@ public class TestController {
 	@Autowired ApiNotificationService apiNotificationService;
 	@Autowired NotificationService notificationService;
 	@Autowired VoucherService voucherService;
+	@Autowired InsuranceService insuranceService;
+	@Autowired OrderService orderService;
 	@Autowired StorageProvider storageService;
 	
 	@Autowired AswataInsuranceProvider aswata;
@@ -91,6 +98,55 @@ public class TestController {
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
+	@PostMapping("/test/aswata/orderconfirm")
+	@ResponseBody
+	public String testOrderConfirm(@RequestAttribute ("authUserId") String authUserId, @RequestParam("providerOrderNum") String orderNum ) throws Exception{
+		
+		logger.debug("dapat ordernum <{}>", orderNum);
+		
+		PolicyOrder po = new PolicyOrder();
+		po.setUserId(authUserId);
+		po.setProviderOrderNumber(orderNum);
+		ResponseDto<OrderConfirmResponseDto> result = aswata.orderConfirm(po);
+		
+//		return orderNum;
+		return result.toString();
+	}
+	
+	@PostMapping("/test/insurance/orderconfirm")
+	@ResponseBody
+	public String testOrderConfirmInsurance(@RequestAttribute ("authUserId") String authUserId, @RequestParam("providerOrderNum") String orderNum ) throws Exception{
+		
+		logger.debug("dapat ordernum <{}>", orderNum);
+		
+		PolicyOrder po = new PolicyOrder();
+		po.setUserId(authUserId);
+		po.setProviderOrderNumber(orderNum);
+		
+		insuranceService.orderConfirm(po);
+		
+//		return orderNum;
+		return po.toString();
+	}
+	
+	@PostMapping("/test/order/orderconfirm")
+	@ResponseBody
+	public String testOrderConfirmOrder(@RequestAttribute("authUserId") String authUserId,
+			@RequestParam("providerOrderNum") String orderNum,
+			@RequestParam("orderId") String orderId) throws Exception {
+		
+		logger.debug("dapat ordernum <{}>", orderNum);
+		
+		PolicyOrder po = new PolicyOrder();
+		po.setOrderId(orderId);
+		po.setUserId(authUserId);
+		po.setProviderOrderNumber(orderNum);
+		
+		orderService.orderConfirm(po);
+		
+		return po.toString();
+	}
+	
 	@PostMapping("/test/google")
 	@ResponseBody
 	public String testGoogleVerification(@RequestBody RegistrationDto registrationDto) throws Exception{
@@ -101,7 +157,12 @@ public class TestController {
 	@GetMapping("/test/aswata/order")
 	@ResponseBody
 	public String testAswataOrder(@RequestAttribute ("authUserId") String authUserId) throws AppNotFoundException, IOException, StorageException{
-		aswata.orderPolicy(null);
+		try {
+			aswata.orderPolicy(null);
+		} catch (InsuranceProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "ok";
 	}
 	

@@ -70,4 +70,6 @@ public interface PolicyOrderMapper {
 	LocalDate selectMaxPolicyEndDateByCoverage(@Param ("userId") String userId, 
 			@Param ("policyEndDate") LocalDate policyEndDate,
 			@Param ("coverageIds") List<String> coverageIds);
+	
+	int updateStatusAndProviderResponseByOrderIdSelective(PolicyOrder record);
 }

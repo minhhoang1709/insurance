@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.FileSystemResource;
 
 @Configuration
-@Profile("dev")
+@Profile("localdb")
 public class TestConfiguration {
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
