@@ -34,4 +34,11 @@ public interface VoucherMapper {
 		"where code=#{code,jdbcType=VARCHAR} and user_id=#{userId,jdbcType=VARCHAR}"
 	})
 	int increamentInviterRewardCount(@Param("code") String code, @Param("userId") String userId);
+	
+	@Update({
+		"update public.voucher ",
+		"set approve_cnt=approve_cnt+1 ",
+		"where id = #{id,jdbcType=INTEGER}"
+	})
+	int increamentVoucherApproveCount(@Param("id") Integer id);
 }

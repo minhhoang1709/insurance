@@ -36,10 +36,12 @@ public class VoucherService {
 	}
 	
 	public Voucher fetchVoucherByCode(String code) throws AppNotFoundException{
-		return fetchVoucherByCode(code, null);
+		return fetchVoucherByCode(code, null, true);
 	}
-	
 	public Voucher fetchVoucherByCode(String code, VoucherType voucherType) throws AppNotFoundException{
+		return fetchVoucherByCode(code, voucherType, true);
+	}
+	public Voucher fetchVoucherByCode(String code, VoucherType voucherType, boolean isValidateUseable) throws AppNotFoundException{
 		//TODO return voucher from cache for B2B (non-invite)
 		LocalDate today = LocalDate.now();
 		
@@ -84,9 +86,22 @@ public class VoucherService {
 				voucher.setPolicyStartDate(today);
 				voucher.setPolicyEndDate(orderService.calculatePolicyEndDate(today, voucher.getPeriod()));
 			}else if(voucher.getVoucherType().equals(VoucherType.B2B)){
-				if(today.isBefore(voucher.getUseStartDate()) || today.isAfter(voucher.getUseEndDate())){
-					throw new AppNotFoundException(ErrorCode.ERR9002_VOUCHER_EXPIRED, "Asuransi gratis ini telah habis masa penawarannya");
-				}
+				if(isValidateUseable){
+					if(isUseExpired(voucher)){
+						throw new AppNotFoundException(ErrorCode.ERR9002_VOUCHER_EXPIRED, "Masa berlaku kode ini sudah habis.");
+					}
+				}				
+			}else if(voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)){
+				if(isValidateUseable){
+					if(isUseExpired(voucher)){
+						throw new AppNotFoundException(ErrorCode.ERR9002_VOUCHER_EXPIRED, "Masa berlaku kode ini sudah habis.");
+					} else if (voucher.getMaxUse() != null && voucher.getApproveCnt() != null
+							&& voucher.getApproveCnt() >= voucher.getMaxUse()) {
+						throw new AppNotFoundException(ErrorCode.ERR9003_VOUCHER_OVERUSE, "Kode ini sudah tidak tersedia.");
+					}
+				}				
+				voucher.setPolicyStartDate(today);
+				voucher.setPolicyEndDate(orderService.calculatePolicyEndDate(today, voucher.getPeriod()));
 			}
 		}
 		
@@ -97,7 +112,41 @@ public class VoucherService {
 		return voucher;
 	}
 	
+	public boolean isUsable(Voucher voucher){
+		if(voucher!=null){
+			if(voucher.getVoucherType()!=null){
+				if(voucher.getVoucherType().equals(VoucherType.B2B)){
+					if(isUseExpired(voucher)){
+						return false;
+					}
+				}else if(voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)){
+					if(isUseExpired(voucher)){
+						return false;
+					} else if (voucher.getMaxUse() != null && voucher.getApproveCnt() != null
+							&& voucher.getApproveCnt() >= voucher.getMaxUse()) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isUseExpired(Voucher voucher){
+		LocalDate today = LocalDate.now();
+		if(today.isBefore(voucher.getUseStartDate()) || today.isAfter(voucher.getUseEndDate())){
+			return true;
+		}else{
+			return false;
+		}		
+	}
+	
 	public void increaseInviterRewardCounter(String code, String userId){
 		voucherMapper.increamentInviterRewardCount(code, userId);
+	}
+	
+	public void increaseVoucherApproveCounter(int id){
+		voucherMapper.increamentVoucherApproveCount(id);
 	}
 }

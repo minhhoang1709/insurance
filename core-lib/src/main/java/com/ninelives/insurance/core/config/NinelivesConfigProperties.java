@@ -174,10 +174,13 @@ public class NinelivesConfigProperties {
 
 	public static class Promo {		
 		private Boolean isPromoAvailable = false;
+		
 		@NotNull
 		private Integer inviteVoucherId;
 		@NotNull
 		private Integer voucherMinimumAggregatePayment;
+		
+		private int voucherMaxUseMargin = 20;
 		
 		private int voucherCodeLength = 10;
 
@@ -203,7 +206,15 @@ public class NinelivesConfigProperties {
 
 		public void setVoucherMinimumAggregatePayment(Integer voucherMinimumAggregatePayment) {
 			this.voucherMinimumAggregatePayment = voucherMinimumAggregatePayment;
-		}		
+		}			
+
+		public int getVoucherMaxUseMargin() {
+			return voucherMaxUseMargin;
+		}
+
+		public void setVoucherMaxUseMargin(int voucherMaxUseMargin) {
+			this.voucherMaxUseMargin = voucherMaxUseMargin;
+		}
 
 		public int getVoucherCodeLength() {
 			return voucherCodeLength;
@@ -215,7 +226,9 @@ public class NinelivesConfigProperties {
 
 		@Override
 		public String toString() {
-			return "Promo [isPromoAvailable=" + isPromoAvailable + ", inviteVoucherId=" + inviteVoucherId + "]";
+			return "Promo [isPromoAvailable=" + isPromoAvailable + ", inviteVoucherId=" + inviteVoucherId
+					+ ", voucherMinimumAggregatePayment=" + voucherMinimumAggregatePayment + ", voucherMaxUseMargin="
+					+ voucherMaxUseMargin + ", voucherCodeLength=" + voucherCodeLength + "]";
 		}
 		
 	}

@@ -250,46 +250,13 @@ public class ApiOrderService {
 					"Permintaan tidak dapat diproses, silahkan cek kembali pesanan.");
 		}
 		
-		//order with voucher
-		Voucher voucher = null;
+		//order with voucher		
 		Map<String, Product> voucherProductMap = null;
 		Set<String> voucherProductIdSet = null;
-		if(submitOrderDto.getVoucher()!=null){
-			try {
-				voucher = voucherService.fetchVoucherByCode(submitOrderDto.getVoucher().getCode(), submitOrderDto.getVoucher().getVoucherType());
-			} catch (AppNotFoundException e) {
-				logger.debug("Process order for user: <{}> with order <{}> with result: voucher not found <{}>", 
-						userId,	submitOrderDto, e.getCode());
-				throw new AppBadRequestException(ErrorCode.ERR4011_ORDER_VOUCHER_NOTFOUND,
-						"Permintaan tidak dapat diproses, silahkan cek kode asuransi gratis Anda.");
-			}
-			if(VoucherType.INVITE.equals(voucher.getVoucherType())){
-				//verify that user is eligible
-				if(orderService.hasPaidOrder(userId)){
-					logger.debug("Process order for user: <{}> with order <{}> with result: voucher not eligible", 
-							userId,	submitOrderDto);
-					throw new AppBadRequestException(ErrorCode.ERR4012_ORDER_VOUCHER_NOTELIGIBLE,
-							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru.");
-				}
-				
-			}
-			if(!voucher.getTotalPremi().equals(submitOrderDto.getTotalPremi())){
-				logger.debug("Process order for user: <{}> with order <{}> with result: voucher premi not match, voucher: <{}>", 
-						userId,	submitOrderDto, voucher.getTotalPremi());
-				throw new AppBadRequestException(ErrorCode.ERR4013_ORDER_VOUCHER_PREMI_MISMATCH,
-						"Permintaan tidak dapat diproses, premi voucher tidak sesuai dengan pemesanan.");
-			}
-			if(!voucher.getPolicyStartDate().isEqual(submitOrderDto.getPolicyStartDate().toLocalDate())||
-					!voucher.getPolicyEndDate().isEqual(submitOrderDto.getPolicyEndDate().toLocalDate())){
-				throw new AppBadRequestException(ErrorCode.ERR4014_ORDER_VOUCHER_DATE_MISMATCH,
-						"Permintaan tidak dapat diproses, tanggal asuransi voucher tidak sesuai dengan pemesanan.");
-			}
-			
-			//voucherProductIdSet = voucher.getProducts().stream().map(Product::getProductId).collect(Collectors.toSet());
+		Voucher voucher = validateVoucher(userId, submitOrderDto);
+		if(voucher!=null){
 			voucherProductMap = voucher.getProducts().stream().collect(Collectors.toMap(Product::getProductId, item -> item)); 
-			voucherProductIdSet = voucherProductMap.keySet();
-			
-			//logger.debug("voucher with productMap <{}> and productIdSet <{}>", map, voucherProductIdSet);
+			voucherProductIdSet = voucherProductMap.keySet();			
 		}
 				
 		Set<String> productIdSet = submitOrderDto.getProducts().stream().map(ProductDto::getProductId).collect(Collectors.toSet()); 
@@ -567,7 +534,8 @@ public class ApiOrderService {
 				
 				//check if INVITE free voucher, if yes, then mark as APPROVED instead of SUBMITTED
 				if(voucher.getTotalPremi().equals(0)){
-					if(voucher.getVoucherType().equals(VoucherType.INVITE)){
+					if(voucher.getVoucherType().equals(VoucherType.INVITE) 
+							||voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)){
 						policyOrder.setStatus(PolicyStatus.APPROVED);
 					}else if(voucher.getVoucherType().equals(VoucherType.B2B )){
 						policyOrder.setStatus(PolicyStatus.PAID);
@@ -601,6 +569,12 @@ public class ApiOrderService {
 						logger.error("Failed to register order for inviter", e);
 					}
 				}
+				
+				//update approve count
+				if(voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER) 
+						&& policyOrder.getStatus().equals(PolicyStatus.APPROVED)){
+					voucherService.increaseVoucherApproveCounter(voucher.getId());
+				}
 			}
 			
 		}
@@ -610,6 +584,71 @@ public class ApiOrderService {
 		return policyOrder;
 	}
 	
+	protected Voucher validateVoucher(final String userId, OrderDto submitOrderDto) throws AppBadRequestException{
+		Voucher voucher = null;
+		
+		if(userId!=null && submitOrderDto!=null && submitOrderDto.getVoucher()!=null){
+			try {
+				voucher = voucherService.fetchVoucherByCode(submitOrderDto.getVoucher().getCode(), submitOrderDto.getVoucher().getVoucherType(), false);
+			} catch (AppNotFoundException e) {
+				logger.debug("Process order for user: <{}> with order <{}> with result: voucher not found <{}>", 
+						userId,	submitOrderDto, e.getCode());								
+				throw new AppBadRequestException(ErrorCode.ERR4011_ORDER_VOUCHER_NOTFOUND,
+						"Permintaan tidak dapat diproses, silahkan cek kode asuransi gratis Anda.");
+			}
+			
+			logger.info("Validate voucher, process order for user: <{}> with order: <{}> with voucher: <{}>", userId, submitOrderDto, voucher);
+			
+			//check over limit case
+			if(!voucherService.isUsable(voucher)){
+				boolean isUsable = false;
+				
+				//for free promo allow error margin for voucher overuse
+				if (VoucherType.FREE_PROMO_NEW_USER.equals(voucher.getVoucherType())
+						&& !voucherService.isUseExpired(voucher)
+						&& (voucher.getApproveCnt() < voucher.getMaxUse() + config.getPromo().getVoucherMaxUseMargin())){
+					isUsable = true;
+				}
+				if(!isUsable){
+					logger.debug("Process order for user: <{}> with order <{}> with result: voucher unusable", 
+							userId,	submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4011_ORDER_VOUCHER_NOTFOUND,
+								"Kode ini sudah tidak tersedia.");
+				}
+			}
+			
+			if(VoucherType.INVITE.equals(voucher.getVoucherType())){
+				//verify that user is eligible
+				if(orderService.hasPaidOrder(userId)){
+					logger.debug("Process order for user: <{}> with order <{}> with result: voucher not eligible", 
+							userId,	submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4012_ORDER_VOUCHER_NOTELIGIBLE,
+							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru.");
+				}
+				
+			}else if(VoucherType.FREE_PROMO_NEW_USER.equals(voucher.getVoucherType())){
+				if(orderService.hasPaidOrder(userId)){
+					logger.debug("Process order for user: <{}> with order <{}> with result: voucher not eligible", 
+							userId,	submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4012_ORDER_VOUCHER_NOTELIGIBLE,
+							"Permintaan tidak dapat diproses, asuransi gratis ini hanya dapat digunakan oleh pengguna baru.");
+				}
+			}
+			if(!voucher.getTotalPremi().equals(submitOrderDto.getTotalPremi())){
+				logger.debug("Process order for user: <{}> with order <{}> with result: voucher premi not match, voucher: <{}>", 
+						userId,	submitOrderDto, voucher.getTotalPremi());
+				throw new AppBadRequestException(ErrorCode.ERR4013_ORDER_VOUCHER_PREMI_MISMATCH,
+						"Permintaan tidak dapat diproses, premi voucher tidak sesuai dengan pemesanan.");
+			}
+			if(!voucher.getPolicyStartDate().isEqual(submitOrderDto.getPolicyStartDate().toLocalDate())||
+					!voucher.getPolicyEndDate().isEqual(submitOrderDto.getPolicyEndDate().toLocalDate())){
+				throw new AppBadRequestException(ErrorCode.ERR4014_ORDER_VOUCHER_DATE_MISMATCH,
+						"Permintaan tidak dapat diproses, tanggal asuransi voucher tidak sesuai dengan pemesanan.");
+			}
+		}
+				
+		return voucher;
+	}
 	private void sendSuccessNotification(String userId, String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null && policyOrder.getCoverageCategory()!=null){
 			if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)

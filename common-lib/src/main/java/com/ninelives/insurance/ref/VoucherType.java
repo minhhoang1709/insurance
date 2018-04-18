@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum VoucherType {
 	INVITE("INVITE"),
-	B2B("B2B")
+	B2B("B2B"),
+	FREE_PROMO_NEW_USER("FREE_PROMO_NEW_USER")
 	;
 	
 	static final Map<String, VoucherType> lookup = new HashMap<>();

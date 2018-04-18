@@ -58,6 +58,9 @@ public class Voucher implements Serializable{
 
     private LocalDateTime updateDate;
     
+    private Integer maxUse;
+
+    private Integer approveCnt;
 
     public Integer getId() {
         return id;
@@ -242,4 +245,34 @@ public class Voucher implements Serializable{
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	public Integer getMaxUse() {
+		return maxUse;
+	}
+
+	public void setMaxUse(Integer maxUse) {
+		this.maxUse = maxUse;
+	}
+
+	public Integer getApproveCnt() {
+		return approveCnt;
+	}
+
+	public void setApproveCnt(Integer approveCnt) {
+		this.approveCnt = approveCnt;
+	}
+
+	@Override
+	public String toString() {
+		return "Voucher [id=" + id + ", code=" + code + ", title=" + title + ", subtitle=" + subtitle + ", description="
+				+ description + ", policyStartDate=" + policyStartDate + ", policyEndDate=" + policyEndDate
+				+ ", useStartDate=" + useStartDate + ", useEndDate=" + useEndDate + ", basePremi=" + basePremi
+				+ ", totalPremi=" + totalPremi + ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount
+				+ ", periodId=" + periodId + ", status=" + status + ", voucherType=" + voucherType + ", period="
+				+ period + ", inviterRewardLimit=" + inviterRewardLimit + ", inviterUserId=" + inviterUserId
+				+ ", inviterRewardCount=" + inviterRewardCount + ", createdDate=" + createdDate + ", updateDate="
+				+ updateDate + ", maxUse=" + maxUse + ", approveCnt=" + approveCnt + "]";
+	}
+	
+    
 }

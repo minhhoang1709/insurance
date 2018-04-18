@@ -79,7 +79,8 @@ public enum ErrorCode {
 	ERR8202_PAYMENT_NOTIF_ORDER_NOT_FOUND("ERR8202"),
 	
 	ERR9001_VOUCHER_NOT_FOUND("ERR9001"),
-	ERR9002_VOUCHER_EXPIRED("ERR9002") //voucher expired, b2b case
+	ERR9002_VOUCHER_EXPIRED("ERR9002"), //voucher expired
+	ERR9003_VOUCHER_OVERUSE("ERR9003") //voucher usage limit exceeded
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

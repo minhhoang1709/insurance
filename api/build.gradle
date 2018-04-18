@@ -16,7 +16,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
 group = 'com.ninelives'
-version = '0.1.3'
+version = '0.2.0'
 sourceCompatibility = 1.8
 
 repositories {

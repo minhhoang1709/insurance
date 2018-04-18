@@ -23,6 +23,8 @@
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="user_id" jdbcType="VARCHAR" property="inviterUserId" />
+    <result column="max_use" jdbcType="INTEGER" property="maxUse" />
+    <result column="approve_cnt" jdbcType="INTEGER" property="approveCnt" />
     <collection property="products" ofType="com.ninelives.insurance.model.Product">
 	    <id column="product_id" jdbcType="VARCHAR" property="productId" />
 	    <result column="premi" jdbcType="INTEGER" property="premi" />
@@ -36,13 +38,14 @@
   <sql id="Base_Column_List">
     id, code, title, subtitle, description, policy_start_date, policy_end_date, use_start_date, 
     use_end_date, base_premi, total_premi, has_beneficiary, product_count, period_id, 
-    status, voucher_type, created_date, update_date
+    status, voucher_type, created_date, update_date, inviter_reward_limit, max_use, approve_cnt
   </sql>  
   <select id="selectByCode" resultMap="NestedVoucherResultMap">
   	select
   		vo.id, vo.code, vo.title, vo.subtitle, vo.policy_start_date, vo.policy_end_date, vo.use_start_date, 
 	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
-	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vop.product_id, vop.premi
+	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt,
+	    vop.product_id, vop.premi
   	from public.voucher vo, public.voucher_product vop
   	where vo.code = #{code,jdbcType=VARCHAR} and vop.voucher_id=vo.id
   </select>
@@ -50,7 +53,8 @@
   	select
   		vo.id, vo.code, vo.title, vo.subtitle, vo.policy_start_date, vo.policy_end_date, vo.use_start_date, 
 	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
-	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vop.product_id, vop.premi, 
+	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt, 
+	    vop.product_id, vop.premi, 
 	    uiv.user_id, uiv.inviter_reward_count
   	from public.user_invite_voucher uiv, public.voucher vo, public.voucher_product vop
   	where uiv.code= #{code,jdbcType=VARCHAR} and vo.id = uiv.voucher_id and vop.voucher_id=vo.id
