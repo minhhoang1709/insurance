@@ -123,6 +123,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setPremium(order.getTotalPremi());
 		requestDto.getRequestParam().setMobileNumber(order.getPolicyOrderUsers().getPhone());
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
+		
+		requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
 
 		/* Insured address is hardcoded into empty string */
 		requestDto.getRequestParam().setInsuredAddress("-");				
