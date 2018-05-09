@@ -54,7 +54,12 @@ public class VoucherService {
 		if(voucherType!=null && VoucherType.INVITE.equals(voucherType)){
 			voucher = voucherMapper.selectByInviteCode(code);
 		}else{
-			voucher = voucherMapper.selectByCode(code);
+			if(voucherType.equals(VoucherType.B2B)){
+			  voucher = voucherMapper.selectByInviteVoucherType(code);	
+			}else{
+			  voucher = voucherMapper.selectByCode(code);
+			}
+			
 			
 			if(voucher ==null){
 				voucher = voucherMapper.selectByInviteCode(code);

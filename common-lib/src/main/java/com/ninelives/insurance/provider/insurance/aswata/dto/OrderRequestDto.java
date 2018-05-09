@@ -101,12 +101,20 @@ public class OrderRequestDto implements Serializable{
 		private String emailAddress;
 		@JsonProperty("industry")
 		private String industry;
+		@JsonProperty("client_id")
+		private String clientId;
 		
 		public String getProductCode() {
 			return productCode;
 		}
 		public void setProductCode(String productCode) {
 			this.productCode = productCode;
+		}
+		public String getClientId() {
+			return clientId;
+		}
+		public void setClientId(String clientId) {
+			this.clientId = clientId;
 		}
 		public String getPackageType() {
 			return packageType;
@@ -205,7 +213,7 @@ public class OrderRequestDto implements Serializable{
 					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
 					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCard=" + (idCard==null?"":"***")
 					+ ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
-					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry
+					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry+ ", clientId=" + clientId
 					+ "]";
 		}
 		
