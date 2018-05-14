@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderConfirmLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderLogMapper;
@@ -107,6 +108,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
+			requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
 		}else{
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
 		}		
@@ -124,8 +126,6 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setMobileNumber(order.getPolicyOrderUsers().getPhone());
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
 		
-		requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
-
 		/* Insured address is hardcoded into empty string */
 		requestDto.getRequestParam().setInsuredAddress("-");				
 		
@@ -156,7 +156,12 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		restHeader.setContentType(MediaType.APPLICATION_JSON);
 		
-		HttpEntity<OrderRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
+		//for check JSON format 
+		ObjectMapper objectMapper = new ObjectMapper();
+	    String value = objectMapper.writeValueAsString(requestDto);
+	    logger.debug(value);
+		
+	    HttpEntity<OrderRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
 		ResponseEntity<OrderResponseDto> resp = null;
 		LocalDateTime requestTime = LocalDateTime.now();
 		try{

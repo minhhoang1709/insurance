@@ -73,7 +73,7 @@
 <!-- 	  	<id column="user_id" jdbcType="VARCHAR" property="userId" /> -->
 <!--     </association> -->
 
-  <select id="selectByInviteVoucherType" resultMap="NestedVoucherB2BResultMap">
+  <select id="selectByForB2B" resultMap="NestedVoucherB2BResultMap">
   	select 
   		vo.id, vo.code, vo.title, vo.subtitle, vo.policy_start_date, vo.policy_end_date, vo.use_start_date, 
 	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
