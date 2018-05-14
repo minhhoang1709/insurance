@@ -22,6 +22,7 @@ import com.ninelives.insurance.api.dto.ClaimDocumentDto;
 import com.ninelives.insurance.api.dto.CoverageCategoryDto;
 import com.ninelives.insurance.api.dto.CoverageClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
+import com.ninelives.insurance.api.dto.CoverageOptionDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PaymentDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
@@ -36,6 +37,7 @@ import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.CoverageClaimDocType;
+import com.ninelives.insurance.model.CoverageOption;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimBankAccount;
@@ -63,6 +65,17 @@ public class ModelMapperAdapter {
 	String policyImgUrl;
 //	@Value("${ninelives.order.policy-title}")
 //	String policyTitle;
+	
+	public CoverageOptionDto toDto(CoverageOption m){
+		CoverageOptionDto dto = null;
+		if(m!=null){
+			dto = new CoverageOptionDto();
+			dto.setCoverageOptionId(m.getId());
+			dto.setCoverageOptionName(m.getCoverageOptionName());
+			dto.setCoverageOptionGroupId(m.getCoverageOptionGroupId());
+		}
+		return dto;
+	}
 	
 	public UserNotificationDto toDto (UserNotification m){
 		UserNotificationDto dto = null;
@@ -375,6 +388,8 @@ public class ModelMapperAdapter {
 				dto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}
 			dto.setCoverageCategory(toDto(m.getCoverageCategory()));
+			dto.setCoverageOption(toDto(m.getCoverageOption()));
+			
 //			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
 //				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
 //				for(ClaimDocType docType: m.getClaimDocTypes()){

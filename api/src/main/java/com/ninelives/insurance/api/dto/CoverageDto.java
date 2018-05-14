@@ -25,6 +25,8 @@ public class CoverageDto {
     
     private CoverageCategoryDto coverageCategory;
     
+    private CoverageOptionDto coverageOption;
+    
 	public Long getMaxLimit() {
 		return maxLimit;
 	}
@@ -97,6 +99,12 @@ public class CoverageDto {
 		this.coverageCategory = coverageCategory;
 	}
 
-	
+	public CoverageOptionDto getCoverageOption() {
+		return coverageOption;
+	}
+
+	public void setCoverageOption(CoverageOptionDto coverageOption) {
+		this.coverageOption = coverageOption;
+	}
 	
 }
