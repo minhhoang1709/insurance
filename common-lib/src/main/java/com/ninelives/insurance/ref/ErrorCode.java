@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum ErrorCode {
 	ERR1001_GENERIC_ERROR("ERR1001"),
 	ERR1002_STORAGE_ERROR("ERR1002"),
+	ERR1003_UPGRADE_REQUIRED("ERR1002"), //Client needs upgrade
 	
 	ERR2001_LOGIN_FAILURE("ERR2001"),
 	ERR2002_NOT_AUTHORIZED("ERR2002"),

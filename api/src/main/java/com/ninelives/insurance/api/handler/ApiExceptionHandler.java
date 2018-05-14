@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.ninelives.insurance.api.dto.ErrorDto;
+import com.ninelives.insurance.api.exception.AppUpgradeRequiredException;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
@@ -60,6 +61,17 @@ public class ApiExceptionHandler {
 	@ResponseBody
 	public Map<String, ErrorDto> handleInternalServerErrorException(HttpServletRequest request, Exception ex){
 		ErrorDto errorDto = new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), ((AppException) ex).getCode(), ex.getMessage());
+		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
+		errorDtoResp.put("error", errorDto);
+		
+		return errorDtoResp;
+	}
+	
+	@ExceptionHandler(AppUpgradeRequiredException.class)
+	@ResponseStatus(HttpStatus.UPGRADE_REQUIRED)
+	@ResponseBody
+	public Map<String, ErrorDto> handleUpgradeRequiredException(HttpServletRequest request, Exception ex){
+		ErrorDto errorDto = new ErrorDto(HttpStatus.UPGRADE_REQUIRED.value(), ((AppException) ex).getCode(), ex.getMessage());
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
