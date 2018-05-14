@@ -13,9 +13,19 @@
     <result column="provider_code" jdbcType="VARCHAR" property="providerCode" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="display_rank" jdbcType="INTEGER" property="displayRank" />
+    <result column="coverage_option_id" jdbcType="VARCHAR" property="coverageOptionId" />
     <association property="coverageCategory" javaType="com.ninelives.insurance.model.CoverageCategory">
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
+    </association>
+    <association property="coverageOption" javaType="com.ninelives.insurance.model.CoverageOption">
+    	<id column="coverage_option_id" jdbcType="VARCHAR" property="id" />
+    	<result column="coverage_option_name" jdbcType="VARCHAR" property="coverageOptionName" />
+    	<result column="coverage_option_group_id" jdbcType="VARCHAR" property="coverageOptionGroupId" />
+    	<association property="coverageOptionGroup" javaType="com.ninelives.insurance.model.CoverageOptionGroup">
+    		<id column="coverage_option_group_id" jdbcType="VARCHAR" property="id" />
+    		<result column="coverage_option_group_name" jdbcType="VARCHAR" property="coverageOptionGroupName" />
+    	</association>
     </association>
     <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.model.CoverageClaimDocType">
     	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" />
@@ -30,10 +40,12 @@
   
   <sql id="NestedCoverageColumnList">
 	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, 
-	a.has_beneficiary, a.status, a.display_rank, a.is_recommended, a.provider_code,
+	a.has_beneficiary, a.status, a.display_rank, a.is_recommended, a.provider_code, a.coverage_option_id,
 	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name,
 	c.coverage_claim_doc_type_id, c.is_mandatory,
-	d.claim_doc_type_id, d.name as claim_doc_type_name
+	d.claim_doc_type_id, d.name as claim_doc_type_name,
+	e.coverage_option_name, e.coverage_option_group_id,
+	f.coverage_option_group_name 
   </sql>
   
   <sql id="NestedCoverageTableJoinList">
@@ -41,6 +53,8 @@
 	inner join public.coverage_category b on b.coverage_category_id=a.coverage_category_id
 	left outer join public.coverage_claim_doc_type c on c.coverage_id=a.coverage_id
 	left outer join public.claim_doc_type d on d.claim_doc_type_id=c.claim_doc_type_id
+	left outer join public.coverage_option e on e.id=a.coverage_option_id and a.coverage_option_id is not null
+	left outer join public.coverage_option_group f on f.id=e.coverage_option_group_id
   </sql>
   
   <select id="selectByCoverageId" resultMap="NestedCoverageResultMap">

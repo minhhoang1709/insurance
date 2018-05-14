@@ -33,9 +33,13 @@ public class Coverage implements Serializable{
     
     private String providerCode;
     
+    private String coverageOptionId;
+    
     private List<CoverageClaimDocType> coverageClaimDocTypes;
     
     private CoverageCategory coverageCategory;
+    
+    private CoverageOption coverageOption;
 
     public String getCoverageId() {
         return coverageId;
@@ -156,6 +160,22 @@ public class Coverage implements Serializable{
 	public void setCoverageCategory(CoverageCategory coverageCategory) {
 		this.coverageCategory = coverageCategory;
 	}
+	
+	public String getCoverageOptionId() {
+		return coverageOptionId;
+	}
+
+	public void setCoverageOptionId(String coverageOptionId) {
+		this.coverageOptionId = coverageOptionId;
+	}
+
+	public CoverageOption getCoverageOption() {
+		return coverageOption;
+	}
+
+	public void setCoverageOption(CoverageOption coverageOption) {
+		this.coverageOption = coverageOption;
+	}
 
 	@Override
 	public String toString() {
@@ -163,8 +183,9 @@ public class Coverage implements Serializable{
 				+ ", recommendation=" + recommendation + ", description=" + description + ", maxLimit=" + maxLimit
 				+ ", hasBeneficiary=" + hasBeneficiary + ", createdDate=" + createdDate + ", updateDate=" + updateDate
 				+ ", status=" + status + ", displayRank=" + displayRank + ", isRecommended=" + isRecommended
-				+ ", providerCode=" + providerCode + ", coverageClaimDocTypes=" + coverageClaimDocTypes
-				+ ", coverageCategory=" + coverageCategory + "]";
+				+ ", providerCode=" + providerCode + ", coverageOptionId=" + coverageOptionId
+				+ ", coverageClaimDocTypes=" + coverageClaimDocTypes + ", coverageCategory=" + coverageCategory
+				+ ", coverageOption=" + coverageOption + "]";
 	}
 
 	
