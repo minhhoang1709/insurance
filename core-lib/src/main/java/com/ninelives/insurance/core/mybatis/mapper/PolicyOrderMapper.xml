@@ -67,6 +67,8 @@
     <result column="period_name" jdbcType="VARCHAR" property="name" />
     <result column="period_value" jdbcType="INTEGER" property="value" />
     <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+    <result column="period_start_value" jdbcType="INTEGER" property="startValue" />
+    <result column="period_end_value" jdbcType="INTEGER" property="endValue" />
   </resultMap>
   
   <resultMap id="NestedPolicyOrderWithBeneficiaryResultMap" type="com.ninelives.insurance.model.PolicyOrder">
@@ -126,7 +128,7 @@
    	b.coverage_max_limit as order_product_coverage_max_limit, 
    	b.coverage_has_beneficiary as order_product_coverage_has_beneficiary, 
    	b.premi as order_product_premi, b.base_premi as order_product_base_premi,
-   	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, 
+   	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, c.start_value as period_start_value, c.end_value as period_end_value,
    	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name,
    	pp.id as payment_id, 
    	pp.start_time as payment_start_time,

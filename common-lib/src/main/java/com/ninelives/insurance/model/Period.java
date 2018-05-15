@@ -13,6 +13,10 @@ public class Period implements Serializable{
     private String name;
 
     private Integer value;
+    
+    private Integer startValue;
+
+    private Integer endValue;
 
     private PeriodUnit unit;
 
@@ -45,9 +49,28 @@ public class Period implements Serializable{
     public void setValue(Integer value) {
         this.value = value;
     }
-
     
-    public PeriodUnit getUnit() {
+    public Integer getStartValue() {
+		return startValue;
+	}
+
+	public void setStartValue(Integer startValue) {
+		this.startValue = startValue;
+	}
+
+	public Integer getEndValue() {
+		return endValue;
+	}
+
+	public void setEndValue(Integer endValue) {
+		this.endValue = endValue;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public PeriodUnit getUnit() {
 		return unit;
 	}
 

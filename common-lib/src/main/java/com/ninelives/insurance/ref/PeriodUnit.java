@@ -9,7 +9,8 @@ public enum PeriodUnit {
 	DAY("DAY"),
 	WEEK("WEEK"),
 	MONTH("MONTH"),
-	YEAR("YEAR")
+	YEAR("YEAR"),
+	RANGE_DAY("RANGE_DAY")
 	;
 	
 	static final Map<String, PeriodUnit> lookup = new HashMap<>();

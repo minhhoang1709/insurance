@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import com.ninelives.insurance.model.Period;
 @Mapper
 public interface PeriodMapper {
-	@Select({"select period_id, name, value, unit, created_date, update_date ",
+	@Select({"select period_id, name, value, unit, start_value, end_value, created_date, update_date ",
 		"from ",
 		"public.period ",
 		"where status='A' ",

@@ -20,6 +20,8 @@
     <result column="period_name" jdbcType="VARCHAR" property="name" />
     <result column="period_value" jdbcType="INTEGER" property="value" />
     <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+    <result column="period_start_value" jdbcType="INTEGER" property="startValue" />
+    <result column="period_end_value" jdbcType="INTEGER" property="endValue" />
   </resultMap>
   <resultMap id="CoverageResultMap" type="com.ninelives.insurance.model.Coverage">
     <id column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
@@ -51,6 +53,7 @@
   <sql id="NestedProductColumnList">
   	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.premi as base_premi, a.status, a.product_type, a.created_date, a.update_date,
 	b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
+	b.start_value as period_start_value, b.end_value as period_end_value,
 	c.coverage_id as coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
 	c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
 	c.is_recommended as coverage_is_recommended, c.provider_code as coverage_provider_code, c.status as coverage_status, c.display_rank as coverage_display_rank,

@@ -10,6 +10,10 @@ public class PeriodDto {
     private String name;
 
     private Integer value;
+    
+    private Integer startValue;
+    
+    private Integer endValue;
 
     private PeriodUnit unit;
 
@@ -35,6 +39,23 @@ public class PeriodDto {
 
 	public void setValue(Integer value) {
 		this.value = value;
+	}
+
+	
+	public Integer getStartValue() {
+		return startValue;
+	}
+
+	public void setStartValue(Integer startValue) {
+		this.startValue = startValue;
+	}
+
+	public Integer getEndValue() {
+		return endValue;
+	}
+
+	public void setEndValue(Integer endValue) {
+		this.endValue = endValue;
 	}
 
 	public PeriodUnit getUnit() {

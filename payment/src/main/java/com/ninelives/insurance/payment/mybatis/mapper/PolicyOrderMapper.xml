@@ -28,6 +28,8 @@
     <result column="period_name" jdbcType="VARCHAR" property="name" />
     <result column="period_value" jdbcType="INTEGER" property="value" />
     <result column="period_unit" jdbcType="VARCHAR" property="unit" />
+    <result column="period_start_value" jdbcType="INTEGER" property="startValue" />
+    <result column="period_end_value" jdbcType="INTEGER" property="endValue" />
   </resultMap>
   
   <resultMap id="PolicyPaymentResultMap" type="com.ninelives.insurance.model.PolicyPayment">
@@ -55,7 +57,8 @@
    	a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
    	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.provider_download_url,
    	a.status, a.created_date,   	
-   	pr.period_id as period_period_id, pr.name as period_name, pr.value as period_value, pr.unit as period_unit, 
+   	pr.period_id as period_period_id, pr.name as period_name, pr.value as period_value, pr.unit as period_unit,
+   	pr.start_value as period_start_value, pr.end_value as period_end_value, 
    	pp.id as payment_id, 
    	pp.start_time as payment_start_time,
    	pp.order_id as payment_order_id, 

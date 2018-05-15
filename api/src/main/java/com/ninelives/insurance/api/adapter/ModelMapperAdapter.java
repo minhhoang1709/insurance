@@ -409,6 +409,8 @@ public class ModelMapperAdapter {
 			dto.setPeriodId(m.getPeriodId());
 			dto.setUnit(m.getUnit());
 			dto.setValue(m.getValue());
+			dto.setStartValue(m.getStartValue());
+			dto.setEndValue(m.getEndValue());
 		}
 		return dto;
 	}
