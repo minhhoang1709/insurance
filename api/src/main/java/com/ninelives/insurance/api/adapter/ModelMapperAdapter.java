@@ -61,8 +61,8 @@ public class ModelMapperAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(ModelMapperAdapter.class);
 	
 	//TODO: replace the hardcoded imgurl and title
-	@Value("${ninelives.order.policy-imgUrl}")
-	String policyImgUrl;
+	@Value("${ninelives.order.policy-imgUrlPath}")
+	String policyImgUrlPath;
 //	@Value("${ninelives.order.policy-title}")
 //	String policyTitle;
 	
@@ -253,7 +253,7 @@ public class ModelMapperAdapter {
 			dto = new CoverageCategoryDto();
 			dto.setCoverageCategoryId(m.getCoverageCategoryId());
 			dto.setName(m.getName());
-			dto.setImageUrl(this.policyImgUrl);
+			dto.setImageUrl(this.policyImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
 		}
 		return dto;
 	}
