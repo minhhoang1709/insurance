@@ -40,6 +40,7 @@ public enum ErrorCode {
 	ERR4017_ORDER_IDCARD_NOTFOUND("ERR4017"), //KTP is mandatory
 	ERR4018_ORDER_PROFILE_AGE_INVALID("ERR4018"), //invalid age
 	ERR4019_ORDER_PAYMENT_MINIMUM("ERR4019"), //minimum payment
+	ERR4020_ORDER_ENDDATE_INVALID("ERR4020"), //minimum payment
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary

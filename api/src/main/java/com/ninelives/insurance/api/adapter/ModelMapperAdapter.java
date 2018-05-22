@@ -166,6 +166,7 @@ public class ModelMapperAdapter {
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setProductCount(m.getProductCount());
 			dto.setStatus(m.getStatus());
+			dto.setIsFamily(m.getIsFamily());
 			dto.setCreatedDate(m.getCreatedDate());
 			//dto.setTitle(this.policyTitle);
 			//dto.setImgUrl(this.policyImgUrl);
@@ -254,6 +255,7 @@ public class ModelMapperAdapter {
 			dto.setCoverageCategoryId(m.getCoverageCategoryId());
 			dto.setName(m.getName());
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
+			dto.setType(m.getType());
 		}
 		return dto;
 	}

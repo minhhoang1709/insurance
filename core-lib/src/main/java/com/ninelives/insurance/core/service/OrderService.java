@@ -2,6 +2,7 @@ package com.ninelives.insurance.core.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -134,6 +135,19 @@ public class OrderService {
 			}
 		}
 		return calculatedDate;
+	}
+	
+	public boolean isPolicyEndDateWithinRange(LocalDate startDate, LocalDate endDate, Period period){
+		if(startDate==null||endDate==null||period==null){
+			return false;
+		}
+		if(PeriodUnit.RANGE_DAY.equals(period.getUnit())){
+			long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1; //inclusive enddate
+			if(daysBetween >= period.getStartValue() &&
+					daysBetween <= period.getEndValue())
+			return true;
+		}
+		return false;
 	}
 
 	public Boolean isUserProfileCompleteForOrder(User user){

@@ -1,6 +1,6 @@
 package com.ninelives.insurance.core.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -51,5 +51,29 @@ public class OrderServicePolicyEndDateTest {
 		assertEquals(LocalDate.parse("2017-02-27",formatter), service.calculatePolicyEndDate(now, monthly));
 		assertEquals(LocalDate.parse("2017-07-29",formatter), service.calculatePolicyEndDate(now, sixmonthly));
 		assertEquals(LocalDate.parse("2018-01-29",formatter), service.calculatePolicyEndDate(now, yearly));
+	}
+	
+	@Test
+	public void testEndDateRange(){
+		OrderService service = new OrderService();
+		
+		LocalDate startDate = LocalDate.parse("2017-05-01",formatter);
+		
+		Period per = new Period();
+		per.setUnit(PeriodUnit.RANGE_DAY);
+		per.setStartValue(15);
+		per.setEndValue(21);
+		
+		assertTrue(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-15",formatter), per));
+		assertTrue(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-16",formatter), per));
+		assertTrue(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-20",formatter), per));
+		assertTrue(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-21",formatter), per));
+		
+		assertFalse(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-01",formatter), per));
+		assertFalse(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-14",formatter), per));
+		assertFalse(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-05-22",formatter), per));
+		
+		assertFalse(service.isPolicyEndDateWithinRange(startDate, LocalDate.parse("2017-04-15",formatter), per));
+		assertFalse(service.isPolicyEndDateWithinRange(null, null, null));
 	}
 }

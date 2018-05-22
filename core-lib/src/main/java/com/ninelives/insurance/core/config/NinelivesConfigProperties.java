@@ -404,6 +404,7 @@ public class NinelivesConfigProperties {
 	    
 	    private int minimumPayment = 5000;
 	    
+	    private double familyMultiplier = 2.5;
 	    
 		public int getPolicyStartDatePeriod() {
 			return policyStartDatePeriod;
@@ -452,12 +453,23 @@ public class NinelivesConfigProperties {
 		public void setMinimumPayment(int minimumPayment) {
 			this.minimumPayment = minimumPayment;
 		}
+		
+		
+
+		public double getFamilyMultiplier() {
+			return familyMultiplier;
+		}
+
+		public void setFamilyMultiplier(double familyMultiplier) {
+			this.familyMultiplier = familyMultiplier;
+		}
 
 		@Override
 		public String toString() {
 			return "Order [policyStartDatePeriod=" + policyStartDatePeriod + ", policyDueDatePeriod="
 					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit + ", minimumAge="
-					+ minimumAge + ", maximumAge=" + maximumAge + ", minimumPayment=" + minimumPayment + "]";
+					+ minimumAge + ", maximumAge=" + maximumAge + ", minimumPayment=" + minimumPayment
+					+ ", familyMultiplier=" + familyMultiplier + "]";
 		}
 		
 	}

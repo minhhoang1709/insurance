@@ -37,6 +37,8 @@ public class OrderDto {
     private Integer productCount;
 
     private PolicyStatus status;
+    
+    private Boolean isFamily;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
@@ -149,6 +151,14 @@ public class OrderDto {
 	public void setStatus(PolicyStatus status) {
 		this.status = status;
 	}
+	
+	public Boolean getIsFamily() {
+		return isFamily;
+	}
+
+	public void setIsFamily(Boolean isFamily) {
+		this.isFamily = isFamily;
+	}
 
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
@@ -212,8 +222,9 @@ public class OrderDto {
 				+ subtitle + ", imgUrl=" + imgUrl + ", policyNumber=" + policyNumber + ", policyStartDate="
 				+ policyStartDate + ", policyEndDate=" + policyEndDate + ", totalPremi=" + totalPremi
 				+ ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount + ", status=" + status
-				+ ", createdDate=" + createdDate + ", products=" + products + ", coverageCategory=" + coverageCategory
-				+ ", period=" + period + ", user=" + user + ", voucher=" + voucher + "]";
+				+ ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", products=" + products
+				+ ", coverageCategory=" + coverageCategory + ", period=" + period + ", user=" + user + ", voucher="
+				+ voucher + ", payment=" + payment + "]";
 	}
 
     

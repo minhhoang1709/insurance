@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.ref.CoverageCategoryType;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CoverageCategory implements Serializable{
@@ -15,6 +16,8 @@ public class CoverageCategory implements Serializable{
     private String name;
 
     private String description;
+    
+    private CoverageCategoryType type;
 
     @JsonIgnore
     private LocalDateTime createdDate;
@@ -46,6 +49,14 @@ public class CoverageCategory implements Serializable{
         this.description = description;
     }
 
+	public CoverageCategoryType getType() {
+		return type;
+	}
+
+	public void setType(CoverageCategoryType type) {
+		this.type = type;
+	}
+
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
@@ -65,7 +76,7 @@ public class CoverageCategory implements Serializable{
 	@Override
 	public String toString() {
 		return "CoverageCategory [coverageCategoryId=" + coverageCategoryId + ", name=" + name + ", description="
-				+ description + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
+				+ description + ", type=" + type + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
 	}
 
 

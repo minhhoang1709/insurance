@@ -43,6 +43,8 @@ public class PolicyOrder implements Serializable{
     private String providerDownloadUrl;
 
     private PolicyStatus status;
+    
+    private Boolean isFamily;
 
     private LocalDateTime createdDate;
 
@@ -190,6 +192,15 @@ public class PolicyOrder implements Serializable{
 		this.providerDownloadUrl = providerDownloadUrl;
 	}
 
+	
+	public Boolean getIsFamily() {
+		return isFamily;
+	}
+
+	public void setIsFamily(Boolean isFamily) {
+		this.isFamily = isFamily;
+	}
+
 	public PolicyStatus getStatus() {
 		return status;
 	}
@@ -278,10 +289,10 @@ public class PolicyOrder implements Serializable{
 				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
 				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", providerOrderNumber="
 				+ providerOrderNumber + ", providerDownloadUrl=" + providerDownloadUrl + ", status=" + status
-				+ ", createdDate=" + createdDate + ", updateDate=" + updateDate + ", coverageCategory="
-				+ coverageCategory + ", policyOrderUsers=" + policyOrderUsers + ", policyOrderProducts="
-				+ policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary + ", period=" + period
-				+ ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
+				+ ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", updateDate=" + updateDate
+				+ ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
+				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
+				+ ", period=" + period + ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
 	}
 
 	

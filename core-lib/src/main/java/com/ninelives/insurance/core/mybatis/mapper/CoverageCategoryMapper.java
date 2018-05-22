@@ -9,7 +9,7 @@ import com.ninelives.insurance.model.CoverageCategory;
 public interface CoverageCategoryMapper {
     @Select({
         "select",
-        "coverage_category_id, name, description, created_date, update_date",
+        "coverage_category_id, name, description, type, created_date, update_date",
         "from public.coverage_category",
         "where coverage_category_id = #{coverageCategoryId,jdbcType=VARCHAR}"
     })

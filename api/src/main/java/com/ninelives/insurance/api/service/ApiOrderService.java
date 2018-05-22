@@ -50,6 +50,7 @@ import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
+import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.ref.PolicyStatus;
@@ -102,7 +103,6 @@ public class ApiOrderService {
 //	
 //	@Value("${ninelives.order.filter-offset:0}")
 //	int defaultOrdersFilterOffset;
-//	
 	
 	public PolicyOrderBeneficiaryDto updateBeneficiary(String authUserId, String orderId,
 			PolicyOrderBeneficiaryDto beneficiary) throws AppException {
@@ -308,6 +308,7 @@ public class ApiOrderService {
 		int calculatedTotalPremi = 0;
 		int calculatedTotalBasePremi = 0;
 		boolean hasBeneficiary = false;
+		boolean isFamily = submitOrderDto.getIsFamily()!=null?submitOrderDto.getIsFamily():false;
 		List<String> coverageIds = new ArrayList<>();
 		for(Product p: products){
 			//logger.debug("CHECK {}", p);
@@ -324,8 +325,14 @@ public class ApiOrderService {
 				logger.debug("Process order for {} with order {} with result: exception voucher needed", userId, submitOrderDto);
 				throw new AppBadRequestException(ErrorCode.ERR4016_ORDER_VOUCHER_REQUIRED, "Permintaan tidak dapat diproses, produk ini hanya dapat dibeli lewat undangan.");
 			}
-			calculatedTotalPremi += p.getPremi();
-			calculatedTotalBasePremi += p.getBasePremi();
+			//order policy +family, multiplier is applied
+			if(isFamily){
+				calculatedTotalPremi += (int) (p.getPremi() * config.getOrder().getFamilyMultiplier());
+				calculatedTotalBasePremi += (int) (p.getBasePremi() * config.getOrder().getFamilyMultiplier());
+			}else{
+				calculatedTotalPremi += p.getPremi();
+				calculatedTotalBasePremi += p.getBasePremi();
+			}			
 			hasBeneficiary = hasBeneficiary || p.getCoverage().getHasBeneficiary();
 			coverageIds.add(p.getCoverageId());
 		}
@@ -337,16 +344,8 @@ public class ApiOrderService {
 		}else{
 			calculatedTotalPremi = voucher.getTotalPremi();
 		}
-		
-		Period period = products.get(0).getPeriod();
-//		if(!period.getUnit().equals(PeriodUnit.DAY)){
-//			logger.debug("Process order for {} with order {} with result: exception period unit {}", userId, submitOrderDto, period.getUnit());
-//			throw new ApiBadRequestException(ErrorCode.ERR4008_ORDER_PRODUCT_UNSUPPORTED, "Permintaan tidak dapat diproses");
-//		}
-		
-		//LocalDate policyEndDate = submitOrderDto.getPolicyStartDate().toLocalDate().plusDays(products.get(0).getPeriod().getValue()-1);
-		
-		//if voucher is empty, then check for the price
+			
+		//if voucher is not used, then check for the minimum payment
 		if(voucher == null){
 			if(calculatedTotalPremi < config.getOrder().getMinimumPayment()){
 				logger.debug("Process order for {} with order {} with result: exception minimum payment", userId, submitOrderDto);
@@ -355,9 +354,25 @@ public class ApiOrderService {
 			}
 		}
 		
-		LocalDate policyEndDate = orderService.calculatePolicyEndDate(submitOrderDto.getPolicyStartDate().toLocalDate(), products.get(0).getPeriod());
-		LocalDate dueOrderDate = today.minusDays(config.getOrder().getPolicyDueDatePeriod());
+		Period period = products.get(0).getPeriod();
+
+		//policyEndDate is calculated in server side for non-travel product
+		LocalDate policyEndDate = null;
+		if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC) ||
+				coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+			policyEndDate = submitOrderDto.getPolicyEndDate().toLocalDate();
+			
+			//policyEndDate should within range of selected period for travel product		
+			if(!orderService.isPolicyEndDateWithinRange(submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, period)){
+				logger.debug("Process order for <{}> with order <{}> with result: exception policy-end-date not match range period", userId, submitOrderDto);
+				throw new AppBadRequestException(ErrorCode.ERR4020_ORDER_ENDDATE_INVALID,
+						"Permintaan tidak dapat diproses.");
+			}
+		}else{
+			policyEndDate = orderService.calculatePolicyEndDate(submitOrderDto.getPolicyStartDate().toLocalDate(), period);
+		}				
 		
+		LocalDate dueOrderDate = today.minusDays(config.getOrder().getPolicyDueDatePeriod());		
 		boolean isOverLimit = orderService.isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
 		if(isOverLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
@@ -468,6 +483,7 @@ public class ApiOrderService {
 			policyOrder.setProductCount(products.size());
 			policyOrder.setPeriod(period);
 			policyOrder.setStatus(PolicyStatus.SUBMITTED);
+			policyOrder.setIsFamily(isFamily);
 
 			//Set user info
 			PolicyOrderUsers policyOrderUser = new PolicyOrderUsers();
@@ -510,12 +526,18 @@ public class ApiOrderService {
 				pop.setPeriodId(p.getPeriodId());
 				pop.setProductId(p.getProductId());
 				pop.setCoverageName(p.getCoverage().getName());
-				pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
-				pop.setBasePremi(p.getBasePremi());
+				if(isFamily){
+					pop.setCoverageMaxLimit((long) (p.getCoverage().getMaxLimit() * config.getOrder().getFamilyMultiplier()));
+					pop.setBasePremi((int) (p.getBasePremi()* config.getOrder().getFamilyMultiplier()));
+					pop.setPremi((int) (p.getPremi()* config.getOrder().getFamilyMultiplier()));
+				}else{
+					pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
+					pop.setBasePremi(p.getBasePremi());
+					pop.setPremi(p.getPremi());
+				}
+				
 				if(voucher!=null){
 					pop.setPremi(voucherProductMap.get(p.getProductId()).getPremi());
-				}else{
-					pop.setPremi(p.getPremi());
 				}				
 				pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
 				pop.setPeriod(p.getPeriod());
@@ -833,6 +855,5 @@ public class ApiOrderService {
 		}
 		return filterType;
 	}
-	
 
 }
