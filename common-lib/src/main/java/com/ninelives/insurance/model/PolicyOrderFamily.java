@@ -1,7 +1,10 @@
 package com.ninelives.insurance.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+
+import com.ninelives.insurance.ref.FamilyRelationship;
+import com.ninelives.insurance.ref.Gender;
 
 public class PolicyOrderFamily {
     private Long id;
@@ -10,9 +13,11 @@ public class PolicyOrderFamily {
 
     private String name;
 
-    private String relationship;
+    private FamilyRelationship relationship;
+    
+    private LocalDate birthDate;
 
-    private Date birthDate;
+    private Gender gender;
 
     private LocalDateTime createdDate;
 
@@ -42,23 +47,31 @@ public class PolicyOrderFamily {
         this.name = name;
     }
 
-    public String getRelationship() {
-        return relationship;
-    }
+    public FamilyRelationship getRelationship() {
+		return relationship;
+	}
 
-    public void setRelationship(String relationship) {
-        this.relationship = relationship;
-    }
+	public void setRelationship(FamilyRelationship relationship) {
+		this.relationship = relationship;
+	}
 
-    public Date getBirthDate() {
+	public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
+    
+    public Gender getGender() {
+		return gender;
+	}
 
-    public LocalDateTime getCreatedDate() {
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 

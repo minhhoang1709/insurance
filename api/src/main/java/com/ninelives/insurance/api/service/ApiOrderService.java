@@ -24,6 +24,7 @@ import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
+import com.ninelives.insurance.api.dto.PolicyOrderFamilyDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
@@ -41,6 +42,7 @@ import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
+import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.PolicyOrderVoucher;
@@ -52,6 +54,7 @@ import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.ProductType;
@@ -379,7 +382,11 @@ public class ApiOrderService {
 			throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
 						"Anda membeli jaminan yang sama lebih dari 3 kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.");
 		}
-				
+		
+		if(isFamily){
+			validateFamilyMember(userId, submitOrderDto);
+		}
+		
 		PolicyOrder policyOrder = null;
 		boolean isAllProfileInfoUpdated = false;
 		boolean isPhoneInfoUpdated = false;
@@ -542,9 +549,23 @@ public class ApiOrderService {
 				pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
 				pop.setPeriod(p.getPeriod());
 				policyOrderProducts.add(pop);
-			}
-			
+			}			
 			policyOrder.setPolicyOrderProducts(policyOrderProducts);
+
+			//Set for family member
+			if(isFamily){
+				List<PolicyOrderFamily> policyOrderFamilies = new ArrayList<>();
+				for(PolicyOrderFamilyDto family: submitOrderDto.getFamilies()){
+					PolicyOrderFamily pof = new PolicyOrderFamily();
+					pof.setOrderId(policyOrder.getOrderId());
+					pof.setName(family.getName());
+					pof.setRelationship(family.getRelationship());
+					pof.setBirthDate(family.getBirthDate().toLocalDate());
+					pof.setGender(family.getGender());
+					policyOrderFamilies.add(pof);
+				}
+				policyOrder.setPolicyOrderFamilies(policyOrderFamilies);
+			}			
 			
 			//Set for policy voucher
 			if(voucher!=null){
@@ -566,6 +587,8 @@ public class ApiOrderService {
 			}else{
 				policyOrder.setHasVoucher(false);
 			}
+			
+
 			
 			try {
 				insuranceService.orderPolicy(policyOrder);
@@ -604,6 +627,48 @@ public class ApiOrderService {
 				isValidateOnly, userId, submitOrderDto, isAllProfileInfoUpdated, isPhoneInfoUpdated, policyOrder);
 		
 		return policyOrder;
+	}
+	
+	protected void validateFamilyMember(final String userId, OrderDto submitOrderDto)throws AppBadRequestException{
+		if(CollectionUtils.isEmpty(submitOrderDto.getFamilies())){
+			logger.debug("Process order for <{}> with order <{}> with result: exception empty family", userId, submitOrderDto);
+			throw new AppBadRequestException(ErrorCode.ERR4021_ORDER_FAMILY_EMPTY,
+					"Permintaan tidak dapat diproses. Periksa kembali data keluarga Anda");
+		}		
+		LocalDate today = LocalDate.now();
+		int childCnt = 0;
+		int adultCnt = 0;
+		for(PolicyOrderFamilyDto family: submitOrderDto.getFamilies()){
+			if (StringUtils.isEmpty(family.getName()) || family.getRelationship() == null
+					|| family.getBirthDate() == null || family.getGender() == null) {
+				logger.debug("Process order for <{}> with order <{}> with result: family invalid data", userId, submitOrderDto);
+				throw new AppBadRequestException(ErrorCode.ERR4022_ORDER_FAMILY_INVALID,
+						"Permintaan tidak dapat diproses. Periksa kembali data keluarga Anda");
+			}
+			long age = ChronoUnit.YEARS.between(family.getBirthDate().toLocalDate(), today);
+			if(FamilyRelationship.ANAK.equals(family.getRelationship())){
+				childCnt++;				
+				if(age < 0 || age >= config.getOrder().getFamilyAdultMinimumAge()){
+					logger.debug("Process order for <{}> with order <{0}> with result: family children age invalid", userId, submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
+							"Maksimum usia anak adalah 16 tahun");
+				}	
+			}else{
+				adultCnt++;
+				if(age < config.getOrder().getFamilyAdultMinimumAge() 
+						|| age > config.getOrder().getFamilyAdultMaximumAge()){
+					logger.debug("Process order for <{}> with order <{0}> with result: family adult age invalid", userId, submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
+							"Rentang usia dewasa adalah 17 tahun sampai dengan 83 tahun");
+				}
+			}
+		}
+		if(childCnt > config.getOrder().getFamilyChildrenMaximumCount() 
+				|| adultCnt > config.getOrder().getFamilyAdultMaximumCount()){
+			logger.debug("Process order for <{}> with order <{}> with result: family invalid count", userId, submitOrderDto);
+			throw new AppBadRequestException(ErrorCode.ERR4024_ORDER_FAMILY_CNT_INVALID,
+					"Permintaan tidak dapat diproses. Periksa kembali data keluarga Anda");
+		}
 	}
 	
 	protected Voucher validateVoucher(final String userId, OrderDto submitOrderDto) throws AppBadRequestException{

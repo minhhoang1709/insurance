@@ -27,6 +27,7 @@ import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PaymentDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
+import com.ninelives.insurance.api.dto.PolicyOrderFamilyDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
@@ -46,6 +47,7 @@ import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyClaimDocument;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
+import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.PolicyPayment;
@@ -66,6 +68,17 @@ public class ModelMapperAdapter {
 //	@Value("${ninelives.order.policy-title}")
 //	String policyTitle;
 	
+	public PolicyOrderFamilyDto toDto(PolicyOrderFamily m){
+		PolicyOrderFamilyDto dto = null;
+		if(m!=null){
+			dto = new PolicyOrderFamilyDto();
+			dto.setName(m.getName());
+			dto.setBirthDate(m.getBirthDate()!=null?m.getBirthDate().atStartOfDay():null);
+			dto.setRelationship(m.getRelationship());
+			dto.setGender(m.getGender());
+		}
+		return dto;
+	}
 	public CoverageOptionDto toDto(CoverageOption m){
 		CoverageOptionDto dto = null;
 		if(m!=null){
@@ -198,6 +211,13 @@ public class ModelMapperAdapter {
 				dto.setVoucher(toDto(m.getPolicyOrderVoucher().getVoucher()));
 			}
 			
+			if(!CollectionUtils.isEmpty(m.getPolicyOrderFamilies())){
+				List<PolicyOrderFamilyDto> familyDtos = new ArrayList<>();
+				for(PolicyOrderFamily f:m.getPolicyOrderFamilies()){
+					familyDtos.add(toDto(f));
+				}
+				dto.setFamilies(familyDtos);
+			}
 			if(m.getStatus()!=null && m.getStatus().equals(PolicyStatus.INPAYMENT)){
 				dto.setPayment(toDto(m.getPayment()));
 			}

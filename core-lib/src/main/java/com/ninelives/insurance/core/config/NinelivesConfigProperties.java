@@ -405,6 +405,10 @@ public class NinelivesConfigProperties {
 	    private int minimumPayment = 5000;
 	    
 	    private double familyMultiplier = 2.5;
+	    private int familyAdultMinimumAge = 17;
+	    private int familyAdultMaximumAge = 83;
+	    private int familyAdultMaximumCount = 1;
+	    private int familyChildrenMaximumCount = 3;
 	    
 		public int getPolicyStartDatePeriod() {
 			return policyStartDatePeriod;
@@ -454,14 +458,44 @@ public class NinelivesConfigProperties {
 			this.minimumPayment = minimumPayment;
 		}
 		
-		
-
 		public double getFamilyMultiplier() {
 			return familyMultiplier;
 		}
 
 		public void setFamilyMultiplier(double familyMultiplier) {
 			this.familyMultiplier = familyMultiplier;
+		}
+
+		public int getFamilyAdultMinimumAge() {
+			return familyAdultMinimumAge;
+		}
+
+		public void setFamilyAdultMinimumAge(int familyAdultMinimumAge) {
+			this.familyAdultMinimumAge = familyAdultMinimumAge;
+		}
+
+		public int getFamilyAdultMaximumAge() {
+			return familyAdultMaximumAge;
+		}
+
+		public void setFamilyAdultMaximumAge(int familyAdultMaximumAge) {
+			this.familyAdultMaximumAge = familyAdultMaximumAge;
+		}
+		
+		public int getFamilyAdultMaximumCount() {
+			return familyAdultMaximumCount;
+		}
+
+		public void setFamilyAdultMaximumCount(int familyAdultMaximumCount) {
+			this.familyAdultMaximumCount = familyAdultMaximumCount;
+		}
+
+		public int getFamilyChildrenMaximumCount() {
+			return familyChildrenMaximumCount;
+		}
+
+		public void setFamilyChildrenMaximumCount(int familyChildrenMaximumCount) {
+			this.familyChildrenMaximumCount = familyChildrenMaximumCount;
 		}
 
 		@Override

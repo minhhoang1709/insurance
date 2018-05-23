@@ -58,7 +58,9 @@ public class PolicyOrder implements Serializable{
     
     private PolicyOrderBeneficiary policyOrderBeneficiary;
     
-    private Period period;
+    private List<PolicyOrderFamily> policyOrderFamilies;
+    
+    private Period period;    
 
     private PolicyPayment payment;
     
@@ -265,6 +267,14 @@ public class PolicyOrder implements Serializable{
 		this.policyOrderBeneficiary = policyOrderBeneficiary;
 	}
 
+	public List<PolicyOrderFamily> getPolicyOrderFamilies() {
+		return policyOrderFamilies;
+	}
+
+	public void setPolicyOrderFamilies(List<PolicyOrderFamily> policyOrderFamilies) {
+		this.policyOrderFamilies = policyOrderFamilies;
+	}
+
 	public PolicyPayment getPayment() {
 		return payment;
 	}
@@ -292,7 +302,8 @@ public class PolicyOrder implements Serializable{
 				+ ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", updateDate=" + updateDate
 				+ ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
 				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
-				+ ", period=" + period + ", payment=" + payment + ", policyOrderVoucher=" + policyOrderVoucher + "]";
+				+ ", policyOrderFamilies=" + policyOrderFamilies + ", period=" + period + ", payment=" + payment
+				+ ", policyOrderVoucher=" + policyOrderVoucher + "]";
 	}
 
 	
