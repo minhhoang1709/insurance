@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.ninelives.insurance.ref.VoucherType;
 
 public class Voucher implements Serializable{
@@ -41,6 +40,7 @@ public class Voucher implements Serializable{
     private String status;
 
     private VoucherType voucherType;
+    
     
     private CorporateClient corporateClient;
     

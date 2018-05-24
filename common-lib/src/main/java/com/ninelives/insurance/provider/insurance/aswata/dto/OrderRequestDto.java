@@ -206,23 +206,17 @@ public class OrderRequestDto implements Serializable{
 		public void setIndustry(String industry) {
 			this.industry = industry;
 		}
+		
 		@Override
 		public String toString() {
-			String rValue = "RequestParam [productCode=" + productCode + ", packageType=" + packageType + ", insuredName="
+			return "RequestParam [productCode=" + productCode + ", packageType=" + packageType + ", insuredName="
 					+ insuredName + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", insuredAddress="
 					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
 					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCard=" + (idCard==null?"":"***")
 					+ ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
-					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry ;
-			if(packageType.contains("B2B")){
-				rValue = rValue +" , clientId=" + clientId +"]";
-			}
-			else{ 
-				rValue = rValue + "]";
-		    }
-			
-			return rValue;
+					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry +"]";
+		    
 		}
-		
+
 	}
 }

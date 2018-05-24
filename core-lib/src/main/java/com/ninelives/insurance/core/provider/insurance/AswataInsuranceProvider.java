@@ -108,7 +108,12 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
-			requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
+			if(order.getPolicyOrderVoucher().getVoucher()
+					.getCorporateClient().getCorporateClientProviderId()!=null){
+				requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher()
+						.getVoucher().getCorporateClient().getCorporateClientProviderId());
+			}
+			
 		}else{
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
 		}		
@@ -155,11 +160,6 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		HttpHeaders restHeader = new HttpHeaders();
 		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		restHeader.setContentType(MediaType.APPLICATION_JSON);
-		
-		//for check JSON format 
-		ObjectMapper objectMapper = new ObjectMapper();
-	    String value = objectMapper.writeValueAsString(requestDto);
-	    logger.debug(value);
 		
 	    HttpEntity<OrderRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
 		ResponseEntity<OrderResponseDto> resp = null;

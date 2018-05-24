@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CorporateClient implements Serializable{
 	
-	private static final long serialVersionUID = -1106804861994184823L;
+	private static final long serialVersionUID = 8655120355423167463L;
 	
 	private String corporateClientId;
 	
