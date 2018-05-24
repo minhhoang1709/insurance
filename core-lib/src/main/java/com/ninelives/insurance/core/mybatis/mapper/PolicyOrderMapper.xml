@@ -38,6 +38,7 @@
     		<result column="pov_voucher_type" jdbcType="VARCHAR" property="voucherType" />
     	 </association>
     </association>
+    <collection property="policyOrderFamilies" ofType="com.ninelives.insurance.model.PolicyOrderFamily" resultMap="com.ninelives.insurance.core.mybatis.mapper.PolicyOrderFamilyMapper.BaseResultMap" columnPrefix="policyorderfamily_"/>
     <collection property="policyOrderProducts" ofType="com.ninelives.insurance.model.PolicyOrderProduct">
     	<id column="order_product_id" jdbcType="BIGINT" property="orderProductId" />
 	    <result column="order_product_coverage_id" jdbcType="VARCHAR" property="coverageId" />
@@ -154,7 +155,13 @@
     pov.voucher_id as pov_voucher_id,
     pov.code as pov_code,
     pov.voucher_type as pov_voucher_type,
-    pov.inviter_user_id as pov_inviter_user_id
+    pov.inviter_user_id as pov_inviter_user_id,
+    pof.id as policyorderfamily_id,
+    pof.order_id as policyorderfamily_order_id,
+    pof.name as policyorderfamily_name, 
+    pof.relationship as policyorderfamily_relationship, 
+    pof.birth_date as policyorderfamily_birth_date, 
+    pof.gender as policyorderfamily_gender 
   </sql>
 
 <!--      	
@@ -167,7 +174,8 @@
     inner join public.period c on c.period_id=a.period_id
     inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
     left outer join public.policy_payment pp on pp.order_id=a.order_id
-    left outer join public.policy_order_voucher pov on pov.order_id=a.order_id and a.has_voucher=true    
+    left outer join public.policy_order_voucher pov on pov.order_id=a.order_id and a.has_voucher=true
+    left outer join public.policy_order_family pof on pof.order_id=a.order_id and a.is_family=true
   </sql>
 
 <!--     
