@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderConfirmLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderLogMapper;
@@ -43,7 +42,6 @@ import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
-import com.ninelives.insurance.provider.insurance.aswata.dto.IAswataResponsePayload;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
@@ -108,12 +106,12 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
-			if(order.getPolicyOrderVoucher().getVoucher()
-					.getCorporateClient().getCorporateClientProviderId()!=null){
-				requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher()
-						.getVoucher().getCorporateClient().getCorporateClientProviderId());
-			}
-			
+			if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
+					&& !StringUtils.isEmpty(
+					order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
+				requestDto.getRequestParam().setClientId(
+						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
+			}			
 		}else{
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
 		}		

@@ -214,8 +214,8 @@ public class OrderRequestDto implements Serializable{
 					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
 					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCard=" + (idCard==null?"":"***")
 					+ ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
-					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry +"]";
-		    
+					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry
+					+ ", clientId=" + clientId + "]";
 		}
 
 	}
