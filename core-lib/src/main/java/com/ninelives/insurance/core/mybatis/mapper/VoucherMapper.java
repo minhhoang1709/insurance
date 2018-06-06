@@ -11,6 +11,7 @@ import com.ninelives.insurance.model.Voucher;
 public interface VoucherMapper {
 	Voucher selectByCode(@Param("code") String code);
 	Voucher selectByInviteCode(@Param("code") String code);
+	Voucher selectByForB2B(@Param("code") String code);
 	
 	@Select({
         "select ",

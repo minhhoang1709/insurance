@@ -31,9 +31,57 @@
 	</collection>
   </resultMap>
   
+  <resultMap id="NestedVoucherB2BResultMap" type="com.ninelives.insurance.model.Voucher">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="subtitle" jdbcType="VARCHAR" property="subtitle" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
+    <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
+    <result column="use_start_date" jdbcType="DATE" property="useStartDate" />
+    <result column="use_end_date" jdbcType="DATE" property="useEndDate" />
+    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
+    <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
+    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
+    <result column="product_count" jdbcType="INTEGER" property="productCount" />
+    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="voucher_type" jdbcType="VARCHAR" property="voucherType" />
+    <result column="inviter_reward_limit" jdbcType="INTEGER" property="inviterRewardLimit" />
+    <result column="inviter_reward_count" jdbcType="INTEGER" property="inviterRewardCount" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="user_id" jdbcType="VARCHAR" property="inviterUserId" />
+    <result column="max_use" jdbcType="INTEGER" property="maxUse" />
+    <result column="approve_cnt" jdbcType="INTEGER" property="approveCnt" />
+    <association property="corporateClient" resultMap="CorporateClientResultMap" />
+    <collection property="products" ofType="com.ninelives.insurance.model.Product">
+	    <id column="product_id" jdbcType="VARCHAR" property="productId" />
+	    <result column="premi" jdbcType="INTEGER" property="premi" />
+	</collection>
+  </resultMap>
+  
+  <resultMap id="CorporateClientResultMap" type="com.ninelives.insurance.model.CorporateClient">
+  <id column="corporate_client_id" jdbcType="VARCHAR" property="corporateClientId" />
+    <result column="corporate_client_name" jdbcType="VARCHAR" property="corporateClientName" />
+    <result column="corporate_client_provider" jdbcType="VARCHAR" property="corporateClientProvider" />
+    <result column="corporate_client_provider_id" jdbcType="VARCHAR" property="corporateClientProviderId" />
+  </resultMap>
+  
 <!--   	<association property="inviter" javaType="com.ninelives.insurance.model.User"> -->
 <!-- 	  	<id column="user_id" jdbcType="VARCHAR" property="userId" /> -->
 <!--     </association> -->
+
+  <select id="selectByForB2B" resultMap="NestedVoucherB2BResultMap">
+  	select 
+  		vo.id, vo.code, vo.title, vo.subtitle, vo.policy_start_date, vo.policy_end_date, vo.use_start_date, 
+	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
+	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt,
+	    vop.product_id, vop.premi, cc.corporate_client_provider_id, cc.corporate_client_provider,cc.corporate_client_name
+  	from public.voucher vo, public.voucher_product vop, public.corporate_client cc
+  	where vo.code = #{code,jdbcType=VARCHAR} and vop.voucher_id=vo.id and vo.corporate_client_id=cc.corporate_client_id
+  </select>
   
   <sql id="Base_Column_List">
     id, code, title, subtitle, description, policy_start_date, policy_end_date, use_start_date, 
