@@ -211,7 +211,16 @@ public class ApiOrderService {
 				newUserProfile.setUserId(userId);;
 				newUserProfile.setName(registerResult.getUserDto().getName());
 				newUserProfile.setGender(registerResult.getUserDto().getGender());
-				newUserProfile.setBirthDate(registerResult.getUserDto().getBirthDate().toLocalDate());
+				
+				if(registerResult.getUserDto().getBirthDate()==null){
+					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId);
+					throw new AppBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
+							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan.");
+				}
+				else{
+					newUserProfile.setBirthDate(registerResult.getUserDto().getBirthDate().toLocalDate());
+				}
+				
 				newUserProfile.setBirthPlace(registerResult.getUserDto().getBirthPlace());
 				newUserProfile.setAddress(registerResult.getUserDto().getAddress());
 				newUserProfile.setPhone(modifiedPhone);

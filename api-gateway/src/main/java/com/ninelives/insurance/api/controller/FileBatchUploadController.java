@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -114,7 +113,6 @@ public class FileBatchUploadController {
 			        	dt.setStatus("on process");
 			        	
 			        	new Thread() {
-							@SuppressWarnings("finally")
 							public void run() {
 								   List<BatchFileUpload> bfus = fileUploadService.selectByBatchNumber(batchNumber);
 								   for (BatchFileUpload bfu : bfus) {
@@ -135,9 +133,9 @@ public class FileBatchUploadController {
 										   fileUploadService.updateBatchFileUpload(e.getMessage(), bfu.getFileId(), 
 												   batchNumber, e.getCode().toString());
 										   logger.info(e.getMessage());
-									   }finally {
-										   continue;
-									}
+									   }//finally {
+										 //  continue;
+								       //}
 									     
 								   }  
 								   
@@ -210,9 +208,15 @@ public class FileBatchUploadController {
 			hm.put("invalid tanggal lahir format", column[3]);
 		}
 		else{
-			if(!batchFileUploadValidation.validateAge(column[3].trim())){
-				hm.put("invalid Age range", column[3]);
+			
+			int age = batchFileUploadValidation.getAge(column[3].trim());
+			if(age<17){
+				hm.put("invalid Age < 17 ( "+age +" years old )", column[3]);
 			}
+			if(age>60){
+				hm.put("invalid Age > 60 ( "+age +" years old )", column[3]);
+			}
+			
 		}
 		
 		if(column[4].trim()!=null && !column[4].isEmpty()){
@@ -242,51 +246,6 @@ public class FileBatchUploadController {
 	}
 	
 	
-	@SuppressWarnings({ "unused", "static-access" })
-	private boolean validationLine(int lineNum, String lineToUpload, 
-			ArrayList<String> listErrorLine) {
-		boolean rValue=true;
-		String[] column = lineToUpload.split(",");
-		HashMap<String, String> hm = new HashMap<String, String>();
-		
-		if(batchFileUploadValidation.validateEmail(column[0].trim())){
-			hm.put("invalid email", column[0]);
-		}
-		if(batchFileUploadValidation.validateLetters(column[1].trim())){
-			hm.put("invalid name format", column[1]);
-		}
-		if(!column[2].trim().equalsIgnoreCase("M")&&
-				!column[2].trim().equalsIgnoreCase("F")){
-			hm.put("invalid jenis kelamin", column[2]);
-		}
-		if(!batchFileUploadValidation.isValidDate(column[3].trim())){
-			hm.put("invalid tanggal lahir format", column[3]);
-		}
-		
-		if(column[4].trim()!=null && !column[4].isEmpty()){
-			if(batchFileUploadValidation.validateLetters(column[4].trim())){
-				hm.put("invalid tempat lahir", column[4]);
-			}
-		}
-		if(batchFileUploadValidation.validateNumeric(column[5].trim())){
-			hm.put("invalid no telpon", column[5]);
-		}
-		if(batchFileUploadValidation.validateNumeric(column[6].trim())){
-			if(column[6].trim().length()!=16){
-				hm.put("invalid ktp number", column[5]);	
-			}
-			
-		}
-		
-		if(!hm.isEmpty()){
-			rValue=false;
-			listErrorLine.add("error   line "+lineNum+": "+lineToUpload+ " ===> "+ hm.toString().replace("{","").replace("}", ""));
-		}
-		
-		return rValue;
-	
-	}
-
 	public File convert(MultipartFile file) throws IOException
 	{    
 	    File convFile = new File(file.getOriginalFilename());

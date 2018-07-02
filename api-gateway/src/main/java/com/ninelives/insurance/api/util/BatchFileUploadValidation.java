@@ -41,9 +41,23 @@ public class BatchFileUploadValidation {
 		    		Integer.parseInt(str.substring(4, 6)),
 		    		Integer.parseInt(str.substring(6, 8)));
             Period period = Period.between(birthday, today);
-            if(period.getYears()>=17 && period.getYears()<=65){
+            if(period.getYears()>17 && period.getYears()<60){
             	rValue= true;
             }
+		return rValue;
+        
+	}
+	
+  public static int getAge(String str) {
+		
+		int rValue;
+		LocalDate today = LocalDate.now();
+        LocalDate birthday = LocalDate.of(Integer.parseInt(str.substring(0, 4)),
+		    		Integer.parseInt(str.substring(4, 6)),
+		    		Integer.parseInt(str.substring(6, 8)));
+        Period period = Period.between(birthday, today);
+        rValue= period.getYears();
+            
 		return rValue;
         
 	}
@@ -59,10 +73,10 @@ public class BatchFileUploadValidation {
 	
 	
 	public static boolean validateSpecialCharacters(String txt) {
-	    String regx = "[^&%$#@!~]+";
+	    String regx = "[a-zA-Z0-9 ]*";
 	    Pattern pattern = Pattern.compile(regx,Pattern.CASE_INSENSITIVE);
-	    Matcher matcher = pattern.matcher(txt);
-	    return matcher.find();
+	    Matcher matcher = pattern.matcher(txt.replace(".", ""));
+	    return matcher.matches();
 
 	}
 	
@@ -70,7 +84,7 @@ public class BatchFileUploadValidation {
 	    String regx = "[0-9]+";
 	    Pattern pattern = Pattern.compile(regx);
 	    Matcher matcher = pattern.matcher(txt);
-	    return matcher.find();
+	    return matcher.matches();
 
 	}
 	
