@@ -28,6 +28,8 @@ public class PolicyOrderUsers implements Serializable{
     private String address;
 
     private Long idCardFileId;
+    
+    private String idCardNo;
 
     private Date createdDate;
 
@@ -112,8 +114,16 @@ public class PolicyOrderUsers implements Serializable{
     public void setIdCardFileId(Long idCardFileId) {
         this.idCardFileId = idCardFileId;
     }
+    
+    public String getIdCardNo() {
+		return idCardNo;
+	}
 
-    public Date getCreatedDate() {
+	public void setIdCardNo(String idCardNo) {
+		this.idCardNo = idCardNo;
+	}
+
+	public Date getCreatedDate() {
         return createdDate;
     }
 
@@ -131,16 +141,10 @@ public class PolicyOrderUsers implements Serializable{
 
 	@Override
 	public String toString() {
-		return "PolicyOrderUsers ["
-				+ (policyOrderUsersId != null ? "policyOrderUsersId=" + policyOrderUsersId + ", " : "")
-				+ (orderId != null ? "orderId=" + orderId + ", " : "") + (email != null ? "email=" + email + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "") + (gender != null ? "gender=" + gender + ", " : "")
-				+ (birthDate != null ? "birthDate=" + birthDate + ", " : "")
-				+ (birthPlace != null ? "birthPlace=" + birthPlace + ", " : "")
-				+ (phone != null ? "phone=" + phone + ", " : "") + (address != null ? "address=" + address + ", " : "")
-				+ (idCardFileId != null ? "idCardFileId=" + idCardFileId + ", " : "")
-				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
-				+ (updateDate != null ? "updateDate=" + updateDate : "") + "]";
+		return "PolicyOrderUsers [policyOrderUsersId=" + policyOrderUsersId + ", orderId=" + orderId + ", email="
+				+ email + ", name=" + name + ", gender=" + gender + ", birthDate=" + birthDate + ", birthPlace="
+				+ birthPlace + ", phone=" + phone + ", address=" + address + ", idCardFileId=" + idCardFileId
+				+ ", idCardNo=" + idCardNo + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
 	}
     
     

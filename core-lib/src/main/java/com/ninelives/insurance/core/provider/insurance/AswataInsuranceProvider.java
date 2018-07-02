@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderConfirmLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderLogMapper;
@@ -43,7 +42,6 @@ import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
-import com.ninelives.insurance.provider.insurance.aswata.dto.IAswataResponsePayload;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
@@ -108,12 +106,12 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
-			if(order.getPolicyOrderVoucher().getVoucher()
-					.getCorporateClient().getCorporateClientProviderId()!=null){
-				requestDto.getRequestParam().setClientId(order.getPolicyOrderVoucher()
-						.getVoucher().getCorporateClient().getCorporateClientProviderId());
-			}
-			
+			if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
+					&& !StringUtils.isEmpty(
+					order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
+				requestDto.getRequestParam().setClientId(
+						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
+			}			
 		}else{
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
 		}		
@@ -137,25 +135,31 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
 						
-		logger.debug("Sending to aswata with request <{}>", requestDto);
 		
-		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
-		
-		//Path filepath = storageProvider.load("test/scan-ktp.jpg");
-		String base64IdCard = null;
-		try {
-			Resource resource = storageProvider.loadAsResource(userFile);
-			base64IdCard = Base64.getEncoder().encodeToString((FileUtils.readFileToByteArray(resource.getFile())));
-		} catch (IOException e) {
-			logger.error("Exception on fetching id card file", e);
-			throw e;
-		} catch (StorageException e) {
-			logger.error("Exception on fetching id card file", e);
-			throw e;
+		if(order.getPolicyOrderUsers().getIdCardFileId()!=null){
+			UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
+			
+			//Path filepath = storageProvider.load("test/scan-ktp.jpg");
+			String base64IdCard = null;
+			try {
+				Resource resource = storageProvider.loadAsResource(userFile);
+				base64IdCard = Base64.getEncoder().encodeToString((FileUtils.readFileToByteArray(resource.getFile())));
+			} catch (IOException e) {
+				logger.error("Exception on fetching id card file", e);
+				throw e;
+			} catch (StorageException e) {
+				logger.error("Exception on fetching id card file", e);
+				throw e;
+			}
+			if(base64IdCard!=null){
+				requestDto.getRequestParam().setIdCard(base64IdCard);
+			}
+		}else{
+			//if there is no image, use the ktp number instead
+			requestDto.getRequestParam().setIdCardNumber(order.getPolicyOrderUsers().getIdCardNo());
 		}
-		if(base64IdCard!=null){
-			requestDto.getRequestParam().setIdCard(base64IdCard);
-		}		
+		
+		logger.debug("Send to aswata with request <{}>", requestDto);
 		
 		HttpHeaders restHeader = new HttpHeaders();
 		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

@@ -47,6 +47,8 @@ public class User implements Serializable{
     private Boolean isSyncGmailEnabled;
 
     private Boolean isNotificationEnabled;
+    
+    private String idCardNo;
 
     private Date createdDate;
 
@@ -219,6 +221,14 @@ public class User implements Serializable{
 	public void setIsNotificationEnabled(Boolean isNotificationEnabled) {
 		this.isNotificationEnabled = isNotificationEnabled;
 	}
+	
+	public String getIdCardNo() {
+		return idCardNo;
+	}
+
+	public void setIdCardNo(String idCardNo) {
+		this.idCardNo = idCardNo;
+	}
 
 	@Override
 	public String toString() {
@@ -228,7 +238,8 @@ public class User implements Serializable{
 				+ ", name=" + name + ", gender=" + gender + ", birthDate=" + birthDate + ", birthPlace="
 				+ birthPlace + ", phone=" + phone + ", address=" + address + ", idCardFileId=" + idCardFileId
 				+ ", status=" + status + ", isSyncGmailEnabled=" + isSyncGmailEnabled + ", isNotificationEnabled="
-				+ isNotificationEnabled + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
+				+ isNotificationEnabled + ", createdDate=" + createdDate + ", updateDate=" + updateDate 
+				+ ", idCardNo=" + idCardNo+ "]";
 	}	
     
 }
