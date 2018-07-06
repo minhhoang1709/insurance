@@ -140,4 +140,14 @@ public class VoucherDto {
 	public void setVoucherType(VoucherType voucherType) {
 		this.voucherType = voucherType;
 	}
+
+	@Override
+	public String toString() {
+		return "VoucherDto [code=" + code + ", title=" + title + ", subtitle=" + subtitle + ", policyStartDate="
+				+ policyStartDate + ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi="
+				+ totalPremi + ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount + ", products="
+				+ products + ", period=" + period + ", description=" + description + ", voucherType=" + voucherType
+				+ "]";
+	}
+	
 }

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.ninelives.insurance.ref.VoucherType;
 
 public class Voucher implements Serializable{
@@ -42,7 +41,18 @@ public class Voucher implements Serializable{
 
     private VoucherType voucherType;
     
-    List<Product> products;
+    
+    private CorporateClient corporateClient;
+    
+    public CorporateClient getCorporateClient() {
+		return corporateClient;
+	}
+
+	public void setCorporateClient(CorporateClient corporateClient) {
+		this.corporateClient = corporateClient;
+	}
+
+	List<Product> products;
     
     Period period;
     
@@ -268,11 +278,24 @@ public class Voucher implements Serializable{
 				+ description + ", policyStartDate=" + policyStartDate + ", policyEndDate=" + policyEndDate
 				+ ", useStartDate=" + useStartDate + ", useEndDate=" + useEndDate + ", basePremi=" + basePremi
 				+ ", totalPremi=" + totalPremi + ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount
+				+ ", periodId=" + periodId + ", status=" + status + ", voucherType=" + voucherType
+				+ ", corporateClient=" + corporateClient + ", products=" + products + ", period=" + period
+				+ ", inviterRewardLimit=" + inviterRewardLimit + ", inviterUserId=" + inviterUserId
+				+ ", inviterRewardCount=" + inviterRewardCount + ", createdDate=" + createdDate + ", updateDate="
+				+ updateDate + ", maxUse=" + maxUse + ", approveCnt=" + approveCnt + "]";
+	}
+
+	/*@Override
+	public String toString() {
+		return "Voucher [id=" + id + ", code=" + code + ", title=" + title + ", subtitle=" + subtitle + ", description="
+				+ description + ", policyStartDate=" + policyStartDate + ", policyEndDate=" + policyEndDate
+				+ ", useStartDate=" + useStartDate + ", useEndDate=" + useEndDate + ", basePremi=" + basePremi
+				+ ", totalPremi=" + totalPremi + ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount
 				+ ", periodId=" + periodId + ", status=" + status + ", voucherType=" + voucherType + ", period="
 				+ period + ", inviterRewardLimit=" + inviterRewardLimit + ", inviterUserId=" + inviterUserId
 				+ ", inviterRewardCount=" + inviterRewardCount + ", createdDate=" + createdDate + ", updateDate="
 				+ updateDate + ", maxUse=" + maxUse + ", approveCnt=" + approveCnt + "]";
 	}
-	
+	*/
     
 }

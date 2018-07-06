@@ -292,7 +292,7 @@
   	select exists (
 	  	select 1 from public.policy_order a
 	  	where a.user_id=#{userId,jdbcType=VARCHAR}
-	  		and a.status != 'SUBMITTED'
+	  		and a.status not in('SUBMITTED','OVERDUE')
   	)
   </select>
   

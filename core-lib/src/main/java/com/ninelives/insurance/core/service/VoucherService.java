@@ -54,12 +54,13 @@ public class VoucherService {
 		if(voucherType!=null && VoucherType.INVITE.equals(voucherType)){
 			voucher = voucherMapper.selectByInviteCode(code);
 		}else{
-			voucher = voucherMapper.selectByCode(code);
-			
+		    voucher = voucherMapper.selectByCode(code);
+		    
 			if(voucher ==null){
 				voucher = voucherMapper.selectByInviteCode(code);
 			}
 		}
+		
 		if(voucher!=null){
 			if(!CollectionUtils.isEmpty(voucher.getProducts())){
 				for(Product p: voucher.getProducts()){

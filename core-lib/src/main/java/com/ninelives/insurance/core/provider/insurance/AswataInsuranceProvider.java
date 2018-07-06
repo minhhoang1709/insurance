@@ -42,7 +42,6 @@ import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
-import com.ninelives.insurance.provider.insurance.aswata.dto.IAswataResponsePayload;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
@@ -107,6 +106,12 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
+			if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
+					&& !StringUtils.isEmpty(
+					order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
+				requestDto.getRequestParam().setClientId(
+						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
+			}			
 		}else{
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
 		}		
@@ -123,7 +128,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.getRequestParam().setPremium(order.getTotalPremi());
 		requestDto.getRequestParam().setMobileNumber(order.getPolicyOrderUsers().getPhone());
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
-
+		
 		/* Insured address is hardcoded into empty string */
 		requestDto.getRequestParam().setInsuredAddress("-");				
 		
@@ -154,7 +159,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		restHeader.setContentType(MediaType.APPLICATION_JSON);
 		
-		HttpEntity<OrderRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
+	    HttpEntity<OrderRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
 		ResponseEntity<OrderResponseDto> resp = null;
 		LocalDateTime requestTime = LocalDateTime.now();
 		try{
