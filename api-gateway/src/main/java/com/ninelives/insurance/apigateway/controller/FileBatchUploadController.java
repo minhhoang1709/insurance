@@ -64,8 +64,8 @@ public class FileBatchUploadController {
 			HttpServletResponse response) throws AppException{
 		
 		BatchFileUploadDto dt = new BatchFileUploadDto();
-		HttpSession session = request.getSession();
-		String userName = (String)session.getAttribute("userName");
+		//HttpSession session = request.getSession();
+		String userName = request.getParameter("userName");
 		String voucherCode = request.getParameter("b2bcode");
         Voucher voucher;
 		
@@ -194,9 +194,12 @@ public class FileBatchUploadController {
 		String[] column = lineToUpload.split(",");
 		HashMap<String, String> hm = new HashMap<String, String>();
 		
-		if(!batchFileUploadValidation.validateEmail(column[0].trim())){
-			hm.put("invalid email", column[0]);
+		if(column[0].trim().length()>0){
+			if(!batchFileUploadValidation.validateEmail(column[0].trim())){
+				hm.put("invalid email", column[0]);
+			}
 		}
+		
 		if(!batchFileUploadValidation.validateSpecialCharacters(column[1].trim())){
 			hm.put("invalid name format", column[1]);
 		}
