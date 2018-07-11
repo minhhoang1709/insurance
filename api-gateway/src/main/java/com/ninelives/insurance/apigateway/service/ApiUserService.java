@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.apigateway.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.apigateway.dto.UserDto;
@@ -17,6 +18,8 @@ import com.ninelives.insurance.model.BatchFileUpload;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.ref.Gender;
 import com.ninelives.insurance.ref.UserStatus;
+
+
 
 @Service
 public class ApiUserService {
@@ -38,7 +41,14 @@ public class ApiUserService {
 		
 		logger.info("Start register, registration:<{}>", batchFileUpload);
 		boolean isNew;
-		User user = userService.fetchByEmail(batchFileUpload.getEmail());
+		User user = null;
+		
+		if(!StringUtils.isEmpty(batchFileUpload.getEmail())){
+			user = userService.fetchByEmail(batchFileUpload.getEmail());
+		}else{
+			user = userService.fetchByIdCardNumber(batchFileUpload.getKtpNumber());
+		}
+		
 		
 		if(user!=null){
 			isNew = false;
@@ -48,7 +58,9 @@ public class ApiUserService {
 
 			user = new User();
 			user.setUserId(userService.generateUserId());
-			user.setEmail(batchFileUpload.getEmail());
+			if(!StringUtils.isEmpty(batchFileUpload.getEmail())){
+				user.setEmail(batchFileUpload.getEmail());
+			}
 			user.setPassword(DigestUtils.sha1Hex("password"));
 			user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
 			user.setStatus(UserStatus.ACTIVE);
