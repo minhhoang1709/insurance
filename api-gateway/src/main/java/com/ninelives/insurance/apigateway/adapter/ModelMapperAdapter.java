@@ -225,7 +225,7 @@ public class ModelMapperAdapter {
 			dto.setTempatLahir(m.getTempatLahir());
 			dto.setNoTelpon(m.getNoTelpon());
 			dto.setKtpNumber(m.getKtpNumber());
-			dto.setValidationStatus(m.getValidationStatus());
+		//	dto.setValidationStatus(m.getValidationStatus());
 			dto.setErrorCode(m.getErrorCode());
 			dto.setResponseMessage(m.getResponseMessage());
 		}

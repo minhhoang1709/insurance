@@ -13,8 +13,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,20 +56,20 @@ public class FileBatchUploadController {
 	
 	private BatchFileUploadValidation batchFileUploadValidation;
 	
+	@SuppressWarnings("static-access")
 	@RequestMapping(value="/upload", method=RequestMethod.POST)	
 	@ResponseBody
 	public BatchFileUploadDto uploadBatchFile(HttpServletRequest request, 
 			HttpServletResponse response) throws AppException{
 		
 		BatchFileUploadDto dt = new BatchFileUploadDto();
-		//HttpSession session = request.getSession();
 		String userName = request.getParameter("userName");
 		String voucherCode = request.getParameter("b2bcode");
         Voucher voucher;
 		
         if(voucherCode!=null){
+			voucher = apiOrderService.validateVoucherB2B(voucherCode, VoucherType.toEnum("B2B"));
 			
-        	voucher = apiOrderService.validateVoucherB2B(voucherCode, VoucherType.toEnum("B2B"));
 			if(voucher!=null){
 				MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 				Iterator<String> itr =  multipartRequest.getFileNames();
@@ -92,16 +90,20 @@ public class FileBatchUploadController {
 			        	String batchNumber = new SimpleDateFormat("yyyyMMdd_HHmmss")
 			        			.format(Calendar.getInstance().getTime());
 			        	
-			        	br.readLine(); 
+			        	//br.readLine(); 
 			        	String lineToUpload=null;
 			        	while ((lineToUpload = br.readLine()) != null){
-			        		lineNum++;
-	        				String validationLine = validation(lineNum,lineToUpload);
-		        				if(validationLine==null){rowValid++;}
-		        				else{rowInvalid++;}
-		        				
-	            				fileUploadService.save(lineToUpload,  
-	        							batchNumber,validationLine, userName );
+			        		System.out.println(lineToUpload);
+			        		if(batchFileUploadValidation.validateFormatRow(lineToUpload)){
+			        			lineNum++;
+		        				HashMap<String, String> validationLine = validationRow(lineNum,lineToUpload);
+				        		if(validationLine==null){rowValid++;}
+			        				else{rowInvalid++;}
+			        			
+				        		fileUploadService.save(lineToUpload,  
+		        							batchNumber,validationLine, userName );
+			        		}
+			        		
 			        	}
 			        	
 			        	fileUploadService.saveHeader(lineNum, rowValid, 
@@ -143,18 +145,17 @@ public class FileBatchUploadController {
 									
 							}
 						}.start();
-			        	
-			        
 					
 					} catch (IOException e) {
 			            e.printStackTrace();
 			        }
+					
+					conFile.delete();
 			    
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+			
 			}
 			else{
 				dt.setCode("B2B Code Invalid");
@@ -189,59 +190,59 @@ public class FileBatchUploadController {
 	
 	
 	@SuppressWarnings("static-access")
-	private String validation(int lineNum, String lineToUpload) {
-		String rValue=null;
+	private HashMap<String, String> validationRow(int lineNum, String lineToUpload) {
+		HashMap<String, String> rValue=null;
 		String[] column = lineToUpload.split(",");
 		HashMap<String, String> hm = new HashMap<String, String>();
 		
 		if(column[0].trim().length()>0){
 			if(!batchFileUploadValidation.validateEmail(column[0].trim())){
-				hm.put("invalid email", column[0]);
+				hm.put("ER002", "Invalid email");
 			}
 		}
 		
 		if(!batchFileUploadValidation.validateSpecialCharacters(column[1].trim())){
-			hm.put("invalid name format", column[1]);
+			hm.put("ER003", "Invalid name");
 		}
 		if(!column[2].trim().equalsIgnoreCase("M")&&
 				!column[2].trim().equalsIgnoreCase("F")){
-			hm.put("invalid jenis kelamin", column[2]);
+			hm.put("ER014","Invalid gender (M/F) only");
 		}
 		if(!batchFileUploadValidation.isValidDate(column[3].trim())){
-			hm.put("invalid tanggal lahir format", column[3]);
+			hm.put("ER004", "Invalid date format (correct format yyyyMMdd)");
 		}
 		else{
 			
 			int age = batchFileUploadValidation.getAge(column[3].trim());
 			if(age<17){
-				hm.put("invalid Age < 17 ( "+age +" years old )", column[3]);
+				hm.put("ER005","Invalid Age < 17 ( "+age +" years old )");
 			}
 			if(age>60){
-				hm.put("invalid Age > 60 ( "+age +" years old )", column[3]);
+				hm.put("ER005","Invalid Age > 60 ( "+age +" years old )");
 			}
 			
 		}
 		
 		if(column[4].trim()!=null && !column[4].isEmpty()){
 			if(!batchFileUploadValidation.validateLetters(column[4].trim())){
-				hm.put("invalid tempat lahir", column[4]);
+				hm.put("ER015","Invalid Birth Place");
 			}
 		}
 		if(!batchFileUploadValidation.validateNumeric(column[5].trim())){
-			hm.put("invalid no telpon", column[5]);
+			hm.put("ER006","Invalid Phone Number");
 		}
 		if(column[6].trim().length()!=16){
-				hm.put("invalid ktp number length", column[6]);	
+				hm.put("ER007","Invalid KTP Number");	
 			
 		}
 		else{
 			if(!batchFileUploadValidation.validateNumeric(column[6].trim())){
-				hm.put("invalid ktp non numeric", column[6]);	
+				hm.put("ER007","Invalid KTP Number");	
 			}
 		}
 		
 		if(!hm.isEmpty()){
-			rValue=hm.toString().replace("{","").replace("}", "");
+			rValue=hm;
 		}
 		
 		return rValue;

@@ -6,8 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,14 +35,28 @@ public class BatchFileUploadService {
 	}
 		
 	public BatchFileUpload save(String record, String batchNumber
-				, String validationLine, String userName)
+				, HashMap<String, String> validationLine, String userName)
 				throws AppException{
+			
 			Date date = new Date();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 			BatchFileUpload batchFileUpload = new BatchFileUpload();
 			Timestamp dt = Timestamp.valueOf(dateFormat.format(date));
+			String isValidate="";
+			String valCode = "";
+			String valMsg = "";
 			
-			String isValidate= ((validationLine == null) ? "1" : "0");
+			if(validationLine!=null){
+				isValidate="0";
+				ArrayList<Entry<String, String>> array = new ArrayList<>();
+		        array.addAll(validationLine.entrySet()); 	
+		        Optional<Entry<String, String>> firstElement = array.stream().findFirst();
+		        valCode = firstElement.get().getKey();
+		        valMsg = firstElement.get().getValue();
+			}else{
+				isValidate="1";
+			}
+		    
 			String[] column = record.split(",");
 				batchFileUpload.setBatchNumber(batchNumber);
 				batchFileUpload.setEmail(column[0]);
@@ -51,7 +68,10 @@ public class BatchFileUploadService {
 				batchFileUpload.setKtpNumber(column[6]);
 				batchFileUpload.setCreatedDate(dt);
 				batchFileUpload.setIsValidate(isValidate);
-				batchFileUpload.setValidationStatus(validationLine);
+				if(!valCode.isEmpty() && !valMsg.isEmpty()){
+					batchFileUpload.setErrorCode(valCode);
+					batchFileUpload.setResponseMessage(valMsg);
+				}
 				batchFileUpload.setCreatedBy(userName);
 			batchFileUploadMapper.insert(batchFileUpload);
 			return batchFileUpload;

@@ -87,6 +87,18 @@ public class BatchFileUploadValidation {
 	    return matcher.matches();
 
 	}
+
+	public static boolean validateFormatRow(String lineToUpload) {
+		boolean rValue=true;
+		String[] col=lineToUpload.split(",");
+		if(col.length!=7){
+			rValue=false;
+		}
+		if(col[0].equalsIgnoreCase("email")){
+			rValue=false;
+		}
+		return rValue;
+	}
 	
 	
 }

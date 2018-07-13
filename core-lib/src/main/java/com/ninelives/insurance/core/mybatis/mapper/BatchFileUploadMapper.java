@@ -20,7 +20,7 @@ public interface BatchFileUploadMapper {
         "tempat_lahir, no_telpon, ",
         "ktp_number, status, ",
         "response_message, validation, created_date, ",
-        "created_by, modified_date,modified_by) ",
+        "created_by, modified_date,modified_by, error_code) ",
         "values (#{batchNumber,jdbcType=VARCHAR}, ",
         "#{email,jdbcType=VARCHAR}, #{nama,jdbcType=VARCHAR}, ",
         "#{jenisKelamin,jdbcType=VARCHAR}, #{tanggalLahir,jdbcType=VARCHAR}, ",
@@ -28,7 +28,7 @@ public interface BatchFileUploadMapper {
         "#{ktpNumber,jdbcType=VARCHAR}, #{validationStatus,jdbcType=VARCHAR}, ",
         "#{responseMessage,jdbcType=VARCHAR},#{isValidate,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP}, ",
         "#{createdBy,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, ",
-        "#{modifiedBy,jdbcType=VARCHAR})"
+        "#{modifiedBy,jdbcType=VARCHAR},#{errorCode,jdbcType=VARCHAR})"
     })
     int insert(BatchFileUpload record);
 	

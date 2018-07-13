@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class RowUploadDto {
     
-	//private String fileName;
-	
 	private String email;
 	
 	private String nama;
@@ -21,8 +19,6 @@ public class RowUploadDto {
 	
 	private String ktpNumber;
 	
-	private String validationStatus;
-	
 	private String errorCode;
 	
 	public String getErrorCode() {
@@ -35,14 +31,7 @@ public class RowUploadDto {
 
 	private String responseMessage;
 
-	/*public String getFileName() {
-		return fileName;
-	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-*/
 	public String getEmail() {
 		return email;
 	}
@@ -108,23 +97,13 @@ public class RowUploadDto {
 		this.responseMessage = responseMessage;
 	}
 
-	public String getValidationStatus() {
-		return validationStatus;
-	}
-
-	public void setValidationStatus(String validationStatus) {
-		this.validationStatus = validationStatus;
-	}
-
 	@Override
 	public String toString() {
 		return "RowUploadDto [email=" + email + ", nama=" + nama + ", jenisKelamin=" + jenisKelamin + ", tanggalLahir="
 				+ tanggalLahir + ", tempatLahir=" + tempatLahir + ", noTelpon=" + noTelpon + ", ktpNumber=" + ktpNumber
-				+ ", validationStatus=" + validationStatus + ", errorCode=" + errorCode + ", responseMessage="
-				+ responseMessage + "]";
+				+ ", errorCode=" + errorCode + ", responseMessage=" + responseMessage + "]";
 	}
 
 	
-	
-	
+		
 }
