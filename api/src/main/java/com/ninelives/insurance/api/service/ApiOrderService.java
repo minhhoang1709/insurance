@@ -640,12 +640,6 @@ public class ApiOrderService {
 				throw new AppBadRequestException(ErrorCode.ERR4013_ORDER_VOUCHER_PREMI_MISMATCH,
 						"Permintaan tidak dapat diproses, premi voucher tidak sesuai dengan pemesanan.");
 			}
-			System.out.println("voucher.getPolicyStartDate() ===> "+voucher.getPolicyStartDate());
-			System.out.println("submitOrderDto.getPolicyStartDate().toLocalDate() ===> "+submitOrderDto.getPolicyStartDate().toLocalDate());
-			
-			System.out.println("voucher.getPolicyEndDate() ===> "+voucher.getPolicyEndDate());
-			System.out.println("submitOrderDto.getPolicyEndDate().toLocalDate() ===> "+submitOrderDto.getPolicyEndDate().toLocalDate());
-				
 			if(!voucher.getPolicyStartDate().isEqual(submitOrderDto.getPolicyStartDate().toLocalDate())||
 					!voucher.getPolicyEndDate().isEqual(submitOrderDto.getPolicyEndDate().toLocalDate())){
 				throw new AppBadRequestException(ErrorCode.ERR4014_ORDER_VOUCHER_DATE_MISMATCH,
