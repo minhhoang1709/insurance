@@ -16,7 +16,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
 group = 'com.ninelives'
-version = '0.2.0'
+version = '1.0.0'
 sourceCompatibility = 1.8
 
 repositories {
@@ -75,7 +75,7 @@ dependencies {
 }
 
 war {
-	archiveName='api-gateway.war'
+	archiveName='ninelives-apigateway.war'
    	from('src/main/java') {
 		include '**/*.xml'
 		into 'WEB-INF/classes'
