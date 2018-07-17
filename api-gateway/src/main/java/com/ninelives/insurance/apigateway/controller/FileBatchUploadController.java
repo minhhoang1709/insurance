@@ -93,7 +93,7 @@ public class FileBatchUploadController {
 			        	//br.readLine(); 
 			        	String lineToUpload=null;
 			        	while ((lineToUpload = br.readLine()) != null){
-			        		System.out.println(lineToUpload);
+			        		//System.out.println(lineToUpload);
 			        		if(batchFileUploadValidation.validateFormatRow(lineToUpload)){
 			        			lineNum++;
 		        				HashMap<String, String> validationLine = validationRow(lineNum,lineToUpload);
@@ -122,7 +122,7 @@ public class FileBatchUploadController {
 										     RegisterUsersResult registerResult = new RegisterUsersResult();
 										     registerResult = apiUserService.registerUserByWithoutEmailValidation(bfu);
 										
-										     System.out.println("===>"+registerResult.getUserDto().getUserId());
+										     //System.out.println("===>"+registerResult.getUserDto().getUserId());
 										     OrderDto orderDto = new OrderDto();
 										   	 orderDto = apiOrderService.submitOrder(registerResult, voucherCode);
 										   	 if(orderDto!=null){
