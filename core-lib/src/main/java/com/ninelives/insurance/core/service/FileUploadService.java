@@ -2,18 +2,9 @@ package com.ninelives.insurance.core.service;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -27,11 +18,9 @@ import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
-import com.ninelives.insurance.core.mybatis.mapper.BatchFileUploadMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserFileMapper;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
-import com.ninelives.insurance.model.BatchFileUpload;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
@@ -42,7 +31,6 @@ public class FileUploadService {
 	private static final Logger logger = LoggerFactory.getLogger(FileUploadService.class);
 	
 	@Autowired UserFileMapper userFileMapper;
-	@Autowired BatchFileUploadMapper batchFileUploadMapper;
 	@Autowired StorageProvider storageProvider;
 	@Autowired NinelivesConfigProperties config;
 	
