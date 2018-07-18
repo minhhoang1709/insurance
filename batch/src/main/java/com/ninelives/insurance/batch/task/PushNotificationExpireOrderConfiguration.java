@@ -90,7 +90,7 @@ public class PushNotificationExpireOrderConfiguration {
 	public PushNotificationMyBatisReader<PushNotificationData> step1Reader() {	
         final PushNotificationMyBatisReader<PushNotificationData> reader = new PushNotificationMyBatisReader<>();
         reader.setSqlSessionFactory(sqlSessionFactory);
-        reader.setQueryId("com.ninelives.insurance.batch.mybatis.mapper.BatchMapper.selectExpireOrder");
+        reader.setQueryId("com.ninelives.insurance.batch.mybatis.mapper.BatchMapper.selectExpireOrderForFcmNotification");
         return reader;
     }
 
