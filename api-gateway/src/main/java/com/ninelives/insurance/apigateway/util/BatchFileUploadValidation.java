@@ -73,7 +73,7 @@ public class BatchFileUploadValidation {
 	
 	
 	public static boolean validateSpecialCharacters(String txt) {
-	    String regx = "[a-zA-Z0-9 ]*";
+		String regx = "[a-zA-Z0-9 ']*";
 	    Pattern pattern = Pattern.compile(regx,Pattern.CASE_INSENSITIVE);
 	    Matcher matcher = pattern.matcher(txt.replace(".", ""));
 	    return matcher.matches();

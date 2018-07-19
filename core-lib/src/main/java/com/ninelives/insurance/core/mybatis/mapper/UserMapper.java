@@ -27,7 +27,7 @@ public interface UserMapper {
         "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no",
         "from public.users",
-    	"where id_card_no=#{idCardNumber,jdbcType=VARCHAR} "
+    	"where id_card_no=#{idCardNumber,jdbcType=VARCHAR} and email is null"
 		})
 	User selectByIdCardNumber(@Param("idCardNumber") String idCardNumber);
     
