@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,7 @@ public class BatchFileUploadService {
 				batchFileUpload.setEmail(column[0]);
 				batchFileUpload.setNama(column[1]);
 				batchFileUpload.setJenisKelamin(column[2]);
-				batchFileUpload.setTanggalLahir(column[3]);
+				batchFileUpload.setTanggalLahir(StringUtils.left(column[3],8));
 				batchFileUpload.setTempatLahir(column[4]);
 				batchFileUpload.setNoTelpon(column[5]);
 				batchFileUpload.setKtpNumber(column[6]);
@@ -100,8 +101,10 @@ public class BatchFileUploadService {
 	
 	public int updateBatchFileUpload(String responseMessage, Long id, String batchNumber,
 			String errorCode){
+		
+		String msg= ((responseMessage.contains(",")) ? responseMessage.replace(",", "") : responseMessage);
 		return batchFileUploadMapper.
-				updateBatchFileUploadByBatchNumberAndId(responseMessage, id , batchNumber, errorCode);
+				updateBatchFileUploadByBatchNumberAndId(msg, id , batchNumber, errorCode);
 	}
 	
 	

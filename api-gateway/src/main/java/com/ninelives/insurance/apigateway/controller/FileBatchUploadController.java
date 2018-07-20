@@ -56,7 +56,7 @@ public class FileBatchUploadController {
 	
 	private BatchFileUploadValidation batchFileUploadValidation;
 	
-	@SuppressWarnings("static-access")
+	@SuppressWarnings({ "static-access", "finally" })
 	@RequestMapping(value="/upload", method=RequestMethod.POST)	
 	@ResponseBody
 	public BatchFileUploadDto uploadBatchFile(HttpServletRequest request, 
@@ -93,15 +93,22 @@ public class FileBatchUploadController {
 			        	//br.readLine(); 
 			        	String lineToUpload=null;
 			        	while ((lineToUpload = br.readLine()) != null){
-			        		//System.out.println(lineToUpload);
+			        
 			        		if(batchFileUploadValidation.validateFormatRow(lineToUpload)){
 			        			lineNum++;
 		        				HashMap<String, String> validationLine = validationRow(lineNum,lineToUpload);
 				        		if(validationLine==null){rowValid++;}
 			        				else{rowInvalid++;}
 			        			
-				        		fileUploadService.save(lineToUpload,  
+				        		try{
+				        			fileUploadService.save(lineToUpload,  
 		        							batchNumber,validationLine, userName );
+			        			}catch(Exception e){
+			        				logger.info(e.getMessage());
+			        			}finally {
+			        				continue;
+			        			}
+				        		
 			        		}
 			        		
 			        	}
@@ -122,22 +129,21 @@ public class FileBatchUploadController {
 										     RegisterUsersResult registerResult = new RegisterUsersResult();
 										     registerResult = apiUserService.registerUserByWithoutEmailValidation(bfu);
 										
-										     //System.out.println("===>"+registerResult.getUserDto().getUserId());
 										     OrderDto orderDto = new OrderDto();
 										   	 orderDto = apiOrderService.submitOrder(registerResult, voucherCode);
 										   	 if(orderDto!=null){
 										   		fileUploadService.updateBatchFileUpload(orderDto.getStatus().name(), 
 										   				bfu.getFileId(), batchNumber,"");
 										   	 }
-										   	continue;
-										   
+										     continue;
+							 			   
 									   }catch (AppException e){
 										   fileUploadService.updateBatchFileUpload(e.getMessage(), bfu.getFileId(), 
 												   batchNumber, e.getCode().toString());
 										   logger.info(e.getMessage());
-									   }//finally {
-										 //  continue;
-								       //}
+									   }finally {
+					        				continue;
+					        		 }
 									     
 								   }  
 								   
@@ -145,6 +151,9 @@ public class FileBatchUploadController {
 									
 							}
 						}.start();
+						
+						
+						
 					
 					} catch (IOException e) {
 			            e.printStackTrace();
@@ -199,11 +208,10 @@ public class FileBatchUploadController {
 			if(!batchFileUploadValidation.validateEmail(column[0].trim())){
 				hm.put("ER002", "Invalid email");
 			}
-		}
-		
+		}		
 		if(!batchFileUploadValidation.validateSpecialCharacters(column[1].trim())){
 			hm.put("ER003", "Invalid name");
-		}
+		}		
 		if(!column[2].trim().equalsIgnoreCase("M")&&
 				!column[2].trim().equalsIgnoreCase("F")){
 			hm.put("ER014","Invalid gender (M/F) only");

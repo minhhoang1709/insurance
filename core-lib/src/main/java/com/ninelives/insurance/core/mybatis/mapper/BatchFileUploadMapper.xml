@@ -54,7 +54,7 @@
  <select id="selectResultByBatchNumber" resultMap="BaseResultMap">
   	select *
    	from public.batch_file_upload 
-    where batch_number=#{batchNumber,jdbcType=VARCHAR}
+    where batch_number=#{batchNumber,jdbcType=VARCHAR} order by batch_file_upload_id asc 
    	
   </select> 
   
