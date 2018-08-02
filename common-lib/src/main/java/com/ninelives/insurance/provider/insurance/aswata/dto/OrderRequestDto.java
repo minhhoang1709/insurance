@@ -91,6 +91,8 @@ public class OrderRequestDto implements Serializable{
 		private Integer premium;
 		@JsonProperty("id_card")
 		private String idCard;
+		@JsonProperty("id_card_number")
+		private String idCardNumber;
 		@JsonProperty("beneficiary")
 		private String beneficiary;
 		@JsonProperty("beneficiary_relation")
@@ -175,6 +177,12 @@ public class OrderRequestDto implements Serializable{
 		}
 		public void setIdCard(String idCard) {
 			this.idCard = idCard;
+		}		
+		public String getIdCardNumber() {
+			return idCardNumber;
+		}
+		public void setIdCardNumber(String idCardNumber) {
+			this.idCardNumber = idCardNumber;
 		}
 		public String getBeneficiary() {
 			return beneficiary;
@@ -213,7 +221,7 @@ public class OrderRequestDto implements Serializable{
 					+ insuredName + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", insuredAddress="
 					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
 					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCard=" + (idCard==null?"":"***")
-					+ ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
+					+ ", idCardNumber=" + idCardNumber + ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
 					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry
 					+ ", clientId=" + clientId + "]";
 		}

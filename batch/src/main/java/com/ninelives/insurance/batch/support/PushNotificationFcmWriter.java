@@ -31,18 +31,22 @@ public class PushNotificationFcmWriter implements ItemWriter<PushNotificationDat
     @Override
     public void write(List<? extends PushNotificationData> items) throws Exception {
         for (PushNotificationData item : items) {
-			logger.debug("Sending for item:<{}>", item);
-        	
-        	FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
-        	
-			notifMessage.setTitle(messageSource.getMessage(PREFIX_MESSAGE_TITLE+item.getPushNotificationType().toString(), null, Locale.ROOT));
-			notifMessage.setBody(messageSource.getMessage(PREFIX_MESSAGE_BODY+item.getPushNotificationType().toString(), null, Locale.ROOT));
-			
-			if(!StringUtils.isEmpty(item.getOrderId())){
-				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage, FcmNotifAction.order, item.getOrderId());
-			}else{
-				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage);
-			}
+        	if(!StringUtils.isEmpty(item.getFcmToken())){
+    			logger.debug("Sending for item:<{}>", item);
+            	
+            	FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
+            	
+    			notifMessage.setTitle(messageSource.getMessage(PREFIX_MESSAGE_TITLE+item.getPushNotificationType().toString(), null, Locale.ROOT));
+    			notifMessage.setBody(messageSource.getMessage(PREFIX_MESSAGE_BODY+item.getPushNotificationType().toString(), null, Locale.ROOT));
+    			
+    			if(!StringUtils.isEmpty(item.getOrderId())){
+    				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage, FcmNotifAction.order, item.getOrderId());
+    			}else{
+    				notificationService.sendFcmPushNotification(item.getUserId(), item.getFcmToken(), notifMessage);
+    			}        		
+        	}else{
+    			logger.debug("Skip empty fcm_token for item:<{}>", item);
+        	}
         }
     }
 

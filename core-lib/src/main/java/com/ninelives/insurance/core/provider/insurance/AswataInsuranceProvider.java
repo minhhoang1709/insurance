@@ -135,25 +135,31 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
 						
-		logger.debug("Sending to aswata with request <{}>", requestDto);
 		
-		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
-		
-		//Path filepath = storageProvider.load("test/scan-ktp.jpg");
-		String base64IdCard = null;
-		try {
-			Resource resource = storageProvider.loadAsResource(userFile);
-			base64IdCard = Base64.getEncoder().encodeToString((FileUtils.readFileToByteArray(resource.getFile())));
-		} catch (IOException e) {
-			logger.error("Exception on fetching id card file", e);
-			throw e;
-		} catch (StorageException e) {
-			logger.error("Exception on fetching id card file", e);
-			throw e;
+		if(order.getPolicyOrderUsers().getIdCardFileId()!=null){
+			UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
+			
+			//Path filepath = storageProvider.load("test/scan-ktp.jpg");
+			String base64IdCard = null;
+			try {
+				Resource resource = storageProvider.loadAsResource(userFile);
+				base64IdCard = Base64.getEncoder().encodeToString((FileUtils.readFileToByteArray(resource.getFile())));
+			} catch (IOException e) {
+				logger.error("Exception on fetching id card file", e);
+				throw e;
+			} catch (StorageException e) {
+				logger.error("Exception on fetching id card file", e);
+				throw e;
+			}
+			if(base64IdCard!=null){
+				requestDto.getRequestParam().setIdCard(base64IdCard);
+			}
+		}else{
+			//if there is no image, use the ktp number instead
+			requestDto.getRequestParam().setIdCardNumber(order.getPolicyOrderUsers().getIdCardNo());
 		}
-		if(base64IdCard!=null){
-			requestDto.getRequestParam().setIdCard(base64IdCard);
-		}		
+		
+		logger.debug("Send to aswata with request <{}>", requestDto);
 		
 		HttpHeaders restHeader = new HttpHeaders();
 		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

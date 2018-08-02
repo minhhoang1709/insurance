@@ -39,6 +39,10 @@ public class UserService {
 		return userMapper.selectByEmail(email);
 	}
 	
+	public User fetchByIdCardNumber(String idCardNumber){
+		return userMapper.selectByIdCardNumber(idCardNumber);
+	}
+	
 	public int updateProfileInfo(User user) {
 		return userMapper.updateProfileAndConfigByUserIdSelective(user);
 	}

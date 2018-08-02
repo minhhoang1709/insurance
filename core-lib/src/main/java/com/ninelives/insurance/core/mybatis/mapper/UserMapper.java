@@ -15,7 +15,7 @@ public interface UserMapper {
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
         "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, ",
-        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled",
+        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no",
         "from public.users",
     	"where email=#{email,jdbcType=VARCHAR} "
 		})
@@ -25,7 +25,18 @@ public interface UserMapper {
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
         "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, ",
-        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled",
+        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no",
+        "from public.users",
+    	"where id_card_no=#{idCardNumber,jdbcType=VARCHAR} and email is null"
+		})
+	User selectByIdCardNumber(@Param("idCardNumber") String idCardNumber);
+    
+    
+    @Select({
+        "select",
+        "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
+        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, ",
+        "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no",
         "from public.users",
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })

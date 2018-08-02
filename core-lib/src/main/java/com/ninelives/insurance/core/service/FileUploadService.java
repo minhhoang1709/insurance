@@ -134,4 +134,6 @@ public class FileUploadService {
 	public UserFile fetchUserFileById(Long fileId) {
 		return  userFileMapper.selectByPrimaryKey(fileId);
 	}
+	
+		
 }

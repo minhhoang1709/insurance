@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.core.mybatis.mapper.BatchFileUploadMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.BatchFileUpload">
+    <id column="batch_file_upload_id" jdbcType="VARCHAR" property="fileId" />
+    <result column="batch_number" jdbcType="VARCHAR" property="batchNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="nama" jdbcType="VARCHAR" property="nama" />
+    <result column="jenis_kelamin" jdbcType="VARCHAR" property="jenisKelamin" />
+    <result column="tanggal_lahir" jdbcType="VARCHAR" property="tanggalLahir" />
+    <result column="tempat_lahir" jdbcType="VARCHAR" property="tempatLahir" />
+    <result column="no_telpon" jdbcType="VARCHAR" property="noTelpon" />
+    <result column="ktp_number" jdbcType="VARCHAR" property="ktpNumber" />
+    <result column="status" jdbcType="VARCHAR" property="validationStatus" />
+    <result column="response_message" jdbcType="VARCHAR" property="responseMessage" />
+    <result column="validation" jdbcType="VARCHAR" property="isValidate" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+ </resultMap> 
+ 
+ <select id="selectByBatchNumber" resultMap="BaseResultMap">
+  	select *
+   	from public.batch_file_upload 
+   	where batch_number=#{batchNumber,jdbcType=VARCHAR}
+    	and validation=#{isValidate,jdbcType=VARCHAR}  	
+  </select>
+  
+  
+   <resultMap id="BaseResultHeaderMap" type="com.ninelives.insurance.model.BatchFileUploadHeader">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="batch_number" jdbcType="VARCHAR" property="batchNumber" />
+    <result column="filename" jdbcType="VARCHAR" property="fileName" />
+    <result column="row_valid" jdbcType="VARCHAR" property="rowValid" />
+    <result column="row_invalid" jdbcType="VARCHAR" property="rowInvalid" />
+    <result column="total_row" jdbcType="VARCHAR" property="totalRow" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="upload_begin" jdbcType="TIMESTAMP" property="uploadBegin" />
+    <result column="upload_end" jdbcType="TIMESTAMP" property="uploadEnd" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+    <result column="modified_date" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+ </resultMap> 
+ 
+ <select id="selectByUploadDate" resultMap="BaseResultHeaderMap">
+  	select *
+   	from public.batch_file_upload_header 
+   	where 
+   	to_char(created_date, 'YYYY-MM-DD')=#{uploadDate,jdbcType=VARCHAR} 
+  </select>
+ 
+ <select id="selectResultByBatchNumber" resultMap="BaseResultMap">
+  	select *
+   	from public.batch_file_upload 
+    where batch_number=#{batchNumber,jdbcType=VARCHAR} order by batch_file_upload_id asc 
+   	
+  </select> 
+  
+  
+</mapper>

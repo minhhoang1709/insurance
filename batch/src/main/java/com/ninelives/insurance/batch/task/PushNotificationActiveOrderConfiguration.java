@@ -92,7 +92,7 @@ public class PushNotificationActiveOrderConfiguration {
 	public PushNotificationMyBatisReader<PushNotificationData> step1Reader() {	
         final PushNotificationMyBatisReader<PushNotificationData> reader = new PushNotificationMyBatisReader<>();
         reader.setSqlSessionFactory(sqlSessionFactory);
-        reader.setQueryId("com.ninelives.insurance.batch.mybatis.mapper.BatchMapper.selectActiveOrder");
+        reader.setQueryId("com.ninelives.insurance.batch.mybatis.mapper.BatchMapper.selectActiveOrderForFcmNotification");
         return reader;
     }
 

@@ -16,18 +16,20 @@ public interface BatchMapper {
 		"FROM public.policy_order a, public.users b, public.coverage_category c ",
 		"WHERE b.user_id=a.user_id and c.coverage_category_id=a.coverage_category_id ",
 		"  and a.policy_start_date=#{targetDate,jdbcType=DATE} ",
-		"  and a.status in ('APPROVED','ACTIVE')"
+		"  and a.status in ('APPROVED','ACTIVE') ",
+		"  and b.fcm_token is not null"
 	})
-	public PushNotificationData selectActiveOrder(@Param("targetDate") LocalDate targetDate);
+	public PushNotificationData selectActiveOrderForFcmNotification(@Param("targetDate") LocalDate targetDate);
 	
 	@Select ({
 		"SELECT b.user_id, b.email, b.fcm_token, a.order_id, c.coverage_category_id, c.name coverage_category_name ",
 		"FROM public.policy_order a, public.users b, public.coverage_category c ",
 		"WHERE b.user_id=a.user_id and c.coverage_category_id=a.coverage_category_id ",
 		"  and a.policy_end_date=(#{targetDate,jdbcType=DATE}::date - '1 day'::interval) ",
-		"  and a.status in ('APPROVED','ACTIVE')"
+		"  and a.status in ('APPROVED','ACTIVE') ",
+		"  and b.fcm_token is not null"
 	})
-	public PushNotificationData selectExpireOrder(@Param("targetDate") LocalDate targetDate);
+	public PushNotificationData selectExpireOrderForFcmNotification(@Param("targetDate") LocalDate targetDate);
 	
 	@Select ({
 		"SELECT b.user_id, b.email, b.fcm_token, a.order_id, c.coverage_category_id, c.name coverage_category_name ",
@@ -38,7 +40,8 @@ public interface BatchMapper {
 		      "or ",
 		    "(a.policy_end_date=(#{targetDate,jdbcType=DATE}::date + '2 day'::interval) and a.period_id!='101') ",
 		  ") ",
-		  "and a.status in ('APPROVED','ACTIVE')"
+		  "and a.status in ('APPROVED','ACTIVE') ",
+		  "and b.fcm_token is not null"
 	})
-	public PushNotificationData selectToBeExpireOrder(@Param("targetDate") LocalDate targetDate);
+	public PushNotificationData selectToBeExpireOrderForFcmNotification(@Param("targetDate") LocalDate targetDate);
 }
