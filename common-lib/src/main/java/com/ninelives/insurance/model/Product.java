@@ -19,6 +19,8 @@ public class Product implements Serializable{
 
     private Integer premi;
     
+    private Integer familyPremi;
+    
     private Integer basePremi;
 
     private String status;
@@ -71,9 +73,17 @@ public class Product implements Serializable{
 
     public void setPremi(Integer premi) {
         this.premi = premi;
-    }
+    }        
     
-    public Integer getBasePremi() {
+    public Integer getFamilyPremi() {
+		return familyPremi;
+	}
+
+	public void setFamilyPremi(Integer familyPremi) {
+		this.familyPremi = familyPremi;
+	}
+
+	public Integer getBasePremi() {
 		return basePremi;
 	}
 
@@ -131,11 +141,9 @@ public class Product implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Product [productId=" + productId + ", coverageId=" + coverageId + ", periodId=" + periodId + ", name="
-				+ name + ", premi=" + premi + ", basePremi=" + basePremi + ", status=" + status + ", createdDate="
-				+ createdDate + ", updateDate=" + updateDate + ", period=" + period + ", coverage=" + coverage + "]";
+		return "Product [productId=" + productId + ", name=" + name + ", premi=" + premi + ", familyPremi="
+				+ familyPremi + ", basePremi=" + basePremi + ", status=" + status + ", productType=" + productType
+				+ "]";
 	}
-
-
     
 }

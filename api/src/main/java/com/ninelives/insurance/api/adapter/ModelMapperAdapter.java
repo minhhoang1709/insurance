@@ -62,7 +62,6 @@ import com.ninelives.insurance.ref.PolicyStatus;
 public class ModelMapperAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(ModelMapperAdapter.class);
 	
-	//TODO: replace the hardcoded imgurl and title
 	@Value("${ninelives-api.coverage-img-url-path}")
 	String coverageImgUrlPath;
 //	@Value("${ninelives.order.policy-title}")
@@ -387,6 +386,7 @@ public class ModelMapperAdapter {
 			dto.setProductId(m.getProductId());			
 			dto.setName(m.getName());
 			dto.setPremi(m.getPremi());
+			dto.setFamilyPremi(m.getFamilyPremi());
 			dto.setPeriod(toDto(m.getPeriod()));
 			dto.setCoverage(toDto(m.getCoverage()));
 		}
@@ -402,6 +402,7 @@ public class ModelMapperAdapter {
 			dto.setIsRecommended(m.getIsRecommended());
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setMaxLimit(m.getMaxLimit());
+			dto.setFamilyMaxLimit(m.getFamilyMaxLimit());
 			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
 				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
 				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){

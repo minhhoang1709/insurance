@@ -178,12 +178,6 @@
     left outer join public.policy_order_family pof on pof.order_id=a.order_id and a.is_family=true
   </sql>
 
-<!--     
-	inner join public.coverage d on  d.coverage_id = b.coverage_id
-    left outer join public.coverage_claim_doc_type f on f.coverage_id=d.coverage_id
-  	left outer join public.claim_doc_type g on g.claim_doc_type_id=f.claim_doc_type_id
--->
-
   
   <!--   sql start -->
   

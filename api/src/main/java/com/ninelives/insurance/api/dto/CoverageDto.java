@@ -18,6 +18,8 @@ public class CoverageDto {
     private Boolean hasBeneficiary;
     
     private Long maxLimit;
+    
+    private Long familyMaxLimit;
 
     private Boolean isRecommended;
     
@@ -33,6 +35,14 @@ public class CoverageDto {
 
 	public void setMaxLimit(Long maxLimit) {
 		this.maxLimit = maxLimit;
+	}
+	
+	public Long getFamilyMaxLimit() {
+		return familyMaxLimit;
+	}
+
+	public void setFamilyMaxLimit(Long familyMaxLimit) {
+		this.familyMaxLimit = familyMaxLimit;
 	}
 
 	public String getCoverageId() {

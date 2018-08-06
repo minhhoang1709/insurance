@@ -8,6 +8,7 @@
     <result column="recommendation" jdbcType="VARCHAR" property="recommendation" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="max_limit" jdbcType="BIGINT" property="maxLimit" />
+    <result column="family_max_limit" jdbcType="BIGINT" property="familyMaxLimit" />
     <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
     <result column="is_recommended" jdbcType="BIT" property="isRecommended" />
     <result column="provider_code" jdbcType="VARCHAR" property="providerCode" />
@@ -40,7 +41,7 @@
   </resultMap>
   
   <sql id="NestedCoverageColumnList">
-	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, 
+	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, a.family_max_limit, 
 	a.has_beneficiary, a.status, a.display_rank, a.is_recommended, a.provider_code, a.coverage_option_id,
 	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name, b.type as covcat_type,
 	c.coverage_claim_doc_type_id, c.is_mandatory,

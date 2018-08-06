@@ -8,6 +8,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="premi" jdbcType="INTEGER" property="premi" />
+    <result column="family_premi" jdbcType="INTEGER" property="familyPremi" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="product_type" jdbcType="VARCHAR" property="productType" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
@@ -30,6 +31,7 @@
     <result column="coverage_recommendation" jdbcType="VARCHAR" property="recommendation" />
     <result column="coverage_description" jdbcType="VARCHAR" property="description" />
     <result column="coverage_max_limit" jdbcType="BIGINT" property="maxLimit" />
+    <result column="coverage_family_max_limit" jdbcType="BIGINT" property="familyMaxLimit" />
     <result column="coverage_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
     <result column="coverage_is_recommended" jdbcType="BIT" property="isRecommended" />
    	<result column="coverage_provider_code" jdbcType="VARCHAR" property="providerCode" />
@@ -62,11 +64,12 @@
   </resultMap>
   
   <sql id="NestedProductColumnList">
-  	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.premi as base_premi, a.status, a.product_type, a.created_date, a.update_date,
+  	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.family_premi, a.premi as base_premi, a.status, a.product_type, a.created_date, a.update_date,
 	b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
 	b.start_value as period_start_value, b.end_value as period_end_value,
 	c.coverage_id as coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
-	c.description as coverage_description, c.max_limit as coverage_max_limit, c.has_beneficiary as coverage_has_beneficiary,
+	c.description as coverage_description, c.max_limit as coverage_max_limit, c.family_max_limit as coverage_family_max_limit, 
+	c.has_beneficiary as coverage_has_beneficiary,
 	c.is_recommended as coverage_is_recommended, c.provider_code as coverage_provider_code, c.status as coverage_status, c.display_rank as coverage_display_rank,
 	d.coverage_category_id as covcat_coverage_category_id, d.name as covcat_name, d.type as covcat_type,
 	e.coverage_claim_doc_type_id, e.is_mandatory,

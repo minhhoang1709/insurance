@@ -18,6 +18,8 @@ public class Coverage implements Serializable{
     private String description;
 
     private Long maxLimit;
+    
+    private Long familyMaxLimit;
 
     private Boolean hasBeneficiary;
 
@@ -87,9 +89,17 @@ public class Coverage implements Serializable{
 
     public void setMaxLimit(Long maxLimit) {
         this.maxLimit = maxLimit;
-    }
+    }    
 
-    public Boolean getHasBeneficiary() {
+    public Long getFamilyMaxLimit() {
+		return familyMaxLimit;
+	}
+
+	public void setFamilyMaxLimit(Long familyMaxLimit) {
+		this.familyMaxLimit = familyMaxLimit;
+	}
+
+	public Boolean getHasBeneficiary() {
         return hasBeneficiary;
     }
 
@@ -181,11 +191,11 @@ public class Coverage implements Serializable{
 	public String toString() {
 		return "Coverage [coverageId=" + coverageId + ", coverageCategoryId=" + coverageCategoryId + ", name=" + name
 				+ ", recommendation=" + recommendation + ", description=" + description + ", maxLimit=" + maxLimit
-				+ ", hasBeneficiary=" + hasBeneficiary + ", createdDate=" + createdDate + ", updateDate=" + updateDate
-				+ ", status=" + status + ", displayRank=" + displayRank + ", isRecommended=" + isRecommended
-				+ ", providerCode=" + providerCode + ", coverageOptionId=" + coverageOptionId
-				+ ", coverageClaimDocTypes=" + coverageClaimDocTypes + ", coverageCategory=" + coverageCategory
-				+ ", coverageOption=" + coverageOption + "]";
+				+ ", familyMaxLimit=" + familyMaxLimit + ", hasBeneficiary=" + hasBeneficiary + ", createdDate="
+				+ createdDate + ", updateDate=" + updateDate + ", status=" + status + ", displayRank=" + displayRank
+				+ ", isRecommended=" + isRecommended + ", providerCode=" + providerCode + ", coverageOptionId="
+				+ coverageOptionId + ", coverageClaimDocTypes=" + coverageClaimDocTypes + ", coverageCategory="
+				+ coverageCategory + ", coverageOption=" + coverageOption + "]";
 	}
 
 	

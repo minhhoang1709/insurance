@@ -13,6 +13,8 @@ public class ProductDto {
     private String name;
 
     private Integer premi;
+    
+    private Integer familyPremi;
 
 	public String getProductId() {
 		return productId;
@@ -46,7 +48,7 @@ public class ProductDto {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 	public Integer getPremi() {
 		return premi;
 	}
@@ -55,12 +57,18 @@ public class ProductDto {
 		this.premi = premi;
 	}
 
+	public Integer getFamilyPremi() {
+		return familyPremi;
+	}
+
+	public void setFamilyPremi(Integer familyPremi) {
+		this.familyPremi = familyPremi;
+	}
+
 	@Override
 	public String toString() {
-		return "ProductDto [" + (productId != null ? "productId=" + productId + ", " : "")
-				+ (coverage != null ? "coverage=" + coverage + ", " : "")
-				+ (period != null ? "period=" + period + ", " : "") + (name != null ? "name=" + name + ", " : "")
-				+ (premi != null ? "premi=" + premi : "") + "]";
+		return "ProductDto [productId=" + productId + ", coverage=" + coverage + ", period=" + period + ", name=" + name
+				+ ", premi=" + premi + ", familyPremi=" + familyPremi + "]";
 	}
 
 	
