@@ -330,8 +330,10 @@ public class ApiOrderService {
 			}
 			//order policy +family, multiplier is applied
 			if(isFamily){
-				calculatedTotalPremi += (int) (p.getPremi() * config.getOrder().getFamilyMultiplier());
-				calculatedTotalBasePremi += (int) (p.getBasePremi() * config.getOrder().getFamilyMultiplier());
+				//calculatedTotalPremi += (int) (p.getPremi() * config.getOrder().getFamilyMultiplier());
+				//calculatedTotalBasePremi += (int) (p.getBasePremi() * config.getOrder().getFamilyMultiplier());
+				calculatedTotalPremi += p.getFamilyPremi();
+				calculatedTotalBasePremi += p.getFamilyPremi();
 			}else{
 				calculatedTotalPremi += p.getPremi();
 				calculatedTotalBasePremi += p.getBasePremi();
@@ -534,9 +536,12 @@ public class ApiOrderService {
 				pop.setProductId(p.getProductId());
 				pop.setCoverageName(p.getCoverage().getName());
 				if(isFamily){
-					pop.setCoverageMaxLimit((long) (p.getCoverage().getMaxLimit() * config.getOrder().getFamilyMultiplier()));
-					pop.setBasePremi((int) (p.getBasePremi()* config.getOrder().getFamilyMultiplier()));
-					pop.setPremi((int) (p.getPremi()* config.getOrder().getFamilyMultiplier()));
+					//pop.setCoverageMaxLimit((long) (p.getCoverage().getMaxLimit() * config.getOrder().getFamilyMultiplier()));
+					//pop.setBasePremi((int) (p.getBasePremi()* config.getOrder().getFamilyMultiplier()));
+					//pop.setPremi((int) (p.getPremi()* config.getOrder().getFamilyMultiplier()));
+					pop.setCoverageMaxLimit(p.getCoverage().getFamilyMaxLimit());
+					pop.setBasePremi(p.getFamilyPremi());
+					pop.setPremi(p.getFamilyPremi());
 				}else{
 					pop.setCoverageMaxLimit(p.getCoverage().getMaxLimit());
 					pop.setBasePremi(p.getBasePremi());
