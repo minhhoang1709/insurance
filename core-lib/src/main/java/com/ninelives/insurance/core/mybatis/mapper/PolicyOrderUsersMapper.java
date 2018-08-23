@@ -12,12 +12,12 @@ public interface PolicyOrderUsersMapper {
         "email, name, gender, ",
         "birth_date, birth_place, ",
         "phone, address, ",
-        "id_card_file_id, id_card_no) ",
+        "id_card_file_id, passport_file_id, id_card_no) ",
         "values (#{orderId,jdbcType=VARCHAR}, ",
         "#{email,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, ",
         "#{birthDate,jdbcType=DATE}, #{birthPlace,jdbcType=VARCHAR}, ",
         "#{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, ",
-        "#{idCardFileId,jdbcType=BIGINT}, #{idCardNo,jdbcType=VARCHAR})"
+        "#{idCardFileId,jdbcType=BIGINT}, #{passportFileId,jdbcType=BIGINT}, #{idCardNo,jdbcType=VARCHAR})"
     })
     int insert(PolicyOrderUsers record);
 

@@ -17,6 +17,7 @@
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="id_card_file_id" jdbcType="BIGINT" property="idCardFileId" />
+    <result column="passport_file_id" jdbcType="BIGINT" property="passportFileId" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -27,7 +28,7 @@
   </resultMap> 
   <sql id="Base_Column_List">
     user_id, password, email, google_refresh_token, google_auth_code, google_access_token, 
-    fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, 
+    fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id,
     status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, 
     id_card_no
   </sql>
@@ -78,6 +79,9 @@
       </if>
       <if test="idCardFileId != null">
         id_card_file_id,
+      </if>
+      <if test="passportFileId != null">
+        passport_file_id,
       </if>
       <if test="status != null">
         status,
@@ -146,6 +150,9 @@
       </if>
       <if test="idCardFileId != null">
         #{idCardFileId,jdbcType=BIGINT},
+      </if>
+      <if test="passportFileId != null">
+        #{passportFileId,jdbcType=BIGINT},
       </if>
       <if test="status != null">
         #{status,jdbcType=VARCHAR},

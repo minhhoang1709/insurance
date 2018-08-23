@@ -154,6 +154,10 @@ public class ApiUserService {
 		return modelMapperAdapter.toDto(userService.updateIdCardFile(userId, file));
 	}
 	
+	public UserFileDto updatePassportFile(String userId, MultipartFile file) throws AppException {
+		return modelMapperAdapter.toDto(userService.updatePassportFile(userId, file));
+	}
+	
 	/**
 	 * If existing profile is not empty, user is only allowed to edit phone number or address or configuration
 	 * 

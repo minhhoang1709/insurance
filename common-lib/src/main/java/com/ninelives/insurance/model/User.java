@@ -41,6 +41,8 @@ public class User implements Serializable{
     private String address;
 
     private Long idCardFileId;
+    
+    private Long passportFileId;
 
     private UserStatus status;
 
@@ -174,7 +176,15 @@ public class User implements Serializable{
         this.idCardFileId = idCardFileId;
     }
 
-    public UserStatus getStatus() {
+    public Long getPassportFileId() {
+		return passportFileId;
+	}
+
+	public void setPassportFileId(Long passportFileId) {
+		this.passportFileId = passportFileId;
+	}
+
+	public UserStatus getStatus() {
 		return status;
 	}
 
@@ -237,6 +247,7 @@ public class User implements Serializable{
 				+ ", googleAccessToken=***" + ", googleUserId=" + googleUserId + ", fcmToken=***" 
 				+ ", name=" + name + ", gender=" + gender + ", birthDate=" + birthDate + ", birthPlace="
 				+ birthPlace + ", phone=" + phone + ", address=" + address + ", idCardFileId=" + idCardFileId
+				+ ", passportFileId=" + passportFileId
 				+ ", status=" + status + ", isSyncGmailEnabled=" + isSyncGmailEnabled + ", isNotificationEnabled="
 				+ isNotificationEnabled + ", createdDate=" + createdDate + ", updateDate=" + updateDate 
 				+ ", idCardNo=" + idCardNo+ "]";

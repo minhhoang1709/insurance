@@ -76,6 +76,15 @@ public class UserController {
 		return apiUserService.updateIdCardFile(authUserId, file); 
 	}
 	
+	@RequestMapping(value="/users/{userId}/passportFiles",
+			method=RequestMethod.PUT)
+	@ResponseBody
+	public UserFileDto updatePassportFile (@RequestAttribute ("authUserId") String authUserId, 
+			@RequestParam("file") MultipartFile file) throws AppException{
+
+		return apiUserService.updatePassportFile(authUserId, file); 
+	}
+	
 //	@RequestMapping(value="/users/{userId}/idCardFiles",
 //			method=RequestMethod.GET)
 //	@ResponseBody

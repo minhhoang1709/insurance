@@ -83,6 +83,20 @@ public class UserService {
 		}
 	}
 	
+	public UserFile updatePassportFile(String userId, MultipartFile file) throws AppException {
+		if(file==null){
+			logger.debug("Update idcard for user {} with empty file", userId);
+			throw new AppBadRequestException(ErrorCode.ERR6001_UPLOAD_EMPTY, "Permintaan tidak dapat diproses, periksa kembali berkas yang akan Anda unggah");
+		}
+		logger.info("Update idcard for user {} with content-type {} and size {}", userId, file.getContentType(), file.getSize());
+		
+		UserFile userFile =  fileUploadService.save(userId, file, FileUseType.PASSPORT);
+		if(userFile!=null && userFile.getFileId()!=null){
+			userMapper.updatePassportFileIdByUserId(userId, userFile.getFileId());
+		}
+		return userFile;
+	}
+	
 	public UserFile updateIdCardFile(String userId, MultipartFile file) throws AppException {
 		if(file==null){
 			logger.debug("Update idcard for user {} with empty file", userId);

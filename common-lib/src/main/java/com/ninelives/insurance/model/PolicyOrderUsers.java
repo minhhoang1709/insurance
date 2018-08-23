@@ -29,6 +29,8 @@ public class PolicyOrderUsers implements Serializable{
 
     private Long idCardFileId;
     
+    private Long passportFileId;
+    
     private String idCardNo;
 
     private Date createdDate;
@@ -113,9 +115,17 @@ public class PolicyOrderUsers implements Serializable{
 
     public void setIdCardFileId(Long idCardFileId) {
         this.idCardFileId = idCardFileId;
-    }
+    }        
     
-    public String getIdCardNo() {
+    public Long getPassportFileId() {
+		return passportFileId;
+	}
+
+	public void setPassportFileId(Long passportFileId) {
+		this.passportFileId = passportFileId;
+	}
+
+	public String getIdCardNo() {
 		return idCardNo;
 	}
 
@@ -144,7 +154,8 @@ public class PolicyOrderUsers implements Serializable{
 		return "PolicyOrderUsers [policyOrderUsersId=" + policyOrderUsersId + ", orderId=" + orderId + ", email="
 				+ email + ", name=" + name + ", gender=" + gender + ", birthDate=" + birthDate + ", birthPlace="
 				+ birthPlace + ", phone=" + phone + ", address=" + address + ", idCardFileId=" + idCardFileId
-				+ ", idCardNo=" + idCardNo + ", createdDate=" + createdDate + ", updateDate=" + updateDate + "]";
+				+ ", passportFileId=" + passportFileId + ", idCardNo=" + idCardNo + ", createdDate=" + createdDate
+				+ ", updateDate=" + updateDate + "]";
 	}
     
     

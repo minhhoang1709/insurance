@@ -40,6 +40,8 @@ public class UserDto {
     private Map<String, Object> config;
     
     private UserFileDto idCardFile;
+    
+    private UserFileDto passportFile;
 
 	public String getUserId() {
 		return userId;
@@ -121,7 +123,6 @@ public class UserDto {
 		this.config = config;
 	}
 		
-
 	public UserFileDto getIdCardFile() {
 		return idCardFile;
 	}
@@ -130,16 +131,20 @@ public class UserDto {
 		this.idCardFile = idCardFile;
 	}
 
+	public UserFileDto getPassportFile() {
+		return passportFile;
+	}
+
+	public void setPassportFile(UserFileDto passportFile) {
+		this.passportFile = passportFile;
+	}
+
 	@Override
 	public String toString() {
-		return "UserDto [" + (userId != null ? "userId=" + userId + ", " : "")
-				+ (email != null ? "email=" + email + ", " : "") + (name != null ? "name=" + name + ", " : "")
-				+ (gender != null ? "gender=" + gender + ", " : "")
-				+ (birthDate != null ? "birthDate=" + birthDate + ", " : "")
-				+ (birthPlace != null ? "birthPlace=" + birthPlace + ", " : "")
-				+ (phone != null ? "phone=" + phone + ", " : "") + (address != null ? "address=" + address + ", " : "")
-				+ (config != null ? "config=" + config + ", " : "")
-				+ (idCardFile != null ? "idCardFile=" + idCardFile : "") + "]";
+		return "UserDto [userId=" + userId + ", email=" + email + ", name=" + name + ", gender=" + gender
+				+ ", birthDate=" + birthDate + ", birthPlace=" + birthPlace + ", phone=" + phone + ", address="
+				+ address + ", config=" + config + ", idCardFile=" + idCardFile + ", passportFile=" + passportFile
+				+ "]";
 	}
     
 }

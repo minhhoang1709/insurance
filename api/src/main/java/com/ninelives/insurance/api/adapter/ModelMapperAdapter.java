@@ -154,6 +154,7 @@ public class ModelMapperAdapter {
 			dto.setEmail(m.getEmail());
 			dto.setGender(m.getGender());
 			dto.setIdCardFile(toUserFileDto((m.getIdCardFileId())));
+			dto.setPassportFile(toUserFileDto((m.getPassportFileId())));
 			dto.setPhone(m.getPhone());
 			dto.setAddress(m.getAddress());
 			
@@ -373,9 +374,10 @@ public class ModelMapperAdapter {
 			dto.setBirthPlace(m.getBirthPlace());
 			dto.setEmail(m.getEmail());
 			dto.setGender(m.getGender());
-			dto.setIdCardFile(toUserFileDto(m.getIdCardFileId()));				
+			dto.setIdCardFile(toUserFileDto(m.getIdCardFileId()));
+			dto.setPassportFile(toUserFileDto(m.getPassportFileId()));
 			dto.setPhone(m.getPhone());
-			dto.setAddress(m.getAddress());						
+			dto.setAddress(m.getAddress());
 		}
 		return dto;
 	}

@@ -499,6 +499,7 @@ public class ApiOrderService {
 			policyOrderUser.setOrderId(policyOrder.getOrderId());
 			policyOrderUser.setEmail(existingUser.getEmail());
 			policyOrderUser.setIdCardFileId(existingUser.getIdCardFileId());
+			policyOrderUser.setPassportFileId(existingUser.getPassportFileId());
 
 			if(isAllProfileInfoUpdated){			
 				policyOrderUser.setName(newUserProfile.getName());
@@ -815,6 +816,7 @@ public class ApiOrderService {
 		inviterPolicyUser.setOrderId(inviterPolicy.getOrderId());
 		inviterPolicyUser.setEmail(inviterUser.getEmail());
 		inviterPolicyUser.setIdCardFileId(inviterUser.getIdCardFileId());
+		inviterPolicyUser.setPassportFileId(inviterUser.getPassportFileId());
 		inviterPolicyUser.setName(inviterUser.getName());
 		inviterPolicyUser.setGender(inviterUser.getGender());
 		inviterPolicyUser.setBirthDate(inviterUser.getBirthDate());
