@@ -157,6 +157,7 @@
     pov.voucher_type as pov_voucher_type,
     pov.inviter_user_id as pov_inviter_user_id,
     pof.id as policyorderfamily_id,
+    pof.sub_id as policyorderfamily_sub_id,
     pof.order_id as policyorderfamily_order_id,
     pof.name as policyorderfamily_name, 
     pof.relationship as policyorderfamily_relationship, 
@@ -205,7 +206,8 @@
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
     	) as a
-    	<include refid="NestedPolicyOrderTableJoinList"/>    
+    	<include refid="NestedPolicyOrderTableJoinList"/>
+    order by a.created_date desc    
   </select>
   
   <select id="selectWhereStatusActiveByUserId" resultMap="NestedPolicyOrderResultMap">
@@ -224,6 +226,7 @@
     	offset #{offset,jdbcType=INTEGER}
     	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
+    order by a.created_date desc    	
   </select>
   
   <select id="selectWhereStatusApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
@@ -242,6 +245,7 @@
     	offset #{offset,jdbcType=INTEGER}
     	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
+    order by a.created_date desc    	
   </select>
   
   <select id="selectWhereStatusExpiredOrTerminatedByUserId" resultMap="NestedPolicyOrderResultMap">
@@ -263,6 +267,7 @@
     	offset #{offset,jdbcType=INTEGER}
     	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
+    order by a.created_date desc    	
   </select>
   
   <select id="selectWhereStatusBeforeApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
@@ -279,7 +284,8 @@
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
     	) as a
-    	<include refid="NestedPolicyOrderTableJoinList"/>  
+    	<include refid="NestedPolicyOrderTableJoinList"/>
+    order by a.created_date desc    	  
   </select>
   
   <select id="selectPaidOrderExists" resultType="boolean">

@@ -9,6 +9,8 @@ import com.ninelives.insurance.ref.Gender;
 public class PolicyOrderFamily {
     private Long id;
 
+    private Integer subId;
+    
     private String orderId;
 
     private String name;
@@ -31,7 +33,15 @@ public class PolicyOrderFamily {
         this.id = id;
     }
 
-    public String getOrderId() {
+    public Integer getSubId() {
+		return subId;
+	}
+
+	public void setSubId(Integer subId) {
+		this.subId = subId;
+	}
+
+	public String getOrderId() {
         return orderId;
     }
 

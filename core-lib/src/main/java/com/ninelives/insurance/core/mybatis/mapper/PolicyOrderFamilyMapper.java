@@ -10,10 +10,10 @@ import com.ninelives.insurance.model.PolicyOrderFamily;
 @Mapper
 public interface PolicyOrderFamilyMapper {
     @Insert({
-        "insert into public.policy_order_family (order_id, ",
+        "insert into public.policy_order_family (order_id, sub_id, ",
         "name, relationship, ",
         "birth_date, gender ",
-        "values (#{orderId,jdbcType=VARCHAR}, ",
+        "values (#{orderId,jdbcType=VARCHAR}, #{subId,jdbcType=INTEGER}, ",
         "#{name,jdbcType=VARCHAR}, #{relationship,jdbcType=VARCHAR}, ",
         "#{birthDate,jdbcType=DATE}, #{gender,jdbcType=VARCHAR})"
     })

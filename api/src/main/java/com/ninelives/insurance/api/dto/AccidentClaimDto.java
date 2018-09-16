@@ -34,6 +34,8 @@ public class AccidentClaimDto {
     
     private List<ClaimDocumentDto> claimDocuments;
     
+    private List<PolicyClaimFamilyDto> families;
+    
     private CoverageCategoryDto coverageCategory;
     
     private OrderDto order;
@@ -102,6 +104,14 @@ public class AccidentClaimDto {
 
 	public void setClaimDocuments(List<ClaimDocumentDto> claimDocuments) {
 		this.claimDocuments = claimDocuments;
+	}
+
+	public List<PolicyClaimFamilyDto> getFamilies() {
+		return families;
+	}
+
+	public void setFamilies(List<PolicyClaimFamilyDto> families) {
+		this.families = families;
 	}
 
 	public CoverageCategoryDto getCoverageCategory() {

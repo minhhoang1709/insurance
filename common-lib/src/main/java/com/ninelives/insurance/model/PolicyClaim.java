@@ -23,6 +23,10 @@ public class PolicyClaim <T extends PolicyClaimDetail> implements Serializable{
     private LocalDateTime incidentDateTime;
 
     private String incidentSummary;
+    
+    private Boolean isUserClaimant;
+
+    private Boolean hasFamily;
 
     private ClaimStatus status;
 
@@ -37,6 +41,8 @@ public class PolicyClaim <T extends PolicyClaimDetail> implements Serializable{
     private List<PolicyClaimDocument> policyClaimDocuments;
     
     private List<PolicyClaimCoverage> policyClaimCoverages;
+    
+    private List<PolicyClaimFamily> policyClaimFamilies;
 
     private PolicyOrder policyOrder;
     
@@ -98,7 +104,31 @@ public class PolicyClaim <T extends PolicyClaimDetail> implements Serializable{
         this.incidentSummary = incidentSummary;
     }
 
-    public T getPolicyClaimDetail() {
+    public Boolean getIsUserClaimant() {
+		return isUserClaimant;
+	}
+
+	public void setIsUserClaimant(Boolean isUserClaimant) {
+		this.isUserClaimant = isUserClaimant;
+	}
+
+	public Boolean getHasFamily() {
+		return hasFamily;
+	}
+
+	public void setHasFamily(Boolean hasFamily) {
+		this.hasFamily = hasFamily;
+	}
+
+	public List<PolicyClaimFamily> getPolicyClaimFamilies() {
+		return policyClaimFamilies;
+	}
+
+	public void setPolicyClaimFamilies(List<PolicyClaimFamily> policyClaimFamilies) {
+		this.policyClaimFamilies = policyClaimFamilies;
+	}
+
+	public T getPolicyClaimDetail() {
 		return policyClaimDetail;
 	}
 

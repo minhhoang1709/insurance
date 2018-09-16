@@ -175,7 +175,7 @@ public class ApiOrderServiceFamilyTest {
 		
 		assertNull(exp);
 		
-		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(83));
+		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(75));
 		try {
 			orderService.validateFamilyMember("userIdA", submitOrderDto);
 		} catch (AppBadRequestException e) {

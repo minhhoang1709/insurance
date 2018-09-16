@@ -26,6 +26,7 @@ import com.ninelives.insurance.api.dto.ClaimCoverageDto;
 import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
 import com.ninelives.insurance.api.dto.FilterDto;
+import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.service.ClaimService;
@@ -40,11 +41,14 @@ import com.ninelives.insurance.model.PolicyClaimBankAccount;
 import com.ninelives.insurance.model.PolicyClaimCoverage;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyClaimDocument;
+import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.ref.ClaimCoverageStatus;
 import com.ninelives.insurance.ref.ClaimStatus;
+import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.PolicyStatus;
@@ -238,9 +242,19 @@ public class ApiClaimService {
 			throw new AppBadRequestException(ErrorCode.ERR7009_CLAIM_BANK_ACCOUNT_INVALID, "Permintaan tidak dapat diproses, silahkan info bank Anda");
 		}
 		
+		if(!CollectionUtils.isEmpty(claimDto.getFamilies())){
+			if(order.getIsFamily()==false){
+				logger.debug(
+						"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error order has no family>, exception:<{}>",
+						isValidateOnly, userId, claimDto, ErrorCode.ERR7010_CLAIM_ORDER_FAMILY);
+				throw new AppBadRequestException(ErrorCode.ERR7010_CLAIM_ORDER_FAMILY, "Permintaan tidak dapat diproses, pilihan keluarga tidak tersedia");				
+			}
+		}
+		
 		//logger.debug("Hasil mapping {}", docTypeMap);
 		
-
+		//TODO: verify family
+		
 		PolicyClaim<PolicyClaimDetailAccident> claim = null;
 		
 		if(!isValidateOnly){
@@ -292,7 +306,41 @@ public class ApiClaimService {
 				cov.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverage().getCoverageId()));
 				claimCovs.add(cov);
 			}
-			claim.setPolicyClaimCoverages(claimCovs);		
+			claim.setPolicyClaimCoverages(claimCovs);
+			
+
+			/*
+			 *	claim for family(TRAVEL related)
+			 *	available option as Sep 2018, exclusively:
+			 *  - User as claimant
+			 *  - 1 family member as claimant
+			 */
+			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC) ||
+					order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+				if(!CollectionUtils.isEmpty(claimDto.getFamilies())){					
+					PolicyClaimFamilyDto famDto = claimDto.getFamilies().get(0);					
+					List<PolicyClaimFamily> claimFamilies = new ArrayList<>();
+					for(PolicyOrderFamily orderClaimFamily: order.getPolicyOrderFamilies()){
+						if(orderClaimFamily.getSubId().equals(famDto.getSubId())){
+							PolicyClaimFamily claimFamily = new PolicyClaimFamily();					
+							claimFamily.setClaimId(claim.getClaimId());
+							claimFamily.setSubId(orderClaimFamily.getSubId());
+							claimFamily.setName(orderClaimFamily.getName());
+							claimFamily.setBirthDate(orderClaimFamily.getBirthDate());
+							claimFamily.setGender(orderClaimFamily.getGender());
+							claimFamily.setRelationship(orderClaimFamily.getRelationship());
+							claimFamilies.add(claimFamily);
+						}
+					}
+					claim.setIsUserClaimant(false);
+					claim.setHasFamily(true);
+					claim.setPolicyClaimFamilies(claimFamilies);								
+				}else{
+					claim.setIsUserClaimant(true);
+					claim.setHasFamily(false);
+				}
+			}
+			
 			
 			policyClaimTrxService.registerPolicyClaim(claim);
 			

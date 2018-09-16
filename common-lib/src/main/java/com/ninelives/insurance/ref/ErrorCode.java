@@ -45,6 +45,7 @@ public enum ErrorCode {
 	ERR4022_ORDER_FAMILY_INVALID("ERR4022"), //family cannot empty if isFamily is selected
 	ERR4023_ORDER_FAMILY_AGE_INVALID("ERR4023"), //family cannot empty if isFamily is selected
 	ERR4024_ORDER_FAMILY_CNT_INVALID("ERR4024"), //family cannot empty if isFamily is selected
+	ERR4025_ORDER_PASSPORT_NOTFOUND("ERR4025"), //passport is mandatory
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary
@@ -73,6 +74,7 @@ public enum ErrorCode {
 	ERR7007_CLAIM_DOCUMENT_FILE_INVALID("ERR7007"), //file is empty or not uploaded
 	ERR7008_CLAIM_DETAIL_INVALID("ERR7008"), //detail info (e.g. address) is invalid
 	ERR7009_CLAIM_BANK_ACCOUNT_INVALID("ERR7009"), //bank account info is invalid
+	ERR7010_CLAIM_ORDER_FAMILY("ERR7010"), //bank account info is invalid
 	
 	ERR8001_CHARGE_API_ERROR("ERR8001"), //error from api call to midtrans
 	ERR8002_CHARGE_INVALID("ERR8002"), //empty or invalid charge data

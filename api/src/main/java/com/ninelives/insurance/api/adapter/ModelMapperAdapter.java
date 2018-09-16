@@ -26,6 +26,7 @@ import com.ninelives.insurance.api.dto.CoverageOptionDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PaymentDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
+import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.PolicyOrderFamilyDto;
 import com.ninelives.insurance.api.dto.ProductDto;
@@ -45,6 +46,7 @@ import com.ninelives.insurance.model.PolicyClaimBankAccount;
 import com.ninelives.insurance.model.PolicyClaimCoverage;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyClaimDocument;
+import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderFamily;
@@ -71,6 +73,7 @@ public class ModelMapperAdapter {
 		PolicyOrderFamilyDto dto = null;
 		if(m!=null){
 			dto = new PolicyOrderFamilyDto();
+			dto.setSubId(m.getSubId());
 			dto.setName(m.getName());
 			dto.setBirthDate(m.getBirthDate()!=null?m.getBirthDate().atStartOfDay():null);
 			dto.setRelationship(m.getRelationship());
@@ -78,6 +81,20 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
+	
+	public PolicyClaimFamilyDto toDto(PolicyClaimFamily m){
+		PolicyClaimFamilyDto dto = null;
+		if(m!=null){
+			dto = new PolicyClaimFamilyDto();
+			dto.setSubId(m.getSubId());
+			dto.setName(m.getName());
+			dto.setBirthDate(m.getBirthDate()!=null?m.getBirthDate().atStartOfDay():null);
+			dto.setRelationship(m.getRelationship());
+			dto.setGender(m.getGender());
+		}
+		return dto;
+	}
+	
 	public CoverageOptionDto toDto(CoverageOption m){
 		CoverageOptionDto dto = null;
 		if(m!=null){
@@ -263,6 +280,13 @@ public class ModelMapperAdapter {
 					docDtos.add(toDto(doc));
 				}
 				dto.setClaimDocuments(docDtos);
+			}
+			if(!CollectionUtils.isEmpty(m.getPolicyClaimFamilies())){
+				List<PolicyClaimFamilyDto> famDtos = new ArrayList<>();
+				for(PolicyClaimFamily fam : m.getPolicyClaimFamilies()){
+					famDtos.add(toDto(fam));
+				}
+				dto.setFamilies(famDtos);
 			}
 			dto.setOrder(toDto(m.getPolicyOrder()));
 		}

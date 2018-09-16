@@ -9,7 +9,8 @@ public enum FamilyRelationship {
 	PASANGAN("pasangan"),
 	ANAK("anak"),
 	ORANGTUA("orangtua"),
-	SAUDARA("saudara")	
+	SAUDARA("saudara"),
+	ORANGLAIN("oranglain")
 	;
 	
 	static final Map<String, FamilyRelationship> lookup = new HashMap<>();

@@ -385,25 +385,34 @@ public class ApiOrderService {
 						"Anda membeli jaminan yang sama lebih dari 3 kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.");
 		}
 		
-		if(isFamily){
-			validateFamilyMember(userId, submitOrderDto);
-		}
-		
 		PolicyOrder policyOrder = null;
 		boolean isAllProfileInfoUpdated = false;
 		boolean isPhoneInfoUpdated = false;
 		boolean isAddressInfoUpdated = false;
-		if(!isValidateOnly){
+		if(!isValidateOnly){			
+			if(isFamily){
+				validateFamilyMember(userId, submitOrderDto);
+			}
+			
 			final User existingUser = userService.fetchByUserId(userId);
 
 			boolean isExistingUserProfileCompleteForOrder = orderService.isUserProfileCompleteForOrder(existingUser);
 			
-			if(existingUser.getIdCardFileId()==null){
-				logger.debug("Process order for <{}> with order <{}> with result: id card not found", userId, submitOrderDto);
-				throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
-						"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
+			//if it is international travel, then check for passport
+			if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+				if(existingUser.getPassportFileId()==null){
+					logger.debug("Process order for <{}> with order <{}> with result: passport not found", userId, submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4025_ORDER_PASSPORT_NOTFOUND,
+							"Permintaan tidak dapat diproses, unggah paspor Anda untuk melanjutkan pemesanan.");
+				}
+			}else{
+				if(existingUser.getIdCardFileId()==null){
+					logger.debug("Process order for <{}> with order <{}> with result: id card not found", userId, submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
+							"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
+				}				
 			}
-			
+						
 			//verify age
 			LocalDate birthDate = existingUser.getBirthDate();
 			if(birthDate == null){
@@ -419,8 +428,9 @@ public class ApiOrderService {
 					logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
 					throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
 							"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun.");
-				}				
+				}
 			}
+			
 			//modify phone
 			String modifiedPhone = null;
 			if(submitOrderDto.getUser()!=null && !StringUtils.isEmpty(submitOrderDto.getUser().getPhone())){
@@ -561,9 +571,11 @@ public class ApiOrderService {
 			//Set for family member
 			if(isFamily){
 				List<PolicyOrderFamily> policyOrderFamilies = new ArrayList<>();
+				int i=1;
 				for(PolicyOrderFamilyDto family: submitOrderDto.getFamilies()){
 					PolicyOrderFamily pof = new PolicyOrderFamily();
 					pof.setOrderId(policyOrder.getOrderId());
+					pof.setSubId(i++);
 					pof.setName(family.getName());
 					pof.setRelationship(family.getRelationship());
 					pof.setBirthDate(family.getBirthDate().toLocalDate());
@@ -571,7 +583,7 @@ public class ApiOrderService {
 					policyOrderFamilies.add(pof);
 				}
 				policyOrder.setPolicyOrderFamilies(policyOrderFamilies);
-			}			
+			}
 			
 			//Set for policy voucher
 			if(voucher!=null){
@@ -593,8 +605,6 @@ public class ApiOrderService {
 			}else{
 				policyOrder.setHasVoucher(false);
 			}
-			
-
 			
 			try {
 				insuranceService.orderPolicy(policyOrder);

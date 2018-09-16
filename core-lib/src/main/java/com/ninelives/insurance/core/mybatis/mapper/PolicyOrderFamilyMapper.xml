@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.PolicyOrderFamily">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="sub_id" jdbcType="INTEGER" property="subId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="relationship" jdbcType="VARCHAR" property="relationship" />
     <result column="birth_date" jdbcType="DATE" property="birthDate" />
@@ -12,6 +13,7 @@
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
   
+<!--   
   <resultMap id="NamespacedResultMap" type="com.ninelives.insurance.model.PolicyOrderFamily">
     <id column="policyorderfamily_id" jdbcType="BIGINT" property="id" />
     <result column="policyorderfamily_order_id" jdbcType="VARCHAR" property="orderId" />
@@ -20,18 +22,18 @@
     <result column="policyorderfamily_birth_date" jdbcType="DATE" property="birthDate" />
     <result column="policyorderfamily_gender" jdbcType="VARCHAR" property="gender" />
   </resultMap>
-  
+-->
   <sql id="Base_Column_List">
-    id, order_id, name, relationship, birth_date, gender, created_date, update_date
+    id, order_id, sub_id, name, relationship, birth_date, gender, created_date, update_date
   </sql>
   <insert id="insertList">
-  	insert into public.policy_order_family (order_id,
+  	insert into public.policy_order_family (order_id, sub_id,
     	name, relationship, 
     	birth_date, gender )
     values
     <foreach item="item" index="index" collection="list" separator=",">
     	(
-    	#{item.orderId,jdbcType=VARCHAR},
+    	#{item.orderId,jdbcType=VARCHAR}, #{item.subId,jdbcType=INTEGER},
 		#{item.name,jdbcType=VARCHAR}, #{item.relationship,jdbcType=VARCHAR},
 		#{item.birthDate,jdbcType=DATE}, #{item.gender,jdbcType=VARCHAR}
 		)

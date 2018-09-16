@@ -8,6 +8,7 @@ import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimBankAccountMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimCoverageMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimDetailAccidentMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimDocumentMapper;
+import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimFamilyMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimMapper;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
@@ -19,6 +20,7 @@ public class PolicyClaimTrxService {
 	@Autowired PolicyClaimBankAccountMapper policyClaimBankAccountMapper;
 	@Autowired PolicyClaimDocumentMapper policyClaimDocumentMapper;
 	@Autowired PolicyClaimCoverageMapper policyClaimCoverageMapper;
+	@Autowired PolicyClaimFamilyMapper policyClaimFamilyMapper;
 	
 	@Transactional
 	public void registerPolicyClaim(PolicyClaim<?> policyClaim){
@@ -28,6 +30,9 @@ public class PolicyClaimTrxService {
 		policyClaimCoverageMapper.insertList(policyClaim.getPolicyClaimCoverages());
 		if(policyClaim.getPolicyClaimDetail() instanceof PolicyClaimDetailAccident){
 			policyClaimDetailAccidentMapper.insert((PolicyClaimDetailAccident)policyClaim.getPolicyClaimDetail());
+		}
+		if(policyClaim.getHasFamily()!=null && policyClaim.getHasFamily().equals(true)){
+			policyClaimFamilyMapper.insertList(policyClaim.getPolicyClaimFamilies());
 		}
 	}
 }

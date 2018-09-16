@@ -10,9 +10,7 @@ import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.Gender;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PolicyOrderFamilyDto {
-    private String orderId;
-    
+public class PolicyClaimFamilyDto {
     private Integer subId;
 
     @Size(max=255)
@@ -24,14 +22,6 @@ public class PolicyOrderFamilyDto {
     private LocalDateTime birthDate;
     
     private Gender gender;
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
 
 	public Integer getSubId() {
 		return subId;
@@ -75,8 +65,8 @@ public class PolicyOrderFamilyDto {
 
 	@Override
 	public String toString() {
-		return "PolicyOrderFamilyDto [orderId=" + orderId + ", name=" + name + ", relationship=" + relationship
-				+ ", birthDate=" + birthDate + "]";
+		return "PolicyClaimFamilyDto [subId=" + subId + ", name=" + name + ", relationship=" + relationship
+				+ ", birthDate=" + birthDate + ", gender=" + gender + "]";
 	}
     
     

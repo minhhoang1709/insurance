@@ -16,10 +16,12 @@ public interface PolicyClaimMapper {
         "insert into public.policy_claim (claim_id, coverage_category_id, order_id, ",
         "user_id, claim_date, ",
         "incident_date_time, incident_summary, ",
+        "is_user_claimant, has_family, ",
         "status) ",
         "values (#{claimId,jdbcType=VARCHAR},  #{coverageCategoryId,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, ",
         "#{userId,jdbcType=VARCHAR}, #{claimDate,jdbcType=DATE}, ",
         "#{incidentDateTime,jdbcType=TIMESTAMP}, #{incidentSummary,jdbcType=VARCHAR}, ",
+        "#{isUserClaimant,jdbcType=BIT}, #{hasFamily,jdbcType=BIT}, ",
         "#{status,jdbcType=VARCHAR})"
     })
     int insert(PolicyClaim record); 

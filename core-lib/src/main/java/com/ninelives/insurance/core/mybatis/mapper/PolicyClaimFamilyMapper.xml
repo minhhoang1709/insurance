@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.core.mybatis.mapper.PolicyClaimFamilyMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.PolicyClaimFamily">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="claim_id" jdbcType="VARCHAR" property="claimId" />
+    <result column="sub_id" jdbcType="INTEGER" property="subId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="relationship" jdbcType="VARCHAR" property="relationship" />
+    <result column="birth_date" jdbcType="DATE" property="birthDate" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  <insert id="insertList">
+  	insert into public.policy_claim_family (claim_id, sub_id,
+    	name, relationship, 
+    	birth_date, gender )
+    values
+    <foreach item="item" index="index" collection="list" separator=",">
+    	(
+    	#{item.claimId,jdbcType=VARCHAR}, #{item.subId,jdbcType=INTEGER},
+		#{item.name,jdbcType=VARCHAR}, #{item.relationship,jdbcType=VARCHAR},
+		#{item.birthDate,jdbcType=DATE}, #{item.gender,jdbcType=VARCHAR}
+		)
+    </foreach>
+  </insert>
+</mapper>

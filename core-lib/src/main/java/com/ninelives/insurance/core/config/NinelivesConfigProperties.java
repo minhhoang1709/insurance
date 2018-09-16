@@ -406,7 +406,7 @@ public class NinelivesConfigProperties {
 	    
 	    private double familyMultiplier = 2.5;
 	    private int familyAdultMinimumAge = 17;
-	    private int familyAdultMaximumAge = 83;
+	    private int familyAdultMaximumAge = 75;
 	    private int familyAdultMaximumCount = 1;
 	    private int familyChildrenMaximumCount = 3;
 	    
