@@ -26,5 +26,10 @@ public class ClaimDocumentDto {
 	public void setClaimDocType(ClaimDocTypeDto claimDocType) {
 		this.claimDocType = claimDocType;
 	}
+	@Override
+	public String toString() {
+		return "ClaimDocumentDto [claimDocumentId=" + claimDocumentId + ", file=" + file + ", claimDocType="
+				+ claimDocType + "]";
+	}
 	
 }
