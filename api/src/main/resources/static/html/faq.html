@@ -6,46 +6,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
-        font-family: 'Roboto', sans-serif;
-        font-size: 14px;
+	font-family: 'Roboto Regular', sans-serif;
+	margin: 0px;
 }
 h1{
-        font-size: 20px;
+	font-size: 14px;
+	color: #6235a0;
+	background-color: #f4f4f4;
+	height: 56px;
+	line-height: 56px;	
+}
+.collapsible {
+	background-color: #ffffff;
+	color: #212121;
+	cursor: pointer;
+	padding: 10px 0px 10px 0px;
+	width: 100%;
+	border: none;
+	border-bottom: 1px solid #e6e6e6;	
+	text-align: left;
+	outline: none;
+	font-size: 15px;
 }
 
-ul li{
-        list-style-type: disc;
+.active, .collapsible:hover {
+	background-color: #ffffff;
+	font-weight: bold;
 }
+
+.collapsible:after {
+	content: '';
+	background: url('../image/arrowdown.svg') no-repeat center center;
+	float: right;
+	margin-left: 5px;
+	width: 24px;
+	height: 24px;
+}
+
+.active:after {
+	content: '';
+	background: url('../image/arrowup.svg') no-repeat center center;
+}
+
+.content {
+	padding: 0 10px;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out;
+	background-color: #f4f4f4;
+	border: none;
+}
+
 </style>
 </head>
 <body>
-<ul>
-	<li>Q. Bagaimana saya memperbarui informasi pribadi saya?</li>
-	<li>A. Tekan tombol menu di kiri atas, dan buka profil Anda. Klik ‘Simpan’ jika sudah selesai.</li>
-</ul>
-<ul>
-	<li>Q. Informasi pribadi apa saja yang dapat diperbarui?</li>
-	<li>A. Nama, jenis kelamin, tanggal dan tempat lahir pada dasarnya tidak dapat diubah. Anda bisa memperbarui nomor telepon Anda.</li>
-</ul>
-<ul>
-	<li>Q. Dapatkah saya menggunakan 9Lives jika umur saya di bawah 17 tahun?</li>
-	<li>A. Mohon maaf, 9Lives hanya tersedia untuk pengguna umur 17 tahun ke atas.</li>
-</ul>
-<ul>
-	<li>Q. Metode pembayaran apa saja yang dapat diterima di 9Lives?</li>
-	<li>A. Untuk saat ini aplikasi 9Lives dapat menerima hampir semua kartu kredit &amp; kartu debit, termasuk Visa, Mastercard, American Express, dan JCB. Kami juga menerima transfer bank dan beberapa platform pembayaran tertentu seperti Go-Pay.</li>
-</ul>
-<ul>
-	<li>Q. Bagaimana cara menukarkan kode undangan atau kode perusahaan?</li>
-	<li>A. Tekan tombol menu di kiri atas, lalu pilih Asuransi Gratis. Masukkan kode undangan atau kode perusahaan, lalu tekan “Pakai” untuk mendapatkannya secara otomatis.</li>
-</ul>
-<ul>
-	<li>Q. Di mana saya dapat mengunduh aplikasi 9Lives untuk iPhone?</li>
-	<li>A. Mohon maaf, saat ini 9Lives hanya tersedia untuk Android. Aplikasi untuk iPhone akan menyusul.</li>
-</ul>
-<ul>
-	<li>Q. Bagaimana cara membatalkan pembelian?</li>
-	<li>A. Silakan kontak tim 9Lives untuk membatalkan polis yang aktif.</li>
-</ul>
+<h1>AKUN</h1>
+<button class="collapsible">Open Section 1</button>
+<div class="content">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+<button class="collapsible">Open Section 2</button>
+<div class="content">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+<button class="collapsible">Open Section 3</button>
+<div class="content">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    } 
+   });
+}
+</script>
 </body>
 </html>
