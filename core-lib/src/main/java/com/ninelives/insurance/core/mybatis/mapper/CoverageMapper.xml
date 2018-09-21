@@ -19,6 +19,7 @@
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
+    	<result column="covcat_recommendation" jdbcType="VARCHAR" property="recommendation" />
     </association>
     <association property="coverageOption" javaType="com.ninelives.insurance.model.CoverageOption">
     	<id column="coverage_option_id" jdbcType="VARCHAR" property="id" />
@@ -44,6 +45,7 @@
 	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, a.family_max_limit, 
 	a.has_beneficiary, a.status, a.display_rank, a.is_recommended, a.provider_code, a.coverage_option_id,
 	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name, b.type as covcat_type,
+	b.recommendation as covcat_recommendation,
 	c.coverage_claim_doc_type_id, c.is_mandatory,
 	d.claim_doc_type_id, d.name as claim_doc_type_name,
 	e.coverage_option_name, e.coverage_option_group_id,

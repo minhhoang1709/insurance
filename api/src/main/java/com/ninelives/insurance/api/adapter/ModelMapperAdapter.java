@@ -298,8 +298,9 @@ public class ModelMapperAdapter {
 			dto = new CoverageCategoryDto();
 			dto.setCoverageCategoryId(m.getCoverageCategoryId());
 			dto.setName(m.getName());
+			dto.setRecommendation(m.getRecommendation());
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
-			dto.setType(m.getType());
+			dto.setType(m.getType());			
 		}
 		return dto;
 	}

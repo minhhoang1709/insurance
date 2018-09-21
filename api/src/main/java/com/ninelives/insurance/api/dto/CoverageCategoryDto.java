@@ -7,6 +7,8 @@ public class CoverageCategoryDto {
 
     private String name;
     
+    private String recommendation;
+    
     private String imageUrl;
     
     private CoverageCategoryType type;
@@ -25,6 +27,14 @@ public class CoverageCategoryDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getRecommendation() {
+		return recommendation;
+	}
+
+	public void setRecommendation(String recommendation) {
+		this.recommendation = recommendation;
 	}
 
 	public String getImageUrl() {

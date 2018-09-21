@@ -24,6 +24,8 @@ public class CoverageCategory implements Serializable{
 
     @JsonIgnore
     private LocalDateTime updateDate;
+    
+    private String recommendation;
 
     public String getCoverageCategoryId() {
         return coverageCategoryId;
@@ -55,6 +57,14 @@ public class CoverageCategory implements Serializable{
 
 	public void setType(CoverageCategoryType type) {
 		this.type = type;
+	}
+	
+	public String getRecommendation() {
+		return recommendation;
+	}
+
+	public void setRecommendation(String recommendation) {
+		this.recommendation = recommendation;
 	}
 
 	public LocalDateTime getCreatedDate() {
