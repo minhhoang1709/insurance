@@ -25,4 +25,10 @@ public class ClaimDocTypeDto {
     public void setName(String name) {
         this.name = name;
     }
+
+	@Override
+	public String toString() {
+		return "ClaimDocTypeDto [claimDocTypeId=" + claimDocTypeId + ", name=" + name + "]";
+	}
+    
 }

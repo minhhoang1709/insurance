@@ -2,6 +2,7 @@ package com.ninelives.insurance.api.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.service.ClaimService;
@@ -58,6 +60,8 @@ public class ApiClaimService {
 	private static final Logger logger = LoggerFactory.getLogger(ApiClaimService.class);
 
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	
+	@Autowired NinelivesConfigProperties config;
 	
 	@Autowired ClaimService claimService;
 	@Autowired FileUploadService fileUploadService;
@@ -153,6 +157,14 @@ public class ApiClaimService {
 					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error status not valid>, exception:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7002_CLAIM_ORDER_INVALID);
 			throw new AppBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, status asuransi Anda tidak valid");
+		}
+		
+		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
+				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
+			logger.debug(
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error expired order pass allowed claim period>, exception:<{}>",
+					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);
+			throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER, "Permintaan tidak dapat diproses, batas waktu pengajuan klaim telah terlewati");
 		}
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimCoverages())){

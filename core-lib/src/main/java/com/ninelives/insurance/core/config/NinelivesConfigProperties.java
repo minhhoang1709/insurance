@@ -15,7 +15,9 @@ public class NinelivesConfigProperties {
 	@NotEmpty
 	private String helpPolicyStandardFilePath;
 	
-	private Order order = new Order();	
+	private Order order = new Order();
+	private Claim claim = new Claim();
+	
 	@Valid
 	private Storage storage = new Storage();
 	@Valid
@@ -38,6 +40,12 @@ public class NinelivesConfigProperties {
 	}
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+	public Claim getClaim() {
+		return claim;
+	}
+	public void setClaim(Claim claim) {
+		this.claim = claim;
 	}
 	public Storage getStorage() {
 		return storage;
@@ -69,6 +77,8 @@ public class NinelivesConfigProperties {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+	
+
 
 	public static class Account {
 		@NotEmpty
@@ -506,6 +516,22 @@ public class NinelivesConfigProperties {
 					+ ", familyMultiplier=" + familyMultiplier + "]";
 		}
 		
+	}
+	
+	public static class Claim {
+		/**
+		 * Allowed period between claim and policy-end-date
+		 */
+	    private int maxPolicyEndDatePeriod = 30;
+
+		public int getMaxPolicyEndDatePeriod() {
+			return maxPolicyEndDatePeriod;
+		}
+
+		public void setMaxPolicyEndDatePeriod(int maxPolicyEndDatePeriod) {
+			this.maxPolicyEndDatePeriod = maxPolicyEndDatePeriod;
+		}
+	    
 	}
 
 	@Override
