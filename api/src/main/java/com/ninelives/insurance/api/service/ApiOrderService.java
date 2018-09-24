@@ -284,19 +284,11 @@ public class ApiOrderService {
 			logger.debug("Process order for {} with order {} with result: exception policy start-date exceed limit {}", userId, submitOrderDto, config.getOrder().getPolicyStartDatePeriod());
 			throw new AppBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");			
-//
-//			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-//					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
-//							+ limitPolicyStartDate.format(formatter));			
 		}
 		if(submitOrderDto.getPolicyStartDate().toLocalDate().isBefore(today)){
 			logger.debug("Process order for {} with order {} with result: exception policy start-date before today", userId, submitOrderDto);
 			throw new AppBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
 					"Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");			
-//			throw new ApiBadRequestException(ErrorCode.ERR4007_ORDER_STARTDATE_INVALID,
-//					"Permintaan tidak dapat diproses, silahkan pilih tanggal mulai asuransi antara hari ini sampai tanggal "
-//							+ limitPolicyStartDate.format(formatter));
-			
 		}
 		
 		List<Product> products = productIdSet.stream().map(productService::fetchProductByProductId).collect(Collectors.toList());
@@ -308,6 +300,18 @@ public class ApiOrderService {
 		//logger.debug("products is not empty? empty is {}, and the products <{}> and the size is {}",products.isEmpty(),products, products.size());
 		String periodId = products.get(0).getPeriodId();
 		String coverageCategoryId = products.get(0).getCoverage().getCoverageCategoryId();
+				
+		if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
+				coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+			if (ChronoUnit.DAYS.between(today, submitOrderDto.getPolicyStartDate().toLocalDate()) <= config.getOrder()
+					.getTravelMinPolicyStartDatePeriod()) {
+				logger.debug(
+						"Process order for {} with order {} with result: exception travel startdate not valid with travel-min-policy-start-date-period={}",
+						userId, submitOrderDto, config.getOrder().getTravelMinPolicyStartDatePeriod());
+				throw new AppBadRequestException(ErrorCode.ERR4026_ORDER_TRAVEL_STARTDATE_INVALID, "Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");
+			}
+		}
+		
 		int calculatedTotalPremi = 0;
 		int calculatedTotalBasePremi = 0;
 		boolean hasBeneficiary = false;

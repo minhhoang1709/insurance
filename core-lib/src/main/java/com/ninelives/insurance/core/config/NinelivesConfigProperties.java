@@ -408,13 +408,17 @@ public class NinelivesConfigProperties {
 		 * Specify number of coverage that allowed to be active at the same period 
 		 */
 	    private int policyConflictPeriodLimit = 3;
+	    	
+	    /**
+		 * Allowed policy-start-date for Travel insurance should not less than specified period
+		 */
+	    private int travelMinPolicyStartDatePeriod = 2;
 	    
 	    private int minimumAge = 17;
 	    private int maximumAge = 60;
 	    
 	    private int minimumPayment = 5000;
 	    
-	    private double familyMultiplier = 2.5;
 	    private int familyAdultMinimumAge = 17;
 	    private int familyAdultMaximumAge = 75;
 	    private int familyAdultMaximumCount = 1;
@@ -434,6 +438,14 @@ public class NinelivesConfigProperties {
 
 		public void setPolicyDueDatePeriod(int policyDueDatePeriod) {
 			this.policyDueDatePeriod = policyDueDatePeriod;
+		}
+
+		public int getTravelMinPolicyStartDatePeriod() {
+			return travelMinPolicyStartDatePeriod;
+		}
+
+		public void setTravelMinPolicyStartDatePeriod(int travelMinPolicyStartDatePeriod) {
+			this.travelMinPolicyStartDatePeriod = travelMinPolicyStartDatePeriod;
 		}
 
 		public int getPolicyConflictPeriodLimit() {
@@ -468,14 +480,7 @@ public class NinelivesConfigProperties {
 			this.minimumPayment = minimumPayment;
 		}
 		
-		public double getFamilyMultiplier() {
-			return familyMultiplier;
-		}
-
-		public void setFamilyMultiplier(double familyMultiplier) {
-			this.familyMultiplier = familyMultiplier;
-		}
-
+		
 		public int getFamilyAdultMinimumAge() {
 			return familyAdultMinimumAge;
 		}
@@ -511,9 +516,12 @@ public class NinelivesConfigProperties {
 		@Override
 		public String toString() {
 			return "Order [policyStartDatePeriod=" + policyStartDatePeriod + ", policyDueDatePeriod="
-					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit + ", minimumAge="
+					+ policyDueDatePeriod + ", policyConflictPeriodLimit=" + policyConflictPeriodLimit
+					+ ", travelMinPolicyStartDatePeriod=" + travelMinPolicyStartDatePeriod + ", minimumAge="
 					+ minimumAge + ", maximumAge=" + maximumAge + ", minimumPayment=" + minimumPayment
-					+ ", familyMultiplier=" + familyMultiplier + "]";
+					+ ", familyAdultMinimumAge=" + familyAdultMinimumAge + ", familyAdultMaximumAge="
+					+ familyAdultMaximumAge + ", familyAdultMaximumCount=" + familyAdultMaximumCount
+					+ ", familyChildrenMaximumCount=" + familyChildrenMaximumCount + "]";
 		}
 		
 	}

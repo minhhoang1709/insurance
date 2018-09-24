@@ -46,6 +46,7 @@ public enum ErrorCode {
 	ERR4023_ORDER_FAMILY_AGE_INVALID("ERR4023"), //family cannot empty if isFamily is selected
 	ERR4024_ORDER_FAMILY_CNT_INVALID("ERR4024"), //family cannot empty if isFamily is selected
 	ERR4025_ORDER_PASSPORT_NOTFOUND("ERR4025"), //passport is mandatory
+	ERR4026_ORDER_TRAVEL_STARTDATE_INVALID("ERR4026"), //policy start-date is not valid for travel
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary
