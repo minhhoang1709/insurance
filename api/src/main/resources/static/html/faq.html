@@ -26,7 +26,14 @@ h1{
 	border-bottom: 1px solid #e6e6e6;	
 	text-align: left;
 	outline: none;
-	font-size: 15px;
+    font-size: 15px;
+    position: relative;
+}
+
+.collapsible-text {
+    position: absolute; 
+    top: 50%;
+    transform: translate(0, -50%);
 }
 
 .active, .collapsible:hover {
@@ -61,17 +68,116 @@ h1{
 </head>
 <body>
 <h1>AKUN</h1>
-<button class="collapsible">Open Section 1</button>
+<button class="collapsible"><span class="collapsible-text">Unduh Applikasi</span></button>
 <div class="content">
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>
+    Aplikasi 9Lives tersedia untuk pengguna ponsel Android dengan versi 5.0.0 atau lebih dan dapat di unduh melalui layanan Google Play Store.<br/>
+    Untuk saat ini kami belum menyediakan aplikasi 9Lives untuk pengguna ponsel iOS.
+  </p>
 </div>
-<button class="collapsible">Open Section 2</button>
+<button class="collapsible"><span class="collapsible-text">Pendaftaran</span></button>
 <div class="content">
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>Untuk dapat masuk ke aplikasi 9Lives, anda cukup menggunakan akun Google yang aktif.</p>
 </div>
-<button class="collapsible">Open Section 3</button>
+<button class="collapsible"><span class="collapsible-text">Profil</span></button>
 <div class="content">
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>Anda dapat menambahkan informasi pribadi melalui tombol kiri atas dan buka menu profil, silahkan cantumkan nama lengkap anda sesuai kartu identitas, jenis kelamin, tanggal lahir, tempat lahir dan nomor telepon yang dapat dihubungi.</p>
+</div>
+<button class="collapsible"><span class="collapsible-text">Perubahan Informasi</span></button>
+<div class="content">
+  <p>Buka menu profil dan klik ubah di tombol kanan atas, informasi pribadi yang dapat diperbarui hanya nomor telepon anda.</p>
+</div>
+
+<h1>PEMBELIAN ASURANSI</h1>
+<button class="collapsible"><span class="collapsible-text">Pembelian</span></button>
+<div class="content">
+  <p>
+    Silahkan pilih jangka waktu dan jenis santunan yang anda butuhkan dan tekan tombol mulai, jumlah premi yang harus dibayarkan akan muncul secara otomatis menyesuaikan dengan pilihan anda dan kemudian tekan tombol berikutnya.<br/>
+    Pastikan isi data pribadi telah sesuai, karena anda akan diminta mengunggah foto bagian depan KTP yang masih berlaku.
+  </p>      
+</div>
+<button class="collapsible"><span class="collapsible-text">Minimum Transaksi</span></button>
+<div class="content">
+  <p>Jumlah minimum pembelian asuransi adalah sebesar Rp 5,000 (Lima Ribu Rupiah).</p>
+</div>
+<button class="collapsible"><span class="collapsible-text">Usia Minimum</span></button>
+<div class="content">
+  <p>Pembelian asuransi 9Lives hanya bisa dilakukan untuk anda yang berusia di atas 17 tahun.</p>
+</div>
+<button class="collapsible"><span class="collapsible-text">Usia Maksimum</span></button>
+<div class="content">
+  <ul>
+    <li>Batas maksimum usia peserta asuransi kecelakaan diri 9Lives adalah 60 tahun.</li>
+    <li>Batas maksimum usia peserta asuransi perjalanan 9Lives adalah 75 tahun.</li>
+  </ul>
+</div>
+<button class="collapsible"><span class="collapsible-text">Usia Anak</span></button>
+<div class="content">
+  <p>Rentang usia anak untuk peserta asuransi perjalanan 9Lives adalah 2 sampai dengan 16 Tahun.</p>
+</div>
+
+<h1>PEMBAYARAN</h1>
+<button class="collapsible"><span class="collapsible-text">Pembayaran</span></button>
+<div class="content">
+  <p>
+		<ol>
+			<li>Menggunakan kartu kredit dan debit yang berlogo Visa dan MasterCard</li>
+			<li>Pilihan pembayaran melalui ATM Bank Mandiri, Bank Permata, Bank BNI atau transfer Bank dengan jaringan ATM Bersama, Prima, atau ALTO.</li>
+			<li>Melalui platform pembayaran GO-Pay (by GO-JEK).</li>
+		</ol>
+	</p>
+</div>
+
+<h1>POLIS ASURANSI</h1>
+<button class="collapsible"><span class="collapsible-text">Polis Asuransi Anda</span></button>
+<div class="content">
+  <p>
+    Untuk mendapatkan dokumen Polis asuransi yang telah anda beli, silahkan buka menu asuransi saya kemudian pilih tombol Polis Anda di bagian kanan atas.<br/>
+    Dokumen Iktisar Pertanggungan akan di unduh ke ponsel anda dalam bentuk file pdf.
+  </p>
+</div>
+<button class="collapsible"><span class="collapsible-text">Polis Standar</span></button>
+<div class="content">
+  <p>Melalui menu pengaturan dan tekan tombol polis standar anda dapat menumukan informasi lebih lengkap mengenai Polis Standar Asuransi Kecelakaan Diri Indonesia (PSAKDI) dan Polis Standar Rangkaian Perjalanan.</p>
+</div>
+
+<h1>PROSES KLAIM</h1>
+<button class="collapsible"><span class="collapsible-text">Klaim Asuransi</span></button>
+<div class="content">
+  <p>
+    Ada 6 tahapan dalam melakukan klaim asuransi, caranya sangat mudah dan dilakukan secara online langsung melalui aplikasi 9Lives, buka menu Asuransi Saya kemudian pilih polis yang aktif dan tekan tombol klaim. Pastikan anda telah menyiapkan informasi sebagai berikut:
+    <ol>
+      <li>Rincian Kecelakaan</li>
+      <li>Daftar Pilihan (Jaminan yang dimiliki)</li>
+      <li>Unggah dokumen (laporan medis dan rincian biaya rumah sakit)</li>
+      <li>Informasi rekening Bank anda</li>
+      <li>Pernyataan kebenaran</li>
+      <li>Konfirmasi akhir</li>
+    </ol>
+  </p>
+</div>
+
+<h1>ASURANSI GRATIS</h1>
+<button class="collapsible"><span class="collapsible-text">Asuransi Gratis</span></button>
+<div class="content">
+  <p>
+    Anda berhak mendapatkan asuransi gratis berupa <b>santunan kehilangan pendapatan karena kematian/cacat tetap selama 3 minggu</b> dengan cara:
+    <ol>
+      <li>Melakukan pembelian asuransi lebih dari Rp 30,000 (Tiga Puluh Ribu Rupiah).</li>
+      <li>Undang teman anda untuk menggunakan aplikasi 9Lives dengan tautan link yang tersedia.</li>
+      <li>Tambahan jaminan akan di dapatkan setelah teman anda terdaftar sebagai peserta asuransi 9Lives.</li>
+      <li>Promo gratis dibatasi sebanyak 3 (tiga) kali per akun pengguna.</li>
+      <li>Asuransi gratis berlaku bagi pengguna dan pemilik kode undangan bersangkutan.</li>
+      <li>Jika sebelumnya Anda telah memiliki polis dengan jenis santunan yang sama dalam keadaan aktif, asuransi gratis tersebut akan diaktifkan setelah masa tanggungan polis sebelumnya berakhir.</li>
+    </ol>
+  </p>
+</div>
+<button class="collapsible"><span class="collapsible-text">Kode Perusahaan</span></button>
+<div class="content">
+  <p>
+    Tekan tombol menu di kiri atas, lalu pilih Asuransi Gratis. Masukkan kode undangan atau kode perusahaan, lalu tekan “Pakai” untuk mendapatkan asuransi secara gratis.<br/>
+    Kode ini bisa digunakan untuk pendaftaran peserta korporasi yang bekerjasama dengan 9Lives.
+  </p>
 </div>
 
 <script>
