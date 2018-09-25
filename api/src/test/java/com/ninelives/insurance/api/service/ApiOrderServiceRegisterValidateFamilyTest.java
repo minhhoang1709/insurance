@@ -18,7 +18,7 @@ import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.Gender;
 
-public class ApiOrderServiceFamilyTest {
+public class ApiOrderServiceRegisterValidateFamilyTest {
 	ApiOrderService orderService;
 	AppBadRequestException exp = null;
 	

@@ -425,13 +425,27 @@ public class ApiOrderService {
 				}
 			}
 			//logger.debug("Going to check birthdate {}", birthDate);
-			if(birthDate != null){
-				long age = ChronoUnit.YEARS.between(birthDate, today);
-				if(age > config.getOrder().getMaximumAge()||
-						age < config.getOrder().getMinimumAge()){
-					logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
-					throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
-							"Produk ini hanya tersedia untuk usia 17 sampai 60 tahun.");
+			if(birthDate != null){								
+				if (coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)
+						|| coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)) {
+					
+					long age = ChronoUnit.YEARS.between(birthDate, submitOrderDto.getPolicyStartDate().toLocalDate());
+					if(age > config.getOrder().getTravelMaximumAge()||
+							age < config.getOrder().getTravelMinimumAge()){
+						logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
+						throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+								"Produk ini hanya tersedia untuk usia " + config.getOrder().getTravelMinimumAge()
+										+ " sampai " + config.getOrder().getTravelMaximumAge() + " tahun.");
+					}
+				}else{
+					long age = ChronoUnit.YEARS.between(birthDate, today);
+					if(age > config.getOrder().getMaximumAge()||
+							age < config.getOrder().getMinimumAge()){
+						logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
+						throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+								"Produk ini hanya tersedia untuk usia " + config.getOrder().getMinimumAge() + " sampai "
+										+ config.getOrder().getMaximumAge() + " tahun.");
+					}
 				}
 			}
 			
