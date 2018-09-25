@@ -417,12 +417,18 @@ public class NinelivesConfigProperties {
 	    private int minimumAge = 17;
 	    private int maximumAge = 60;
 	    
+	    private int travelMinimumAge = 17;
+	    private int travelMaximumAge = 75;
+	    
 	    private int minimumPayment = 5000;
 	    
+	    private int familyMinorMinimumAge = 2;
+	    private int familyMinorMaximumAge = 16;
 	    private int familyAdultMinimumAge = 17;
 	    private int familyAdultMaximumAge = 75;
-	    private int familyAdultMaximumCount = 1;
-	    private int familyChildrenMaximumCount = 3;
+	    
+	    private int familyAdultMaximumCount = 1;	    
+	    private int familyMinorMaximumCount = 3;
 	    
 		public int getPolicyStartDatePeriod() {
 			return policyStartDatePeriod;
@@ -505,12 +511,44 @@ public class NinelivesConfigProperties {
 			this.familyAdultMaximumCount = familyAdultMaximumCount;
 		}
 
-		public int getFamilyChildrenMaximumCount() {
-			return familyChildrenMaximumCount;
+		public int getFamilyMinorMaximumCount() {
+			return familyMinorMaximumCount;
 		}
 
-		public void setFamilyChildrenMaximumCount(int familyChildrenMaximumCount) {
-			this.familyChildrenMaximumCount = familyChildrenMaximumCount;
+		public void setFamilyMinorMaximumCount(int familyMinorMaximumCount) {
+			this.familyMinorMaximumCount = familyMinorMaximumCount;
+		}
+
+		public int getTravelMinimumAge() {
+			return travelMinimumAge;
+		}
+
+		public void setTravelMinimumAge(int travelMinimumAge) {
+			this.travelMinimumAge = travelMinimumAge;
+		}
+
+		public int getTravelMaximumAge() {
+			return travelMaximumAge;
+		}
+
+		public void setTravelMaximumAge(int travelMaximumAge) {
+			this.travelMaximumAge = travelMaximumAge;
+		}
+
+		public int getFamilyMinorMinimumAge() {
+			return familyMinorMinimumAge;
+		}
+
+		public void setFamilyMinorMinimumAge(int familyMinorMinimumAge) {
+			this.familyMinorMinimumAge = familyMinorMinimumAge;
+		}
+
+		public int getFamilyMinorMaximumAge() {
+			return familyMinorMaximumAge;
+		}
+
+		public void setFamilyMinorMaximumAge(int familyMinorMaximumAge) {
+			this.familyMinorMaximumAge = familyMinorMaximumAge;
 		}
 
 		@Override
@@ -521,7 +559,7 @@ public class NinelivesConfigProperties {
 					+ minimumAge + ", maximumAge=" + maximumAge + ", minimumPayment=" + minimumPayment
 					+ ", familyAdultMinimumAge=" + familyAdultMinimumAge + ", familyAdultMaximumAge="
 					+ familyAdultMaximumAge + ", familyAdultMaximumCount=" + familyAdultMaximumCount
-					+ ", familyChildrenMaximumCount=" + familyChildrenMaximumCount + "]";
+					+ ", familyMinorMaximumCount=" + familyMinorMaximumCount + "]";
 		}
 		
 	}

@@ -43,7 +43,7 @@ public enum ErrorCode {
 	ERR4020_ORDER_ENDDATE_INVALID("ERR4020"), //invalid enddate for travel insurance
 	ERR4021_ORDER_FAMILY_EMPTY("ERR4021"), //family cannot empty if isFamily is selected
 	ERR4022_ORDER_FAMILY_INVALID("ERR4022"), //family cannot empty if isFamily is selected
-	ERR4023_ORDER_FAMILY_AGE_INVALID("ERR4023"), //family cannot empty if isFamily is selected
+	ERR4023_ORDER_FAMILY_AGE_INVALID("ERR4023"), //family age limit is between 2 (min minor) to 75 (max adult) years old
 	ERR4024_ORDER_FAMILY_CNT_INVALID("ERR4024"), //family cannot empty if isFamily is selected
 	ERR4025_ORDER_PASSPORT_NOTFOUND("ERR4025"), //passport is mandatory
 	ERR4026_ORDER_TRAVEL_STARTDATE_INVALID("ERR4026"), //policy start-date is not valid for travel

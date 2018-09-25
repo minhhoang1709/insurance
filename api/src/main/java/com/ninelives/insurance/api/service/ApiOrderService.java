@@ -648,42 +648,66 @@ public class ApiOrderService {
 		
 		return policyOrder;
 	}
-	
+	/**
+	 * Validate family member count and age againts policy-start-date
+	 * 
+	 * @param userId
+	 * @param submitOrderDto
+	 * @throws AppBadRequestException
+	 */
 	protected void validateFamilyMember(final String userId, OrderDto submitOrderDto)throws AppBadRequestException{
 		if(CollectionUtils.isEmpty(submitOrderDto.getFamilies())){
-			logger.debug("Process order for <{}> with order <{}> with result: exception empty family", userId, submitOrderDto);
+			logger.debug("Process order for <{}> with order <{}> with result:<exception empty family>", userId, submitOrderDto);
 			throw new AppBadRequestException(ErrorCode.ERR4021_ORDER_FAMILY_EMPTY,
 					"Permintaan tidak dapat diproses. Periksa kembali data keluarga Anda");
 		}		
-		LocalDate today = LocalDate.now();
-		int childCnt = 0;
-		int adultCnt = 0;
+		//LocalDate today = LocalDate.now();
+		int minorCnt = 0;
+		int adultCnt = 0;		
 		for(PolicyOrderFamilyDto family: submitOrderDto.getFamilies()){
 			if (StringUtils.isEmpty(family.getName()) || family.getRelationship() == null
 					|| family.getBirthDate() == null || family.getGender() == null) {
-				logger.debug("Process order for <{}> with order <{}> with result: family invalid data", userId, submitOrderDto);
+				logger.debug("Process order for <{}> with order <{}> with result:<family invalid data>", userId, submitOrderDto);
 				throw new AppBadRequestException(ErrorCode.ERR4022_ORDER_FAMILY_INVALID,
 						"Permintaan tidak dapat diproses. Periksa kembali data keluarga Anda");
 			}
-			long age = ChronoUnit.YEARS.between(family.getBirthDate().toLocalDate(), today);
-			if(FamilyRelationship.ANAK.equals(family.getRelationship())){
-				childCnt++;				
-				if(age < 0 || age >= config.getOrder().getFamilyAdultMinimumAge()){
-					logger.debug("Process order for <{}> with order <{0}> with result: family children age invalid", userId, submitOrderDto);
-					throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
-							"Maksimum usia anak adalah 16 tahun");
-				}	
+			long age = ChronoUnit.YEARS.between(family.getBirthDate().toLocalDate(), submitOrderDto.getPolicyStartDate().toLocalDate());
+			
+			if (age < config.getOrder().getFamilyMinorMinimumAge()
+					|| age > config.getOrder().getFamilyAdultMaximumAge()) {
+				logger.debug("Process order for <{}> with order <{}> with result:<family invalid count>, exception:<{}> ",
+						userId, submitOrderDto, ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID);
+				throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
+						"Silakan cek kembali usia keluarga Anda. Kategori anak untuk usia "
+								+ config.getOrder().getFamilyMinorMinimumAge() + " tahun hingga "
+								+ config.getOrder().getFamilyMinorMaximumAge() + " tahun. Kategori dewasa untuk usia "
+								+ config.getOrder().getFamilyAdultMinimumAge() + " tahun hingga "
+								+ config.getOrder().getFamilyAdultMaximumAge() + " tahun");
+			}
+			
+			if(age < config.getOrder().getFamilyAdultMinimumAge()){
+				minorCnt++;
 			}else{
 				adultCnt++;
-				if(age < config.getOrder().getFamilyAdultMinimumAge() 
-						|| age > config.getOrder().getFamilyAdultMaximumAge()){
-					logger.debug("Process order for <{}> with order <{0}> with result: family adult age invalid", userId, submitOrderDto);
-					throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
-							"Rentang usia dewasa adalah 17 tahun sampai dengan 83 tahun");
-				}
 			}
+//			if(FamilyRelationship.ANAK.equals(family.getRelationship())){
+//				minorCnt++;				
+//				if(age < 0 || age >= config.getOrder().getFamilyAdultMinimumAge()){
+//					logger.debug("Process order for <{}> with order <{0}> with result: family children age invalid", userId, submitOrderDto);
+//					throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
+//							"Maksimum usia anak adalah 16 tahun");
+//				}	
+//			}else{
+//				adultCnt++;
+//				if(age < config.getOrder().getFamilyAdultMinimumAge() 
+//						|| age > config.getOrder().getFamilyAdultMaximumAge()){
+//					logger.debug("Process order for <{}> with order <{0}> with result: family adult age invalid", userId, submitOrderDto);
+//					throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
+//							"Rentang usia dewasa adalah 17 tahun sampai dengan 83 tahun");
+//				}
+//			}
 		}
-		if(childCnt > config.getOrder().getFamilyChildrenMaximumCount() 
+		if(minorCnt > config.getOrder().getFamilyMinorMaximumCount() 
 				|| adultCnt > config.getOrder().getFamilyAdultMaximumCount()){
 			logger.debug("Process order for <{}> with order <{}> with result: family invalid count", userId, submitOrderDto);
 			throw new AppBadRequestException(ErrorCode.ERR4024_ORDER_FAMILY_CNT_INVALID,
