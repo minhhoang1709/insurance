@@ -31,6 +31,7 @@ import com.ninelives.insurance.model.PolicyOrderCoverage;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
+import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
@@ -168,15 +169,41 @@ public class OrderService {
 		return policyOrderMapper.selectPaidOrderExists(userId); 
 	}
 	
+//	/**
+//	 * Check if multiple coverage purchase with the same period is allowed for SELF PA
+//	 * @param userId
+//	 * @param policyStartDate
+//	 * @param policyEndDate
+//	 * @param dueOrderDate
+//	 * @param coverageIds
+//	 * @return
+//	 */
+//	public boolean isOverCoverageInSamePeriodLimit(String userId, LocalDate policyStartDate, LocalDate policyEndDate,
+//			LocalDate dueOrderDate, List<String> coverageIds) {
+//		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
+//				policyStartDate, policyEndDate, dueOrderDate, coverageIds);		
+//		
+//		Map<String, Long> conflictCoverageMap = conflictList.stream()
+//				.collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
+//		
+//		return conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getPolicyConflictPeriodLimit());
+//	}
+	
 	public boolean isOverCoverageInSamePeriodLimit(String userId, LocalDate policyStartDate, LocalDate policyEndDate,
-			LocalDate dueOrderDate, List<String> coverageIds) {
+			LocalDate dueOrderDate, List<String> coverageIds, String coverageCategoryId) {
 		List<PolicyOrderCoverage> conflictList = policyOrderMapper.selectCoverageWithConflictedPolicyDate(userId,
 				policyStartDate, policyEndDate, dueOrderDate, coverageIds);		
 		
 		Map<String, Long> conflictCoverageMap = conflictList.stream()
 				.collect(Collectors.groupingBy(PolicyOrderCoverage::getCoverageId, Collectors.counting()));
 		
-		return conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getPolicyConflictPeriodLimit());
+		if(CoverageCategoryId.TRAVEL_INTERNATIONAL.equals(coverageCategoryId)||
+				CoverageCategoryId.TRAVEL_DOMESTIC.equals(coverageCategoryId)){
+			return conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getTravelPolicyConflictPeriodLimit());
+		}else{
+			return conflictCoverageMap.entrySet().stream().anyMatch(map -> map.getValue()>=config.getOrder().getPolicyConflictPeriodLimit());
+		}
+				
 	}
 	
 	public PolicyOrder fetchOrderWithBeneficiaryByOrderId(final String userId, final String orderId){

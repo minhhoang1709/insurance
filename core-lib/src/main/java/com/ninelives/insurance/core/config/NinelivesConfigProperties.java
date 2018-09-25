@@ -405,9 +405,14 @@ public class NinelivesConfigProperties {
 	    private int policyDueDatePeriod = 30;
 	    
 	    /**
-		 * Specify number of coverage that allowed to be active at the same period 
+		 * Specify number of coverage that allowed to be active at the same period
 		 */
 	    private int policyConflictPeriodLimit = 3;
+	    
+	    /**
+		 * Specify number of coverage that allowed to be active at the same period for Travel Insurance 
+		 */
+	    private int travelPolicyConflictPeriodLimit = 1;
 	    	
 	    /**
 		 * Allowed policy-start-date for Travel insurance should not less than specified period
@@ -462,6 +467,14 @@ public class NinelivesConfigProperties {
 			this.policyConflictPeriodLimit = policyConflictPeriodLimit;
 		}		
 
+		public int getTravelPolicyConflictPeriodLimit() {
+			return travelPolicyConflictPeriodLimit;
+		}
+
+		public void setTravelPolicyConflictPeriodLimit(int travelPolicyConflictPeriodLimit) {
+			this.travelPolicyConflictPeriodLimit = travelPolicyConflictPeriodLimit;
+		}
+
 		public int getMinimumAge() {
 			return minimumAge;
 		}
@@ -484,8 +497,7 @@ public class NinelivesConfigProperties {
 
 		public void setMinimumPayment(int minimumPayment) {
 			this.minimumPayment = minimumPayment;
-		}
-		
+		}		
 		
 		public int getFamilyAdultMinimumAge() {
 			return familyAdultMinimumAge;

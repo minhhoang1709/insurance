@@ -382,11 +382,20 @@ public class ApiOrderService {
 		}				
 		
 		LocalDate dueOrderDate = today.minusDays(config.getOrder().getPolicyDueDatePeriod());		
-		boolean isOverLimit = orderService.isOverCoverageInSamePeriodLimit(userId, submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds);
+		boolean isOverLimit = orderService.isOverCoverageInSamePeriodLimit(userId,
+				submitOrderDto.getPolicyStartDate().toLocalDate(), policyEndDate, dueOrderDate, coverageIds, coverageCategoryId);
 		if(isOverLimit){
-			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
-			throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
-						"Anda membeli jaminan yang sama lebih dari 3 kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.");
+			if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
+					coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+				logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
+				throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
+							"Anda sudah membeli jaminan ini untuk periode yang sama. Silahkan atur kembali periode pemakaian jaminan.");
+			}else{
+				logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
+				throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
+							"Anda membeli jaminan yang sama lebih dari 3 kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.");
+				
+			}
 		}
 		
 		PolicyOrder policyOrder = null;
