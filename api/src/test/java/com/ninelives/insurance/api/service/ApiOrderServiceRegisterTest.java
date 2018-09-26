@@ -19,14 +19,17 @@ import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.ProductDto;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.UserService;
+import com.ninelives.insurance.core.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.Gender;
 import com.ninelives.insurance.ref.PeriodUnit;
 
 @RunWith(SpringRunner.class)
@@ -45,7 +48,9 @@ public class ApiOrderServiceRegisterTest {
 			throw new AppException(ErrorCode.ERR1001_GENERIC_ERROR,"");
 		}
 	}
-	public void testExceptionTravelPeriodStartDate(){	
+	
+	@Test
+	public void testTravelPeriodStartDate(){	
 		int policyStartDatePeriodParam1 = 2;
 		int policyStartDatePeriodParam2 = 0;
 		int configTravelMinPolicyStartDatePeriod = 2;
@@ -107,10 +112,11 @@ public class ApiOrderServiceRegisterTest {
 		}
 		assertNotNull(exp);
 		assertThat(exp.getCode(), is(ErrorCode.ERR4026_ORDER_TRAVEL_STARTDATE_INVALID));
+		
 	}
 	
 	@Test
-	public void testValidTravelValidateOnlyOrder() throws AppException {
+	public void testTravelValidateOnlyOrder(){
 		int policyStartDatePeriod = 3;
 		int configTravelMinPolicyStartDatePeriod = 2;
 				
@@ -169,8 +175,8 @@ public class ApiOrderServiceRegisterTest {
 		assertNull(exp);		
 	}
 	
-	@Test(expected=AppException.class)
-	public void testExceptionTravelInvalidAge() throws AppException {
+	@Test
+	public void testTravelUserAge(){
 		int configTravelMinPolicyStartDatePeriod = 2;
 		int configTravelMinAge = 17;
 		int configTravelMaxAge = 75;
@@ -222,6 +228,8 @@ public class ApiOrderServiceRegisterTest {
 				orderDto.getPolicyEndDate().toLocalDate(),
 				prod.getPeriod())).thenReturn(true);
 		
+		service.insuranceService = Mockito.mock(InsuranceService.class);
+		service.policyOrderTrxService = Mockito.mock(PolicyOrderTrxService.class);
 		/*
 		 * Test 1
 		 */
@@ -234,12 +242,14 @@ public class ApiOrderServiceRegisterTest {
 		service.userService = Mockito.mock(UserService.class);
 		when(service.userService.fetchByUserId(user.getUserId())).thenReturn(user);
 		
+		AppException exp = null;
 		try{ 
 			service.registerOrder(user.getUserId(), orderDto, false);
 		}catch(AppException e){
-			assertThat(e.getCode(), is(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID));
-			throw new AppException(ErrorCode.ERR1001_GENERIC_ERROR,"");
+			exp=e;
 		}
+		assertNotNull(exp);
+		assertThat(exp.getCode(), is(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID));
 		
 		/*
 		 * Test 2
@@ -248,15 +258,23 @@ public class ApiOrderServiceRegisterTest {
 		User user2 = new User();
 		user2.setBirthDate(LocalDate.now().minusYears(userAgeAtPolicyStartDate-policyStartDatePlusYear));
 		user2.setUserId("testId2");
+		user2.setName("name");
 		user2.setIdCardFileId(123L);
+		user2.setBirthPlace("test");
+		user2.setGender(Gender.FEMALE);
+		user2.setIdCardFileId(123L);
+		user2.setPhone("123");
 		
 		when(service.userService.fetchByUserId(user2.getUserId())).thenReturn(user2);
+		when(service.orderService.isUserProfileCompleteForOrder(user2)).thenReturn(true);
 		
+		exp = null;
 		try{ 
 			service.registerOrder(user2.getUserId(), orderDto, false);
 		}catch(AppException e){
-			assertThat(e.getCode(), is(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID));
-			throw new AppException(ErrorCode.ERR1001_GENERIC_ERROR,"");
+			exp=e;			
 		}
+		assertNull(exp);
 	}
+		
 }
