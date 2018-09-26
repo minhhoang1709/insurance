@@ -158,7 +158,7 @@ public class ApiOrderService {
 		LocalDate dueOrderDate = today.minusDays(config.getOrder().getPolicyDueDatePeriod());
 		
 		boolean isOverLimit = orderService.isOverCoverageInSamePeriodLimit(userId, 
-				voucher.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds);
+				voucher.getPolicyStartDate(), policyEndDate, dueOrderDate, coverageIds, coverageCategoryId);
 		if(isOverLimit){
 			logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId);
 			throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
