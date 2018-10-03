@@ -37,6 +37,7 @@
 	    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType">
 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+		    <result column="claim_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
     	</association>	
     </collection>    
   </resultMap>
@@ -47,7 +48,7 @@
 	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name, b.type as covcat_type,
 	b.recommendation as covcat_recommendation,
 	c.coverage_claim_doc_type_id, c.is_mandatory,
-	d.claim_doc_type_id, d.name as claim_doc_type_name,
+	d.claim_doc_type_id, d.name as claim_doc_type_name, d.usage_type as claim_doc_type_usage_type,
 	e.coverage_option_name, e.coverage_option_group_id,
 	f.coverage_option_group_name 
   </sql>

@@ -481,6 +481,7 @@ public class ModelMapperAdapter {
 			dto = new ClaimDocTypeDto();
 			dto.setClaimDocTypeId(m.getClaimDocTypeId());
 			dto.setName(m.getName());
+			dto.setUsageType(m.getUsageType());
 		}
 		return dto;
 	}

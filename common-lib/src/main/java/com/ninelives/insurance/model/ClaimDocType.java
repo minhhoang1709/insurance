@@ -3,6 +3,8 @@ package com.ninelives.insurance.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.ninelives.insurance.ref.ClaimDocUsageType;
+
 public class ClaimDocType implements Serializable{
     private static final long serialVersionUID = -1030025360604205678L;
 
@@ -12,8 +14,8 @@ public class ClaimDocType implements Serializable{
 
     private String description;
     
-    private Boolean isMandatory;
-
+    private ClaimDocUsageType usageType;
+    
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
@@ -41,13 +43,13 @@ public class ClaimDocType implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public Boolean getIsMandatory() {
-		return isMandatory;
+
+	public ClaimDocUsageType getUsageType() {
+		return usageType;
 	}
 
-	public void setIsMandatory(Boolean isMandatory) {
-		this.isMandatory = isMandatory;
+	public void setUsageType(ClaimDocUsageType usageType) {
+		this.usageType = usageType;
 	}
 
 	public LocalDateTime getCreatedDate() {
