@@ -49,6 +49,7 @@ import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.ref.ClaimCoverageStatus;
+import com.ninelives.insurance.ref.ClaimDocUsageType;
 import com.ninelives.insurance.ref.ClaimStatus;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
@@ -186,6 +187,11 @@ public class ApiClaimService {
 			}
 		}
 		
+		boolean isClaimHasFamily = false;
+		if(!CollectionUtils.isEmpty(claimDto.getFamilies())){
+			isClaimHasFamily = true;
+		}		
+		
 		if(CollectionUtils.isEmpty(claimDto.getClaimDocuments())){
 			logger.debug(
 					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty document>, exception:<{}>",
@@ -217,7 +223,7 @@ public class ApiClaimService {
 		}
 		
 		//mandatory doc check exists
-		Map<String, Boolean> docTypeMap = extractDocTypeMap(claimDto.getClaimCoverages());		
+		Map<String, Boolean> docTypeMap = extractDocTypeMap(claimDto.getClaimCoverages(), isClaimHasFamily);		
 		for(Map.Entry<String, Boolean> doc: docTypeMap.entrySet()){
 			if(doc.getValue()==true){
 				if(!docFromClaimSet.contains(doc.getKey())){
@@ -323,13 +329,13 @@ public class ApiClaimService {
 
 			/*
 			 *	claim for family(TRAVEL related)
-			 *	available option as Sep 2018, exclusively:
-			 *  - User as claimant
-			 *  - 1 family member as claimant
+			 *	as Sep 2018, select one of these options:
+			 *  1. User as claimant
+			 *  2. 1 family member as claimant
 			 */
 			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC) ||
 					order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
-				if(!CollectionUtils.isEmpty(claimDto.getFamilies())){					
+				if(isClaimHasFamily){					
 					PolicyClaimFamilyDto famDto = claimDto.getFamilies().get(0);					
 					List<PolicyClaimFamily> claimFamilies = new ArrayList<>();
 					for(PolicyOrderFamily orderClaimFamily: order.getPolicyOrderFamilies()){
@@ -393,19 +399,21 @@ public class ApiClaimService {
 		return true;
 	}
 	
-	protected Map<String, Boolean> extractDocTypeMap (List<ClaimCoverageDto> ccds) {
+	protected Map<String, Boolean> extractDocTypeMap(List<ClaimCoverageDto> ccds, boolean isClaimHasFamily) {
 		Map<String, Boolean> docTypeMap = new HashMap<>();
-		for(ClaimCoverageDto ccd: ccds){
+		for (ClaimCoverageDto ccd : ccds) {
 			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
-			for(CoverageClaimDocType ccdt: c.getCoverageClaimDocTypes()){
-				Boolean current = docTypeMap.get(ccdt.getClaimDocTypeId()); 
-				if(current!=null){
-					docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory()||current);
-				}else{
-					docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory());
-				}				
+			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
+				if (!ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.FAMILY_CARD) || isClaimHasFamily) {
+					//if it is family-card type then verify whether to include in document requirement by checking whether claim has family as claimant
+					Boolean lastMandatoryCheck = docTypeMap.get(ccdt.getClaimDocTypeId());
+					if (lastMandatoryCheck != null) {
+						docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory() || lastMandatoryCheck);
+					} else {
+						docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory());
+					}
+				}
 			}
-
 		}
 		return docTypeMap;
 	}

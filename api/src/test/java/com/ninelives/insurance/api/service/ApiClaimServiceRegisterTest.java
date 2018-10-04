@@ -21,10 +21,12 @@ import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageClaimDocType;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
+import com.ninelives.insurance.ref.ClaimDocUsageType;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PolicyStatus;
 
@@ -43,9 +45,15 @@ public class ApiClaimServiceRegisterTest {
 		cov1.getCoverageClaimDocTypes().add(new CoverageClaimDocType());
 		cov1.getCoverageClaimDocTypes().get(0).setClaimDocTypeId("DT001");
 		cov1.getCoverageClaimDocTypes().get(0).setIsMandatory(true);
+		cov1.getCoverageClaimDocTypes().get(0).setClaimDocType(new ClaimDocType());
+		cov1.getCoverageClaimDocTypes().get(0).getClaimDocType().setClaimDocTypeId("DT001");
+		cov1.getCoverageClaimDocTypes().get(0).getClaimDocType().setUsageType(ClaimDocUsageType.REGULAR);
 		cov1.getCoverageClaimDocTypes().add(new CoverageClaimDocType());
 		cov1.getCoverageClaimDocTypes().get(1).setClaimDocTypeId("DT002");
 		cov1.getCoverageClaimDocTypes().get(1).setIsMandatory(true);
+		cov1.getCoverageClaimDocTypes().get(1).setClaimDocType(new ClaimDocType());
+		cov1.getCoverageClaimDocTypes().get(1).getClaimDocType().setClaimDocTypeId("DT002");
+		cov1.getCoverageClaimDocTypes().get(1).getClaimDocType().setUsageType(ClaimDocUsageType.REGULAR);
 		
 		PolicyOrder order = new PolicyOrder();
 		order.setOrderId(orderId);
