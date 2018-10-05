@@ -27,8 +27,6 @@ public class NinelivesInsurerConfigProperties {
 		@NotEmpty
 		private String aswataClientKey;
 		@NotEmpty
-		private String aswataProductCode;
-		@NotEmpty
 		private String aswataPackageType;
 		@NotEmpty
 		private String aswataUrl;
@@ -50,12 +48,6 @@ public class NinelivesInsurerConfigProperties {
 		public void setAswataClientKey(String aswataClientKey) {
 			this.aswataClientKey = aswataClientKey;
 		}		
-		public String getAswataProductCode() {
-			return aswataProductCode;
-		}
-		public void setAswataProductCode(String aswataProductCode) {
-			this.aswataProductCode = aswataProductCode;
-		}
 		public String getAswataPackageType() {
 			return aswataPackageType;
 		}

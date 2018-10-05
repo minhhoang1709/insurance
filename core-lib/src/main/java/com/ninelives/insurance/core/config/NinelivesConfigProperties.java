@@ -125,8 +125,6 @@ public class NinelivesConfigProperties {
 		@NotEmpty
 		private String aswataClientKey;
 		@NotEmpty
-		private String aswataProductCode;
-		@NotEmpty
 		private String aswataUrl;
 		
 		private int aswataConnectionPoolSize = 32;
@@ -152,12 +150,6 @@ public class NinelivesConfigProperties {
 		public void setAswataClientKey(String aswataClientKey) {
 			this.aswataClientKey = aswataClientKey;
 		}		
-		public String getAswataProductCode() {
-			return aswataProductCode;
-		}
-		public void setAswataProductCode(String aswataProductCode) {
-			this.aswataProductCode = aswataProductCode;
-		}
 		public String getAswataUrl() {
 			return aswataUrl;
 		}
