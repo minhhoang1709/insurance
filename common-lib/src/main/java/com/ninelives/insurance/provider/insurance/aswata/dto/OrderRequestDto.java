@@ -1,6 +1,7 @@
 package com.ninelives.insurance.provider.insurance.aswata.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -105,6 +106,16 @@ public class OrderRequestDto implements Serializable{
 		private String industry;
 		@JsonProperty("client_id")
 		private String clientId;
+		
+		/*
+		 * Travel insurance support
+		 */
+		@JsonProperty("travel_type")
+		private Integer travelType;
+		@JsonProperty("is_family")
+		private String isFamily;
+		@JsonProperty("family_list")
+		private List<RequestParamFamily> familyList;
 		
 		public String getProductCode() {
 			return productCode;
@@ -214,17 +225,89 @@ public class OrderRequestDto implements Serializable{
 		public void setIndustry(String industry) {
 			this.industry = industry;
 		}
+		public Integer getTravelType() {
+			return travelType;
+		}
+		public void setTravelType(Integer travelType) {
+			this.travelType = travelType;
+		}
+		public String getIsFamily() {
+			return isFamily;
+		}
+		public void setIsFamily(String isFamily) {
+			this.isFamily = isFamily;
+		}
+		public List<RequestParamFamily> getFamilyList() {
+			return familyList;
+		}
+		public void setFamilyList(List<RequestParamFamily> familyList) {
+			this.familyList = familyList;
+		}
 		
 		@Override
 		public String toString() {
 			return "RequestParam [productCode=" + productCode + ", packageType=" + packageType + ", insuredName="
 					+ insuredName + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", insuredAddress="
 					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
-					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCard=" + (idCard==null?"":"***")
-					+ ", idCardNumber=" + idCardNumber + ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
+					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCardNumber="
+					+ idCardNumber + ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
 					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry
-					+ ", clientId=" + clientId + "]";
+					+ ", clientId=" + clientId + ", travelType=" + travelType + ", isFamily=" + isFamily
+					+ ", familyList=" + familyList + ", idCard=" + (idCard==null?"":"***")+ "]";
 		}
-
+	}
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class RequestParamFamily implements Serializable{
+		private static final long serialVersionUID = 7044761969219806251L;
+		
+		@JsonProperty("family_name")
+		private String familyName;
+		@JsonProperty("date_of_birth")
+		private String dateOfBirth;
+		@JsonProperty("relation")
+		private String relation;
+		@JsonProperty("beneficiary")
+		private String beneficiary;
+		@JsonProperty("id_card_number")
+		private String idCardNumber;
+		
+		public String getFamilyName() {
+			return familyName;
+		}
+		public void setFamilyName(String familyName) {
+			this.familyName = familyName;
+		}
+		public String getDateOfBirth() {
+			return dateOfBirth;
+		}
+		public void setDateOfBirth(String dateOfBirth) {
+			this.dateOfBirth = dateOfBirth;
+		}
+		public String getRelation() {
+			return relation;
+		}
+		public void setRelation(String relation) {
+			this.relation = relation;
+		}
+		public String getBeneficiary() {
+			return beneficiary;
+		}
+		public void setBeneficiary(String beneficiary) {
+			this.beneficiary = beneficiary;
+		}
+		public String getIdCardNumber() {
+			return idCardNumber;
+		}
+		public void setIdCardNumber(String idCardNumber) {
+			this.idCardNumber = idCardNumber;
+		}
+		@Override
+		public String toString() {
+			return "RequestParamFamily [familyName=" + familyName + ", dateOfBirth=" + dateOfBirth + ", relation="
+					+ relation + ", beneficiary=" + beneficiary + ", idCardNumber=" + idCardNumber + "]";
+		}
+		
+		
 	}
 }

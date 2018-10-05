@@ -3,13 +3,16 @@ package com.ninelives.insurance.core.provider.insurance;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 import java.util.StringJoiner;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
@@ -37,9 +40,11 @@ import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.core.service.FileUploadService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.InsurerOrderConfirmLog;
 import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRequestDto;
@@ -48,8 +53,14 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.ref.PackageType;
+import com.ninelives.insurance.provider.insurance.aswata.ref.ProductCode;
 import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
+import com.ninelives.insurance.provider.insurance.aswata.ref.TravelType;
+import com.ninelives.insurance.ref.CoverageCategoryId;
+import com.ninelives.insurance.ref.CoverageCategoryType;
+import com.ninelives.insurance.ref.CoverageOptionId;
 import com.ninelives.insurance.ref.VoucherType;
+import com.ninelives.insurance.ref.YesNo;
 
 @Service
 public class AswataInsuranceProvider implements InsuranceProvider{	
@@ -76,8 +87,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	private RestTemplate template;
 	private String providerUrl;	
 	private String clientCode;
-	private String clientKey;
-	private String productCode;
+	private String clientKey;	
 	private final String coverageSeparator = "|";
 	
 	@Autowired
@@ -102,19 +112,18 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.setRequestTime(order.getOrderTime().format(timeFormatter));
 		
 		requestDto.setRequestParam(new OrderRequestDto.RequestParam());
-		requestDto.getRequestParam().setProductCode(productCode);
+		
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
-			requestDto.getRequestParam().setPackageType(PackageType.TYPE_B2B);
+			requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_B2B);
 			if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
 					&& !StringUtils.isEmpty(
 					order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
 				requestDto.getRequestParam().setClientId(
 						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
 			}			
-		}else{
-			requestDto.getRequestParam().setPackageType(PackageType.TYPE_NORMAL);
-		}		
+		}
+		
 		requestDto.getRequestParam().setInsuredName(StringUtils.abbreviate(order.getPolicyOrderUsers().getName(), 50));
 		requestDto.getRequestParam().setDateOfBirth(order.getPolicyOrderUsers().getBirthDate().format(dateFormatter));
 		requestDto.getRequestParam().setGender(order.getPolicyOrderUsers().getGender().toStr());		
@@ -131,6 +140,33 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		/* Insured address is hardcoded into empty string */
 		requestDto.getRequestParam().setInsuredAddress("-");				
+		
+		/*
+		 * Travel insurance specific
+		 */
+		if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)
+				|| order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+			requestDto.getRequestParam().setProductCode(ProductCode.TRAVEL);
+			requestDto.getRequestParam().setPackageType(PackageType.TYPE_TRAVEL);
+			requestDto.getRequestParam().setTravelType(getProviderTravelType(order));
+			requestDto.getRequestParam().setIsFamily((order.getIsFamily()?"Y":"N"));
+			if(order.getIsFamily() && !CollectionUtils.isEmpty(order.getPolicyOrderFamilies())){
+				List<OrderRequestDto.RequestParamFamily> familyList = new ArrayList<>();  
+				for(PolicyOrderFamily pof: order.getPolicyOrderFamilies()){
+					OrderRequestDto.RequestParamFamily family = new OrderRequestDto.RequestParamFamily();
+					family.setFamilyName(pof.getName());
+					family.setDateOfBirth(pof.getBirthDate().format(dateFormatter));
+					family.setRelation(pof.getRelationship().toStr());
+					family.setIdCardNumber("");
+					family.setBeneficiary("");
+					familyList.add(family);
+				}
+				requestDto.getRequestParam().setFamilyList(familyList);
+			}
+		}else{
+			requestDto.getRequestParam().setProductCode(ProductCode.PA);
+			requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_NORMAL);
+		}
 		
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
@@ -325,6 +361,38 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 //		return false;
 //	}
 
+	
+	public Integer getProviderTravelType(PolicyOrder order){
+		Integer result = null;
+		if(order!=null){
+			if(CoverageCategoryId.TRAVEL_DOMESTIC.equals(order.getCoverageCategoryId())){
+				result = TravelType.TYPE_DOMESTIC;
+			}else if(CoverageCategoryId.TRAVEL_INTERNATIONAL.equals(order.getCoverageCategoryId())){
+				//check if any coverage has option, if they do, use that option, otherwise use international
+				for(PolicyOrderProduct p: order.getPolicyOrderProducts()){
+					Coverage coverage = productService.fetchCoverageByCoverageId(p.getCoverageId());
+					if (coverage.getCoverageOptionId()!=null){
+						if(CoverageOptionId.OPTION_INTERNATIONAL.equals(coverage.getCoverageOptionId())){
+							result = TravelType.TYPE_WORLDWIDE;
+						}else if(CoverageOptionId.OPTION_ASEAN.equals(coverage.getCoverageOptionId())){
+							result = TravelType.TYPE_ASIA;
+						}else if(CoverageOptionId.OPTION_EU_AU_NZ.equals(coverage.getCoverageOptionId())){
+							result = TravelType.TYPE_EU_AUS_NZ;
+						}
+						break;
+					}
+				}
+				
+				if(result == null){
+					//for international coverage without specific destination option, use worldwide
+					result =  TravelType.TYPE_WORLDWIDE;
+				}
+			}
+		}
+				
+		return result;
+	}
+	
 	@PostConstruct
 	private void init() throws IOException {
 		enableConnection = config.getInsurance().getEnableConnection();
@@ -351,8 +419,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 				
 		providerUrl = config.getInsurance().getAswataUrl();
 		clientCode = config.getInsurance().getAswataClientCode();
-		clientKey = config.getInsurance().getAswataClientKey();
-		productCode = config.getInsurance().getAswataProductCode();			
+		clientKey = config.getInsurance().getAswataClientKey();					
 	}
 	
 	

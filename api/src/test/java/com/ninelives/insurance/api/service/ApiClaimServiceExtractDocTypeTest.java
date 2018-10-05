@@ -74,6 +74,8 @@ public class ApiClaimServiceExtractDocTypeTest {
 		dtos.get(1).setCoverage(new CoverageDto());
 		dtos.get(1).getCoverage().setCoverageId("102001");
 		
+		boolean isOrderHasFamily = true;
+		
 		//expected output: family is included
 		Map<String, Boolean> expectedResultMap = new HashMap<>();
 		expectedResultMap.put("DT001", true);
@@ -84,7 +86,7 @@ public class ApiClaimServiceExtractDocTypeTest {
 		when(claimService.productService.fetchCoverageByCoverageId("101001")).thenReturn(cov1);
 		when(claimService.productService.fetchCoverageByCoverageId("102001")).thenReturn(cov2);
 		
-		Map<String, Boolean> resultMap = claimService.extractDocTypeMap(dtos, true);
+		Map<String, Boolean> resultMap = claimService.extractDocTypeMap(dtos, isOrderHasFamily);
 		
 		assertThat(resultMap, is(expectedResultMap));
 	}
@@ -135,6 +137,8 @@ public class ApiClaimServiceExtractDocTypeTest {
 		dtos.get(1).setCoverage(new CoverageDto());
 		dtos.get(1).getCoverage().setCoverageId("102001");
 		
+		boolean isOrderHasFamily = false;
+		
 		//expected output: family is excluded
 		Map<String, Boolean> expectedResultMap = new HashMap<>();
 		expectedResultMap.put("DT002", true);
@@ -145,7 +149,7 @@ public class ApiClaimServiceExtractDocTypeTest {
 		when(claimService.productService.fetchCoverageByCoverageId("101001")).thenReturn(cov1);
 		when(claimService.productService.fetchCoverageByCoverageId("102001")).thenReturn(cov2);
 		
-		Map<String, Boolean> resultMap = claimService.extractDocTypeMap(dtos, false);
+		Map<String, Boolean> resultMap = claimService.extractDocTypeMap(dtos, isOrderHasFamily);
 		
 		assertThat(resultMap, is(expectedResultMap));
 	}
