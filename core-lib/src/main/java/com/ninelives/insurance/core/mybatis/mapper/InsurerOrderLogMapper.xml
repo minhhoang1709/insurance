@@ -19,13 +19,19 @@
     <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
     <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
     <result column="download_url" jdbcType="VARCHAR" property="downloadUrl" />
+    <result column="package_type" jdbcType="VARCHAR" property="packageType" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="travel_type" jdbcType="INTEGER" property="travelType" />
+    <result column="is_family" jdbcType="VARCHAR" property="isFamily" />
+    <result column="other_properties" jdbcType="VARCHAR" property="otherProperties" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
   </resultMap>
 
   <sql id="Base_Column_List">
     id, coverage_category_id, service_code, order_id, order_time, user_ref_no, provider_coverage, 
     premi, response_status, response_code, provider_request_time, provider_response_time, 
-    request_time, response_time, policy_number, order_number, download_url, created_date
+    request_time, response_time, policy_number, order_number, download_url, 
+    package_type, product_code, travel_type, is_family, other_properties, created_date
   </sql>
 
   <insert id="insertSelective" parameterType="com.ninelives.insurance.model.InsurerOrderLog">
@@ -79,6 +85,24 @@
       <if test="downloadUrl != null">
         download_url,
       </if>
+      <if test="createdDate != null">
+        created_date,
+      </if>
+      <if test="packageType != null">
+        package_type,
+      </if>
+      <if test="productCode != null">
+        product_code,
+      </if>
+      <if test="travelType != null">
+        travel_type,
+      </if>
+      <if test="isFamily != null">
+        is_family,
+      </if>
+      <if test="otherProperties != null">
+        other_properties,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="coverageCategoryId != null">
@@ -128,6 +152,24 @@
       </if>
       <if test="downloadUrl != null">
         #{downloadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null">
+        #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="packageType != null">
+        #{packageType,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null">
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="travelType != null">
+        #{travelType,jdbcType=INTEGER},
+      </if>
+      <if test="isFamily != null">
+        #{isFamily,jdbcType=VARCHAR},
+      </if>
+      <if test="otherProperties != null">
+        #{otherProperties,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

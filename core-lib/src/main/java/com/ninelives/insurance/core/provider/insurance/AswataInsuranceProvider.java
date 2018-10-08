@@ -228,6 +228,14 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		orderLog.setRequestTime(requestTime);
 		orderLog.setResponseTime(responseTime);
 		orderLog.setOrderTime(order.getOrderTime());
+		orderLog.setPackageType(requestDto.getRequestParam().getPackageType());
+		orderLog.setProductCode(requestDto.getRequestParam().getProductCode());
+		orderLog.setTravelType(requestDto.getRequestParam().getTravelType());
+		
+		if(order.getIsFamily()!=null && order.getIsFamily()){
+			orderLog.setIsFamily(requestDto.getRequestParam().getIsFamily());
+			orderLog.setOtherProperties("{ familyList="+ requestDto.getRequestParam().getFamilyList().toString()+"}");
+		}
 		
 		if(result!=null){
 			orderLog.setResponseStatus(result.getHttpStatus());

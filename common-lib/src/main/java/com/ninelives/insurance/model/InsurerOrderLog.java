@@ -36,6 +36,16 @@ public class InsurerOrderLog {
     private String orderNumber;
 
     private String downloadUrl;
+    
+    private String packageType;
+
+    private String productCode;
+
+    private Integer travelType;
+
+    private String isFamily;
+
+    private String otherProperties;
 
     private LocalDateTime createdDate;
 
@@ -175,7 +185,47 @@ public class InsurerOrderLog {
         this.downloadUrl = downloadUrl;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public String getPackageType() {
+		return packageType;
+	}
+
+	public void setPackageType(String packageType) {
+		this.packageType = packageType;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public Integer getTravelType() {
+		return travelType;
+	}
+
+	public void setTravelType(Integer travelType) {
+		this.travelType = travelType;
+	}
+
+	public String getIsFamily() {
+		return isFamily;
+	}
+
+	public void setIsFamily(String isFamily) {
+		this.isFamily = isFamily;
+	}
+
+	public String getOtherProperties() {
+		return otherProperties;
+	}
+
+	public void setOtherProperties(String otherProperties) {
+		this.otherProperties = otherProperties;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
