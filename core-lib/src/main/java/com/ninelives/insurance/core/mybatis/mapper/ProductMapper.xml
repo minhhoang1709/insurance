@@ -34,6 +34,7 @@
     <result column="coverage_family_max_limit" jdbcType="BIGINT" property="familyMaxLimit" />
     <result column="coverage_has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
     <result column="coverage_is_recommended" jdbcType="BIT" property="isRecommended" />
+    <result column="coverage_is_intro_recommended" jdbcType="BIT" property="isIntroRecommended" />
    	<result column="coverage_provider_code" jdbcType="VARCHAR" property="providerCode" />
     <result column="coverage_status" jdbcType="VARCHAR" property="status" />
     <result column="coverage_display_rank" jdbcType="INTEGER" property="displayRank" />
@@ -72,7 +73,8 @@
 	c.coverage_id as coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
 	c.description as coverage_description, c.max_limit as coverage_max_limit, c.family_max_limit as coverage_family_max_limit, 
 	c.has_beneficiary as coverage_has_beneficiary,
-	c.is_recommended as coverage_is_recommended, c.provider_code as coverage_provider_code, c.status as coverage_status, c.display_rank as coverage_display_rank,
+	c.is_recommended as coverage_is_recommended, c.is_intro_recommended as coverage_is_intro_recommended, 
+	c.provider_code as coverage_provider_code, c.status as coverage_status, c.display_rank as coverage_display_rank,
 	d.coverage_category_id as covcat_coverage_category_id, d.name as covcat_name, d.type as covcat_type,
 	d.recommendation as covcat_recommendation,
 	e.coverage_claim_doc_type_id, e.is_mandatory,

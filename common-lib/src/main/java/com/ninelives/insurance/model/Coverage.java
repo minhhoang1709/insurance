@@ -33,6 +33,8 @@ public class Coverage implements Serializable{
     
     private Boolean isRecommended;
     
+    private Boolean isIntroRecommended; //if true then display in wizard
+    
     private String providerCode;
     
     private String coverageOptionId;
@@ -147,6 +149,14 @@ public class Coverage implements Serializable{
 		this.isRecommended = isRecommended;
 	}	
 
+	public Boolean getIsIntroRecommended() {
+		return isIntroRecommended;
+	}
+
+	public void setIsIntroRecommended(Boolean isIntroRecommended) {
+		this.isIntroRecommended = isIntroRecommended;
+	}
+
 	public String getProviderCode() {
 		return providerCode;
 	}
@@ -193,9 +203,10 @@ public class Coverage implements Serializable{
 				+ ", recommendation=" + recommendation + ", description=" + description + ", maxLimit=" + maxLimit
 				+ ", familyMaxLimit=" + familyMaxLimit + ", hasBeneficiary=" + hasBeneficiary + ", createdDate="
 				+ createdDate + ", updateDate=" + updateDate + ", status=" + status + ", displayRank=" + displayRank
-				+ ", isRecommended=" + isRecommended + ", providerCode=" + providerCode + ", coverageOptionId="
-				+ coverageOptionId + ", coverageClaimDocTypes=" + coverageClaimDocTypes + ", coverageCategory="
-				+ coverageCategory + ", coverageOption=" + coverageOption + "]";
+				+ ", isRecommended=" + isRecommended + ", isIntroRecommended=" + isIntroRecommended + ", providerCode="
+				+ providerCode + ", coverageOptionId=" + coverageOptionId + ", coverageClaimDocTypes="
+				+ coverageClaimDocTypes + ", coverageCategory=" + coverageCategory + ", coverageOption="
+				+ coverageOption + "]";
 	}
 
 	

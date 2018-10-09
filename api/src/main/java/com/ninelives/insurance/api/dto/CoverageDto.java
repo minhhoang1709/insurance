@@ -23,6 +23,8 @@ public class CoverageDto {
 
     private Boolean isRecommended;
     
+    private Boolean isIntroRecommended;
+    
     private List<CoverageClaimDocTypeDto> coverageClaimDocTypes;
     
     private CoverageCategoryDto coverageCategory;
@@ -91,6 +93,14 @@ public class CoverageDto {
 
 	public void setIsRecommended(Boolean isRecommended) {
 		this.isRecommended = isRecommended;
+	}
+
+	public Boolean getIsIntroRecommended() {
+		return isIntroRecommended;
+	}
+
+	public void setIsIntroRecommended(Boolean isIntroRecommended) {
+		this.isIntroRecommended = isIntroRecommended;
 	}
 
 	public List<CoverageClaimDocTypeDto> getCoverageClaimDocTypes() {

@@ -427,6 +427,7 @@ public class ModelMapperAdapter {
 			dto.setName(m.getName());
 			dto.setRecommendation(m.getRecommendation());
 			dto.setIsRecommended(m.getIsRecommended());
+			dto.setIsIntroRecommended(m.getIsIntroRecommended());
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setMaxLimit(m.getMaxLimit());
 			dto.setFamilyMaxLimit(m.getFamilyMaxLimit());
