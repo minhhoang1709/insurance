@@ -80,6 +80,7 @@ public class OrderServiceCoverageLimitTest {
 	public void testTravelConflict(){
 		NinelivesConfigProperties config = new NinelivesConfigProperties();
 		config.getOrder().setPolicyConflictPeriodLimit(3);
+		config.getOrder().setTravelPolicyConflictPeriodLimit(2);
 		
 		List<PolicyOrderCoverage> conflictList = new ArrayList<>();
 		
@@ -121,7 +122,7 @@ public class OrderServiceCoverageLimitTest {
 		
 		boolean result3 = orderService.isOverCoverageInSamePeriodLimit("id", today, today, today, coverageIds, CoverageCategoryId.TRAVEL_DOMESTIC);
 		
-		assertEquals(result3, true);
+		assertEquals(result3, false);
 		
 		
 	}

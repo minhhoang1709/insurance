@@ -238,6 +238,7 @@ public class ApiOrderServiceRegisterTest {
 		user.setBirthDate(LocalDate.now().minusYears(userAgeAtPolicyStartDate-policyStartDatePlusYear));
 		user.setUserId("testId");
 		user.setIdCardFileId(123L);
+		user.setPassportFileId(123L);
 		
 		service.userService = Mockito.mock(UserService.class);
 		when(service.userService.fetchByUserId(user.getUserId())).thenReturn(user);
@@ -263,6 +264,7 @@ public class ApiOrderServiceRegisterTest {
 		user2.setBirthPlace("test");
 		user2.setGender(Gender.FEMALE);
 		user2.setIdCardFileId(123L);
+		user2.setPassportFileId(123L);
 		user2.setPhone("123");
 		
 		when(service.userService.fetchByUserId(user2.getUserId())).thenReturn(user2);
