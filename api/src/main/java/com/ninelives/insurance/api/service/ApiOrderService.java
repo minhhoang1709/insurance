@@ -303,7 +303,7 @@ public class ApiOrderService {
 				
 		if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
 				coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
-			if (ChronoUnit.DAYS.between(today, submitOrderDto.getPolicyStartDate().toLocalDate()) <= config.getOrder()
+			if (ChronoUnit.DAYS.between(today, submitOrderDto.getPolicyStartDate().toLocalDate()) < config.getOrder()
 					.getTravelMinPolicyStartDatePeriod()) {
 				logger.debug(
 						"Process order for {} with order {} with result: exception travel startdate not valid with travel-min-policy-start-date-period={}",

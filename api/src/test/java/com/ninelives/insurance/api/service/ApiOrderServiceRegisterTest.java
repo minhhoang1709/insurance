@@ -51,7 +51,7 @@ public class ApiOrderServiceRegisterTest {
 	
 	@Test
 	public void testTravelPeriodStartDate(){	
-		int policyStartDatePeriodParam1 = 2;
+		int policyStartDatePeriodParam1 = 1;
 		int policyStartDatePeriodParam2 = 0;
 		int configTravelMinPolicyStartDatePeriod = 2;
 		
