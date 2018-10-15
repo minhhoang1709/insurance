@@ -34,6 +34,8 @@ public class Coverage implements Serializable{
     private Boolean isRecommended;
     
     private Boolean isIntroRecommended; //if true then display in wizard
+        
+    private Boolean isLumpSum; //if true then claim will be paid for all family member (no need family selection) 
     
     private String providerCode;
     
@@ -157,6 +159,14 @@ public class Coverage implements Serializable{
 		this.isIntroRecommended = isIntroRecommended;
 	}
 
+	public Boolean getIsLumpSum() {
+		return isLumpSum;
+	}
+
+	public void setIsLumpSum(Boolean isLumpSum) {
+		this.isLumpSum = isLumpSum;
+	}
+
 	public String getProviderCode() {
 		return providerCode;
 	}
@@ -203,10 +213,10 @@ public class Coverage implements Serializable{
 				+ ", recommendation=" + recommendation + ", description=" + description + ", maxLimit=" + maxLimit
 				+ ", familyMaxLimit=" + familyMaxLimit + ", hasBeneficiary=" + hasBeneficiary + ", createdDate="
 				+ createdDate + ", updateDate=" + updateDate + ", status=" + status + ", displayRank=" + displayRank
-				+ ", isRecommended=" + isRecommended + ", isIntroRecommended=" + isIntroRecommended + ", providerCode="
-				+ providerCode + ", coverageOptionId=" + coverageOptionId + ", coverageClaimDocTypes="
-				+ coverageClaimDocTypes + ", coverageCategory=" + coverageCategory + ", coverageOption="
-				+ coverageOption + "]";
+				+ ", isRecommended=" + isRecommended + ", isIntroRecommended=" + isIntroRecommended + ", isLumpSum="
+				+ isLumpSum + ", providerCode=" + providerCode + ", coverageOptionId=" + coverageOptionId
+				+ ", coverageClaimDocTypes=" + coverageClaimDocTypes + ", coverageCategory=" + coverageCategory
+				+ ", coverageOption=" + coverageOption + "]";
 	}
 
 	

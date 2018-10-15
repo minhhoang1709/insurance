@@ -25,6 +25,8 @@ public class CoverageDto {
     
     private Boolean isIntroRecommended;
     
+    private Boolean isLumpSum;
+    
     private List<CoverageClaimDocTypeDto> coverageClaimDocTypes;
     
     private CoverageCategoryDto coverageCategory;
@@ -101,6 +103,14 @@ public class CoverageDto {
 
 	public void setIsIntroRecommended(Boolean isIntroRecommended) {
 		this.isIntroRecommended = isIntroRecommended;
+	}
+
+	public Boolean getIsLumpSum() {
+		return isLumpSum;
+	}
+
+	public void setIsLumpSum(Boolean isLumpSum) {
+		this.isLumpSum = isLumpSum;
 	}
 
 	public List<CoverageClaimDocTypeDto> getCoverageClaimDocTypes() {

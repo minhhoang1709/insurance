@@ -287,7 +287,7 @@ public class ModelMapperAdapter {
 					famDtos.add(toDto(fam));
 				}
 				dto.setFamilies(famDtos);
-			}
+			}			
 			dto.setOrder(toDto(m.getPolicyOrder()));
 		}
 		return dto;
@@ -375,15 +375,16 @@ public class ModelMapperAdapter {
 			CoverageDto covDto = new CoverageDto();
 			covDto.setCoverageId(m.getCoverageId());
 			covDto.setName(m.getCoverageName());
-			covDto.setMaxLimit(m.getCoverageMaxLimit());
+			covDto.setMaxLimit(m.getCoverageMaxLimit());			
 			covDto.setHasBeneficiary(m.getCoverageHasBeneficiary());
+			covDto.setIsLumpSum(m.getIsLumpSum());
 			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
 				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
 				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){
 					covDocTypeDtos.add(toDto(covDocType));
 				}
 				covDto.setCoverageClaimDocTypes(covDocTypeDtos);
-			}
+			}			
 
 			dto.setCoverage(covDto);
 		}				
@@ -429,6 +430,7 @@ public class ModelMapperAdapter {
 			dto.setRecommendation(m.getRecommendation());
 			dto.setIsRecommended(m.getIsRecommended());
 			dto.setIsIntroRecommended(m.getIsIntroRecommended());
+			dto.setIsLumpSum(m.getIsLumpSum());
 			dto.setHasBeneficiary(m.getHasBeneficiary());
 			dto.setMaxLimit(m.getMaxLimit());
 			dto.setFamilyMaxLimit(m.getFamilyMaxLimit());

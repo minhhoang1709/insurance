@@ -315,6 +315,7 @@ public class OrderService {
 					Coverage c = productService.fetchCoverageByCoverageId(pop.getCoverageId()); 
 					pop.setCoverageClaimDocTypes(c.getCoverageClaimDocTypes());
 					pop.setCoverageDisplayRank(c.getDisplayRank());
+					pop.setIsLumpSum(c.getIsLumpSum());
 				}
 				List<PolicyOrderProduct> sortedList = policyOrder.getPolicyOrderProducts().stream().sorted(
 						(o1, o2) -> Integer.compare(o1.getCoverageDisplayRank(), o2.getCoverageDisplayRank()))

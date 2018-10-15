@@ -33,6 +33,7 @@ public class PolicyOrderProduct implements Serializable{
     
     //transient
     private int coverageDisplayRank;
+    private Boolean isLumpSum;
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -128,6 +129,14 @@ public class PolicyOrderProduct implements Serializable{
 
 	public void setCoverageDisplayRank(int coverageDisplayRank) {
 		this.coverageDisplayRank = coverageDisplayRank;
+	}
+
+	public Boolean getIsLumpSum() {
+		return isLumpSum;
+	}
+
+	public void setIsLumpSum(Boolean isLumpSum) {
+		this.isLumpSum = isLumpSum;
 	}
 
 	public List<CoverageClaimDocType> getCoverageClaimDocTypes() {
