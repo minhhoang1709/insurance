@@ -310,7 +310,8 @@ public class ModelMapperAdapter {
 			dto = new ClaimDocumentDto();
 			//dto.setClaimDocumentId(m.getClaimDocumentId());
 			dto.setClaimDocType(toDto(m.getClaimDocType()));
-			dto.setFile(toUserFileDto(m.getFileId()));			
+			dto.setFile(toUserFileDto(m.getFileId()));
+			dto.setExtraAsString(m.getExtra());
 		}
 		return dto;
 	}

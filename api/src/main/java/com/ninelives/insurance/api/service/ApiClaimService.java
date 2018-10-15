@@ -159,14 +159,15 @@ public class ApiClaimService {
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7002_CLAIM_ORDER_INVALID);
 			throw new AppBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, status asuransi Anda tidak valid");
 		}
-		
-		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
-				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
-			logger.debug(
-					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error expired order pass allowed claim period>, exception:<{}>",
-					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);
-			throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER, "Permintaan tidak dapat diproses, batas waktu pengajuan klaim telah terlewati");
-		}
+
+		//test
+//		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
+//				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
+//			logger.debug(
+//					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error expired order pass allowed claim period>, exception:<{}>",
+//					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);
+//			throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER, "Permintaan tidak dapat diproses, batas waktu pengajuan klaim telah terlewati");
+//		}
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimCoverages())){
 			logger.debug(
@@ -311,6 +312,9 @@ public class ApiClaimService {
 				doc.setClaimDocType(productService.fetchClaimDocTypeByClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId()));
 				doc.setFileId(c.getFile().getFileId());
 				doc.setUserFile(userFileMap.get(c.getFile().getFileId()));
+				if(c.getExtra()!=null){
+					doc.setExtra(c.getExtra().toString());
+				}
 				claimDocs.add(doc);
 			}
 			claim.setPolicyClaimDocuments(claimDocs);		
@@ -329,9 +333,10 @@ public class ApiClaimService {
 
 			/*
 			 *	claim for family(TRAVEL related)
-			 *	as Sep 2018, select one of these options:
+			 *	as Oct 2018, select one of these options:
 			 *  1. User as claimant
 			 *  2. 1 family member as claimant
+			 *  3. All family member as claimant
 			 */
 			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC) ||
 					order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){

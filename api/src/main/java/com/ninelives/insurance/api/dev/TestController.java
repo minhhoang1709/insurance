@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.dev;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import com.ninelives.insurance.api.service.ApiUserService;
 import com.ninelives.insurance.api.service.ApiVoucherService;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
+import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimDocumentMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.core.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
@@ -52,6 +54,7 @@ import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
+import com.ninelives.insurance.model.PolicyClaimDocument;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
@@ -89,6 +92,7 @@ public class TestController {
 	@Autowired ApiUserService apiUserService;
 	@Autowired UserMapper userMapper;
 	
+	@Autowired PolicyClaimDocumentMapper docMapper;
 	
 	@Autowired FluentProducerTemplate producerTemplate;
 	
@@ -97,6 +101,21 @@ public class TestController {
 	
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
+	
+	@RequestMapping("/test/claimdoc")
+	@ResponseBody
+	public String testInsertClaimDoc(){
+		List<PolicyClaimDocument> docs = new ArrayList<>();
+		docs.add(new PolicyClaimDocument());
+		docs.get(0).setClaimId("test-001");
+		docs.get(0).setClaimDocTypeId("DT004");
+		docs.get(0).setFileId(12321314L);
+		docs.get(0).setExtra("{\"familySubId\": 2, \"familyName\": \"Anak ketiga\"}");
+		
+		docMapper.insertList(docs);
+		
+		return "test insert";
+	}
 	
 	@PostMapping("/test/aswata/orderconfirm")
 	@ResponseBody
