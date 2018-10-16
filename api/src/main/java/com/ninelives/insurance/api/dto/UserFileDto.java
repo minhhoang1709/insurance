@@ -17,5 +17,9 @@ public class UserFileDto {
 	public void setFileId(Long fileId) {
 		this.fileId = fileId;
 	}
+	@Override
+	public String toString() {
+		return "UserFileDto [fileId=" + fileId + "]";
+	}
 	
 }

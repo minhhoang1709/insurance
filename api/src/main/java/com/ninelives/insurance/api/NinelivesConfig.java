@@ -12,7 +12,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -51,6 +53,20 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@Validated
 	public NinelivesConfigProperties config(){
 		return new NinelivesConfigProperties();
+	}
+	
+	/*
+	 * For debugging on development
+	 */
+	@Bean
+	@Profile("dev")
+	public CommonsRequestLoggingFilter requestLoggingFilter() {
+	    CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
+	    loggingFilter.setIncludeClientInfo(true);
+	    loggingFilter.setIncludeQueryString(true);
+	    loggingFilter.setIncludePayload(true);
+	    loggingFilter.setMaxPayloadLength(10000);
+	    return loggingFilter;
 	}
 	
 //	@Bean
