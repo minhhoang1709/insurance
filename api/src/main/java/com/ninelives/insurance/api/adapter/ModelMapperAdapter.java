@@ -19,6 +19,7 @@ import com.ninelives.insurance.api.dto.ClaimCoverageDto;
 import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
+import com.ninelives.insurance.api.dto.ClaimDocumentExtraDto;
 import com.ninelives.insurance.api.dto.CoverageCategoryDto;
 import com.ninelives.insurance.api.dto.CoverageClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
@@ -46,6 +47,7 @@ import com.ninelives.insurance.model.PolicyClaimBankAccount;
 import com.ninelives.insurance.model.PolicyClaimCoverage;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyClaimDocument;
+import com.ninelives.insurance.model.PolicyClaimDocumentExtra;
 import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
@@ -311,7 +313,15 @@ public class ModelMapperAdapter {
 			//dto.setClaimDocumentId(m.getClaimDocumentId());
 			dto.setClaimDocType(toDto(m.getClaimDocType()));
 			dto.setFile(toUserFileDto(m.getFileId()));
-			dto.setExtraAsString(m.getExtra());
+			dto.setExtra(toDto(m.getExtra()));
+		}
+		return dto;
+	}
+	public ClaimDocumentExtraDto toDto(PolicyClaimDocumentExtra m){
+		ClaimDocumentExtraDto dto = null;
+		if(m!=null){
+			dto = new ClaimDocumentExtraDto();
+			dto.setFamily(toDto(m.getFamily()));
 		}
 		return dto;
 	}

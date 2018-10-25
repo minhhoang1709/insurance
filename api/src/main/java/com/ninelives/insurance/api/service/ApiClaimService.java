@@ -2,7 +2,6 @@ package com.ninelives.insurance.api.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -43,6 +41,7 @@ import com.ninelives.insurance.model.PolicyClaimBankAccount;
 import com.ninelives.insurance.model.PolicyClaimCoverage;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyClaimDocument;
+import com.ninelives.insurance.model.PolicyClaimDocumentExtra;
 import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderFamily;
@@ -53,7 +52,6 @@ import com.ninelives.insurance.ref.ClaimDocUsageType;
 import com.ninelives.insurance.ref.ClaimStatus;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
-import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.PolicyStatus;
 
 @Service
@@ -160,7 +158,7 @@ public class ApiClaimService {
 			throw new AppBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, status asuransi Anda tidak valid");
 		}
 
-		//test
+		//test, remove the comment after test
 //		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
 //				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
 //			logger.debug(
@@ -168,6 +166,7 @@ public class ApiClaimService {
 //					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);
 //			throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER, "Permintaan tidak dapat diproses, batas waktu pengajuan klaim telah terlewati");
 //		}
+		//test -- end
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimCoverages())){
 			logger.debug(
@@ -313,8 +312,17 @@ public class ApiClaimService {
 				doc.setFileId(c.getFile().getFileId());
 				doc.setUserFile(userFileMap.get(c.getFile().getFileId()));
 				if(c.getExtra()!=null){
-					doc.setExtra(c.getExtra().toString());
+					if(c.getExtra().getFamily()!=null){
+						doc.setExtra(new PolicyClaimDocumentExtra());
+						doc.getExtra().setFamily(new PolicyClaimFamily());						
+						doc.getExtra().getFamily().setSubId(c.getExtra().getFamily().getSubId());
+						doc.getExtra().getFamily().setName(c.getExtra().getFamily().getName());
+						doc.getExtra().getFamily().setBirthDate(c.getExtra().getFamily().getBirthDate().toLocalDate());
+						doc.getExtra().getFamily().setGender(c.getExtra().getFamily().getGender());
+						doc.getExtra().getFamily().setRelationship(c.getExtra().getFamily().getRelationship());
+					}
 				}
+
 				claimDocs.add(doc);
 			}
 			claim.setPolicyClaimDocuments(claimDocs);		

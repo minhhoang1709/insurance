@@ -14,7 +14,9 @@ public class PolicyClaimDocument implements Serializable{
     
     private Long fileId;
         
-    private String extra;
+    //private String extra;
+    
+    private PolicyClaimDocumentExtra extra;
 
     private LocalDateTime createdDate;
 
@@ -55,12 +57,11 @@ public class PolicyClaimDocument implements Serializable{
 	public void setFileId(Long fileId) {
 		this.fileId = fileId;
 	}
-
-	public String getExtra() {
+	public PolicyClaimDocumentExtra getExtra() {
 		return extra;
 	}
 
-	public void setExtra(String extra) {
+	public void setExtra(PolicyClaimDocumentExtra extra) {
 		this.extra = extra;
 	}
 

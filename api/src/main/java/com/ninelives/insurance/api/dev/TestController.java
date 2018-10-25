@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.dev;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import com.ninelives.insurance.core.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.core.provider.insurance.InsuranceProviderException;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.service.ClaimService;
 import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.OrderService;
@@ -55,6 +57,8 @@ import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 import com.ninelives.insurance.model.PolicyClaimDocument;
+import com.ninelives.insurance.model.PolicyClaimDocumentExtra;
+import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
@@ -63,6 +67,7 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRespons
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.route.EndPointRef;
 
 @Controller
@@ -81,6 +86,7 @@ public class TestController {
 	@Autowired VoucherService voucherService;
 	@Autowired InsuranceService insuranceService;
 	@Autowired OrderService orderService;
+	@Autowired ClaimService claimService;
 	@Autowired StorageProvider storageService;
 	
 	@Autowired AswataInsuranceProvider aswata;
@@ -102,15 +108,37 @@ public class TestController {
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
+	
+	@RequestMapping(value="/test/fullclaim/{claimId}",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public PolicyClaim<PolicyClaimDetailAccident> getClaimAccidentByClaimId (@RequestAttribute ("authUserId") String authUserId,
+			@PathVariable("claimId") String claimId) throws AppNotFoundException{
+//		logger.debug("Terima /claims GET untuk authuser {} ", authUserId);
+//		logger.debug("param data: {}", claimId);
+//		logger.debug("---");		
+		
+		PolicyClaim<PolicyClaimDetailAccident> claimDto = claimService.fetchClaimByClaimId(authUserId, claimId);
+		if(claimDto==null){
+			throw new AppNotFoundException(ErrorCode.ERR7001_CLAIM_NOT_FOUND,"Klaim tidak ditemukan");
+		}
+		return claimDto;
+	}
 	@RequestMapping("/test/claimdoc")
 	@ResponseBody
 	public String testInsertClaimDoc(){
 		List<PolicyClaimDocument> docs = new ArrayList<>();
 		docs.add(new PolicyClaimDocument());
-		docs.get(0).setClaimId("test-001");
+		docs.get(0).setClaimId("test-002");
 		docs.get(0).setClaimDocTypeId("DT004");
 		docs.get(0).setFileId(12321314L);
-		docs.get(0).setExtra("{\"familySubId\": 2, \"familyName\": \"Anak ketiga\"}");
+		//docs.get(0).setExtra("{\"familySubId\": 2, \"familyName\": \"Anak ketiga\"}");
+		docs.get(0).setExtra(new PolicyClaimDocumentExtra());
+		docs.get(0).getExtra().setFamily(new PolicyClaimFamily());
+		docs.get(0).getExtra().getFamily().setSubId(1);
+		docs.get(0).getExtra().getFamily().setName("Test nama family");
+		docs.get(0).getExtra().getFamily().setRelationship(FamilyRelationship.ANAK);
+		docs.get(0).getExtra().getFamily().setBirthDate(LocalDate.now());
 		
 		docMapper.insertList(docs);
 		
