@@ -97,6 +97,19 @@ public class ModelMapperAdapter {
 		return dto;
 	}
 	
+	public PolicyClaimFamilyDto toPolicyClaimFamilyDto(PolicyOrderFamily m){
+		PolicyClaimFamilyDto dto = null;
+		if(m!=null){
+			dto = new PolicyClaimFamilyDto();
+			dto.setSubId(m.getSubId());
+			dto.setName(m.getName());
+			dto.setBirthDate(m.getBirthDate()!=null?m.getBirthDate().atStartOfDay():null);
+			dto.setRelationship(m.getRelationship());
+			dto.setGender(m.getGender());
+		}
+		return dto;
+	}
+	
 	public CoverageOptionDto toDto(CoverageOption m){
 		CoverageOptionDto dto = null;
 		if(m!=null){

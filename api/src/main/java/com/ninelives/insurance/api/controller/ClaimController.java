@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
+import com.ninelives.insurance.api.dto.ClaimDocumentDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
@@ -59,6 +60,18 @@ public class ClaimController {
 //	}
 //	
 	
+	@RequestMapping(value="/claimDocuments",
+			method={ RequestMethod.POST })
+	@ResponseBody
+	public List<ClaimDocumentDto> listRequiredClaimDocumentDtos (@RequestAttribute ("authUserId") String authUserId,
+			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
+			@RequestBody @Valid AccidentClaimDto claimDto) throws AppException{
+		if(isValidateOnly){
+			return apiClaimService.requiredClaimDocumentDtos(authUserId, claimDto);
+		}else{
+			throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR,"Parameter not supported");
+		}
+	}
 	
 	@RequestMapping(value="/claims",
 			method={ RequestMethod.POST })

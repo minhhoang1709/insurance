@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum ClaimDocUsageType {
 	FAMILY_CARD("familyCard"),
 	REGULAR("regular"),
-	FAMILY_ID_CARD("familyIdCard")
+	FAMILY_ID_CARD("familyIdCard"),
+	FAMILY_PASSPORT("familyPassport")
 	;
 	
 	static final Map<String, ClaimDocUsageType> lookup = new HashMap<>();

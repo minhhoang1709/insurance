@@ -8,6 +8,7 @@ public class ClaimDocumentDto {
 	private UserFileDto file;
 	private ClaimDocTypeDto claimDocType;	
 	private ClaimDocumentExtraDto extra;	
+	private Boolean isMandatory;
 
 	public Long getClaimDocumentId() {
 		return claimDocumentId;
@@ -32,6 +33,12 @@ public class ClaimDocumentDto {
 	}
 	public void setExtra(ClaimDocumentExtraDto extra) {
 		this.extra = extra;
+	}	
+	public Boolean getIsMandatory() {
+		return isMandatory;
+	}
+	public void setIsMandatory(Boolean isMandatory) {
+		this.isMandatory = isMandatory;
 	}
 	@Override
 	public String toString() {

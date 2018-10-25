@@ -24,6 +24,10 @@ import com.ninelives.insurance.ref.FileUseType;
 @Service
 public class ClaimService {
 	private static final Logger logger = LoggerFactory.getLogger(ClaimService.class);
+	
+	public static final String CLAIM_DOC_TYPE_FAMILY_CARD = "DT011";
+	public static final String CLAIM_DOC_TYPE_FAMILY_ID_CARD = "ID001";
+	public static final String CLAIM_DOC_TYPE_FAMILY_PASSPORT = "ID002";
 
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	

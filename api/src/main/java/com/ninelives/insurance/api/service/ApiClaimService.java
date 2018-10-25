@@ -2,10 +2,12 @@ package com.ninelives.insurance.api.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +26,7 @@ import com.ninelives.insurance.api.dto.ClaimBankAccountDto;
 import com.ninelives.insurance.api.dto.ClaimCoverageDto;
 import com.ninelives.insurance.api.dto.ClaimDetailAccidentAddressDto;
 import com.ninelives.insurance.api.dto.ClaimDocumentDto;
+import com.ninelives.insurance.api.dto.ClaimDocumentExtraDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
@@ -190,7 +193,7 @@ public class ApiClaimService {
 		boolean isClaimHasFamily = false;
 		if(!CollectionUtils.isEmpty(claimDto.getFamilies())){
 			isClaimHasFamily = true;
-		}		
+		}
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimDocuments())){
 			logger.debug(
@@ -223,17 +226,9 @@ public class ApiClaimService {
 		}
 		
 		//mandatory doc check exists
-		Map<String, Boolean> docTypeMap = extractDocTypeMap(claimDto.getClaimCoverages(), isClaimHasFamily);		
-		for(Map.Entry<String, Boolean> doc: docTypeMap.entrySet()){
-			if(doc.getValue()==true){
-				if(!docFromClaimSet.contains(doc.getKey())){
-					logger.debug(
-							"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error missing mandatory doc>, exception:<{}>, doc:<{}>",
-							isValidateOnly, userId, claimDto, ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY, doc.getKey());
-					throw new AppBadRequestException(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
-				}
-			}
-		}
+		//validateMandatoryClaimDocument(userId, claimDto,order,docFromClaimSet);
+		//TODO: uncomment validateMandatoryClaimDocument and implement it
+		
 		
 		//check that all file already uploaded for each claim document
 		//int uploadedFileCount = fileUploadService.countUploadedTempFile(userId, fileIds);
@@ -388,6 +383,29 @@ public class ApiClaimService {
 		return claim;
 	}
 	
+	public List<ClaimDocumentDto> requiredClaimDocumentDtos(final String userId, final AccidentClaimDto claimDto) throws AppException{
+		if(claimDto==null || claimDto.getOrder() == null || StringUtils.isEmpty(claimDto.getOrder().getOrderId())){
+			logger.debug("Process requiredClaimDocumentDtos  claim:<{}>, result:<error empty data>, exception:<{}>", claimDto, ErrorCode.ERR7000_CLAIM_INVALID);
+			throw new AppBadRequestException(ErrorCode.ERR7000_CLAIM_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali data klaim Anda");
+		}
+		
+		PolicyOrder order = orderService.fetchOrderByOrderId(userId, claimDto.getOrder().getOrderId());
+		
+		if(order==null){
+			logger.debug("Process requiredClaimDocumentDtos claim:<{}>, result:<error order not found>, exception:<{}>", claimDto, ErrorCode.ERR7002_CLAIM_ORDER_INVALID);
+			throw new AppBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, asuransi Anda tidak ditemukan");			
+		}
+		
+		if(CollectionUtils.isEmpty(claimDto.getClaimCoverages())){
+			logger.debug(
+					"Process requiredClaimDocumentDtosclaim:<{}>, result:<error empty claim coverage>, exception:<{}>",
+					claimDto, ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID);
+			throw new AppBadRequestException(ErrorCode.ERR7003_CLAIM_COVERAGE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali pilihan jaminan Anda");
+		}
+		
+		return requiredClaimDocumentDtos(claimDto, order);
+		
+	}
 	private boolean isPolicyClaimBankAccountIsValid(ClaimBankAccountDto cba) {
 		if(cba == null
 				||StringUtils.isEmpty(cba.getName())
@@ -411,6 +429,284 @@ public class ApiClaimService {
 		
 		return true;
 	}
+	/*
+	 * test list
+	 * - mandatory doctype ketemu notmandatory doctypes, dia berubah jadi mandatory
+	 */
+	/*
+	 * dev list
+	 * - return non-family (regular) case, test it with test class
+	 * - return non-family (regular) case, test it with test class
+	 * x comment out
+	 */
+	public List<ClaimDocumentDto> requiredClaimDocumentDtos(final AccidentClaimDto claimDto, final PolicyOrder order) throws AppBadRequestException {
+		boolean isClaimHasFamily = false;
+		if (!CollectionUtils.isEmpty(claimDto.getFamilies())) {
+			isClaimHasFamily = true;
+		}
+		boolean isAnyLumpSum = false;
+		Map<String, ClaimDocumentDto> claimDocMap = new LinkedHashMap<>();
+		for (ClaimCoverageDto ccd : claimDto.getClaimCoverages()) {
+			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
+			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
+				if (ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.REGULAR)) {
+					ClaimDocumentDto claimDocDto = claimDocMap.get(ccdt.getClaimDocType().getClaimDocTypeId());
+					if(claimDocDto==null){
+						claimDocDto = new ClaimDocumentDto();
+						claimDocDto.setClaimDocType(modelMapperAdapter.toDto(ccdt.getClaimDocType()));
+						claimDocDto.setIsMandatory(ccdt.getIsMandatory());
+						claimDocMap.put(ccdt.getClaimDocType().getClaimDocTypeId(), claimDocDto);
+					}else{
+						claimDocDto.setIsMandatory(claimDocDto.getIsMandatory() || ccdt.getIsMandatory()); 
+					}
+				}
+				if(c.getIsLumpSum()){
+					isAnyLumpSum = true;
+				}
+			}
+		}
+				
+		List<ClaimDocumentDto> claimDocList = new ArrayList<>();
+		boolean isFamilyCardRequired = false;
+		if(order.getIsFamily()){
+			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+				if(isAnyLumpSum){
+					//for each family in order, add paspor
+					for(PolicyOrderFamily fam: order.getPolicyOrderFamilies()){
+						ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+						claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+								.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_PASSPORT)));
+						claimDocDto.setIsMandatory(true);
+						claimDocDto.setExtra(new ClaimDocumentExtraDto());
+						claimDocDto.getExtra().setFamily(modelMapperAdapter.toPolicyClaimFamilyDto(fam));
+						claimDocList.add(claimDocDto);
+					}
+					//add kartu keluarga
+					isFamilyCardRequired=true;
+				}else if (isClaimHasFamily){
+					//for each family in claim, add paspor
+					for(PolicyClaimFamilyDto fam: claimDto.getFamilies()){
+						for(PolicyOrderFamily orderFam: order.getPolicyOrderFamilies()){
+							if(orderFam.getSubId().equals(fam.getSubId())){
+								ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+								claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+										.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_PASSPORT)));
+								claimDocDto.setIsMandatory(true);
+								claimDocDto.setExtra(new ClaimDocumentExtraDto());
+								claimDocDto.getExtra().setFamily(modelMapperAdapter.toPolicyClaimFamilyDto(orderFam));
+								claimDocList.add(claimDocDto);
+							}
+						}
+//						ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+//						claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+//								.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_PASSPORT)));
+//						claimDocDto.setIsMandatory(true);
+//						claimDocDto.setExtra(new ClaimDocumentExtraDto());
+//						claimDocDto.getExtra().setFamily(fam);
+//						claimDocList.add(claimDocDto);
+					}
+					//add kartu keluarga
+					isFamilyCardRequired=true;
+				}
+			}else if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+				if(isAnyLumpSum){
+					//for each family in order, if its adult, check ktp exists
+					for(PolicyOrderFamily fam: order.getPolicyOrderFamilies()){
+						long age = ChronoUnit.YEARS.between(fam.getBirthDate(), order.getPolicyStartDate());
+						if(age >= config.getOrder().getFamilyAdultMinimumAge()){
+							//adult need ktp
+							ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+							claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+									.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_ID_CARD)));
+							claimDocDto.setIsMandatory(true);
+							claimDocDto.setExtra(new ClaimDocumentExtraDto());
+							claimDocDto.getExtra().setFamily(modelMapperAdapter.toPolicyClaimFamilyDto(fam));
+							claimDocList.add(claimDocDto);
+						}
+					}
+					//add kartu keluarga
+					isFamilyCardRequired=true;					
+				}else if (isClaimHasFamily){
+					//if claim family is adult, check ktp exists
+					for(PolicyClaimFamilyDto fam: claimDto.getFamilies()){
+						for(PolicyOrderFamily orderFam: order.getPolicyOrderFamilies()){
+							if(orderFam.getSubId().equals(fam.getSubId())){
+								long age = ChronoUnit.YEARS.between(orderFam.getBirthDate(), order.getPolicyStartDate());
+								if(age >= config.getOrder().getFamilyAdultMinimumAge()){
+									//adult need ktp
+									ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+									claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+											.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_ID_CARD)));
+									claimDocDto.setIsMandatory(true);
+									claimDocDto.setExtra(new ClaimDocumentExtraDto());
+									claimDocDto.getExtra().setFamily(modelMapperAdapter.toPolicyClaimFamilyDto(orderFam));
+									claimDocList.add(claimDocDto);
+								}
+							}
+						}
+//						long age = ChronoUnit.YEARS.between(fam.getBirthDate(), order.getPolicyStartDate());
+//						if(age >= config.getOrder().getFamilyAdultMinimumAge()){
+//							ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+//							claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+//									.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_ID_CARD)));
+//							claimDocDto.setIsMandatory(true);
+//							claimDocDto.setExtra(new ClaimDocumentExtraDto());
+//							claimDocDto.getExtra().setFamily(fam);
+//							claimDocList.add(claimDocDto);
+//						}						
+					}
+					//cek kartu keluarga
+					isFamilyCardRequired=true;
+				}
+			}
+		}
+		if(isFamilyCardRequired){
+			ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
+			claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
+					.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_CARD)));
+			claimDocDto.setIsMandatory(true);
+			claimDocList.add(claimDocDto);
+		}
+		
+		claimDocList.addAll(claimDocMap.values());
+		
+		return claimDocList;
+	}
+	
+//	protected void validateMandatoryClaimDocument2(final String userId, final AccidentClaimDto claimDto,
+//			final PolicyOrder order, final Set<String> docFromClaimSet) throws AppBadRequestException {
+//		boolean isClaimHasFamily = false;
+//		if (!CollectionUtils.isEmpty(claimDto.getFamilies())) {
+//			isClaimHasFamily = true;
+//		}		
+//		
+//		boolean isAnyLumpSum = false;
+//		Set<String> docTypeSet = new HashSet<>();
+//		for (ClaimCoverageDto ccd : claimDto.getClaimCoverages()) {
+//			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
+//			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
+//				if (ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.REGULAR)) {
+//					//dont check for family card (use custom logic instead)
+//					if(ccdt.getIsMandatory()){
+//						if(!docTypeSet.contains(ccdt.getClaimDocTypeId())){
+//							docTypeSet.add(ccdt.getClaimDocTypeId());
+//						}
+//					}
+//				}
+//				if(c.getIsLumpSum()){
+//					isAnyLumpSum = true;
+//				}
+//			}
+//		}
+//		
+//		//for the document, havent tested yet
+//		if(order.getIsFamily()){
+//			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+//				if(isAnyLumpSum){
+//					//for each family in order, cek paspor exists
+//					//cek kartu keluarga
+//				}else if (isClaimHasFamily){
+//					//for each family in claim, cek paspor exists
+//					//cek kartu keluarga
+//				}
+//			}else if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+//				if(isAnyLumpSum){
+//					//for each family in order, if its adult, check ktp exists
+//					//cek kartu keluarga
+//				}else if (isClaimHasFamily){
+//					//if claim family is adult, check ktp exists
+//					//cek kartu keluarga
+//				}
+//			}
+//		}
+//		
+//		//for all others mandatory doc, check that doc exists
+//		
+//	}
+	
+//	protected void validateMandatoryClaimDocument(final String userId, final AccidentClaimDto claimDto,
+//			final PolicyOrder order, final Set<String> docFromClaimSet) throws AppBadRequestException {
+//		boolean isClaimHasFamily = false;
+//		if (!CollectionUtils.isEmpty(claimDto.getFamilies())) {
+//			isClaimHasFamily = true;
+//		}
+//
+//		Map<String, Boolean> docTypeMap = extractDocTypeMap(claimDto.getClaimCoverages(), isClaimHasFamily);
+//		for (Map.Entry<String, Boolean> doc : docTypeMap.entrySet()) {
+//			if (doc.getValue() == true) {
+//				if (!docFromClaimSet.contains(doc.getKey())) {
+//					logger.debug(
+//							"Process claim, userId:<{}>, claim:<{}>, result:<error missing mandatory doc>, exception:<{}>, doc:<{}>",
+//							userId, claimDto, ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY, doc.getKey());
+//					throw new AppBadRequestException(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY,
+//							"Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
+//				}
+//			}
+//		}
+//		
+//		
+//		/*
+//		 * For order with family, if its a travel insurance, then check for ktp/pasport
+//		 */
+//		//iterate claim coverage, fetch coverage to check isclaimlumpsum
+//		//or somehow in extractdoctypemap, we also return isAnyClaimLumpSum
+//		//or extractdoctypemap dipindah ke sini aja
+//		//or 
+//		if(order.getIsFamily()){
+//			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+//				if(isClaimHasFamily){
+//					
+//					//for family identification, ask based on the number of family
+//				}
+//			}
+//		}
+//	}
+	
+//	protected Map<String, Integer> mandatoryDocTypes(PolicyOrder order, List<ClaimCoverageDto> ccds, List<PolicyClaimFamilyDto> claimFamilies) {
+//		boolean isClaimHasFamily = false;
+//		if (!CollectionUtils.isEmpty(claimFamilies)) {
+//			isClaimHasFamily = true;
+//		}
+//		
+//		//kalau mandatory set as 1
+//		
+//		/*
+//		 * If document is mandatory, set the counter as 1
+//		 */
+//		boolean isAnyLumpSum = false;
+//		Map<String, Integer> docTypeMap = new HashMap<>();
+//		for (ClaimCoverageDto ccd : ccds) {
+//			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
+//			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
+//				if (!ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.FAMILY_CARD)) {
+//					//dont check for family card (use custom logic instead)
+//					if(ccdt.getIsMandatory()){
+//						if(!docTypeMap.containsKey(ccdt.getClaimDocTypeId())){
+//							docTypeMap.put(ccdt.getClaimDocTypeId(), 1);
+//						}
+//					}
+//				}
+//				if(c.getIsLumpSum()){
+//					isAnyLumpSum = true;
+//				}
+//			}
+//		}
+//		
+//		/*
+//		 * Special case for travel insurance, ktp/paspor + kartu keluarga of family is required for certain type of coverage 
+//		 * or if the claimant includes family
+//		 */
+//		if(order.getIsFamily()){
+//			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+//				if(isAnyLumpSum){
+//					//List<ClaimDocType> familyIdCards = productService.fetchClaimDocTypeByUsageType(ClaimDocUsageType.FAMILY_ID_CARD);
+//				}
+//			}
+//		}
+//		
+//		
+//		return docTypeMap;
+//	}
 	
 	protected Map<String, Boolean> extractDocTypeMap(List<ClaimCoverageDto> ccds, boolean isClaimHasFamily) {
 		Map<String, Boolean> docTypeMap = new HashMap<>();

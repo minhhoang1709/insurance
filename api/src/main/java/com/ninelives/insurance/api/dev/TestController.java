@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
+import com.ninelives.insurance.api.dto.ClaimCoverageDto;
+import com.ninelives.insurance.api.dto.ClaimDocumentDto;
+import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.RegistrationDto;
@@ -35,6 +38,7 @@ import com.ninelives.insurance.api.service.ApiOrderService;
 import com.ninelives.insurance.api.service.TestService;
 import com.ninelives.insurance.api.service.ApiUserService;
 import com.ninelives.insurance.api.service.ApiVoucherService;
+import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimDocumentMapper;
@@ -108,6 +112,18 @@ public class TestController {
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
+	@GetMapping("/test/claimdoccheck")
+	@ResponseBody
+	public List<ClaimDocumentDto> testClaimDocCheck() throws AppBadRequestException{
+		PolicyOrder order = orderService.fetchOrderByOrderId("1a122c4d03a047f191438a34d283ac78", "5df28d70-d553-4618-8dd2-d2a7107ec805");
+		
+		AccidentClaimDto dto = new AccidentClaimDto();
+		dto.setClaimCoverages(new ArrayList<ClaimCoverageDto>());
+		dto.getClaimCoverages().add(new ClaimCoverageDto());
+		dto.getClaimCoverages().get(0).setCoverage(new CoverageDto());
+		dto.getClaimCoverages().get(0).getCoverage().setCoverageId("103003");
+		return apiClaimService.requiredClaimDocumentDtos(dto, order);
+	}
 	
 	@RequestMapping(value="/test/fullclaim/{claimId}",
 			method={ RequestMethod.GET })
