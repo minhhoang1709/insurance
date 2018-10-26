@@ -112,18 +112,18 @@ public class TestController {
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
-	@GetMapping("/test/claimdoccheck")
-	@ResponseBody
-	public List<ClaimDocumentDto> testClaimDocCheck() throws AppBadRequestException{
-		PolicyOrder order = orderService.fetchOrderByOrderId("1a122c4d03a047f191438a34d283ac78", "5df28d70-d553-4618-8dd2-d2a7107ec805");
-		
-		AccidentClaimDto dto = new AccidentClaimDto();
-		dto.setClaimCoverages(new ArrayList<ClaimCoverageDto>());
-		dto.getClaimCoverages().add(new ClaimCoverageDto());
-		dto.getClaimCoverages().get(0).setCoverage(new CoverageDto());
-		dto.getClaimCoverages().get(0).getCoverage().setCoverageId("103003");
-		return apiClaimService.requiredClaimDocumentDtos(dto, order);
-	}
+//	@GetMapping("/test/claimdoccheck")
+//	@ResponseBody
+//	public List<ClaimDocumentDto> testClaimDocCheck() throws AppBadRequestException{
+//		PolicyOrder order = orderService.fetchOrderByOrderId("1a122c4d03a047f191438a34d283ac78", "5df28d70-d553-4618-8dd2-d2a7107ec805");
+//		
+//		AccidentClaimDto dto = new AccidentClaimDto();
+//		dto.setClaimCoverages(new ArrayList<ClaimCoverageDto>());
+//		dto.getClaimCoverages().add(new ClaimCoverageDto());
+//		dto.getClaimCoverages().get(0).setCoverage(new CoverageDto());
+//		dto.getClaimCoverages().get(0).getCoverage().setCoverageId("103003");
+//		return apiClaimService.requiredClaimDocumentDtos(dto, order);
+//	}
 	
 	@RequestMapping(value="/test/fullclaim/{claimId}",
 			method={ RequestMethod.GET })

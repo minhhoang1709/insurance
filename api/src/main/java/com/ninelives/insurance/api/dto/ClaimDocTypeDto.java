@@ -34,6 +34,31 @@ public class ClaimDocTypeDto {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((claimDocTypeId == null) ? 0 : claimDocTypeId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClaimDocTypeDto other = (ClaimDocTypeDto) obj;
+		if (claimDocTypeId == null) {
+			if (other.claimDocTypeId != null)
+				return false;
+		} else if (!claimDocTypeId.equals(other.claimDocTypeId))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "ClaimDocTypeDto [claimDocTypeId=" + claimDocTypeId + ", name=" + name + "]";
 	}

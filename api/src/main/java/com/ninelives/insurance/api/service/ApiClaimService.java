@@ -435,7 +435,7 @@ public class ApiClaimService {
 	 * - return non-family (regular) case, test it with test class
 	 * x comment out
 	 */
-	public List<ClaimDocumentDto> requiredClaimDocumentDtos(final AccidentClaimDto claimDto, final PolicyOrder order) throws AppBadRequestException {
+	protected List<ClaimDocumentDto> requiredClaimDocumentDtos(final AccidentClaimDto claimDto, final PolicyOrder order) {
 		boolean isClaimHasFamily = false;
 		if (!CollectionUtils.isEmpty(claimDto.getFamilies())) {
 			isClaimHasFamily = true;
@@ -464,8 +464,8 @@ public class ApiClaimService {
 				
 		List<ClaimDocumentDto> claimDocList = new ArrayList<>();
 		boolean isFamilyCardRequired = false;
-		if(order.getIsFamily()){
-			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+		if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+			if(order.getIsFamily()){
 				if(isAnyLumpSum){
 					//for each family in order, add paspor
 					for(PolicyOrderFamily fam: order.getPolicyOrderFamilies()){
@@ -497,7 +497,9 @@ public class ApiClaimService {
 					//add kartu keluarga
 					isFamilyCardRequired=true;
 				}
-			}else if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+			}			
+		}else if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
+			if(order.getIsFamily()){
 				if(isAnyLumpSum){
 					//for each family in order, if its adult, check ktp exists
 					for(PolicyOrderFamily fam: order.getPolicyOrderFamilies()){
@@ -537,8 +539,9 @@ public class ApiClaimService {
 					//cek kartu keluarga
 					isFamilyCardRequired=true;
 				}
-			}
+			}			
 		}
+					
 		if(isFamilyCardRequired){
 			ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
 			claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
