@@ -3,19 +3,12 @@ package com.ninelives.insurance.api.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClaimDocumentDto {
-	private Long claimDocumentId;
+public class ClaimDocumentDto {	
 	private UserFileDto file;
 	private ClaimDocTypeDto claimDocType;	
-	private ClaimDocumentExtraDto extra;	
 	private Boolean isMandatory;
-
-	public Long getClaimDocumentId() {
-		return claimDocumentId;
-	}
-	public void setClaimDocumentId(Long claimDocumentId) {
-		this.claimDocumentId = claimDocumentId;
-	}
+	private ClaimDocumentExtraDto extra;
+	
 	public UserFileDto getFile() {
 		return file;
 	}
@@ -40,10 +33,11 @@ public class ClaimDocumentDto {
 	public void setIsMandatory(Boolean isMandatory) {
 		this.isMandatory = isMandatory;
 	}
+	
 	@Override
 	public String toString() {
-		return "ClaimDocumentDto [claimDocumentId=" + claimDocumentId + ", file=" + file + ", claimDocType="
-				+ claimDocType + ", extra=" + extra + "]";
+		return "ClaimDocumentDto [file=" + file + ", claimDocType=" + claimDocType + ", isMandatory=" + isMandatory
+				+ ", extra=" + extra + "]";
 	}
 	
 }
