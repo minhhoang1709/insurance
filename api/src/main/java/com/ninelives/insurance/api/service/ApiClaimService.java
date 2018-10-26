@@ -161,15 +161,13 @@ public class ApiClaimService {
 			throw new AppBadRequestException(ErrorCode.ERR7002_CLAIM_ORDER_INVALID, "Permintaan tidak dapat diproses, status asuransi Anda tidak valid");
 		}
 
-		//test, remove the comment after test
-//		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
-//				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
-//			logger.debug(
-//					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error expired order pass allowed claim period>, exception:<{}>",
-//					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);
-//			throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER, "Permintaan tidak dapat diproses, batas waktu pengajuan klaim telah terlewati");
-//		}
-		//test -- end
+		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
+				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
+			logger.debug(
+					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error expired order pass allowed claim period>, exception:<{}>",
+					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);
+			throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER, "Permintaan tidak dapat diproses, batas waktu pengajuan klaim telah terlewati");
+		}
 		
 		if(CollectionUtils.isEmpty(claimDto.getClaimCoverages())){
 			logger.debug(
@@ -201,10 +199,9 @@ public class ApiClaimService {
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7004_CLAIM_DOCUMENT_EMPTY);
 			throw new AppBadRequestException(ErrorCode.ERR7004_CLAIM_DOCUMENT_EMPTY, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 		}
-		//logger.debug("Policyproducts from order adalah {}", order.getPolicyOrderProducts());
 		
 		//check that document/file is in claim
-		Set<String> docFromClaimSet = new HashSet<>();
+		//Set<String> docFromClaimSet = new HashSet<>(); //commentout: because unused?
 		List<Long> fileIds = new ArrayList<>();
 		int claimDocCount = 0;
 		for(ClaimDocumentDto cd: claimDto.getClaimDocuments()){
@@ -214,15 +211,11 @@ public class ApiClaimService {
 						isValidateOnly, userId, claimDto, ErrorCode.ERR7005_CLAIM_DOCUMENT_INVALID);
 				throw new AppBadRequestException(ErrorCode.ERR7005_CLAIM_DOCUMENT_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
 			}
-			else if(cd.getFile()==null||cd.getFile().getFileId()==null){
-				logger.debug(
-						"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error empty file-id>, exception:<{}>",
-						isValidateOnly, userId, claimDto, ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID);
-				throw new AppBadRequestException(ErrorCode.ERR7007_CLAIM_DOCUMENT_FILE_INVALID, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
+			if(cd.getFile()!=null && cd.getFile().getFileId()!=null){
+				//docFromClaimSet.add(cd.getClaimDocType().getClaimDocTypeId()); //commentout: because unused?
+				fileIds.add(cd.getFile().getFileId());
+				claimDocCount++;
 			}
-			docFromClaimSet.add(cd.getClaimDocType().getClaimDocTypeId());
-			fileIds.add(cd.getFile().getFileId());
-			claimDocCount++;
 		}
 		
 		//mandatory doc check exists
@@ -300,25 +293,27 @@ public class ApiClaimService {
 			
 			List<PolicyClaimDocument> claimDocs = new ArrayList<>();
 			for(ClaimDocumentDto c: claimDto.getClaimDocuments()){
-				PolicyClaimDocument doc = new PolicyClaimDocument();
-				doc.setClaimId(claim.getClaimId());
-				doc.setClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId());
-				doc.setClaimDocType(productService.fetchClaimDocTypeByClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId()));
-				doc.setFileId(c.getFile().getFileId());
-				doc.setUserFile(userFileMap.get(c.getFile().getFileId()));
-				if(c.getExtra()!=null){
-					if(c.getExtra().getFamily()!=null){
-						doc.setExtra(new PolicyClaimDocumentExtra());
-						doc.getExtra().setFamily(new PolicyClaimFamily());						
-						doc.getExtra().getFamily().setSubId(c.getExtra().getFamily().getSubId());
-						doc.getExtra().getFamily().setName(c.getExtra().getFamily().getName());
-						doc.getExtra().getFamily().setBirthDate(c.getExtra().getFamily().getBirthDate().toLocalDate());
-						doc.getExtra().getFamily().setGender(c.getExtra().getFamily().getGender());
-						doc.getExtra().getFamily().setRelationship(c.getExtra().getFamily().getRelationship());
+				if(c.getFile()!=null && c.getFile().getFileId()!=null){
+					//only process claimdocuments with file
+					PolicyClaimDocument doc = new PolicyClaimDocument();
+					doc.setClaimId(claim.getClaimId());
+					doc.setClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId());
+					doc.setClaimDocType(productService.fetchClaimDocTypeByClaimDocTypeId(c.getClaimDocType().getClaimDocTypeId()));
+					doc.setFileId(c.getFile().getFileId());
+					doc.setUserFile(userFileMap.get(c.getFile().getFileId()));
+					if(c.getExtra()!=null){
+						if(c.getExtra().getFamily()!=null){
+							doc.setExtra(new PolicyClaimDocumentExtra());
+							doc.getExtra().setFamily(new PolicyClaimFamily());						
+							doc.getExtra().getFamily().setSubId(c.getExtra().getFamily().getSubId());
+							doc.getExtra().getFamily().setName(c.getExtra().getFamily().getName());
+							doc.getExtra().getFamily().setBirthDate(c.getExtra().getFamily().getBirthDate().toLocalDate());
+							doc.getExtra().getFamily().setGender(c.getExtra().getFamily().getGender());
+							doc.getExtra().getFamily().setRelationship(c.getExtra().getFamily().getRelationship());
+						}
 					}
+					claimDocs.add(doc);
 				}
-
-				claimDocs.add(doc);
 			}
 			claim.setPolicyClaimDocuments(claimDocs);		
 			
@@ -343,6 +338,7 @@ public class ApiClaimService {
 			 */
 			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC) ||
 					order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+				//TODO: set claim.sethasfamily for any lumpsum?
 				if(isClaimHasFamily){					
 					PolicyClaimFamilyDto famDto = claimDto.getFamilies().get(0);					
 					List<PolicyClaimFamily> claimFamilies = new ArrayList<>();
@@ -497,13 +493,6 @@ public class ApiClaimService {
 								claimDocList.add(claimDocDto);
 							}
 						}
-//						ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
-//						claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
-//								.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_PASSPORT)));
-//						claimDocDto.setIsMandatory(true);
-//						claimDocDto.setExtra(new ClaimDocumentExtraDto());
-//						claimDocDto.getExtra().setFamily(fam);
-//						claimDocList.add(claimDocDto);
 					}
 					//add kartu keluarga
 					isFamilyCardRequired=true;
@@ -543,17 +532,7 @@ public class ApiClaimService {
 									claimDocList.add(claimDocDto);
 								}
 							}
-						}
-//						long age = ChronoUnit.YEARS.between(fam.getBirthDate(), order.getPolicyStartDate());
-//						if(age >= config.getOrder().getFamilyAdultMinimumAge()){
-//							ClaimDocumentDto claimDocDto = new ClaimDocumentDto();
-//							claimDocDto.setClaimDocType(modelMapperAdapter.toDto(productService
-//									.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_ID_CARD)));
-//							claimDocDto.setIsMandatory(true);
-//							claimDocDto.setExtra(new ClaimDocumentExtraDto());
-//							claimDocDto.getExtra().setFamily(fam);
-//							claimDocList.add(claimDocDto);
-//						}						
+						}				
 					}
 					//cek kartu keluarga
 					isFamilyCardRequired=true;
