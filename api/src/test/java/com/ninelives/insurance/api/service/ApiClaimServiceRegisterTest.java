@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
 import com.ninelives.insurance.api.dto.ClaimCoverageDto;
 import com.ninelives.insurance.api.dto.ClaimDocTypeDto;
@@ -27,6 +28,7 @@ import com.ninelives.insurance.model.CoverageClaimDocType;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.ref.ClaimDocUsageType;
+import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PolicyStatus;
 
@@ -34,66 +36,69 @@ import com.ninelives.insurance.ref.PolicyStatus;
 public class ApiClaimServiceRegisterTest {
 	
 	
-//	@Test(expected=AppException.class)
-//	public void testMandatoryDocument() throws AppException{
-//		String userId = "uid1";
-//		String orderId = "oid1";
+	@Test(expected=AppException.class)
+	public void testMandatoryDocument() throws AppException{
+		String userId = "uid1";
+		String orderId = "oid1";
+		
+		ApiClaimService claimService = new ApiClaimService();
+		Coverage cov1 = new Coverage();
+		cov1.setCoverageClaimDocTypes(new ArrayList<>());
+		cov1.getCoverageClaimDocTypes().add(new CoverageClaimDocType());
+		cov1.getCoverageClaimDocTypes().get(0).setClaimDocTypeId("DT001");
+		cov1.getCoverageClaimDocTypes().get(0).setIsMandatory(true);
+		cov1.getCoverageClaimDocTypes().get(0).setClaimDocType(new ClaimDocType());
+		cov1.getCoverageClaimDocTypes().get(0).getClaimDocType().setClaimDocTypeId("DT001");
+		cov1.getCoverageClaimDocTypes().get(0).getClaimDocType().setUsageType(ClaimDocUsageType.REGULAR);
+		cov1.getCoverageClaimDocTypes().add(new CoverageClaimDocType());
+		cov1.getCoverageClaimDocTypes().get(1).setClaimDocTypeId("DT002");
+		cov1.getCoverageClaimDocTypes().get(1).setIsMandatory(true);
+		cov1.getCoverageClaimDocTypes().get(1).setClaimDocType(new ClaimDocType());
+		cov1.getCoverageClaimDocTypes().get(1).getClaimDocType().setClaimDocTypeId("DT002");
+		cov1.getCoverageClaimDocTypes().get(1).getClaimDocType().setUsageType(ClaimDocUsageType.REGULAR);
+		cov1.setIsLumpSum(false);
+		
+		PolicyOrder order = new PolicyOrder();
+		order.setCoverageCategoryId(CoverageCategoryId.PERSONAL_ACCIDENT);
+		order.setOrderId(orderId);
+		order.setStatus(PolicyStatus.ACTIVE);
+		order.setPolicyOrderProducts(new ArrayList<>());
+		order.getPolicyOrderProducts().add(new PolicyOrderProduct());
+		order.getPolicyOrderProducts().get(0).setCoverageId("101001");
+//		order.getPolicyOrderProducts().get(0).setCoverageClaimDocTypes(new ArrayList<CoverageClaimDocType>());
+//		order.getPolicyOrderProducts().get(0).getCoverageClaimDocTypes().add(new CoverageClaimDocType());
+//		order.getPolicyOrderProducts().get(0).getCoverageClaimDocTypes().get(0).setClaimDocTypeId("DT001");
+//		order.getPolicyOrderProducts().get(0).getCoverageClaimDocTypes().get(0).setIsMandatory(true);
 //		
-//		ApiClaimService claimService = new ApiClaimService();
-//		Coverage cov1 = new Coverage();
-//		cov1.setCoverageClaimDocTypes(new ArrayList<>());
-//		cov1.getCoverageClaimDocTypes().add(new CoverageClaimDocType());
-//		cov1.getCoverageClaimDocTypes().get(0).setClaimDocTypeId("DT001");
-//		cov1.getCoverageClaimDocTypes().get(0).setIsMandatory(true);
-//		cov1.getCoverageClaimDocTypes().get(0).setClaimDocType(new ClaimDocType());
-//		cov1.getCoverageClaimDocTypes().get(0).getClaimDocType().setClaimDocTypeId("DT001");
-//		cov1.getCoverageClaimDocTypes().get(0).getClaimDocType().setUsageType(ClaimDocUsageType.REGULAR);
-//		cov1.getCoverageClaimDocTypes().add(new CoverageClaimDocType());
-//		cov1.getCoverageClaimDocTypes().get(1).setClaimDocTypeId("DT002");
-//		cov1.getCoverageClaimDocTypes().get(1).setIsMandatory(true);
-//		cov1.getCoverageClaimDocTypes().get(1).setClaimDocType(new ClaimDocType());
-//		cov1.getCoverageClaimDocTypes().get(1).getClaimDocType().setClaimDocTypeId("DT002");
-//		cov1.getCoverageClaimDocTypes().get(1).getClaimDocType().setUsageType(ClaimDocUsageType.REGULAR);
-//		
-//		PolicyOrder order = new PolicyOrder();
-//		order.setOrderId(orderId);
-//		order.setStatus(PolicyStatus.ACTIVE);
-//		order.setPolicyOrderProducts(new ArrayList<>());
-//		order.getPolicyOrderProducts().add(new PolicyOrderProduct());
-//		order.getPolicyOrderProducts().get(0).setCoverageId("101001");
-////		order.getPolicyOrderProducts().get(0).setCoverageClaimDocTypes(new ArrayList<CoverageClaimDocType>());
-////		order.getPolicyOrderProducts().get(0).getCoverageClaimDocTypes().add(new CoverageClaimDocType());
-////		order.getPolicyOrderProducts().get(0).getCoverageClaimDocTypes().get(0).setClaimDocTypeId("DT001");
-////		order.getPolicyOrderProducts().get(0).getCoverageClaimDocTypes().get(0).setIsMandatory(true);
-////		
-//		claimService.orderService = Mockito.mock(OrderService.class);
-//		when(claimService.orderService.fetchOrderByOrderId(userId, orderId)).thenReturn(order);
-//		claimService.productService = Mockito.mock(ProductService.class);
-//		when(claimService.productService.fetchCoverageByCoverageId("101001")).thenReturn(cov1);
-//			
-//		AccidentClaimDto claimDto = new AccidentClaimDto();
-//		claimDto.setOrder(new OrderDto());
-//		claimDto.getOrder().setOrderId(orderId);		
-//		claimDto.setClaimCoverages(new ArrayList<>());
-//		claimDto.getClaimCoverages().add(new ClaimCoverageDto());
-//		claimDto.getClaimCoverages().get(0).setCoverage(new CoverageDto());
-//		claimDto.getClaimCoverages().get(0).getCoverage().setCoverageId("101001");		
-//		claimDto.setClaimDocuments(new ArrayList<>());
-//		claimDto.getClaimDocuments().add(new ClaimDocumentDto());
-//		claimDto.getClaimDocuments().get(0).setClaimDocType(new ClaimDocTypeDto());
-//		claimDto.getClaimDocuments().get(0).getClaimDocType().setClaimDocTypeId("DT001");
-//		claimDto.getClaimDocuments().get(0).setFile(new UserFileDto());
-//		claimDto.getClaimDocuments().get(0).getFile().setFileId(101L);
-//		
-//		try{
-//			claimService.registerAccidentalClaim(userId, claimDto, true);
-//			
-//		}catch(AppException e){
-//			assertThat(e.getCode(), is(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY));
-//			throw new AppException(ErrorCode.ERR1001_GENERIC_ERROR,"");
-//		}
-//		
-//	}
+		claimService.orderService = Mockito.mock(OrderService.class);
+		when(claimService.orderService.fetchOrderByOrderId(userId, orderId)).thenReturn(order);
+		claimService.productService = Mockito.mock(ProductService.class);
+		when(claimService.productService.fetchCoverageByCoverageId("101001")).thenReturn(cov1);
+		claimService.modelMapperAdapter = new ModelMapperAdapter();
+			
+		AccidentClaimDto claimDto = new AccidentClaimDto();
+		claimDto.setOrder(new OrderDto());
+		claimDto.getOrder().setOrderId(orderId);		
+		claimDto.setClaimCoverages(new ArrayList<>());
+		claimDto.getClaimCoverages().add(new ClaimCoverageDto());
+		claimDto.getClaimCoverages().get(0).setCoverage(new CoverageDto());
+		claimDto.getClaimCoverages().get(0).getCoverage().setCoverageId("101001");		
+		claimDto.setClaimDocuments(new ArrayList<>());
+		claimDto.getClaimDocuments().add(new ClaimDocumentDto());
+		claimDto.getClaimDocuments().get(0).setClaimDocType(new ClaimDocTypeDto());
+		claimDto.getClaimDocuments().get(0).getClaimDocType().setClaimDocTypeId("DT001");
+		claimDto.getClaimDocuments().get(0).setFile(new UserFileDto());
+		claimDto.getClaimDocuments().get(0).getFile().setFileId(101L);
+		
+		try{
+			claimService.registerAccidentalClaim(userId, claimDto, true);
+			
+		}catch(AppException e){
+			assertThat(e.getCode(), is(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY));
+			throw new AppException(ErrorCode.ERR1001_GENERIC_ERROR,"");
+		}
+		
+	}
 
 	@Test(expected=AppException.class)
 	public void testInvalidCoverage() throws AppException{

@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -219,9 +217,7 @@ public class ApiClaimService {
 		}
 		
 		//mandatory doc check exists
-		//validateMandatoryClaimDocument(userId, claimDto,order,docFromClaimSet);
-		//TODO: uncomment validateMandatoryClaimDocument and implement it
-		
+		validateMandatoryClaimDocument(userId, claimDto,order);
 		
 		//check that all file already uploaded for each claim document
 		//int uploadedFileCount = fileUploadService.countUploadedTempFile(userId, fileIds);
@@ -342,7 +338,7 @@ public class ApiClaimService {
 			if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC) ||
 					order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
 				//TODO: set claim.sethasfamily for any lumpsum?
-				if(isClaimHasFamily){					
+				if(isClaimHasFamily){
 					PolicyClaimFamilyDto famDto = claimDto.getFamilies().get(0);					
 					List<PolicyClaimFamily> claimFamilies = new ArrayList<>();
 					for(PolicyOrderFamily orderClaimFamily: order.getPolicyOrderFamilies()){
@@ -428,16 +424,52 @@ public class ApiClaimService {
 		
 		return true;
 	}
-	/*
-	 * test list
-	 * - mandatory doctype ketemu notmandatory doctypes, dia berubah jadi mandatory
-	 */
-	/*
-	 * dev list
-	 * - return non-family (regular) case, test it with test class
-	 * - return non-family (regular) case, test it with test class
-	 * x comment out
-	 */
+	
+	protected void validateMandatoryClaimDocument(final String userId, final AccidentClaimDto claimDto, final PolicyOrder order) throws AppBadRequestException{
+		List<ClaimDocumentDto> requiredClaimDocumentDtos = requiredClaimDocumentDtos(claimDto, order);
+		if(requiredClaimDocumentDtos!=null){
+			for (ClaimDocumentDto claimDocDto:requiredClaimDocumentDtos){
+				//System.out.println("check "+claimDocDto);
+				if(claimDocDto.getIsMandatory()){
+					boolean exists = false;
+					for(ClaimDocumentDto clientClaimDocDto: claimDto.getClaimDocuments()){
+						//System.out.println("ismandatory, compare with "+clientClaimDocDto);
+						if (claimDocDto.getClaimDocType().getClaimDocTypeId()
+								.equals(clientClaimDocDto.getClaimDocType().getClaimDocTypeId())
+								&& clientClaimDocDto.getFile()!=null
+								&& !StringUtils.isEmpty(clientClaimDocDto.getFile().getFileId())){
+							if(claimDocDto.getExtra()!=null){
+								if(claimDocDto.getExtra().equals(clientClaimDocDto.getExtra())){
+									exists=true;
+									break;
+								}
+							}else{
+								exists = true;
+								break;
+							}
+						}
+					}
+					if(!exists){
+						logger.debug(
+								"Process claim, userId:<{}>, claim:<{}>, result:<error missing mandatory doc>, exception:<{}>, doc:<{}>",
+								userId, claimDto, ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY,
+								claimDocDto.getClaimDocType());
+						throw new AppBadRequestException(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY,
+								"Permintaan tidak dapat diproses, dokumen "
+										+ claimDocDto.getClaimDocType().getClaimDocTypeId() + " tidak ditemukan.");
+					}
+				}
+			}
+		}
+//		else{
+//			logger.debug(
+//					"Process claim, userId:<{}>, claim:<{}>, result:<error missing mandatory doc>, exception:<{}>",
+//					userId, claimDto, ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY);
+//			throw new AppBadRequestException(ErrorCode.ERR7006_CLAIM_DOCUMENT_MANDATORY,
+//					"Permintaan tidak dapat diproses, dokumen tidak ditemukan.");
+//		}
+	}
+	
 	protected List<ClaimDocumentDto> requiredClaimDocumentDtos(final AccidentClaimDto claimDto, final PolicyOrder order) {
 		boolean isClaimHasFamily = false;
 		if (!CollectionUtils.isEmpty(claimDto.getFamilies())) {
@@ -693,23 +725,23 @@ public class ApiClaimService {
 //		return docTypeMap;
 //	}
 	
-	protected Map<String, Boolean> extractDocTypeMap(List<ClaimCoverageDto> ccds, boolean isClaimHasFamily) {
-		Map<String, Boolean> docTypeMap = new HashMap<>();
-		for (ClaimCoverageDto ccd : ccds) {
-			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
-			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
-				if (!ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.FAMILY_CARD) || isClaimHasFamily) {
-					//if it is family-card type then verify whether to include in document requirement by checking whether claim has family as claimant
-					Boolean lastMandatoryCheck = docTypeMap.get(ccdt.getClaimDocTypeId());
-					if (lastMandatoryCheck != null) {
-						docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory() || lastMandatoryCheck);
-					} else {
-						docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory());
-					}
-				}
-			}
-		}
-		return docTypeMap;
-	}
+//	protected Map<String, Boolean> extractDocTypeMap(List<ClaimCoverageDto> ccds, boolean isClaimHasFamily) {
+//		Map<String, Boolean> docTypeMap = new HashMap<>();
+//		for (ClaimCoverageDto ccd : ccds) {
+//			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
+//			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
+//				if (!ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.FAMILY_CARD) || isClaimHasFamily) {
+//					//if it is family-card type then verify whether to include in document requirement by checking whether claim has family as claimant
+//					Boolean lastMandatoryCheck = docTypeMap.get(ccdt.getClaimDocTypeId());
+//					if (lastMandatoryCheck != null) {
+//						docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory() || lastMandatoryCheck);
+//					} else {
+//						docTypeMap.put(ccdt.getClaimDocTypeId(), ccdt.getIsMandatory());
+//					}
+//				}
+//			}
+//		}
+//		return docTypeMap;
+//	}
 
 }

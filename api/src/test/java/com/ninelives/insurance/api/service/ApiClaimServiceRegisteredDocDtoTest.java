@@ -35,6 +35,21 @@ import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.Gender;
 
+
+/*
+ * Case:
+ *  v Non travel with 2 coverages, one with mandatory, one with optional
+ *  v Travel with order no family, domestic
+ *  v Travel with order family, domestic, 1 coverage lumpsum, family 1 adult 1 child, no family selection
+ *  v Travel with order family, domestic, 1 coverage lumpsum 1 coverage is notlumpsum, family 1 adult 1 child, family selection 1 adult
+ *  v Travel with order family, domestic, 1 coverage lumpsum 1 coverage is notlumpsum, family 1 adult 1 child, family selection 1 child
+ *  v Travel with order family, domestic, 1 coverage notlumpsum, family order 1 adult 1 child, family selection 1 child
+ *  v Travel with order family, domestic, 1 coverage notlumpsum, family order 1 adult 1 child, family selection 1 adult
+ *  v Travel with order family, domestic, 1 coverage notlumpsum, family order 1 adult 1 child, no family selection
+ *  - Travel with order family, international ...
+ *  ...
+ *  
+ */
 @RunWith(SpringRunner.class)
 public class ApiClaimServiceRegisteredDocDtoTest {
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -47,23 +62,8 @@ public class ApiClaimServiceRegisteredDocDtoTest {
 	ClaimDocType claimDocTypeFamilyId;
 	ClaimDocType claimDocTypeFamilyPassport;
 	ClaimDocType claimDocTypeFamilyCard;
-	
-	/*
-	 * Case:
-	 *  v Non travel with 2 coverages, one with mandatory, one with optional
-	 *  v Travel with order no family, domestic
-	 *  v Travel with order family, domestic, 1 coverage lumpsum, family 1 adult 1 child, no family selection
-	 *  v Travel with order family, domestic, 1 coverage lumpsum 1 coverage is notlumpsum, family 1 adult 1 child, family selection 1 adult
-	 *  v Travel with order family, domestic, 1 coverage lumpsum 1 coverage is notlumpsum, family 1 adult 1 child, family selection 1 child
-	 *  v Travel with order family, domestic, 1 coverage notlumpsum, family order 1 adult 1 child, family selection 1 child
-	 *  v Travel with order family, domestic, 1 coverage notlumpsum, family order 1 adult 1 child, family selection 1 adult
-	 *  v Travel with order family, domestic, 1 coverage notlumpsum, family order 1 adult 1 child, no family selection
-	 *  - Travel with order family, international ...
-	 *  ...
-	 *  
-	 */
-	
-	
+
+		
 	/*
 	 * Travel with order family, international, 1 coverage nonlumpsum, family 1 adult 1 child, no family selection
 	 * expected: the regular doctype
