@@ -27,6 +27,8 @@ public class PolicyClaim <T extends PolicyClaimDetail> implements Serializable{
     private Boolean isUserClaimant;
 
     private Boolean hasFamily;
+    
+    private Boolean isLumpSum;
 
     private ClaimStatus status;
 
@@ -118,6 +120,14 @@ public class PolicyClaim <T extends PolicyClaimDetail> implements Serializable{
 
 	public void setHasFamily(Boolean hasFamily) {
 		this.hasFamily = hasFamily;
+	}
+
+	public Boolean getIsLumpSum() {
+		return isLumpSum;
+	}
+
+	public void setIsLumpSum(Boolean isLumpSum) {
+		this.isLumpSum = isLumpSum;
 	}
 
 	public List<PolicyClaimFamily> getPolicyClaimFamilies() {

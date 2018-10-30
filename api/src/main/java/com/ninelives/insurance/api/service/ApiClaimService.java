@@ -317,6 +317,7 @@ public class ApiClaimService {
 			}
 			claim.setPolicyClaimDocuments(claimDocs);		
 			
+			boolean isLumpSum = false;
 			List<PolicyClaimCoverage> claimCovs = new ArrayList<>();
 			for(ClaimCoverageDto c: claimDto.getClaimCoverages()){
 				PolicyClaimCoverage cov = new PolicyClaimCoverage();
@@ -324,9 +325,11 @@ public class ApiClaimService {
 				cov.setCoverageId(c.getCoverage().getCoverageId());			
 				cov.setStatus(ClaimCoverageStatus.SUBMITTED);
 				cov.setCoverage(productService.fetchCoverageByCoverageId(c.getCoverage().getCoverageId()));
+				isLumpSum = isLumpSum || cov.getCoverage().getIsLumpSum();
 				claimCovs.add(cov);
 			}
 			claim.setPolicyClaimCoverages(claimCovs);
+			claim.setIsLumpSum(isLumpSum);
 			
 
 			/*
@@ -550,7 +553,7 @@ public class ApiClaimService {
 			claimDocList.add(claimDocDto);
 		}
 		
-		claimDocList.addAll(claimDocMap.values());
+		claimDocList.addAll(claimDocMap.values());		
 		
 		return claimDocList;
 	}
