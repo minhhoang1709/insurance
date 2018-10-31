@@ -57,10 +57,8 @@ import com.ninelives.insurance.provider.insurance.aswata.ref.ProductCode;
 import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
 import com.ninelives.insurance.provider.insurance.aswata.ref.TravelType;
 import com.ninelives.insurance.ref.CoverageCategoryId;
-import com.ninelives.insurance.ref.CoverageCategoryType;
 import com.ninelives.insurance.ref.CoverageOptionId;
 import com.ninelives.insurance.ref.VoucherType;
-import com.ninelives.insurance.ref.YesNo;
 
 @Service
 public class AswataInsuranceProvider implements InsuranceProvider{	
@@ -157,8 +155,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 					family.setFamilyName(pof.getName());
 					family.setDateOfBirth(pof.getBirthDate().format(dateFormatter));
 					family.setRelation(pof.getRelationship().toStr());
-					family.setIdCardNumber("");
-					family.setBeneficiary("");
+					family.setIdCardNumber("-");
+					family.setBeneficiary("-");
 					familyList.add(family);
 				}
 				requestDto.getRequestParam().setFamilyList(familyList);
@@ -429,6 +427,5 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		clientCode = config.getInsurance().getAswataClientCode();
 		clientKey = config.getInsurance().getAswataClientKey();					
 	}
-	
-	
+		
 }
