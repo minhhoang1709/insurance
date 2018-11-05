@@ -59,6 +59,7 @@ import com.ninelives.insurance.provider.insurance.aswata.ref.TravelType;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.CoverageOptionId;
 import com.ninelives.insurance.ref.VoucherType;
+import com.ninelives.insurance.util.ValidationUtil;
 
 @Service
 public class AswataInsuranceProvider implements InsuranceProvider{	
@@ -133,7 +134,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		}
 		requestDto.getRequestParam().setCoverages(joiner.toString());			
 		requestDto.getRequestParam().setPremium(order.getTotalPremi());
-		requestDto.getRequestParam().setMobileNumber(order.getPolicyOrderUsers().getPhone());
+		requestDto.getRequestParam().setMobileNumber(ValidationUtil.toAswataPhoneNumber(order.getPolicyOrderUsers().getPhone()));
 		requestDto.getRequestParam().setEmailAddress(order.getPolicyOrderUsers().getEmail());
 		
 		/* Insured address is hardcoded into empty string */

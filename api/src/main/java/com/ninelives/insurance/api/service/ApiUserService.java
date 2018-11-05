@@ -30,6 +30,7 @@ import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.UserStatus;
+import com.ninelives.insurance.util.ValidationUtil;
 
 @Service
 public class ApiUserService {
@@ -206,8 +207,15 @@ public class ApiUserService {
 		}
 		if(!StringUtils.isEmpty(userDto.getPhone()) 
 				&& !userDto.getPhone().equals(existingProfile.getPhone())){
-			updateUser.setPhone(userDto.getPhone());
-			existingProfile.setPhone(userDto.getPhone());
+			
+			String modifiedPhone = userDto.getPhone().replaceAll("\\D+", "");
+			if(!ValidationUtil.isPhoneNumberValid(modifiedPhone)){
+				logger.debug("Update profile:<{}> result:<phone invalid>, error:<{}>", userDto, ErrorCode.ERR4027_ORDER_PROFILE_PHONE_INVALID);
+				throw new AppBadRequestException(ErrorCode.ERR4027_ORDER_PROFILE_PHONE_INVALID,
+						"Periksa kembali nomor telepon Anda");
+			}
+			updateUser.setPhone(modifiedPhone);
+			existingProfile.setPhone(modifiedPhone);
 		}
 		if(!StringUtils.isEmpty(userDto.getAddress()) 
 				&& !userDto.getAddress().equals(existingProfile.getAddress())){

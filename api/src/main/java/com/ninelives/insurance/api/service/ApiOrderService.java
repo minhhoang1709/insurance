@@ -1,3 +1,4 @@
+
 package com.ninelives.insurance.api.service;
 
 import java.time.LocalDate;
@@ -60,6 +61,7 @@ import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.ProductType;
 import com.ninelives.insurance.ref.VoucherType;
 import com.ninelives.insurance.route.EndPointRef;
+import com.ninelives.insurance.util.ValidationUtil;
 
 @Service
 public class ApiOrderService {
@@ -462,8 +464,14 @@ public class ApiOrderService {
 			String modifiedPhone = null;
 			if(submitOrderDto.getUser()!=null && !StringUtils.isEmpty(submitOrderDto.getUser().getPhone())){
 				modifiedPhone = submitOrderDto.getUser().getPhone().replaceAll("\\D+", "");
+				
+				if(!ValidationUtil.isPhoneNumberValid(modifiedPhone)){
+					logger.debug("Process order for {} with order {} with result: phone invalid", userId, submitOrderDto);
+					throw new AppBadRequestException(ErrorCode.ERR4027_ORDER_PROFILE_PHONE_INVALID,
+							"Periksa kembali nomor telepon Anda");
+				}
 			}
-			
+						
 			User newUserProfile = null;			
 			if(!isExistingUserProfileCompleteForOrder){
 				//in case existing profile is not complete, check the submit data
