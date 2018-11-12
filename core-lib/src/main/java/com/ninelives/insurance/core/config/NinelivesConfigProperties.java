@@ -420,6 +420,11 @@ public class NinelivesConfigProperties {
 		 */
 	    private int travelMinPolicyStartDatePeriod = 2;
 	    
+	    /**
+		 * Allowed policy-start-date for Travel insurance should not more than specified period
+		 */
+	    private int travelMaxPolicyStartDatePeriod = 31;
+	    
 	    private int minimumAge = 17;
 	    private int maximumAge = 60;
 	    
@@ -458,6 +463,14 @@ public class NinelivesConfigProperties {
 
 		public void setTravelMinPolicyStartDatePeriod(int travelMinPolicyStartDatePeriod) {
 			this.travelMinPolicyStartDatePeriod = travelMinPolicyStartDatePeriod;
+		}
+
+		public int getTravelMaxPolicyStartDatePeriod() {
+			return travelMaxPolicyStartDatePeriod;
+		}
+
+		public void setTravelMaxPolicyStartDatePeriod(int travelMaxPolicyStartDatePeriod) {
+			this.travelMaxPolicyStartDatePeriod = travelMaxPolicyStartDatePeriod;
 		}
 
 		public int getPolicyConflictPeriodLimit() {

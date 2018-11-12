@@ -50,7 +50,73 @@ public class ApiOrderServiceRegisterTest {
 	}
 	
 	@Test
-	public void testTravelPeriodStartDate(){	
+	public void testTravelMaxPeriodStartDate(){	
+		int policyStartDatePeriodParam1 = 32;
+		int policyStartDatePeriodParam2 = 33;
+		int configTravelMaxPolicyStartDatePeriod = 31;
+		
+		NinelivesConfigProperties config = new NinelivesConfigProperties();
+		config.getOrder().setPolicyStartDatePeriod(365);
+		config.getOrder().setTravelMinPolicyStartDatePeriod(configTravelMaxPolicyStartDatePeriod);
+		
+		ApiOrderService service = new ApiOrderService();
+		service.config = config;	
+				
+		// Param start
+		String prodId = "P102006204001";
+		String covCatId = "102";
+		
+		OrderDto orderDto = new OrderDto();
+		orderDto.setPolicyStartDate(LocalDateTime.now().plusDays(policyStartDatePeriodParam1));
+		
+		ProductDto prodDto = new ProductDto();
+		prodDto.setProductId(prodId);		
+		List<ProductDto> products = new ArrayList<ProductDto>();
+		products.add(prodDto);
+		orderDto.setProducts(products);
+
+		orderDto.setTotalPremi(5000);
+		// Param end---
+		
+		Product prod = new Product();
+		prod.setProductId(prodId);
+		prod.setCoverage(new Coverage());
+		prod.getCoverage().setCoverageCategoryId(covCatId);
+		prod.setPeriodId("204");
+		
+		service.productService = Mockito.mock(ProductService.class);
+		when(service.productService.fetchProductByProductId(prodId)).thenReturn(prod);		
+
+		AppException exp = null;
+		try{
+			service.registerOrder("testId", orderDto, true);			
+		}catch(AppException e){
+			exp = e;
+		}
+		assertNotNull(exp);
+		assertThat(exp.getCode(), is(ErrorCode.ERR4026_ORDER_TRAVEL_STARTDATE_INVALID));
+
+		
+		// Param start
+		OrderDto orderDto2 = new OrderDto();
+		orderDto2.setPolicyStartDate(LocalDateTime.now().plusDays(policyStartDatePeriodParam2));		
+		orderDto2.setProducts(products);
+		orderDto2.setTotalPremi(5000);
+		// Param end---
+		
+		exp = null;
+		try{
+			service.registerOrder("testId", orderDto2, true);			
+		}catch(AppException e){
+			exp = e;
+		}
+		assertNotNull(exp);
+		assertThat(exp.getCode(), is(ErrorCode.ERR4026_ORDER_TRAVEL_STARTDATE_INVALID));
+		
+	}
+	
+	@Test
+	public void testTravelMinPeriodStartDate(){	
 		int policyStartDatePeriodParam1 = 1;
 		int policyStartDatePeriodParam2 = 0;
 		int configTravelMinPolicyStartDatePeriod = 2;
@@ -181,7 +247,7 @@ public class ApiOrderServiceRegisterTest {
 		int configTravelMinAge = 17;
 		int configTravelMaxAge = 75;
 		
-		int policyStartDatePlusYear = 1;				
+		int daysUntilPolicyStartStart = 10;				
 				
 		NinelivesConfigProperties config = new NinelivesConfigProperties();
 		config.getOrder().setPolicyStartDatePeriod(365);
@@ -196,8 +262,8 @@ public class ApiOrderServiceRegisterTest {
 		String covCatId = "102";
 		
 		OrderDto orderDto = new OrderDto();
-		orderDto.setPolicyStartDate(LocalDateTime.now().plusYears(policyStartDatePlusYear)); //set the policy start-date next year
-		orderDto.setPolicyEndDate(LocalDateTime.now().plusYears(policyStartDatePlusYear).plusDays(10));
+		orderDto.setPolicyStartDate(LocalDateTime.now().plusDays(daysUntilPolicyStartStart)); //set the policy start-date 10 days later
+		orderDto.setPolicyEndDate(LocalDateTime.now().plusYears(daysUntilPolicyStartStart).plusDays(10));
 		
 		ProductDto prodDto = new ProductDto();
 		prodDto.setProductId(prodId);
@@ -230,12 +296,14 @@ public class ApiOrderServiceRegisterTest {
 		
 		service.insuranceService = Mockito.mock(InsuranceService.class);
 		service.policyOrderTrxService = Mockito.mock(PolicyOrderTrxService.class);
+		
 		/*
-		 * Test 1
+		 * Test 1, expected invalid age
 		 */
-		int userAgeAtPolicyStartDate = 16;//test value; current age is userAgeAtPolicyStartDate-policyStartDatePlusYear
+		//int userAgeAtPolicyStartDate = 16;//test value; current age is userAgeAtPolicyStartDate-policyStartDatePlusYear
 		User user = new User();
-		user.setBirthDate(LocalDate.now().minusYears(userAgeAtPolicyStartDate-policyStartDatePlusYear));
+		//birthday at minimum age is 10 days after policy startdate
+		user.setBirthDate(LocalDate.now().minusYears(configTravelMinAge).plusDays(daysUntilPolicyStartStart+1)); 
 		user.setUserId("testId");
 		user.setIdCardFileId(123L);
 		user.setPassportFileId(123L);
@@ -255,9 +323,9 @@ public class ApiOrderServiceRegisterTest {
 		/*
 		 * Test 2
 		 */
-		userAgeAtPolicyStartDate = 17;//test value; current age is userAgeAtPolicyStartDate-policyStartDatePlusYear
+		//userAgeAtPolicyStartDate = 17;//test value; current age is userAgeAtPolicyStartDate-policyStartDatePlusYear
 		User user2 = new User();
-		user2.setBirthDate(LocalDate.now().minusYears(userAgeAtPolicyStartDate-policyStartDatePlusYear));
+		user.setBirthDate(LocalDate.now().minusYears(configTravelMinAge).plusDays(daysUntilPolicyStartStart));
 		user2.setUserId("testId2");
 		user2.setName("name");
 		user2.setIdCardFileId(123L);

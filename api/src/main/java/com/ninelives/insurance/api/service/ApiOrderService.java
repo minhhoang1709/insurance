@@ -305,11 +305,16 @@ public class ApiOrderService {
 				
 		if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
 				coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
-			if (ChronoUnit.DAYS.between(today, submitOrderDto.getPolicyStartDate().toLocalDate()) < config.getOrder()
-					.getTravelMinPolicyStartDatePeriod()) {
+			Long travelStartInDays = ChronoUnit.DAYS.between(today, submitOrderDto.getPolicyStartDate().toLocalDate());
+			if ( travelStartInDays < config.getOrder().getTravelMinPolicyStartDatePeriod()) {
 				logger.debug(
 						"Process order for {} with order {} with result: exception travel startdate not valid with travel-min-policy-start-date-period={}",
 						userId, submitOrderDto, config.getOrder().getTravelMinPolicyStartDatePeriod());
+				throw new AppBadRequestException(ErrorCode.ERR4026_ORDER_TRAVEL_STARTDATE_INVALID, "Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");
+			}else if(travelStartInDays > config.getOrder().getTravelMaxPolicyStartDatePeriod()){
+				logger.debug(
+						"Process order for {} with order {} with result: exception travel startdate not valid with travel-max-policy-start-date-period={}",
+						userId, submitOrderDto, config.getOrder().getTravelMaxPolicyStartDatePeriod());
 				throw new AppBadRequestException(ErrorCode.ERR4026_ORDER_TRAVEL_STARTDATE_INVALID, "Permintaan tidak dapat diproses, silahkan periksa tanggal mulai asuransi Anda.");
 			}
 		}
