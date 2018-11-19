@@ -140,6 +140,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		/* Insured address is hardcoded into empty string */
 		requestDto.getRequestParam().setInsuredAddress("-");				
 		
+		
 		/*
 		 * Travel insurance specific
 		 */
@@ -169,10 +170,15 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
 		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
-						
 		
-		if(order.getPolicyOrderUsers().getIdCardFileId()!=null){
-			UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
+		/* ID card, replace with passport incase of international travel */
+		Long idCardFileId = order.getPolicyOrderUsers().getIdCardFileId();
+		if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+			idCardFileId = order.getPolicyOrderUsers().getPassportFileId();
+		}
+		
+		if(idCardFileId!=null){
+			UserFile userFile = fileUploadService.fetchUserFileById(idCardFileId);
 			
 			//Path filepath = storageProvider.load("test/scan-ktp.jpg");
 			String base64IdCard = null;
@@ -190,8 +196,13 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 				requestDto.getRequestParam().setIdCard(base64IdCard);
 			}
 		}else{
-			//if there is no image, use the ktp number instead
-			requestDto.getRequestParam().setIdCardNumber(order.getPolicyOrderUsers().getIdCardNo());
+			/* if there is no image, use the ktp number instead
+			 * no support for passport card number yet
+			 */
+			if(!order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
+				requestDto.getRequestParam().setIdCardNumber(order.getPolicyOrderUsers().getIdCardNo());
+			}
+			
 		}
 		
 		logger.debug("Send to aswata with request <{}>", requestDto);
