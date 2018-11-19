@@ -401,6 +401,8 @@ public class ModelMapperAdapter {
 			covDto.setMaxLimit(m.getCoverageMaxLimit());			
 			covDto.setHasBeneficiary(m.getCoverageHasBeneficiary());
 			covDto.setIsLumpSum(m.getIsLumpSum());
+			covDto.setCoverageOption(toDto(m.getCoverageOption()));
+			covDto.setCoverageCategory(toDto(m.getCoverageCategory()));
 			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
 				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
 				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){

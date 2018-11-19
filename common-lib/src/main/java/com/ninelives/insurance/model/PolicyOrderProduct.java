@@ -34,6 +34,8 @@ public class PolicyOrderProduct implements Serializable{
     //transient
     private int coverageDisplayRank;
     private Boolean isLumpSum;
+    private CoverageOption coverageOption;
+    private CoverageCategory coverageCategory;
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -145,6 +147,22 @@ public class PolicyOrderProduct implements Serializable{
 
 	public void setCoverageClaimDocTypes(List<CoverageClaimDocType> coverageClaimDocTypes) {
 		this.coverageClaimDocTypes = coverageClaimDocTypes;
+	}
+	
+	public CoverageOption getCoverageOption() {
+		return coverageOption;
+	}
+
+	public void setCoverageOption(CoverageOption coverageOption) {
+		this.coverageOption = coverageOption;
+	}
+
+	public CoverageCategory getCoverageCategory() {
+		return coverageCategory;
+	}
+
+	public void setCoverageCategory(CoverageCategory coverageCategory) {
+		this.coverageCategory = coverageCategory;
 	}
 
 	@Override
