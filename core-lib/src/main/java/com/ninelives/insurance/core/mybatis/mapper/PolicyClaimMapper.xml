@@ -72,8 +72,8 @@
     </collection>    
   </resultMap>
   <sql id="Base_Column_List">
-    claim_id, coverage_category_id, order_id, user_id, claim_date, incident_date_time, incident_summary, is_user_claimant, has_family, 
-    status, created_date, update_date
+    claim_id, coverage_category_id, order_id, user_id, claim_date, incident_date_time, incident_summary, is_user_claimant, 
+    has_family, is_lump_sum, status, created_date, update_date
   </sql>
   <sql id="NestedPolicyClaimColumnList">
     a.claim_id, a.order_id, a.user_id, a.claim_date, a.incident_date_time, a.is_user_claimant, a.incident_summary, 
