@@ -112,16 +112,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		requestDto.setRequestParam(new OrderRequestDto.RequestParam());
 		
-		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
-				&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
-			requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_B2B);
-			if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
-					&& !StringUtils.isEmpty(
-					order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
-				requestDto.getRequestParam().setClientId(
-						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
-			}			
-		}
+		
 		
 		requestDto.getRequestParam().setInsuredName(StringUtils.abbreviate(order.getPolicyOrderUsers().getName(), 50));
 		requestDto.getRequestParam().setDateOfBirth(order.getPolicyOrderUsers().getBirthDate().format(dateFormatter));
@@ -165,7 +156,18 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 			}
 		}else{
 			requestDto.getRequestParam().setProductCode(ProductCode.PA);
-			requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_NORMAL);
+			if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
+					&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
+				requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_B2B);
+				if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
+						&& !StringUtils.isEmpty(
+						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
+					requestDto.getRequestParam().setClientId(
+							order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
+				}			
+			}else{				
+				requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_NORMAL);
+			}			
 		}
 		
 		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
