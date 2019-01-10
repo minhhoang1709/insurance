@@ -28,3 +28,4 @@ nbdist/
 #running artifact
 tomcat/
 
+/.metadata/
