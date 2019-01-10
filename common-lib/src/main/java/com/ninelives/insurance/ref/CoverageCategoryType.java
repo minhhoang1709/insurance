@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CoverageCategoryType {
 	PA("PA"),
-	TRAVEL("TRAVEL")
+	TRAVEL("TRAVEL"),
+	SELFIE("SELFIE")
 	;
 	
 	static final Map<String, CoverageCategoryType> lookup = new HashMap<>();
