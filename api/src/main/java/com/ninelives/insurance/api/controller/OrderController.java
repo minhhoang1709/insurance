@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.FilterDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
+import com.ninelives.insurance.api.dto.UserFileDto;
+import com.ninelives.insurance.api.service.ApiFileUploadService;
 import com.ninelives.insurance.api.service.ApiOrderService;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
@@ -31,6 +34,7 @@ import com.ninelives.insurance.ref.ErrorCode;
 public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 			
+	@Autowired ApiFileUploadService fileUploadService;
 	@Autowired ApiOrderService apiOrderService;
 	
 	@RequestMapping(value="/orders/{orderId}",
@@ -88,5 +92,13 @@ public class OrderController {
 		return apiOrderService.updateBeneficiary(authUserId, orderId, beneficiaryDto);
 			
 	}
-		
+	
+	@RequestMapping(value="/orderDocumentFiles",
+			method=RequestMethod.POST)
+	@ResponseBody
+	public UserFileDto uploadClaimDocumentFile (@RequestAttribute ("authUserId") String authUserId, 
+			@RequestParam("file") MultipartFile file) throws AppException{
+		return fileUploadService.saveTemp(authUserId, file);
+	}
+
 }
