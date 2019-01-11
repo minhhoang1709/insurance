@@ -43,6 +43,8 @@ public class Coverage implements Serializable{
     
     private List<CoverageClaimDocType> coverageClaimDocTypes;
     
+    private List<CoverageOrderDocType> coverageOrderDocTypes;
+    
     private CoverageCategory coverageCategory;
     
     private CoverageOption coverageOption;
@@ -181,6 +183,14 @@ public class Coverage implements Serializable{
 
 	public void setCoverageClaimDocTypes(List<CoverageClaimDocType> coverageClaimDocTypes) {
 		this.coverageClaimDocTypes = coverageClaimDocTypes;
+	}
+	
+	public List<CoverageOrderDocType> getCoverageOrderDocTypes() {
+		return coverageOrderDocTypes;
+	}
+
+	public void setCoverageOrderDocTypes(List<CoverageOrderDocType> coverageOrderDocTypes) {
+		this.coverageOrderDocTypes = coverageOrderDocTypes;
 	}
 
 	public CoverageCategory getCoverageCategory() {

@@ -64,7 +64,16 @@
 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
 		    <result column="claim_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
     	</association>	
-    </collection>    
+    </collection>  
+    <collection property="coverageOrderDocTypes" ofType="com.ninelives.insurance.model.CoverageOrderDocType">
+    	<id column="coverage_order_doc_type_id" jdbcType="INTEGER" property="coverageOrderDocTypeId" />
+    	<result column="order_doc_type_id" jdbcType="VARCHAR" property="orderDocTypeId" />
+	    <association property="orderDocType" javaType="com.ninelives.insurance.model.OrderDocType">
+	    	<id column="order_doc_type_id" jdbcType="VARCHAR" property="orderDocTypeId" />
+		    <result column="order_doc_type_name" jdbcType="VARCHAR" property="name" />
+		    <result column="order_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
+    	</association>	
+    </collection>   
   </resultMap>
   
   <sql id="NestedProductColumnList">
@@ -80,6 +89,8 @@
 	d.recommendation as covcat_recommendation,
 	e.coverage_claim_doc_type_id, e.is_mandatory,
 	f.claim_doc_type_id, f.name as claim_doc_type_name, f.usage_type as claim_doc_type_usage_type,
+	i.coverage_order_doc_type_id, 
+	j.order_doc_type_id, j.name as order_doc_type_name, j.usage_type as order_doc_type_usage_type,	
 	g.coverage_option_name, g.coverage_option_group_id,
 	h.coverage_option_group_name
   </sql>
@@ -91,6 +102,8 @@
   	inner join public.coverage_category d on d.coverage_category_id=c.coverage_category_id
   	left outer join public.coverage_claim_doc_type e on e.coverage_id=c.coverage_id
   	left outer join public.claim_doc_type f on f.claim_doc_type_id=e.claim_doc_type_id
+  	left outer join public.coverage_order_doc_type i on i.coverage_id=c.coverage_id
+	left outer join public.order_doc_type j on j.order_doc_type_id=i.order_doc_type_id
   	left outer join public.coverage_option g on g.id=c.coverage_option_id and c.coverage_option_id is not null
 	left outer join public.coverage_option_group h on h.id=g.coverage_option_group_id
   </sql>
