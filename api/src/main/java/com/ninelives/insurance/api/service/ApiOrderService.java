@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.api.dto.FilterDto;
+import com.ninelives.insurance.api.dto.OrderDocumentDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.PolicyOrderFamilyDto;
@@ -40,9 +43,11 @@ import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.CoverageCategory;
+import com.ninelives.insurance.model.CoverageOrderDocType;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
+import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
@@ -55,7 +60,6 @@ import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
-import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.ProductType;
@@ -646,6 +650,22 @@ public class ApiOrderService {
 				policyOrder.setHasVoucher(false);
 			}
 			
+			
+			//Set for documents
+			//TODO: replace with doc completeness check
+			if(submitOrderDto.getOrderDocuments()!=null) {
+				List<PolicyOrderDocument> policyOrderDocuments = new ArrayList<>();
+				for(OrderDocumentDto doc: submitOrderDto.getOrderDocuments()) {
+					PolicyOrderDocument pod = new PolicyOrderDocument();
+					pod.setOrderId(policyOrder.getOrderId());
+					pod.setOrderDocTypeId(doc.getOrderDocType().getOrderDocTypeId());
+					pod.setFileId(doc.getFile().getFileId());
+					policyOrderDocuments.add(pod);
+				}
+				policyOrder.setPolicyOrderDocuments(policyOrderDocuments);
+			}
+			
+			
 			try {
 				insuranceService.orderPolicy(policyOrder);
 			} catch (AppInternalServerErrorException e) {
@@ -955,6 +975,43 @@ public class ApiOrderService {
 				policyOrder, inviterPolicy);
 	}
 
+	public List<OrderDocumentDto> requiredOrderDocumentDtos(String authUserId, OrderDto orderDto) {
+		// TODO Auto-generated method stub
+		//if it is selfie, get coverage object, return the 
+		Map<String, OrderDocumentDto> orderDocumentDtoMaps = new LinkedHashMap<>();
+		if(orderDto!=null) {
+			if(orderDto.getProducts()!=null) {
+				for (ProductDto productDto: orderDto.getProducts()) {
+					Product product = productService.fetchProductByProductId(productDto.getProductId());
+					if (product.getCoverage().getCoverageOrderDocTypes()!=null) {
+						for(CoverageOrderDocType coverageOrderdocType: product.getCoverage().getCoverageOrderDocTypes()) {
+							if(!orderDocumentDtoMaps.containsKey(coverageOrderdocType.getOrderDocType().getOrderDocTypeId())) {
+								OrderDocumentDto dto = new OrderDocumentDto();
+								dto.setOrderDocType(modelMapperAdapter.toDto(coverageOrderdocType.getOrderDocType()));
+								orderDocumentDtoMaps.put(coverageOrderdocType.getOrderDocType().getOrderDocTypeId(), dto);								
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if(!orderDocumentDtoMaps.isEmpty()) {
+			List<OrderDocumentDto> orderDocumentList = orderDocumentDtoMaps.values().stream()
+					.sorted((a, b) -> a.getOrderDocType().getDisplayRank().compareTo(b.getOrderDocType().getDisplayRank()))
+					.collect(Collectors.toList()); 
+			
+			return orderDocumentList;
+		}else {
+			return new ArrayList<OrderDocumentDto>();
+		}
+		
+		
+		//return Collections.sort( (List<T>) new ArrayList<OrderDocumentDto>());
+		//return null;
+	}
+	
 	public List<PolicyOrder> fetchOrders(final String userId, final FilterDto filter){
 		int offset = orderService.getDefaultOrdersFilterOffset();
 		int limit = orderService.getDefaultOrdersFilterLimit();
@@ -1001,5 +1058,7 @@ public class ApiOrderService {
 		}
 		return filterType;
 	}
+
+	
 
 }

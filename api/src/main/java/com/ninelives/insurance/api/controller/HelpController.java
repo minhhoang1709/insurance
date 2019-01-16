@@ -67,4 +67,23 @@ public class HelpController {
 		}	    
 
 	}
+	
+	@RequestMapping(value="/help/selfiePolicyStandard",
+			method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Resource> downloadSelfiePolicyStandard(@RequestAttribute("authUserId") String authUserId, HttpServletResponse response) throws AppException{
+		
+		try {
+			Resource file = storageProvider.loadAsResource(config.getHelpSelfiePolicyStandardFilePath());
+			
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"")
+					.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE).body(file);
+
+		} catch (Exception e) {
+			logger.error("Error on loading policy standar", e);
+			throw new AppInternalServerErrorException(ErrorCode.ERR1002_STORAGE_ERROR, "Maaf, terjadi kesalahan pada sistem.");
+		}	    
+
+	}
 }

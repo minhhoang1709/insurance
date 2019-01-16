@@ -66,6 +66,8 @@ public class PolicyOrder implements Serializable{
     
     private PolicyOrderVoucher policyOrderVoucher;
     
+    private List<PolicyOrderDocument> policyOrderDocuments;
+    
 	public String getOrderId() {
 		return orderId;
 	}
@@ -291,6 +293,14 @@ public class PolicyOrder implements Serializable{
 		this.policyOrderVoucher = policyOrderVoucher;
 	}
 
+	public List<PolicyOrderDocument> getPolicyOrderDocuments() {
+		return policyOrderDocuments;
+	}
+
+	public void setPolicyOrderDocuments(List<PolicyOrderDocument> policyOrderDocuments) {
+		this.policyOrderDocuments = policyOrderDocuments;
+	}
+
 	@Override
 	public String toString() {
 		return "PolicyOrder [orderId=" + orderId + ", orderDate=" + orderDate + ", orderTime=" + orderTime + ", userId="
@@ -303,7 +313,7 @@ public class PolicyOrder implements Serializable{
 				+ ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
 				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
 				+ ", policyOrderFamilies=" + policyOrderFamilies + ", period=" + period + ", payment=" + payment
-				+ ", policyOrderVoucher=" + policyOrderVoucher + "]";
+				+ ", policyOrderVoucher=" + policyOrderVoucher + ", policyOrderDocuments=" + policyOrderDocuments + "]";
 	}
 
 	

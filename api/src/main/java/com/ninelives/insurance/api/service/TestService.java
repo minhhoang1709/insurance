@@ -13,6 +13,7 @@ import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.core.mybatis.mapper.TestMapper;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
@@ -36,8 +37,13 @@ public class TestService {
 	}
 	
 	public Product fetchProduct(String productId){
-		System.out.println("mau panggil yang di cache oi");
+		//System.out.println("mau panggil yang di cache oi");
 		return productService.fetchProductByProductId(productId);
+	}
+	
+	public Coverage fetchCoverage(String coverageId){
+		//System.out.println("mau panggil yang di cache oi");
+		return productService.fetchCoverageByCoverageId(coverageId);
 	}
 
 	public OrderDto changeOrderStatus(String authUserId, OrderDto orderDto) {

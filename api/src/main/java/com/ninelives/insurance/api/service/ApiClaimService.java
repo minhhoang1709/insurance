@@ -480,7 +480,8 @@ public class ApiClaimService {
 		for (ClaimCoverageDto ccd : claimDto.getClaimCoverages()) {
 			Coverage c = productService.fetchCoverageByCoverageId(ccd.getCoverage().getCoverageId());
 			for (CoverageClaimDocType ccdt : c.getCoverageClaimDocTypes()) {
-				if (ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.REGULAR)) {
+				if (ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.REGULAR)
+						|| ccdt.getClaimDocType().getUsageType().equals(ClaimDocUsageType.SELFIE)) {
 					ClaimDocumentDto claimDocDto = claimDocMap.get(ccdt.getClaimDocType().getClaimDocTypeId());
 					if(claimDocDto==null){
 						claimDocDto = new ClaimDocumentDto();

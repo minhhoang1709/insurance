@@ -42,15 +42,11 @@
 		    <result column="claim_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
     	</association>	
     </collection>
-    <collection property="coverageOrderDocTypes" ofType="com.ninelives.insurance.model.CoverageOrderDocType">
+	<collection property="coverageOrderDocTypes" ofType="com.ninelives.insurance.model.CoverageOrderDocType">
     	<id column="coverage_order_doc_type_id" jdbcType="INTEGER" property="coverageOrderDocTypeId" />
     	<result column="order_doc_type_id" jdbcType="VARCHAR" property="orderDocTypeId" />
-	    <association property="orderDocType" javaType="com.ninelives.insurance.model.OrderDocType">
-	    	<id column="order_doc_type_id" jdbcType="VARCHAR" property="orderDocTypeId" />
-		    <result column="order_doc_type_name" jdbcType="VARCHAR" property="name" />
-		    <result column="order_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
-    	</association>	
-    </collection>    
+	    <association property="orderDocType" resultMap="com.ninelives.insurance.core.mybatis.mapper.OrderDocTypeMapper.BaseResultMap" columnPrefix="orderdoctype_" />	    		
+    </collection> 
   </resultMap>
   
   <sql id="NestedCoverageColumnList">
@@ -60,8 +56,8 @@
 	b.recommendation as covcat_recommendation,
 	c.coverage_claim_doc_type_id, c.is_mandatory,
 	d.claim_doc_type_id, d.name as claim_doc_type_name, d.usage_type as claim_doc_type_usage_type,
-	g.coverage_order_doc_type_id, 
-	h.order_doc_type_id, h.name as order_doc_type_name, h.usage_type as order_doc_type_usage_type,	
+	g.coverage_order_doc_type_id, g.order_doc_type_id,
+	h.order_doc_type_id as orderdoctype_order_doc_type_id, h.name as orderdoctype_name, h.usage_type as orderdoctype_usage_type, h.display_rank as orderdoctype_display_rank,
 	e.coverage_option_name, e.coverage_option_group_id,
 	f.coverage_option_group_name 
   </sql>

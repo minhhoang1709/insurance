@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.dto.FilterDto;
+import com.ninelives.insurance.api.dto.OrderDocumentDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PolicyOrderBeneficiaryDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.service.ApiFileUploadService;
 import com.ninelives.insurance.api.service.ApiOrderService;
+import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.util.GsonUtil;
@@ -91,6 +93,19 @@ public class OrderController {
 		
 		return apiOrderService.updateBeneficiary(authUserId, orderId, beneficiaryDto);
 			
+	}
+	
+	@RequestMapping(value="/orderDocuments",
+			method=RequestMethod.POST)
+	@ResponseBody
+	public List<OrderDocumentDto> listRequiredOrderDocumentDtos (@RequestAttribute ("authUserId") String authUserId, 
+			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
+			@RequestBody(required=false) @Valid OrderDto orderDto) throws AppException{
+		if(isValidateOnly){
+			return apiOrderService.requiredOrderDocumentDtos(authUserId, orderDto);
+		}else{
+			throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR,"Parameter not supported");
+		}
 	}
 	
 	@RequestMapping(value="/orderDocumentFiles",

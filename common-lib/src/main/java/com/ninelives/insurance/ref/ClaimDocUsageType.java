@@ -9,7 +9,8 @@ public enum ClaimDocUsageType {
 	FAMILY_CARD("familyCard"),
 	REGULAR("regular"),
 	FAMILY_ID_CARD("familyIdCard"),
-	FAMILY_PASSPORT("familyPassport")
+	FAMILY_PASSPORT("familyPassport"),
+	SELFIE("selfie")
 	;
 	
 	static final Map<String, ClaimDocUsageType> lookup = new HashMap<>();

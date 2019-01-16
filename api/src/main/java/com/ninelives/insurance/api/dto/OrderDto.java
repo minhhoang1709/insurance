@@ -57,6 +57,8 @@ public class OrderDto {
     private PaymentDto payment;
     
     private List<PolicyOrderFamilyDto> families;
+    
+    private List<OrderDocumentDto> orderDocuments;
 
 	public String getOrderId() {
 		return orderId;
@@ -226,6 +228,14 @@ public class OrderDto {
 		this.families = families;
 	}
 
+	public List<OrderDocumentDto> getOrderDocuments() {
+		return orderDocuments;
+	}
+
+	public void setOrderDocuments(List<OrderDocumentDto> orderDocuments) {
+		this.orderDocuments = orderDocuments;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderDto [orderId=" + orderId + ", orderDate=" + orderDate + ", title=" + title + ", subtitle="
@@ -234,7 +244,8 @@ public class OrderDto {
 				+ ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount + ", status=" + status
 				+ ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", products=" + products
 				+ ", coverageCategory=" + coverageCategory + ", period=" + period + ", user=" + user + ", voucher="
-				+ voucher + ", payment=" + payment + ", families=" + families + "]";
+				+ voucher + ", payment=" + payment + ", families=" + families + ", orderDocuments=" + orderDocuments
+				+ "]";
 	}
 
     

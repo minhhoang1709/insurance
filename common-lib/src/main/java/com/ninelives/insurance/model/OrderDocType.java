@@ -16,6 +16,8 @@ public class OrderDocType implements Serializable{
     
     private OrderDocUsageType usageType;
     
+    private Integer displayRank;
+    
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
@@ -50,6 +52,14 @@ public class OrderDocType implements Serializable{
 
 	public void setUsageType(OrderDocUsageType usageType) {
 		this.usageType = usageType;
+	}
+
+	public Integer getDisplayRank() {
+		return displayRank;
+	}
+
+	public void setDisplayRank(Integer displayRank) {
+		this.displayRank = displayRank;
 	}
 
 	public LocalDateTime getCreatedDate() {

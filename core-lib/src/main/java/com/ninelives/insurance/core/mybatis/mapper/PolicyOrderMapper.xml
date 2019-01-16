@@ -49,20 +49,8 @@
 	    <result column="order_product_coverage_has_beneficiary" jdbcType="BIT" property="coverageHasBeneficiary" />
 	    <result column="order_product_premi" jdbcType="INTEGER" property="premi" />
 	    <result column="order_product_base_premi" jdbcType="INTEGER" property="basePremi" />
-<!-- 	    <result column="order_product_coverage_display_rank" jdbcType="INTEGER" property="coverageDisplayRank" /> -->
-<!-- 	    <collection property="coverageClaimDocTypes" ofType="com.ninelives.insurance.model.CoverageClaimDocType"> -->
-<!-- 	    	<id column="coverage_claim_doc_type_id" jdbcType="INTEGER" property="coverageClaimDocTypeId" /> -->
-<!-- 	    	<result column="is_mandatory" jdbcType="BIT" property="isMandatory" /> -->
-<!-- 		    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType"> -->
-<!-- 		    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" /> -->
-<!-- 			    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" /> -->
-<!-- 	    	</association>	 -->
-<!-- 	    </collection> -->
-<!-- 	    <collection property="claimDocTypes" ofType="com.ninelives.insurance.model.ClaimDocType"> -->
-<!-- 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" /> -->
-<!-- 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" /> -->
-<!-- 	    </collection> -->
-    </collection>    
+    </collection>
+    <collection property="policyOrderDocuments" ofType="com.ninelives.insurance.model.PolicyOrderDocument" resultMap="com.ninelives.insurance.core.mybatis.mapper.PolicyOrderDocumentMapper.NestedResultMap" columnPrefix="policyorderdoc_"/>
   </resultMap>
   
   <resultMap id="PeriodResultMap" type="com.ninelives.insurance.model.Period">
@@ -162,7 +150,12 @@
     pof.name as policyorderfamily_name, 
     pof.relationship as policyorderfamily_relationship, 
     pof.birth_date as policyorderfamily_birth_date, 
-    pof.gender as policyorderfamily_gender 
+    pof.gender as policyorderfamily_gender,
+    pod.order_doc_type_id as policyorderdoc_order_doc_type_id,
+    pod.file_id as policyorderdoc_file_id,
+    pod.order_doc_type_id as policyorderdoc_orderdoctype_order_doc_type_id,
+    odt.name as policyorderdoc_orderdoctype_name,
+    odt.usage_type as policyorderdoc_orderdoctype_usage_type
   </sql>
 
 <!--      	
@@ -177,6 +170,8 @@
     left outer join public.policy_payment pp on pp.order_id=a.order_id
     left outer join public.policy_order_voucher pov on pov.order_id=a.order_id and a.has_voucher=true
     left outer join public.policy_order_family pof on pof.order_id=a.order_id and a.is_family=true
+    left outer join public.policy_order_document pod on pod.order_id=a.order_id
+    left outer join public.order_doc_type odt on odt.order_doc_type_id=pod.order_doc_type_id
   </sql>
 
   

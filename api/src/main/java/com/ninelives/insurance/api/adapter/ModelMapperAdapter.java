@@ -24,6 +24,8 @@ import com.ninelives.insurance.api.dto.CoverageCategoryDto;
 import com.ninelives.insurance.api.dto.CoverageClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.CoverageOptionDto;
+import com.ninelives.insurance.api.dto.OrderDocTypeDto;
+import com.ninelives.insurance.api.dto.OrderDocumentDto;
 import com.ninelives.insurance.api.dto.OrderDto;
 import com.ninelives.insurance.api.dto.PaymentDto;
 import com.ninelives.insurance.api.dto.PeriodDto;
@@ -41,6 +43,7 @@ import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.CoverageClaimDocType;
 import com.ninelives.insurance.model.CoverageOption;
+import com.ninelives.insurance.model.OrderDocType;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimBankAccount;
@@ -51,6 +54,7 @@ import com.ninelives.insurance.model.PolicyClaimDocumentExtra;
 import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
+import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
@@ -71,6 +75,7 @@ public class ModelMapperAdapter {
 //	@Value("${ninelives.order.policy-title}")
 //	String policyTitle;
 	
+		
 	public PolicyOrderFamilyDto toDto(PolicyOrderFamily m){
 		PolicyOrderFamilyDto dto = null;
 		if(m!=null){
@@ -253,6 +258,15 @@ public class ModelMapperAdapter {
 			if(m.getStatus()!=null && m.getStatus().equals(PolicyStatus.INPAYMENT)){
 				dto.setPayment(toDto(m.getPayment()));
 			}
+			
+			if(!CollectionUtils.isEmpty(m.getPolicyOrderDocuments())){
+				List<OrderDocumentDto> docDtos = new ArrayList<>();
+				for(PolicyOrderDocument doc : m.getPolicyOrderDocuments()){
+					docDtos.add(toDto(doc));
+				}
+				dto.setOrderDocuments(docDtos);
+			}
+			
 		}
 		return dto;
 	}
@@ -335,6 +349,16 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new ClaimDocumentExtraDto();
 			dto.setFamily(toDto(m.getFamily()));
+		}
+		return dto;
+	}
+	public OrderDocumentDto toDto(PolicyOrderDocument m){
+		OrderDocumentDto dto = null;
+		if(m!=null){
+			dto = new OrderDocumentDto();
+			//dto.setClaimDocumentId(m.getClaimDocumentId());
+			dto.setOrderDocType(toDto(m.getOrderDocType()));
+			dto.setFile(toUserFileDto(m.getFileId()));			
 		}
 		return dto;
 	}
@@ -515,4 +539,15 @@ public class ModelMapperAdapter {
 		return dto;
 	}
 
+	public OrderDocTypeDto toDto(OrderDocType m) {
+		OrderDocTypeDto dto = null;
+		if(m!=null){
+			dto = new OrderDocTypeDto();
+			dto.setOrderDocTypeId(m.getOrderDocTypeId());
+			dto.setName(m.getName());
+			dto.setUsageType(m.getUsageType());
+			dto.setDisplayRank(m.getDisplayRank());
+		}
+		return dto;
+	}
 }

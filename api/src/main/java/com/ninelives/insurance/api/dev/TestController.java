@@ -265,6 +265,13 @@ public class TestController {
 		return testService.fetchProduct(productId);
 	}
 	
+	@RequestMapping("/test/fullcoverages/{coverageId}")
+	@ResponseBody
+	public Coverage getCoverageById(@PathVariable("coverageId") String coverageId){
+		System.out.print("fullcoverages");
+		return testService.fetchCoverage(coverageId);
+	}
+	
 	@PostMapping("/test/notifs")
 	@ResponseBody
 	public String sendNotif(@RequestAttribute("authUserId") String userId, @RequestBody FcmNotifMessageDto messageDto) throws Exception{

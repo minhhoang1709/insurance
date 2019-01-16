@@ -16,7 +16,10 @@ public class NinelivesConfigProperties {
 	private String helpPolicyStandardFilePath;
 	
 	@NotEmpty
-	private String helpTravelPolicyStandardFilePath;	
+	private String helpTravelPolicyStandardFilePath;
+	
+	@NotEmpty
+	private String helpSelfiePolicyStandardFilePath;
 	
 	private Order order = new Order();
 	private Claim claim = new Claim();
@@ -43,6 +46,13 @@ public class NinelivesConfigProperties {
 	}
 	public void setHelpTravelPolicyStandardFilePath(String helpTravelPolicyStandardFilePath) {
 		this.helpTravelPolicyStandardFilePath = helpTravelPolicyStandardFilePath;
+	}
+	
+	public String getHelpSelfiePolicyStandardFilePath() {
+		return helpSelfiePolicyStandardFilePath;
+	}
+	public void setHelpSelfiePolicyStandardFilePath(String helpSelfiePolicyStandardFilePath) {
+		this.helpSelfiePolicyStandardFilePath = helpSelfiePolicyStandardFilePath;
 	}
 	public Order getOrder() {
 		return order;

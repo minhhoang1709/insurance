@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.core.mybatis.mapper.PolicyOrderDocumentMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.PolicyOrderDocument">
+    <id column="order_document_id" jdbcType="BIGINT" property="orderDocumentId" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_doc_type_id" jdbcType="VARCHAR" property="orderDocTypeId" />
+    <result column="file_id" jdbcType="BIGINT" property="fileId" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  
+  <resultMap id="NestedResultMap" type="com.ninelives.insurance.model.PolicyOrderDocument">
+  	<result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_doc_type_id" jdbcType="VARCHAR" property="orderDocTypeId" />
+    <result column="file_id" jdbcType="BIGINT" property="fileId" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  	<association property="orderDocType" resultMap="com.ninelives.insurance.core.mybatis.mapper.OrderDocTypeMapper.BaseResultMap" columnPrefix="orderdoctype_" />
+  </resultMap>
+  
+  <sql id="NestedResultColumnList">
+    order_doc_type_id, name, description, created_date, update_date, usage_type
+  </sql>
+  
+  <insert id="insertList">
+  	insert into public.policy_order_document (order_id, order_doc_type_id, file_id)             
+    values
+    <foreach item="item" index="index" collection="list" separator=",">
+    	(    	 
+    	#{item.orderId,jdbcType=VARCHAR},
+        #{item.orderDocTypeId,jdbcType=VARCHAR},
+        #{item.fileId,jdbcType=BIGINT}        
+		)
+    </foreach>
+  </insert>
+</mapper>

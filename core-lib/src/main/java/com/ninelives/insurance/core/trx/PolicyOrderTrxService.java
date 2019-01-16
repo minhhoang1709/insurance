@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderDocumentMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderFamilyMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderProductMapper;
@@ -22,6 +23,7 @@ public class PolicyOrderTrxService {
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
 	@Autowired PolicyOrderVoucherMapper policyOrderVoucherMapper;
 	@Autowired PolicyOrderFamilyMapper policyOrderFamilyMapper;
+	@Autowired PolicyOrderDocumentMapper policyOrderDocumentMapper;
 	
 	@Transactional
 	public void registerPolicyOrder(PolicyOrder policyOrder){
@@ -33,6 +35,9 @@ public class PolicyOrderTrxService {
 		}
 		if(policyOrder.getPolicyOrderFamilies()!=null){
 			policyOrderFamilyMapper.insertList(policyOrder.getPolicyOrderFamilies());
+		}
+		if(policyOrder.getPolicyOrderDocuments()!=null) {
+			policyOrderDocumentMapper.insertList(policyOrder.getPolicyOrderDocuments());
 		}
 	}
 
