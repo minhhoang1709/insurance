@@ -45,6 +45,8 @@ public class PolicyOrder implements Serializable{
     private PolicyStatus status;
     
     private Boolean isFamily;
+    
+    private Boolean isHide;
 
     private LocalDateTime createdDate;
 
@@ -203,6 +205,14 @@ public class PolicyOrder implements Serializable{
 
 	public void setIsFamily(Boolean isFamily) {
 		this.isFamily = isFamily;
+	}		
+
+	public Boolean getIsHide() {
+		return isHide;
+	}
+
+	public void setIsHide(Boolean isHide) {
+		this.isHide = isHide;
 	}
 
 	public PolicyStatus getStatus() {

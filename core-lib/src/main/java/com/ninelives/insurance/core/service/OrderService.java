@@ -122,6 +122,14 @@ public class OrderService {
 		return policyOrderBeneficiaryMapper.insert(beneficiary);
 	}
 	
+	public void hideOrder(PolicyOrder policyOrder) throws AppException{
+		if(policyOrder == null || StringUtils.isEmpty(policyOrder.getOrderId())){
+			throw new AppBadRequestException(ErrorCode.ERR4000_ORDER_INVALID, "Pesanan tidak ditemukan");
+		}
+		policyOrder.setIsHide(true);
+		policyOrderMapper.updateIsHideByOrderId(policyOrder);
+	}
+	
 	public LocalDate calculatePolicyEndDate(LocalDate localDate, Period period) {
 		LocalDate calculatedDate = null;
 		if(period!=null && period.getValue()!=null){
@@ -222,7 +230,7 @@ public class OrderService {
 		if (limit > this.maxOrdersFilterLimit){
 			limit = this.maxOrdersFilterLimit;
 		}		
-		List<PolicyOrder> orders = policyOrderMapper.selectByUserId(userId, limit, offset);
+		List<PolicyOrder> orders = policyOrderMapper.selectByUserId(userId, limit, offset, false);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
 				postRetrieval(po,LocalDate.now());
@@ -235,7 +243,7 @@ public class OrderService {
 		if (limit > this.maxOrdersFilterLimit){
 			limit = this.maxOrdersFilterLimit;
 		}
-		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset);
+		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusActiveByUserId(userId, limit, offset, false);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
 				postRetrieval(po,LocalDate.now());
@@ -248,7 +256,7 @@ public class OrderService {
 		if (limit > this.maxOrdersFilterLimit){
 			limit = this.maxOrdersFilterLimit;
 		}
-		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset);
+		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusApprovedByUserId(userId, limit, offset, false);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
 				postRetrieval(po,LocalDate.now());
@@ -261,7 +269,7 @@ public class OrderService {
 		if (limit > this.maxOrdersFilterLimit){
 			limit = this.maxOrdersFilterLimit;
 		}
-		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset);
+		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusExpiredOrTerminatedByUserId(userId, limit, offset, false);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
 				postRetrieval(po,LocalDate.now());
@@ -274,7 +282,7 @@ public class OrderService {
 		if (limit > this.maxOrdersFilterLimit){
 			limit = this.maxOrdersFilterLimit;
 		}
-		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset);
+		List<PolicyOrder> orders = policyOrderMapper.selectWhereStatusBeforeApprovedByUserId(userId, limit, offset, false);
 		if(orders!=null){
 			for(PolicyOrder po: orders){
 				postRetrieval(po,LocalDate.now());

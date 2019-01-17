@@ -2,6 +2,7 @@ package com.ninelives.insurance.core.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimMapper;
 import com.ninelives.insurance.model.PolicyClaim;
@@ -24,6 +26,8 @@ import com.ninelives.insurance.ref.FileUseType;
 @Service
 public class ClaimService {
 	private static final Logger logger = LoggerFactory.getLogger(ClaimService.class);
+	
+	@Autowired NinelivesConfigProperties config;
 	
 	public static final String CLAIM_DOC_TYPE_FAMILY_CARD = "DT011";
 	public static final String CLAIM_DOC_TYPE_FAMILY_ID_CARD = "ID001";
@@ -89,6 +93,13 @@ public class ClaimService {
 			}
 			
 		}
+	}
+	
+	public boolean isPolicyEndDateWithinClaimPeriod(LocalDate today, LocalDate policyEndDate) {
+		 if (ChronoUnit.DAYS.between(policyEndDate, today) > config.getClaim().getMaxPolicyEndDatePeriod()) {
+			 return false;
+		 }
+		 return true;
 	}
 	
 	public void updateClaimFiles(List<PolicyClaimDocument> docs) throws AppException{

@@ -81,6 +81,17 @@ public class OrderController {
 		return apiOrderService.submitOrder(authUserId, submitOrder, isValidateOnly);
 	}
 	
+	@RequestMapping(value="/orders/{orderId}",
+			method=RequestMethod.DELETE)	
+	@ResponseBody
+	public void hideOrder(@RequestAttribute("authUserId") String authUserId, 
+			@PathVariable("orderId") String orderId) throws AppException{
+		
+		logger.debug("Hide orders userid is {} with orderid {}", authUserId, orderId);
+		
+		apiOrderService.deleteOrder(authUserId, orderId);
+	}
+	
 	@RequestMapping(value="/orders/{orderId}/beneficiary",
 			method={ RequestMethod.POST, RequestMethod.PUT })	
 	@ResponseBody

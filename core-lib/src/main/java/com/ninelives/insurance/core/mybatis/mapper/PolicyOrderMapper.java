@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
@@ -59,11 +60,20 @@ public interface PolicyOrderMapper {
 
 	PolicyOrder selectByUserIdAndOrderId(@Param("userId") String userId, @Param("orderId") String orderId);
 	
-	List<PolicyOrder> selectByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
-	List<PolicyOrder> selectWhereStatusActiveByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
-	List<PolicyOrder> selectWhereStatusApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
-	List<PolicyOrder> selectWhereStatusExpiredOrTerminatedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
-	List<PolicyOrder> selectWhereStatusBeforeApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
+	List<PolicyOrder> selectByUserId(@Param("userId") String userId, @Param("limit") int limit,
+			@Param("offset") int offset, @Param("isHide") Boolean isHide);
+
+	List<PolicyOrder> selectWhereStatusActiveByUserId(@Param("userId") String userId, @Param("limit") int limit,
+			@Param("offset") int offset, @Param("isHide") Boolean isHide);
+
+	List<PolicyOrder> selectWhereStatusApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit,
+			@Param("offset") int offset, @Param("isHide") Boolean isHide);
+
+	List<PolicyOrder> selectWhereStatusExpiredOrTerminatedByUserId(@Param("userId") String userId,
+			@Param("limit") int limit, @Param("offset") int offset, @Param("isHide") Boolean isHide);
+
+	List<PolicyOrder> selectWhereStatusBeforeApprovedByUserId(@Param("userId") String userId, @Param("limit") int limit,
+			@Param("offset") int offset, @Param("isHide") Boolean isHide);
 	
 	PolicyOrder selectWithBeneficiaryByUserIdAndOrderId(@Param("userId") String userId, @Param("orderId") String orderId);
 	
@@ -72,4 +82,11 @@ public interface PolicyOrderMapper {
 			@Param ("coverageIds") List<String> coverageIds);
 	
 	int updateStatusAndProviderResponseByOrderIdSelective(PolicyOrder record);
+	
+	@Update({
+		"update public.policy_order ",
+		"set is_hide=#{isHide,jdbcType=BIT} ",
+		"where order_id=#{orderId,jdbcType=VARCHAR}" 
+	})
+	int updateIsHideByOrderId(PolicyOrder record);
 }

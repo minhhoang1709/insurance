@@ -160,7 +160,7 @@ public class ApiClaimService {
 		}
 
 		if(order.getStatus().equals(PolicyStatus.EXPIRED) 
-				&& ChronoUnit.DAYS.between(order.getPolicyEndDate(), today) > config.getClaim().getMaxPolicyEndDatePeriod()){
+				&& !claimService.isPolicyEndDateWithinClaimPeriod(today, order.getPolicyEndDate())) { 				
 			logger.debug(
 					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error expired order pass allowed claim period>, exception:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER);

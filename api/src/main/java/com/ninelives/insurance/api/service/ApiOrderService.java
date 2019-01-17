@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +34,7 @@ import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
+import com.ninelives.insurance.core.service.ClaimService;
 import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.OrderService;
@@ -76,6 +76,7 @@ public class ApiOrderService {
 	@Autowired NinelivesConfigProperties config;
 	
 	@Autowired OrderService orderService;
+	@Autowired ClaimService claimService;
 	@Autowired ProductService productService;
 	@Autowired UserService userService;
 	@Autowired VoucherService voucherService;	
@@ -1059,6 +1060,26 @@ public class ApiOrderService {
 		return filterType;
 	}
 
-	
+	public void deleteOrder(String authUserId, String orderId) throws AppException {
+		PolicyOrder order = orderService.fetchOrderByOrderId(authUserId, orderId);
+				
+		if(order!=null) {
+			//check if order is allowed to be hidden
+			if(order.getStatus().equals(PolicyStatus.OVERDUE)
+					|| order.getStatus().equals(PolicyStatus.TERMINATED)
+					|| (order.getStatus().equals(PolicyStatus.EXPIRED) &&
+							!claimService.isPolicyEndDateWithinClaimPeriod(LocalDate.now(), order.getPolicyEndDate()))) {
+				
+				orderService.hideOrder(order);
+			}else {
+				logger.error("Process deleteOrder, user:<{}>, order:<{}>, result: exception order status <{}>",
+						authUserId, orderId, ErrorCode.ERR4404_DELETE_INVALID_ORDER_STATUS);
+				throw new AppBadRequestException(ErrorCode.ERR4404_DELETE_INVALID_ORDER_STATUS, "Pesanan tidak dapat dihapus");
+			}
+		}else {
+			throw new AppBadRequestException(ErrorCode.ERR5001_ORDER_NOT_FOUND, "Pesanan tidak ditemukan");
+		}
+		
+	}
 
 }

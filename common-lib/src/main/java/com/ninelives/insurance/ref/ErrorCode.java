@@ -62,6 +62,8 @@ public enum ErrorCode {
 	ERR4302_DOWNLOAD_NOT_ELIGIBLE("ERR4302"), //fail to read document/file to be sent
 	ERR4303_DOWNLOAD_PROVIDER_ERROR("ERR4303"), //fail to stream from aswata
 	
+	ERR4404_DELETE_INVALID_ORDER_STATUS ("ERR4404"), //order status is not valid for deletion
+	
 	ERR5001_ORDER_NOT_FOUND("ERR5001"), //get order with given id not found
 	ERR6001_UPLOAD_EMPTY("ERR6001"), //upload with empty file
 	ERR6002_UPLOAD_SYSTEM_ERROR("ERR6002"), //system error

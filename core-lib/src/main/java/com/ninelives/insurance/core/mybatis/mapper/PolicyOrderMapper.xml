@@ -20,6 +20,7 @@
     <result column="provider_download_url" jdbcType="VARCHAR" property="providerDownloadUrl" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="is_family" jdbcType="BIT" property="isFamily" />
+    <result column="is_hide" jdbcType="BIT" property="isHide" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <association property="period" resultMap="PeriodResultMap" />
@@ -107,13 +108,13 @@
   <sql id="Base_Column_List">
     order_id, order_date, order_time, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
     policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, provider_order_number, provider_download_url,
-    status, is_family, created_date, update_date
+    status, is_family, is_hide, created_date, update_date
   </sql>
   
   <sql id="NestedPolicyOrderColumnList">
     a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
    	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.provider_download_url, 
-   	a.status, a.is_family, a.created_date,
+   	a.status, a.is_family, a.is_hide, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
    	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 
    	b.coverage_max_limit as order_product_coverage_max_limit, 
@@ -197,6 +198,9 @@
     		<include refid="Base_Column_List"/>
     	from public.policy_order as a
     	where a.user_id=#{userId,jdbcType=VARCHAR}
+	    	<if test="isHide != null">
+	        	and a.is_hide = #{isHide,jdbcType=BIT}
+	      	</if>
     	order by a.created_date desc
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
@@ -216,6 +220,9 @@
     	where a.user_id=#{userId,jdbcType=VARCHAR}
     		and a.status='APPROVED'
     		and current_date between a.policy_start_date and a.policy_end_date
+    		<if test="isHide != null">
+	        	and a.is_hide = #{isHide,jdbcType=BIT}
+	      	</if>
     	order by a.created_date desc
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
@@ -235,6 +242,9 @@
     	where a.user_id=#{userId,jdbcType=VARCHAR}
     		and a.status='APPROVED'
     		and current_date &lt; a.policy_start_date
+    		<if test="isHide != null">
+	        	and a.is_hide = #{isHide,jdbcType=BIT}
+	      	</if>
     	order by a.created_date desc
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
@@ -256,13 +266,16 @@
 		    	( a.status='APPROVED' and current_date &gt; a.policy_end_date )
 		    	or
 		    	( a.status='TERMINATED')
-	    	)     	
+	    	)
+	    	<if test="isHide != null">
+	        	and a.is_hide = #{isHide,jdbcType=BIT}
+	      	</if>
     	order by a.created_date desc
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
     	) as a
     	<include refid="NestedPolicyOrderTableJoinList"/>
-    order by a.created_date desc    	
+    order by a.created_date desc
   </select>
   
   <select id="selectWhereStatusBeforeApprovedByUserId" resultMap="NestedPolicyOrderResultMap">
@@ -274,7 +287,10 @@
     		<include refid="Base_Column_List"/>
     	from public.policy_order as a
     	where a.user_id=#{userId,jdbcType=VARCHAR}
-	    	and a.status in ('SUBMITTED','INPAYMENT','PAID')    	
+	    	and a.status in ('SUBMITTED','INPAYMENT','PAID')
+	    	<if test="isHide != null">
+	        	and a.is_hide = #{isHide,jdbcType=BIT}
+	      	</if>	
     	order by a.created_date desc
     	limit #{limit,jdbcType=INTEGER}
     	offset #{offset,jdbcType=INTEGER}
