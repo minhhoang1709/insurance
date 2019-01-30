@@ -18,7 +18,7 @@ import com.ninelives.insurance.provider.insurance.aswata.ref.TravelType;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.CoverageOptionId;
 
-public class AswataInsuranceProviderTest {
+public class AswataInsuranceProviderTravelTypeTest {
 	/*
 	 * Case:
 	 *  - input medical asean, return type asean

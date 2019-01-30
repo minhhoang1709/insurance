@@ -441,5 +441,9 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		clientCode = config.getInsurance().getAswataClientCode();
 		clientKey = config.getInsurance().getAswataClientKey();					
 	}
+
+	public void setEnableConnection(Boolean enableConnection) {
+		this.enableConnection = enableConnection;
+	}	
 		
 }
