@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.dev;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ import com.ninelives.insurance.core.provider.insurance.InsuranceProviderExceptio
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.core.service.ClaimService;
+import com.ninelives.insurance.core.service.FileUploadService;
 import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.OrderService;
@@ -66,6 +68,7 @@ import com.ninelives.insurance.model.PolicyClaimFamily;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
@@ -92,6 +95,7 @@ public class TestController {
 	@Autowired OrderService orderService;
 	@Autowired ClaimService claimService;
 	@Autowired StorageProvider storageService;
+	@Autowired FileUploadService fileService;
 	
 	@Autowired AswataInsuranceProvider aswata;
 	@Autowired GoogleAccountProvider google;
@@ -413,6 +417,17 @@ public class TestController {
 	@ResponseBody
 	public User getUser(@PathVariable("userId") String userId){
 		return userMapper.selectByUserId(userId);
+	}
+	
+	@RequestMapping(value="/test/userfilemap/{fileId}", method=RequestMethod.GET)
+	@ResponseBody
+	public Map<String, UserFile> getUserFileMap(@PathVariable("fileId") Long fileId){
+		UserFile userfile = fileService.fetchUserFileById(fileId);
+		
+		Map<String, UserFile> resultMap = new HashMap<>();
+		resultMap.put("file", userfile);
+		
+		return resultMap; 
 	}
 	
 	@RequestMapping(value="/test/users/{userId}",

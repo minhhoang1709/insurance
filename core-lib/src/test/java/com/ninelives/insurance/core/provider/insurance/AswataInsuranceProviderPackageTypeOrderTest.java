@@ -21,6 +21,7 @@ import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.PolicyOrderVoucher;
@@ -83,6 +84,7 @@ public class AswataInsuranceProviderPackageTypeOrderTest {
 	@Test
 	public void testSelfie() {
 		order.setCoverageCategoryId(CoverageCategoryId.SELFIE);
+		order.setPolicyOrderDocuments(new ArrayList<PolicyOrderDocument>());
 	
 		try {
 			provider.orderPolicy(order);
@@ -120,7 +122,7 @@ public class AswataInsuranceProviderPackageTypeOrderTest {
 		order.setPolicyStartDate(LocalDate.now());
 		order.setPolicyEndDate(LocalDate.now());
 		order.setPolicyOrderProducts(new ArrayList<PolicyOrderProduct>());
-		order.setIsFamily(false);
+		order.setIsFamily(false);		
 		
 		insurerOrderLogMapper.record=null;
 		provider.insurerOrderLogMapper = insurerOrderLogMapper;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ninelives.insurance.model.UserFile;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderRequestDto implements Serializable{
@@ -107,6 +108,16 @@ public class OrderRequestDto implements Serializable{
 		@JsonProperty("client_id")
 		private String clientId;
 		
+		/*
+		 * Selfie insurance support
+		 */
+		@JsonProperty("face_photo_front")
+		private UserFile facePhotoFront;
+		@JsonProperty("face_photo_left")
+		private UserFile facePhotoLeft;
+		@JsonProperty("face_photo_right")
+		private UserFile facePhotoRight;
+				
 		/*
 		 * Travel insurance support
 		 */
@@ -242,19 +253,52 @@ public class OrderRequestDto implements Serializable{
 		}
 		public void setFamilyList(List<RequestParamFamily> familyList) {
 			this.familyList = familyList;
+		}		
+		public UserFile getFacePhotoFront() {
+			return facePhotoFront;
 		}
-		
+		public void setFacePhotoFront(UserFile facePhotoFront) {
+			this.facePhotoFront = facePhotoFront;
+		}
+		public UserFile getFacePhotoLeft() {
+			return facePhotoLeft;
+		}
+		public void setFacePhotoLeft(UserFile facePhotoLeft) {
+			this.facePhotoLeft = facePhotoLeft;
+		}
+		public UserFile getFacePhotoRight() {
+			return facePhotoRight;
+		}
+		public void setFacePhotoRight(UserFile facePhotoRight) {
+			this.facePhotoRight = facePhotoRight;
+		}
 		@Override
 		public String toString() {
 			return "RequestParam [productCode=" + productCode + ", packageType=" + packageType + ", insuredName="
 					+ insuredName + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", insuredAddress="
 					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
-					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCardNumber="
-					+ idCardNumber + ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
-					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry
-					+ ", clientId=" + clientId + ", travelType=" + travelType + ", isFamily=" + isFamily
-					+ ", familyList=" + familyList + ", idCard=" + (idCard==null?"":"***")+ "]";
+					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCard=" + (idCard == null ? "" : "***")
+					+ ", idCardNumber=" + idCardNumber + ", beneficiary=" + beneficiary + ", beneficiaryRelation="
+					+ beneficiaryRelation + ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress
+					+ ", industry=" + industry + ", clientId=" + clientId + ", facePhotoFront=" + facePhotoFront
+					+ ", facePhotoLeft=" + facePhotoLeft + ", facePhotoRight=" + facePhotoRight + ", travelType="
+					+ travelType + ", isFamily=" + isFamily + ", familyList=" + familyList + "]";
 		}
+
+//		@Override
+//		public String toString() {
+//			return "RequestParam [productCode=" + productCode + ", packageType=" + packageType + ", insuredName="
+//					+ insuredName + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", insuredAddress="
+//					+ insuredAddress + ", insuranceStartDate=" + insuranceStartDate + ", insuranceEndDate="
+//					+ insuranceEndDate + ", coverages=" + coverages + ", premium=" + premium + ", idCardNumber="
+//					+ idCardNumber + ", beneficiary=" + beneficiary + ", beneficiaryRelation=" + beneficiaryRelation
+//					+ ", mobileNumber=" + mobileNumber + ", emailAddress=" + emailAddress + ", industry=" + industry
+//					+ ", clientId=" + clientId + ", travelType=" + travelType + ", isFamily=" + isFamily
+//					+ ", familyList=" + familyList + ", idCard=" + (idCard == null ? "" : "***") + ", facePhotoFront="
+//					+ (facePhotoFront == null ? "" : "***") + ", facePhotoLeft=" + (facePhotoLeft == null ? "" : "***")
+//					+ ", facePhotoRight=" + (facePhotoRight == null ? "" : "***") + "]";
+//		}
+		
 	}
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)

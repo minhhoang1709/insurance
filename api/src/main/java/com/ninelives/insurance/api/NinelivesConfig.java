@@ -44,8 +44,6 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	@PostConstruct
 	public void configInfo() {
 		logger.info("Auto configuration, Datasource is <{}>", dataSource);
-		//logger.info("Ninelives config is {}", config);
-		//logger.info("Auto configuration, TransactionManagement is {}", dataSource);
 	}
 	
 	@Bean
@@ -68,6 +66,13 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	    loggingFilter.setMaxPayloadLength(10000);
 	    return loggingFilter;
 	}
+	
+//	@Bean
+//	public Jackson2ObjectMapperBuilderCustomizer addUserFileToBase64JsonSerializer() {		
+//		return builder -> {
+//			builder.serializerByType(UserFile.class, userFileToBase64JsonSerializer);			
+//		};
+//	}
 	
 //	@Bean
 //	@ConditionalOnProperty(prefix="ninelives", name="storage.location")

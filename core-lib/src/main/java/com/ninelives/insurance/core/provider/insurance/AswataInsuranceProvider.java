@@ -28,12 +28,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
+import com.ninelives.insurance.core.jackson.transformer.UserFileToBase64JsonSerializer;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderConfirmLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderLogMapper;
 import com.ninelives.insurance.core.provider.storage.StorageException;
@@ -44,6 +50,7 @@ import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.InsurerOrderConfirmLog;
 import com.ninelives.insurance.model.InsurerOrderLog;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderFamily;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.UserFile;
@@ -58,6 +65,7 @@ import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
 import com.ninelives.insurance.provider.insurance.aswata.ref.TravelType;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.CoverageOptionId;
+import com.ninelives.insurance.ref.OrderDocTypeId;
 import com.ninelives.insurance.ref.VoucherType;
 import com.ninelives.insurance.util.ValidationUtil;
 
@@ -72,7 +80,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	
 	@Autowired InsurerOrderLogMapper insurerOrderLogMapper;
 	@Autowired InsurerOrderConfirmLogMapper insurerOrderConfirmLogMapper;
-
+	
 //	public static final class AswataResultSuccessCondition{
 //		public static final String responseCode="000000";
 //		public static final int httpStatus=200;
@@ -84,6 +92,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	private Boolean enableConnection;
 	
 	private RestTemplate template;
+	private UserFileToBase64JsonSerializer userFileToBase64JsonSerializer;
 	private String providerUrl;	
 	private String clientCode;
 	private String clientKey;	
@@ -96,7 +105,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	
 	@Override
 	public ResponseDto<OrderResponseDto> orderPolicy(PolicyOrder order) throws IOException, StorageException, InsuranceProviderException{
-		
+	
 		if(!enableConnection){
 			logger.error("Error on orderPolicy with exception <connection is not enabled>");
 			throw new InsuranceProviderConnectDisabledException("Connection is not enabled");
@@ -111,9 +120,6 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		requestDto.setRequestTime(order.getOrderTime().format(timeFormatter));
 		
 		requestDto.setRequestParam(new OrderRequestDto.RequestParam());
-		
-		
-		
 		requestDto.getRequestParam().setInsuredName(StringUtils.abbreviate(order.getPolicyOrderUsers().getName(), 50));
 		requestDto.getRequestParam().setDateOfBirth(order.getPolicyOrderUsers().getBirthDate().format(dateFormatter));
 		requestDto.getRequestParam().setGender(order.getPolicyOrderUsers().getGender().toStr());		
@@ -130,15 +136,15 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		/* Insured address is hardcoded into empty string */
 		requestDto.getRequestParam().setInsuredAddress("-");				
-		
-		
+				
 		/*
-		 * Travel insurance specific
+		 * Specific insurance handler
 		 */
 		if(order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)
 				|| order.getCoverageCategoryId().equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
 			requestDto.getRequestParam().setProductCode(ProductCode.TRAVEL);
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_TRAVEL);
+			
 			requestDto.getRequestParam().setTravelType(getProviderTravelType(order));
 			requestDto.getRequestParam().setIsFamily((order.getIsFamily()?"Y":"N"));
 			if(order.getIsFamily() && !CollectionUtils.isEmpty(order.getPolicyOrderFamilies())){
@@ -154,8 +160,25 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 				}
 				requestDto.getRequestParam().setFamilyList(familyList);
 			}
+		}else if (order.getCoverageCategoryId().equals(CoverageCategoryId.SELFIE)){
+			requestDto.getRequestParam().setProductCode(ProductCode.SELFIE);
+			requestDto.getRequestParam().setPackageType(PackageType.TYPE_SELFIE);
+			
+			for(PolicyOrderDocument orderDoc : order.getPolicyOrderDocuments()) {
+				UserFile docFile = fileUploadService.fetchUserFileById(orderDoc.getFileId());
+
+				if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.FRONT_FACE)) {
+					requestDto.getRequestParam().setFacePhotoFront(docFile);
+				}else if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.RIGHT_FACE)) {
+					requestDto.getRequestParam().setFacePhotoRight(docFile);
+				}else if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.LEFT_FACE)) {
+					requestDto.getRequestParam().setFacePhotoLeft(docFile);	
+				}
+			}			
+			
 		}else{
 			requestDto.getRequestParam().setProductCode(ProductCode.PA);
+			
 			if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 					&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
 				requestDto.getRequestParam().setPackageType(PackageType.TYPE_PA_B2B);
@@ -179,6 +202,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 			idCardFileId = order.getPolicyOrderUsers().getPassportFileId();
 		}
 		
+
 		if(idCardFileId!=null){
 			UserFile userFile = fileUploadService.fetchUserFileById(idCardFileId);
 			
@@ -271,7 +295,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		
 		logger.debug("Receive aswata response with request: <{}>, entity: <{}> and result <{}>", requestDto, resp == null ? null : resp.toString(),
 				result == null ? null : result);		
-
+	
 		return result;
 	}
 	
@@ -418,6 +442,8 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		enableConnection = config.getInsurance().getEnableConnection();
 		
 		if(enableConnection){
+			userFileToBase64JsonSerializer = new UserFileToBase64JsonSerializer(storageProvider);
+			
 			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 			cm.setMaxTotal(config.getInsurance().getAswataConnectionPoolSize());
 			cm.setDefaultMaxPerRoute(config.getInsurance().getAswataConnectionPoolSize());
@@ -433,8 +459,23 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 					.setConnectionManager(cm)
 					.setDefaultRequestConfig(requestConfig)
 					.build();
+			
+			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(defaultHttpClient);
+			requestFactory.setBufferRequestBody(false);
 
-			template = new RestTemplate(new HttpComponentsClientHttpRequestFactory(defaultHttpClient));
+			template = new RestTemplate(requestFactory);
+			
+			//custom objectmapper for userfile's handler
+			SimpleModule module = new SimpleModule();
+			module.addSerializer(UserFile.class, userFileToBase64JsonSerializer);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.registerModule(module);			
+			MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+			messageConverter.setObjectMapper(objectMapper);
+			
+			template.getMessageConverters().removeIf(m -> m instanceof MappingJackson2HttpMessageConverter);
+			template.getMessageConverters().add(messageConverter);			
+			
 		}
 				
 		providerUrl = config.getInsurance().getAswataUrl();
