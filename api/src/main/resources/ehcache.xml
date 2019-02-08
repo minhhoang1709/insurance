@@ -7,7 +7,7 @@
 	<!-- <cache name="ProductsWithStatusActive" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache> -->
 	<cache name="CoverageCategory" maxEntriesLocalHeap="5" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="Coverage" maxEntriesLocalHeap="50" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
-	<cache name="Product" maxEntriesLocalHeap="100" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="Product" maxEntriesLocalHeap="120" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="ClaimDocType" maxEntriesLocalHeap="50" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="InviteVoucherDto" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="InviteVoucher" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
