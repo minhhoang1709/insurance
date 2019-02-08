@@ -135,5 +135,12 @@ public class FileUploadService {
 		return  userFileMapper.selectByPrimaryKey(fileId);
 	}
 	
-		
+	public UserFile featchUploadedTempFileById(Long fileId) {
+		UserFile userFile = userFileMapper.selectByPrimaryKey(fileId);
+		if (userFile != null && UserFileStatus.UPLOADED.equals(userFile.getStatus())
+				&& FileUseType.TEMP.equals(userFile.getFileUseType())) {
+			return userFile;
+		}
+		return null;
+	}	
 }

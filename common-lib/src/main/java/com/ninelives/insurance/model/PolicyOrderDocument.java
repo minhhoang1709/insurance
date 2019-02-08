@@ -18,7 +18,9 @@ public class PolicyOrderDocument implements Serializable{
 
     private LocalDateTime createdDate;
 
-    private LocalDateTime updateDate;        
+    private LocalDateTime updateDate;
+    
+    private UserFile userFile;
 
     public Long getOrderDocumentId() {
         return orderDocumentId;
@@ -75,4 +77,13 @@ public class PolicyOrderDocument implements Serializable{
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	public UserFile getUserFile() {
+		return userFile;
+	}
+
+	public void setUserFile(UserFile userFile) {
+		this.userFile = userFile;
+	}
+    
 }

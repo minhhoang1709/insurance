@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,6 +38,7 @@ import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.service.ClaimService;
+import com.ninelives.insurance.core.service.FileUploadService;
 import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.OrderService;
@@ -55,6 +59,7 @@ import com.ninelives.insurance.model.PolicyOrderVoucher;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
+import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
@@ -83,6 +88,7 @@ public class ApiOrderService {
 	@Autowired PolicyOrderTrxService policyOrderTrxService;
 	@Autowired NotificationService notificationService;
 	@Autowired InsuranceService insuranceService;
+	@Autowired FileUploadService fileUploadService;
 	
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
@@ -414,7 +420,7 @@ public class ApiOrderService {
 		boolean isAllProfileInfoUpdated = false;
 		boolean isPhoneInfoUpdated = false;
 		boolean isAddressInfoUpdated = false;
-		if(!isValidateOnly){			
+		if(!isValidateOnly){
 			if(isFamily){
 				validateFamilyMember(userId, submitOrderDto);
 			}
@@ -509,7 +515,7 @@ public class ApiOrderService {
 				userService.updateProfileInfo(newUserProfile);
 				
 				isAllProfileInfoUpdated = true;
-			}else{
+			} else {
 				//incase existing profile exists, allow update phone or address
 				if(submitOrderDto.getUser()!=null){
 					User updateUser = new User();
@@ -527,9 +533,9 @@ public class ApiOrderService {
 					if(isPhoneInfoUpdated || isAddressInfoUpdated){
 						userService.updateProfileInfo(updateUser);
 					}					
-				}			
+				}
 				
-			}		
+			}	
 			
 			policyOrder = new PolicyOrder();
 			policyOrder.setOrderId(orderService.generateOrderId());
@@ -650,22 +656,24 @@ public class ApiOrderService {
 			}else{
 				policyOrder.setHasVoucher(false);
 			}
-			
-			
+						
 			//Set for documents
-			//TODO: replace with doc completeness check
-			if(submitOrderDto.getOrderDocuments()!=null) {
-				List<PolicyOrderDocument> policyOrderDocuments = new ArrayList<>();
-				for(OrderDocumentDto doc: submitOrderDto.getOrderDocuments()) {
-					PolicyOrderDocument pod = new PolicyOrderDocument();
-					pod.setOrderId(policyOrder.getOrderId());
-					pod.setOrderDocTypeId(doc.getOrderDocType().getOrderDocTypeId());
-					pod.setFileId(doc.getFile().getFileId());
-					policyOrderDocuments.add(pod);
-				}
+			List<PolicyOrderDocument> policyOrderDocuments = validateOrderDocuments(userId, policyOrder.getOrderId(), submitOrderDto);
+			if(policyOrderDocuments!=null && policyOrderDocuments.size()>=0) {
 				policyOrder.setPolicyOrderDocuments(policyOrderDocuments);
-			}
+			}			
+				
+//				List<PolicyOrderDocument> policyOrderDocuments = new ArrayList<>();
+//				for(OrderDocumentDto doc: submitOrderDto.getOrderDocuments()) {
+//					PolicyOrderDocument pod = new PolicyOrderDocument();
+//					pod.setOrderId(policyOrder.getOrderId());
+//					pod.setOrderDocTypeId(doc.getOrderDocType().getOrderDocTypeId());
+//					pod.setFileId(doc.getFile().getFileId());
+//					
+//					policyOrderDocuments.add(pod);
+//				}
 			
+			//}			
 			
 			try {
 				insuranceService.orderPolicy(policyOrder);
@@ -676,6 +684,12 @@ public class ApiOrderService {
 			}
 			
 			policyOrderTrxService.registerPolicyOrder(policyOrder);
+			
+			//move file from temp to claim
+			if(policyOrderDocuments!=null && policyOrderDocuments.size()>=0) {
+				orderService.updateOrderDocumentFiles(policyOrder.getPolicyOrderDocuments());
+			}
+			
 						
 			if(voucher!=null){
 				//no need to send, comment out the success notif
@@ -705,6 +719,76 @@ public class ApiOrderService {
 		
 		return policyOrder;
 	}
+	
+	/**
+	 * Return null if there is no required document
+	 * 
+	 * 
+	 * @param userId
+	 * @param orderDto
+	 * @return
+	 * @throws AppBadRequestException
+	 */
+	@Nullable
+	private List<PolicyOrderDocument> validateOrderDocuments(final String userId, final String orderId, final OrderDto orderDto) throws AppBadRequestException{
+		List<OrderDocumentDto> requiredDocDtos = requiredOrderDocumentDtos(userId, orderDto);
+		
+		if(requiredDocDtos == null || requiredDocDtos.size() == 0) {
+			return null;
+		}
+		
+		if(orderDto.getOrderDocuments()==null 
+				|| orderDto.getOrderDocuments().size() == 0
+				|| orderDto.getOrderDocuments().size() != requiredDocDtos.size()) {
+			logger.debug(
+					"Process validateOrderDocuments, userId:<{}>, order:<{}>, result:<error doc list not match>, exception:<{}>, required:<{}>",
+					userId, orderDto, ErrorCode.ERR4028_ORDER_DOCUMENT_MANDATORY,
+					requiredDocDtos);
+			
+			throw new AppBadRequestException(ErrorCode.ERR4028_ORDER_DOCUMENT_MANDATORY, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
+			
+		}
+		
+		List<PolicyOrderDocument> orderDocs = new ArrayList<>();
+		Set<Long> fileIdSet = new HashSet<>();
+		for(OrderDocumentDto requiredDocDto: requiredDocDtos) {
+			for (OrderDocumentDto submittedDocDto : orderDto.getOrderDocuments()) {
+				if (submittedDocDto.getOrderDocType() != null 
+						&& submittedDocDto.getOrderDocType().getOrderDocTypeId()
+								.equals(requiredDocDto.getOrderDocType().getOrderDocTypeId())) {
+					if(submittedDocDto.getFile()!=null) {
+						UserFile submittedFile = fileUploadService.featchUploadedTempFileById(submittedDocDto.getFile().getFileId());
+						if(submittedFile != null) {
+							PolicyOrderDocument orderDoc = new PolicyOrderDocument();
+							orderDoc.setOrderId(orderId);
+							orderDoc.setOrderDocTypeId(submittedDocDto.getOrderDocType().getOrderDocTypeId());
+							orderDoc.setFileId(submittedFile.getFileId());
+							orderDoc.setUserFile(submittedFile);
+							orderDocs.add(orderDoc);
+							
+							fileIdSet.add(submittedFile.getFileId());
+						} else {
+							logger.error(
+									"Process validateOrderDocuments, userId:<{}>, order:<{}>, file <{}> not found in db",
+									userId, orderDto, submittedDocDto.getFile().getFileId());
+						}
+					}
+				}
+			}
+		}
+		
+		if(fileIdSet.size()!=requiredDocDtos.size() || orderDocs.size()!=requiredDocDtos.size()) {
+			logger.debug(
+					"Process validateOrderDocuments, userId:<{}>, order:<{}>, result:<error doc list not match>, exception:<{}>, required:<{}>",
+					userId, orderDto, ErrorCode.ERR4028_ORDER_DOCUMENT_MANDATORY,
+					requiredDocDtos);
+			
+			throw new AppBadRequestException(ErrorCode.ERR4028_ORDER_DOCUMENT_MANDATORY, "Permintaan tidak dapat diproses, silahkan cek kembali dokumen Anda");
+		}
+		
+		return orderDocs;
+	}
+
 	/**
 	 * Validate family member count and age againts policy-start-date
 	 * 
@@ -712,7 +796,7 @@ public class ApiOrderService {
 	 * @param submitOrderDto
 	 * @throws AppBadRequestException
 	 */
-	protected void validateFamilyMember(final String userId, OrderDto submitOrderDto)throws AppBadRequestException{
+	protected void validateFamilyMember(final String userId, OrderDto submitOrderDto) throws AppBadRequestException{
 		if(CollectionUtils.isEmpty(submitOrderDto.getFamilies())){
 			logger.debug("Process order for <{}> with order <{}> with result:<exception empty family>", userId, submitOrderDto);
 			throw new AppBadRequestException(ErrorCode.ERR4021_ORDER_FAMILY_EMPTY,

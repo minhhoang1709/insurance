@@ -1,6 +1,7 @@
 package com.ninelives.insurance.core.jackson.transformer;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +27,25 @@ public class UserFileToBase64JsonSerializer extends JsonSerializer<UserFile>{
 	@Override
 	public void serialize(UserFile userFile, JsonGenerator gen, SerializerProvider serializers)
 			throws IOException, JsonProcessingException {
+		
+		Resource resource = null;
 		try {
-			Resource resource = storageProvider.loadAsResource(userFile);
-			gen.writeBinary(resource.getInputStream(), -1);			
+			resource = storageProvider.loadAsResource(userFile);				
 		} catch (StorageException e) {
 			logger.error("Exception on fetching user file", e);
 			throw new IOException(e.getMessage());
 		}
+		
+		if(resource!=null) {
+			try (InputStream resourceInputStream = resource.getInputStream()){
+				gen.writeBinary(resourceInputStream, -1);	
+			}catch(IOException ioe) {
+				logger.error("Exception on fetching user file", ioe);
+				throw ioe;
+			}
+		}
+		
+						
 	}
 
 }

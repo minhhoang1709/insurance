@@ -28,11 +28,13 @@ import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
+import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
 
@@ -46,6 +48,7 @@ public class OrderService {
 	
 	@Autowired ProductService productService;
 	@Autowired InsuranceService insuranceService;
+	@Autowired FileUploadService fileUploadService;
 	@Autowired PolicyOrderMapper policyOrderMapper;
 	@Autowired PolicyOrderUsersMapper policyOrderUserMapper;
 	@Autowired PolicyOrderProductMapper policyOrderProductMapper; 
@@ -373,6 +376,13 @@ public class OrderService {
 
 	public int getDefaultOrdersFilterOffset() {
 		return defaultOrdersFilterOffset;
+	}
+	public void updateOrderDocumentFiles(List<PolicyOrderDocument> docs) throws AppException {
+		if (docs!=null) {
+			for(PolicyOrderDocument doc: docs){
+				fileUploadService.moveTemp(doc.getUserFile(), FileUseType.ORDER);
+			}
+		}		
 	}
 	
 }

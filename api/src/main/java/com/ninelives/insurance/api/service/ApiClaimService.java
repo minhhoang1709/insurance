@@ -217,7 +217,7 @@ public class ApiClaimService {
 		}
 		
 		//mandatory doc check exists
-		validateMandatoryClaimDocument(userId, claimDto,order);
+		validateMandatoryClaimDocument(userId, claimDto, order);
 		
 		//check that all file already uploaded for each claim document
 		//int uploadedFileCount = fileUploadService.countUploadedTempFile(userId, fileIds);

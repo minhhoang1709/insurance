@@ -9,7 +9,8 @@ public enum FileUseType {
 	IDT("IDT"), //Identity Card
 	CLAIM("CLA"), //CLAIM
 	TEMP("TMP"), //TEMP
-	PASSPORT("PAS") //PASSPORT
+	PASSPORT("PAS"), //PASSPORT
+	ORDER("ORD") //Order Document (e.g. selfie photo)
 	;
 	
 	static final Map<String, FileUseType> lookup = new HashMap<>();
