@@ -51,7 +51,7 @@ import com.ninelives.insurance.ref.Gender;
  *  
  */
 @RunWith(SpringRunner.class)
-public class ApiClaimServiceRegisteredDocDtoTest {
+public class ApiClaimServiceRequiredDocDtoTest {
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	ApiClaimService claimService = new ApiClaimService();
