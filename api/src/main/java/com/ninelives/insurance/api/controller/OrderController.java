@@ -113,7 +113,7 @@ public class OrderController {
 			@RequestParam(value="test", defaultValue="false") boolean isValidateOnly,
 			@RequestBody(required=false) @Valid OrderDto orderDto) throws AppException{
 		if(isValidateOnly){
-			return apiOrderService.requiredOrderDocumentDtos(authUserId, orderDto);
+			return apiOrderService.requiredOrderDocumentDtos(orderDto);
 		}else{
 			throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR,"Parameter not supported");
 		}

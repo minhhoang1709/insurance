@@ -730,8 +730,8 @@ public class ApiOrderService {
 	 * @throws AppBadRequestException
 	 */
 	@Nullable
-	private List<PolicyOrderDocument> validateOrderDocuments(final String userId, final String orderId, final OrderDto orderDto) throws AppBadRequestException{
-		List<OrderDocumentDto> requiredDocDtos = requiredOrderDocumentDtos(userId, orderDto);
+	protected List<PolicyOrderDocument> validateOrderDocuments(final String userId, final String orderId, final OrderDto orderDto) throws AppBadRequestException{
+		List<OrderDocumentDto> requiredDocDtos = requiredOrderDocumentDtos(orderDto);
 		
 		if(requiredDocDtos == null || requiredDocDtos.size() == 0) {
 			return null;
@@ -1060,7 +1060,7 @@ public class ApiOrderService {
 				policyOrder, inviterPolicy);
 	}
 
-	public List<OrderDocumentDto> requiredOrderDocumentDtos(String authUserId, OrderDto orderDto) {
+	public List<OrderDocumentDto> requiredOrderDocumentDtos(OrderDto orderDto) {
 		// TODO Auto-generated method stub
 		//if it is selfie, get coverage object, return the 
 		Map<String, OrderDocumentDto> orderDocumentDtoMaps = new LinkedHashMap<>();
