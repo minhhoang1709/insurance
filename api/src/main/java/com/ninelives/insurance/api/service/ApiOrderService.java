@@ -65,6 +65,7 @@ import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.OrderDtoFilterStatus;
 import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.ProductType;
@@ -817,7 +818,12 @@ public class ApiOrderService {
 			if(age < config.getOrder().getFamilyAdultMinimumAge()){
 				minorCnt++;
 			}else{
-				adultCnt++;
+				//adult should be pasangan
+				if(!FamilyRelationship.PASANGAN.equals(family.getRelationship())){
+					throw new AppBadRequestException(ErrorCode.ERR4022_ORDER_FAMILY_INVALID,
+							"Permintaan tidak dapat diproses. Periksa kembali data keluarga Anda");
+				}
+				adultCnt++;				
 			}
 //			if(FamilyRelationship.ANAK.equals(family.getRelationship())){
 //				minorCnt++;				

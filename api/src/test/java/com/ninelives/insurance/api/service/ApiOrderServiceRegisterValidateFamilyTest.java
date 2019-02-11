@@ -218,7 +218,7 @@ public class ApiOrderServiceRegisterValidateFamilyTest {
 		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
 		submitOrderDto.getFamilies().get(0).setName("test");
 		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(76));
-		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.ORANGLAIN);
+		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.PASANGAN);
 		submitOrderDto.getFamilies().get(0).setGender(Gender.MALE);				
 		try {
 			orderService.validateFamilyMember("userIdA", submitOrderDto);
@@ -239,7 +239,7 @@ public class ApiOrderServiceRegisterValidateFamilyTest {
 		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
 		submitOrderDto.getFamilies().get(0).setName("test");
 		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(16));
-		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.ORANGLAIN);
+		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.PASANGAN);
 		submitOrderDto.getFamilies().get(0).setGender(Gender.MALE);
 		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
 		submitOrderDto.getFamilies().get(1).setName("test");
@@ -276,12 +276,12 @@ public class ApiOrderServiceRegisterValidateFamilyTest {
 		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
 		submitOrderDto.getFamilies().get(0).setName("test");
 		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(75));
-		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.ORANGTUA);
+		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.PASANGAN);
 		submitOrderDto.getFamilies().get(0).setGender(Gender.MALE);
 		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
 		submitOrderDto.getFamilies().get(1).setName("test");
 		submitOrderDto.getFamilies().get(1).setBirthDate(LocalDateTime.now().minusYears(17));
-		submitOrderDto.getFamilies().get(1).setRelationship(FamilyRelationship.ANAK);
+		submitOrderDto.getFamilies().get(1).setRelationship(FamilyRelationship.PASANGAN);
 		submitOrderDto.getFamilies().get(1).setGender(Gender.MALE);
 				
 		try {
@@ -295,7 +295,7 @@ public class ApiOrderServiceRegisterValidateFamilyTest {
 	}
 	
 	@Test
-	public void testFamilyCountValid(){
+	public void testFamilyAdultShouldBePasangan(){
 		OrderDto submitOrderDto = new OrderDto();
 		submitOrderDto.setPolicyStartDate(LocalDateTime.now());
 		
@@ -304,6 +304,43 @@ public class ApiOrderServiceRegisterValidateFamilyTest {
 		submitOrderDto.getFamilies().get(0).setName("test");
 		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(75));
 		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.ORANGLAIN);
+		submitOrderDto.getFamilies().get(0).setGender(Gender.MALE);
+		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
+		submitOrderDto.getFamilies().get(1).setName("test");
+		submitOrderDto.getFamilies().get(1).setBirthDate(LocalDateTime.now().minusYears(12));
+		submitOrderDto.getFamilies().get(1).setRelationship(FamilyRelationship.ANAK);
+		submitOrderDto.getFamilies().get(1).setGender(Gender.MALE);
+		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
+		submitOrderDto.getFamilies().get(2).setName("test");
+		submitOrderDto.getFamilies().get(2).setBirthDate(LocalDateTime.now().minusYears(13));
+		submitOrderDto.getFamilies().get(2).setRelationship(FamilyRelationship.ORANGTUA);
+		submitOrderDto.getFamilies().get(2).setGender(Gender.MALE);
+		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
+		submitOrderDto.getFamilies().get(3).setName("test");
+		submitOrderDto.getFamilies().get(3).setBirthDate(LocalDateTime.now().minusYears(15));
+		submitOrderDto.getFamilies().get(3).setRelationship(FamilyRelationship.PASANGAN);
+		submitOrderDto.getFamilies().get(3).setGender(Gender.MALE);
+				
+		try {
+			orderService.validateFamilyMember("userIdA", submitOrderDto);
+		} catch (AppBadRequestException e) {
+			exp = e;
+		}
+		
+		assertNotNull(exp);
+		assertEquals(ErrorCode.ERR4022_ORDER_FAMILY_INVALID, exp.getCode());
+	}
+	
+	@Test
+	public void testFamilyCountValid(){
+		OrderDto submitOrderDto = new OrderDto();
+		submitOrderDto.setPolicyStartDate(LocalDateTime.now());
+		
+		submitOrderDto.setFamilies(new ArrayList<PolicyOrderFamilyDto>());
+		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
+		submitOrderDto.getFamilies().get(0).setName("test");
+		submitOrderDto.getFamilies().get(0).setBirthDate(LocalDateTime.now().minusYears(75));
+		submitOrderDto.getFamilies().get(0).setRelationship(FamilyRelationship.PASANGAN);
 		submitOrderDto.getFamilies().get(0).setGender(Gender.MALE);
 		submitOrderDto.getFamilies().add(new PolicyOrderFamilyDto());
 		submitOrderDto.getFamilies().get(1).setName("test");
