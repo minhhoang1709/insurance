@@ -661,19 +661,7 @@ public class ApiOrderService {
 			List<PolicyOrderDocument> policyOrderDocuments = validateOrderDocuments(userId, policyOrder.getOrderId(), submitOrderDto);
 			if(policyOrderDocuments!=null && policyOrderDocuments.size()>=0) {
 				policyOrder.setPolicyOrderDocuments(policyOrderDocuments);
-			}			
-				
-//				List<PolicyOrderDocument> policyOrderDocuments = new ArrayList<>();
-//				for(OrderDocumentDto doc: submitOrderDto.getOrderDocuments()) {
-//					PolicyOrderDocument pod = new PolicyOrderDocument();
-//					pod.setOrderId(policyOrder.getOrderId());
-//					pod.setOrderDocTypeId(doc.getOrderDocType().getOrderDocTypeId());
-//					pod.setFileId(doc.getFile().getFileId());
-//					
-//					policyOrderDocuments.add(pod);
-//				}
-			
-			//}			
+			}								
 			
 			try {
 				insuranceService.orderPolicy(policyOrder);
