@@ -67,8 +67,11 @@ public class ApiExceptionHandler {
 		return errorDtoResp;
 	}
 	
+	/*
+	 * 	A hack to return status 429 instead of HttpStatus.UPGRADE_REQUIRED because of client bug
+	 */
 	@ExceptionHandler(AppUpgradeRequiredException.class)
-	@ResponseStatus(HttpStatus.UPGRADE_REQUIRED)
+	@ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
 	@ResponseBody
 	public Map<String, ErrorDto> handleUpgradeRequiredException(HttpServletRequest request, Exception ex){
 		ErrorDto errorDto = new ErrorDto(HttpStatus.UPGRADE_REQUIRED.value(), ((AppException) ex).getCode(), ex.getMessage());
