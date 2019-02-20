@@ -6,6 +6,8 @@ public class UserLogin {
     private String tokenId;
 
     private String userId;
+    
+    private User user;
 
     private LocalDateTime createdDate;
 
@@ -24,8 +26,16 @@ public class UserLogin {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+    
+    public User getUser() {
+		return user;
+	}
 
-    public LocalDateTime getCreatedDate() {
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 

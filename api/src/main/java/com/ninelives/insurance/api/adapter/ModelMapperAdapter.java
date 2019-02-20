@@ -24,6 +24,7 @@ import com.ninelives.insurance.api.dto.CoverageCategoryDto;
 import com.ninelives.insurance.api.dto.CoverageClaimDocTypeDto;
 import com.ninelives.insurance.api.dto.CoverageDto;
 import com.ninelives.insurance.api.dto.CoverageOptionDto;
+import com.ninelives.insurance.api.dto.LoginDto;
 import com.ninelives.insurance.api.dto.OrderDocTypeDto;
 import com.ninelives.insurance.api.dto.OrderDocumentDto;
 import com.ninelives.insurance.api.dto.OrderDto;
@@ -62,6 +63,7 @@ import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserFile;
+import com.ninelives.insurance.model.UserLogin;
 import com.ninelives.insurance.model.UserNotification;
 import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.ref.PolicyStatus;
@@ -176,6 +178,16 @@ public class ModelMapperAdapter {
 			}catch(Exception e){
 				logger.error("error convert duration <{}>", m);
 			}			
+		}
+		return dto;
+	}
+	
+	public LoginDto toDto(UserLogin m) {
+		LoginDto dto = null;
+		if(m!=null) {
+			dto = new LoginDto();
+			dto.setAccessToken(m.getTokenId());
+			dto.setUser(toDto(m.getUser()));
 		}
 		return dto;
 	}

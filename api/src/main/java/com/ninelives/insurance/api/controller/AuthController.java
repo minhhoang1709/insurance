@@ -1,6 +1,5 @@
 package com.ninelives.insurance.api.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ninelives.insurance.api.model.AuthToken;
+import com.ninelives.insurance.api.dto.LoginDto;
 import com.ninelives.insurance.api.service.AuthService;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 
@@ -29,27 +28,29 @@ public class AuthController {
 	@RequestMapping(value="/login",
 			method=RequestMethod.POST)	
 	@ResponseBody
-	public Map<String, String> login( @RequestBody Map<String, String> loginData) throws AppNotAuthorizedException{
-		AuthToken authToken = authService.loginByEmail(loginData.get("email"), 
+	public LoginDto login( @RequestBody Map<String, String> loginData) throws AppNotAuthorizedException{
+		LoginDto loginDto = authService.login(loginData.get("email"), 
 				loginData.get("password"), 
 				loginData.get("fcmToken"));
 		
-		Map<String, String> result = null;
+//		Map<String, String> result = null;
+//		
+//		if(authToken!=null){
+//			result = new HashMap<>();
+//			result.put("accessToken", authToken.getTokenId());
+//		}
+//		
+//		if(logger.isTraceEnabled()){
+//			logger.trace("Terima /login POST");
+//			if( loginData!=null&&loginData.size()>0 ){
+//				loginData.forEach((k,v)->logger.trace("Param : " + k + " | Value : " + v));
+//			}
+//			logger.trace("---");
+//		}
 		
-		if(authToken!=null){
-			result = new HashMap<>();
-			result.put("accessToken", authToken.getTokenId());
-		}
 		
-		if(logger.isTraceEnabled()){
-			logger.trace("Terima /login POST");
-			if( loginData!=null&&loginData.size()>0 ){
-				loginData.forEach((k,v)->logger.trace("Param : " + k + " | Value : " + v));
-			}
-			logger.trace("---");
-		}
 		
-		return result;
+		return loginDto;
 	}
 	
 	@RequestMapping(value="/logout")	

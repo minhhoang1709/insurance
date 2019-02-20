@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
+import com.ninelives.insurance.api.dto.LoginDto;
 import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.model.AuthToken;
 import com.ninelives.insurance.api.provider.redis.RedisService;
@@ -30,11 +32,19 @@ public class AuthService {
 	@Autowired UserMapper userMapper;
 	@Autowired UserLoginMapper loginMapper;
 	@Autowired RedisService redisService;
+	@Autowired ModelMapperAdapter modelMapperAdapter;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-		
-	public AuthToken loginByEmail(String email, String password, String fcmToken) throws AppNotAuthorizedException{		
-		AuthToken token = null;
+	
+	
+	public LoginDto login(String email, String password, String fcmToken) throws AppNotAuthorizedException{	
+		UserLogin login = loginByEmail(email, password, fcmToken);
+
+		return modelMapperAdapter.toDto(login);
+	}
+	
+	private UserLogin loginByEmail(String email, String password, String fcmToken) throws AppNotAuthorizedException{		
+		UserLogin newLogin = null;
 		
 		if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)||StringUtils.isEmpty(fcmToken)){
 			logger.info("Process login result:<{}>, reason:<Empty>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
@@ -46,11 +56,12 @@ public class AuthService {
 			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
 			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}else{
-			token = generateAuthToken();
+			AuthToken token = generateAuthToken();
 			
-			UserLogin newLogin = new UserLogin();
+			newLogin = new UserLogin();
 			newLogin.setUserId(user.getUserId());
 			newLogin.setTokenId(token.getTokenId());
+			newLogin.setUser(user);
 			
 			UserLogin login = loginMapper.selectByUserId(user.getUserId());
 			if(login!=null){
@@ -71,8 +82,48 @@ public class AuthService {
 			logger.info("Process login result:<Success>, reason:<>, email:<{}>, userId:<{}>", email, user.getUserId());
 		}
 
-		return token;
+		return newLogin;
 	}
+//	public AuthToken loginByEmail(String email, String password, String fcmToken) throws AppNotAuthorizedException{		
+//		AuthToken token = null;
+//		
+//		if(StringUtils.isEmpty(email)||StringUtils.isEmpty(password)||StringUtils.isEmpty(fcmToken)){
+//			logger.info("Process login result:<{}>, reason:<Empty>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
+//			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+//		}
+//		
+//		User user = userMapper.selectByEmail(email);
+//		if(user==null || !user.getPassword().equals(DigestUtils.sha1Hex(password))){
+//			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
+//			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+//		}else{
+//			token = generateAuthToken();
+//			
+//			UserLogin newLogin = new UserLogin();
+//			newLogin.setUserId(user.getUserId());
+//			newLogin.setTokenId(token.getTokenId());
+//			
+//			UserLogin login = loginMapper.selectByUserId(user.getUserId());
+//			if(login!=null){
+//				redisService.deleteAuthToken(login.getTokenId());
+//				loginMapper.updateByUserId(newLogin);
+//			}else{
+//				loginMapper.insert(newLogin);
+//			}						
+//			
+//			ApiSessionData sessionData = new ApiSessionData();
+//			sessionData.setUserId(user.getUserId());
+//			sessionData.setTokenCreatedDateTimeStr(token.getCreatedDateTimeStr());
+//			
+//			redisService.saveAuthToken(token, sessionData);
+//			if(!StringUtils.isEmpty(fcmToken) && !fcmToken.equals(user.getFcmToken())){
+//				userMapper.updateFcmTokenByUserId(user.getUserId(), fcmToken);
+//			}
+//			logger.info("Process login result:<Success>, reason:<>, email:<{}>, userId:<{}>", email, user.getUserId());
+//		}
+//
+//		return token;
+//	}
 	
 	public ApiSessionData validateAuthToken(String tokenId) throws AppNotAuthorizedException{
 		if(StringUtils.isEmpty(tokenId)){
