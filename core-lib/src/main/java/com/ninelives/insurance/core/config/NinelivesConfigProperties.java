@@ -34,7 +34,9 @@ public class NinelivesConfigProperties {
 	private Insurance insurance = new Insurance();
 	@Valid
 	private Account account = new Account();
-		
+	
+	private Email email = new Email();
+	
 	public String getHelpPolicyStandardFilePath() {
 		return helpPolicyStandardFilePath;
 	}
@@ -96,7 +98,13 @@ public class NinelivesConfigProperties {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
+	public Email getEmail() {
+		return email;
+	}
+	public void setEmail(Email email) {
+		this.email = email;
+	}
+
 
 
 	public static class Account {
@@ -106,6 +114,8 @@ public class NinelivesConfigProperties {
 		private List<String> googleOauth2ClientIds;
 		@NotEmpty
 		private List<String> googleIss;
+		
+		private int emailVerificationActiveHours = 24;
 		
 		public String getGoogleTokenEndpointUrl() {
 			return googleTokenEndpointUrl;
@@ -125,6 +135,47 @@ public class NinelivesConfigProperties {
 		public void setGoogleIss(List<String> googleIss) {
 			this.googleIss = googleIss;
 		}
+		public int getEmailVerificationActiveHours() {
+			return emailVerificationActiveHours;
+		}
+		public void setEmailVerificationActiveHours(int emailVerificationActiveHours) {
+			this.emailVerificationActiveHours = emailVerificationActiveHours;
+		}
+		
+	}
+	public static class Email {
+		private String sendgridBearerToken = "";
+		private String sendgridTemplateForVerification= "";
+		private String sendgridEmailFrom = "noreply@9lives.me";
+		
+		private String signupVerificationLink = "https://www.9lives.me/account/verify?token="; 
+		
+		public String getSendgridBearerToken() {
+			return sendgridBearerToken;
+		}
+		public void setSendgridBearerToken(String sendgridBearerToken) {
+			this.sendgridBearerToken = sendgridBearerToken;
+		}
+		public String getSendgridTemplateForVerification() {
+			return sendgridTemplateForVerification;
+		}
+		public void setSendgridTemplateForVerification(String sendgridTemplateForVerification) {
+			this.sendgridTemplateForVerification = sendgridTemplateForVerification;
+		}
+		public String getSendgridEmailFrom() {
+			return sendgridEmailFrom;
+		}
+		public void setSendgridEmailFrom(String sendgridEmailFrom) {
+			this.sendgridEmailFrom = sendgridEmailFrom;
+		}
+		public String getSignupVerificationLink() {
+			return signupVerificationLink;
+		}
+		public void setSignupVerificationLink(String signupVerificationLink) {
+			this.signupVerificationLink = signupVerificationLink;
+		}
+		
+		
 		
 	}
 	public static class Insurance {

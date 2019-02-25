@@ -22,6 +22,8 @@ repositories {
 	mavenCentral()
 }
 
+ext['sendgrid.version'] = '4.3.0'
+
 dependencies {
 	compile('org.springframework:spring-web:4.3.12.RELEASE')	
 	compile('org.apache.httpcomponents:httpclient:4.5.3')
@@ -39,6 +41,9 @@ dependencies {
 	//apache common
 	compile('commons-io:commons-io:2.6')
 	compile('org.apache.commons:commons-collections4:4.1')
+
+	//sendgrid
+	compile('com.sendgrid:sendgrid-java:4.3.0')
 
 	//module
 	compile project(':common-lib')

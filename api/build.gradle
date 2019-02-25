@@ -25,6 +25,8 @@ repositories {
 }
 
 
+ext['sendgrid.version'] = '4.3.0'
+
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-web')

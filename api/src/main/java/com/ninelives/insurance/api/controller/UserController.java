@@ -23,6 +23,7 @@ import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.service.ApiUserService;
 import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
 @RequestMapping("/api")
@@ -35,15 +36,20 @@ public class UserController {
 			method=RequestMethod.POST)
 	@ResponseBody
 	public UserDto registerUser( @RequestBody RegistrationDto registrationDto , HttpServletResponse response ) throws AppException{		
+		
 		logger.debug("Register with dto:<{}>", registrationDto);
+		RegisterUsersResult registerResult = apiUserService.registerUser(registrationDto);
 		
-		RegisterUsersResult registerResult = apiUserService.registerUserByGoogleAccount(registrationDto);
+		if(registerResult!=null) {
+			if(!registerResult.getIsNew()){
+				response.setStatus(HttpStatus.CONFLICT.value());
+			}
+			
+			return registerResult.getUserDto();
+		}
 		
-		if(!registerResult.getIsNew()){
-			response.setStatus(HttpStatus.CONFLICT.value());
-		}		
+		return null;
 		
-		return registerResult.getUserDto();
 	}
 	
 	@RequestMapping(value="/users/{userId}",

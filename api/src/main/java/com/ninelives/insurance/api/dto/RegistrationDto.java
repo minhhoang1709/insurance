@@ -1,7 +1,14 @@
 package com.ninelives.insurance.api.dto;
 
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ninelives.insurance.ref.RegisterIdSource;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegistrationDto {
-	String source;
+	RegisterIdSource source;	
+	@Size(max=255) String email;
 	String deviceId;
 	String googleId;
 	String googleName;
@@ -13,11 +20,17 @@ public class RegistrationDto {
 	String password;
 	Boolean isSyncGmailEnabled;
 	
-	public String getSource() {
+	public RegisterIdSource getSource() {
 		return source;
 	}
-	public void setSource(String source) {
+	public void setSource(RegisterIdSource source) {
 		this.source = source;
+	}	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getDeviceId() {
 		return deviceId;

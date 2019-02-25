@@ -21,14 +21,19 @@ import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.provider.account.AccountProvider;
 import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
+import com.ninelives.insurance.core.exception.AppConflictException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.service.NotificationService;
+import com.ninelives.insurance.core.service.SignupVerificationService;
 import com.ninelives.insurance.core.service.UserService;
+import com.ninelives.insurance.model.SignupVerification;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.RegisterIdSource;
+import com.ninelives.insurance.ref.SignupVerificationType;
 import com.ninelives.insurance.ref.UserStatus;
 import com.ninelives.insurance.util.ValidationUtil;
 
@@ -39,6 +44,7 @@ public class ApiUserService {
 	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = true;
 	
 	@Autowired UserService userService;
+	@Autowired SignupVerificationService signupVerificationService;
 	@Autowired RedisService redisService;
 	@Autowired AccountProvider accountProvider;
 	@Autowired ModelMapperAdapter modelMapperAdapter;
@@ -50,27 +56,83 @@ public class ApiUserService {
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 	
 
+	
+	public RegisterUsersResult registerUser(RegistrationDto registrationDto) throws AppException {
+		logger.info("Start register, registration:<{}>", registrationDto);
+		
+		if(registrationDto == null) {
+			logger.error("Register with error:<{}>, registration:<{}>", ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, registrationDto);
+			throw new AppBadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
+		}
+		
+		if(registrationDto.getSource().equals(RegisterIdSource.EMAIL)) {
+			return registerUserByEmail(registrationDto);
+		}
+		else {
+			return registerUserByGoogleAccount(registrationDto);
+		}
+				
+		
+	}
+	/**
+	 *	 
+	 */
+	private RegisterUsersResult registerUserByEmail(RegistrationDto registrationDto) throws AppException {
+		logger.info("Start register by email, registration:<{}>", registrationDto);
+		
+		User user = userService.fetchByEmail(registrationDto.getEmail());
+		
+		if(user!=null) {
+			logger.error("Register by email, error:<User already registered>, exception:<{}>, registerDto:<{}>",
+					ErrorCode.ERR3101_REGISTER_EMAIL_USER_EXISTS, registrationDto);
+			throw new AppConflictException(ErrorCode.ERR3101_REGISTER_EMAIL_USER_EXISTS,
+					"Alamat email sudah terdaftar.");
+		}
+		
+		SignupVerification signUpVerification = signupVerificationService
+				.fetchActiveSignupVerificationByEmailAndType(registrationDto.getEmail(), SignupVerificationType.EMAIL_LINK);
+		
+		if(signUpVerification!=null) {
+			//there is signUpVerification that still unconfirmed
+			logger.debug("Register by email, error:<last verification still unconfirmed>, exception:<{}>, registerDto:<{}>",
+					ErrorCode.ERR3102_REGISTER_EMAIL_VERIFICATION_ACTIVE, registrationDto);
+			throw new AppConflictException(ErrorCode.ERR3102_REGISTER_EMAIL_VERIFICATION_ACTIVE,
+					"Kami telah mengirimkan email konfirmasi. Silakan periksa kembali kotak masuk email Anda.");
+		}
+		
+		SignupVerification newSignUpVerification = signupVerificationService.signupRequest(registrationDto.getEmail(), 
+				registrationDto.getPassword());
+		
+		RegisterUsersResult registerResult = null;
+		if(newSignUpVerification!=null) {
+			User pendingUser = new User();
+			pendingUser.setEmail(registrationDto.getEmail());
+			pendingUser.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
+			pendingUser.setIsSyncGmailEnabled(false);		
+			
+			registerResult = new RegisterUsersResult();
+			registerResult.setUserDto(modelMapperAdapter.toDto(pendingUser));
+			registerResult.setIsNew(true);
+		}
+		
+		
+		
+		return registerResult;
+	}
+	
+		
 	/**
 	 * Check jika google valid, jika tidak maka return error
 	 * Check jika users exists, jika iya maka di-update dan return users (perlu logging new/existing/..)
 	 * Check jika users tidak exists, maka insert as new user
-	 * 
-	 * @param googleEmail
-	 * @param googleId
-	 * @param googleAuthCode
-	 * @param googleIdToken
-	 * @param name
-	 * @param password
-	 * @return
-	 * @throws AppNotAuthorizedException
 	 */
-	public RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws AppException {
+	private RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws AppException {
 		
 		/**
 		 * v verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
 		 * TODO: get access token and refresh token incase the isSyncGmailEnabled is true
 		 */
-		logger.info("Start register, registration:<{}>", registrationDto);
+		logger.info("Start register by google-id, registration:<{}>", registrationDto);
 		
 		//verify google login
 		String verifyEmail = accountProvider.verifyEmail(registrationDto);

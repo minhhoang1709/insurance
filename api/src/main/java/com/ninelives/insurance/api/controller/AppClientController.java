@@ -37,7 +37,7 @@ public class AppClientController {
 			throws AppUpgradeRequiredException {
 		if(AppVersionUtil.isUpgradeRequired(minimumClientVersion, appVersion)){
 			throw new AppUpgradeRequiredException(ErrorCode.ERR1003_UPGRADE_REQUIRED, 
-					"Versi applikasi Anda sudah tidak didukung, kunjungi Google Play untuk update");
+					"Aplikasi 9Lives anda butuh pembaharuan untuk pengalaman yang lebih baik.");
 		}else{
 			return configService.fetchClientAppConfigMapWithStatusActive();
 		}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.ninelives.insurance.api.dto.ErrorDto;
 import com.ninelives.insurance.api.exception.AppUpgradeRequiredException;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
+import com.ninelives.insurance.core.exception.AppConflictException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
@@ -80,7 +81,17 @@ public class ApiExceptionHandler {
 		
 		return errorDtoResp;
 	}
+	
+	@ExceptionHandler(AppConflictException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ResponseBody
+	public Map<String, ErrorDto> handleConflictException(HttpServletRequest request, Exception ex){
+		ErrorDto errorDto = new ErrorDto(HttpStatus.CONFLICT.value(), ((AppException) ex).getCode(), ex.getMessage());
+		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
+		errorDtoResp.put("error", errorDto);
 		
+		return errorDtoResp;
+	}	
 //	@ExceptionHandler(Exception.class)
 //	protected ResponseEntity<Object> handleException(HttpStatus status, Exception e){
 //		ErrorDto errorDto = new ErrorDto(status.value(),"E1",e.getMessage());
