@@ -18,6 +18,11 @@
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="id_card_file_id" jdbcType="BIGINT" property="idCardFileId" />
     <result column="passport_file_id" jdbcType="BIGINT" property="passportFileId" />
+    <result column="reg_channel" jdbcType="VARCHAR" property="regChannel" />
+    <result column="reg_source" jdbcType="VARCHAR" property="regSource" />
+    <result column="verify_source" jdbcType="VARCHAR" property="verifySource" />
+    <result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
+    <result column="is_email_verified" jdbcType="BIT" property="isEmailVerified" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -30,7 +35,7 @@
     user_id, password, email, google_refresh_token, google_auth_code, google_access_token, 
     fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id,
     status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, 
-    id_card_no
+    id_card_no, reg_channel, reg_source, verify_source, verify_date, is_email_verified
   </sql>
   <insert id="insertSelective" parameterType="com.ninelives.insurance.model.User">
     insert into public.users
@@ -104,6 +109,21 @@
       <if test="idCardNo != null">
         id_card_no,
       </if>
+      <if test="regChannel != null">
+        reg_channel,
+      </if>
+      <if test="regSource != null">
+        reg_source,
+      </if>
+      <if test="verifySource != null">
+        verify_source,
+      </if>
+      <if test="verifyDate != null">
+        verify_date,
+      </if>
+      <if test="isEmailVerified != null">
+        is_email_verified,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
@@ -175,6 +195,21 @@
       <if test="idCardNo != null">
         #{idCardNo,jdbcType=VARCHAR},
       </if>
+      <if test="regChannel != null">
+        #{regChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="regSource != null">
+        #{regSource,jdbcType=VARCHAR},
+      </if>
+      <if test="verifySource != null">
+        #{verifySource,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyDate != null">
+        #{verifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEmailVerified != null">
+        #{isEmailVerified,jdbcType=BIT},
+      </if>
     </trim>
   </insert>
   <update id="updateProfileAndConfigByUserIdSelective" parameterType="com.ninelives.insurance.model.User">
@@ -206,6 +241,58 @@
       </if>
       <if test="true">
         update_date = now(),
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateVerificationByUserIdSelective" parameterType="com.ninelives.insurance.model.User">
+    update public.users
+    <set>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isSyncGmailEnabled != null">
+        is_sync_gmail_enabled = #{isSyncGmailEnabled,jdbcType=BIT},
+      </if>
+      <if test="isNotificationEnabled != null">
+        is_notification_enabled = #{isNotificationEnabled,jdbcType=BIT},
+      </if>
+      <if test="googleUserId != null">
+        google_user_id = #{googleUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="googleName != null">
+        google_name = #{googleName,jdbcType=VARCHAR},
+      </if>
+      <if test="googleRefreshToken != null">
+        google_refresh_token = #{googleRefreshToken,jdbcType=VARCHAR},
+      </if>
+      <if test="googleAuthCode != null">
+        google_auth_code = #{googleAuthCode,jdbcType=VARCHAR},
+      </if>
+      <if test="googleAccessToken != null">
+        google_access_token = #{googleAccessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="fcmToken != null">
+        fcm_token = #{fcmToken,jdbcType=VARCHAR},
+      </if>
+      <if test="verifySource != null">
+        verify_source = #{verifySource,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyDate != null">
+        verify_date = #{verifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isEmailVerified != null">
+        is_email_verified = #{isEmailVerified,jdbcType=BIT},
       </if>
     </set>
     where user_id = #{userId,jdbcType=VARCHAR}

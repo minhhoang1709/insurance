@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -32,8 +33,9 @@ import com.ninelives.insurance.model.SignupVerification;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
-import com.ninelives.insurance.ref.RegisterIdSource;
+import com.ninelives.insurance.ref.UserSource;
 import com.ninelives.insurance.ref.SignupVerificationType;
+import com.ninelives.insurance.ref.UserRegisterChannel;
 import com.ninelives.insurance.ref.UserStatus;
 import com.ninelives.insurance.util.ValidationUtil;
 
@@ -54,9 +56,7 @@ public class ApiUserService {
 	@Autowired MessageSource messageSource;
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-	
-
-	
+		
 	public RegisterUsersResult registerUser(RegistrationDto registrationDto) throws AppException {
 		logger.info("Start register, registration:<{}>", registrationDto);
 		
@@ -65,7 +65,7 @@ public class ApiUserService {
 			throw new AppBadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, "Register error, missing required parameter");
 		}
 		
-		if(registrationDto.getSource().equals(RegisterIdSource.EMAIL)) {
+		if(registrationDto.getSource().equals(UserSource.EMAIL)) {
 			return registerUserByEmail(registrationDto);
 		}
 		else {
@@ -82,7 +82,7 @@ public class ApiUserService {
 		
 		User user = userService.fetchByEmail(registrationDto.getEmail());
 		
-		if(user!=null) {
+		if(user!=null && user.getIsEmailVerified()) {
 			logger.error("Register by email, error:<User already registered>, exception:<{}>, registerDto:<{}>",
 					ErrorCode.ERR3101_REGISTER_EMAIL_USER_EXISTS, registrationDto);
 			throw new AppConflictException(ErrorCode.ERR3101_REGISTER_EMAIL_USER_EXISTS,
@@ -115,8 +115,6 @@ public class ApiUserService {
 			registerResult.setIsNew(true);
 		}
 		
-		
-		
 		return registerResult;
 	}
 	
@@ -147,21 +145,55 @@ public class ApiUserService {
 		
 		User user = userService.fetchByEmail(registrationDto.getGoogleEmail());
 		
-		//check google login valid
-		//1. kalo dia select sycngmail true? ambil refresh token, authentication token
-		//2. kalo gak select sync -> 
-		
+		/*
+		 *	If user exists and verified by google-id then allow password update, set isNew=false
+		 *  If user exists and verified by other source then return ERROR
+		 *  If user exists but not verified then update user, set as verified by google-id, set isNew=true
+		 *  
+		 */
 		if(user!=null){
-			if(!userService.isPasswordEquals(user, registrationDto.getPassword())){
-				//throw new ApiBadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
-				userService.updatePassword(user.getUserId(), registrationDto.getPassword());
-			}
-			if(user.getIsSyncGmailEnabled()!=registrationDto.getIsSyncGmailEnabled()){
+			if(user.getIsEmailVerified()) {
+				if(UserSource.GOOGLE.equals(user.getVerifySource())) {
+					if(!userService.isPasswordEquals(user, registrationDto.getPassword())){
+						//throw new ApiBadRequestException(ErrorCode.ERR3002_REGISTER_PASSWORD_CONFLICT, "Register error, register token doesn't match existing user");
+						userService.updatePassword(user.getUserId(), registrationDto.getPassword());
+					}
+					if(user.getIsSyncGmailEnabled()!=registrationDto.getIsSyncGmailEnabled()){
+						user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
+						userService.updateSyncGmailEnabled(user);
+					}
+					isNew = false;					
+				} else {
+					logger.error("Register with error:<{}>, registration:<{}>", ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, registrationDto);
+					throw new AppConflictException(ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, "Email anda sudah terdaftar, silahkan login kembali menggunakan email"); 
+				}				
+			}else {				
+				if (StringUtils.isEmpty(registrationDto.getGoogleId()) || StringUtils.isEmpty(registrationDto.getPassword())) {
+					logger.error("Register with error:<{}>, registration:<{}>",
+							ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER, registrationDto);
+					throw new AppBadRequestException(ErrorCode.ERR3003_REGISTER_MISSING_PARAMETER,
+							"Register error, missing required parameter");
+				} 
+				
+				//User updateUser = new User();
+				//updateUser.setUserId(user.getUserId());
+				user.setPassword(DigestUtils.sha1Hex(registrationDto.getPassword()));
+				user.setVerifyDate(LocalDateTime.now());
+				user.setVerifySource(UserSource.GOOGLE);
+				user.setIsEmailVerified(true);
+				user.setGoogleName(registrationDto.getGoogleName());
+				user.setGoogleAuthCode(registrationDto.getGoogleServerAuth());
+				user.setGoogleUserId(registrationDto.getGoogleId());
+				user.setFcmToken(registrationDto.getFcmToken());
 				user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
-				userService.updateSyncGmailEnabled(user);
+				user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
+				user.setStatus(UserStatus.ACTIVE);
+				
+				userService.updateVerificationInfo(user);
+				
+				isNew = true;					
 			}
-			isNew = false;
-			
+		
 		}else{
 			//validate field is valid
 			if(StringUtils.isEmpty(registrationDto.getGoogleEmail())
@@ -173,6 +205,11 @@ public class ApiUserService {
 			}
 			
 			user = new User();
+			user.setRegSource(UserSource.GOOGLE);
+			user.setRegChannel(UserRegisterChannel.ANDROID);
+			user.setVerifySource(UserSource.GOOGLE);
+			user.setVerifyDate(LocalDateTime.now());
+			user.setIsEmailVerified(true);
 			user.setUserId(userService.generateUserId());
 			user.setEmail(registrationDto.getGoogleEmail());
 			user.setPassword(DigestUtils.sha1Hex(registrationDto.getPassword()));
@@ -181,7 +218,7 @@ public class ApiUserService {
 			user.setGoogleUserId(registrationDto.getGoogleId());
 			user.setFcmToken(registrationDto.getFcmToken());
 			user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
-			user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
+			user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);			
 			user.setStatus(UserStatus.ACTIVE);
 
 			userService.insertUser(user);

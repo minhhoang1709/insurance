@@ -2,9 +2,12 @@ package com.ninelives.insurance.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.ninelives.insurance.ref.Gender;
+import com.ninelives.insurance.ref.UserRegisterChannel;
+import com.ninelives.insurance.ref.UserSource;
 import com.ninelives.insurance.ref.UserStatus;
 
 public class User implements Serializable{
@@ -51,10 +54,20 @@ public class User implements Serializable{
     private Boolean isNotificationEnabled;
     
     private String idCardNo;
+    
+    private UserSource regSource;
+    
+    private UserRegisterChannel regChannel;
+    
+    private UserSource verifySource;
+    
+    private Boolean isEmailVerified;
 
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    private Date updateDate;
+    private LocalDateTime updateDate;
+    
+    private LocalDateTime verifyDate;
 
     public String getUserId() {
         return userId;
@@ -192,23 +205,23 @@ public class User implements Serializable{
 		this.status = status;
 	}
 
-	public Date getCreatedDate() {
-        return createdDate;
-    }
+    public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public Date getUpdateDate() {
-        return updateDate;
-    }
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.updateDate = updateDate;
+	}
 
-    public String getGoogleUserId() {
+	public String getGoogleUserId() {
         return googleUserId;
     }
 
@@ -240,6 +253,46 @@ public class User implements Serializable{
 		this.idCardNo = idCardNo;
 	}
 
+	public UserSource getRegSource() {
+		return regSource;
+	}
+
+	public void setRegSource(UserSource regSource) {
+		this.regSource = regSource;
+	}
+
+	public UserSource getVerifySource() {
+		return verifySource;
+	}
+
+	public void setVerifySource(UserSource verifySource) {
+		this.verifySource = verifySource;
+	}
+
+	public Boolean getIsEmailVerified() {
+		return isEmailVerified;
+	}
+
+	public void setIsEmailVerified(Boolean isEmailVerified) {
+		this.isEmailVerified = isEmailVerified;
+	}
+
+	public LocalDateTime getVerifyDate() {
+		return verifyDate;
+	}
+
+	public void setVerifyDate(LocalDateTime verifyDate) {
+		this.verifyDate = verifyDate;
+	}
+
+	public UserRegisterChannel getRegChannel() {
+		return regChannel;
+	}
+
+	public void setRegChannel(UserRegisterChannel regChannel) {
+		this.regChannel = regChannel;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", password=***" + ", email=" + email + ", googleName=" + googleName
@@ -247,10 +300,10 @@ public class User implements Serializable{
 				+ ", googleAccessToken=***" + ", googleUserId=" + googleUserId + ", fcmToken=***" 
 				+ ", name=" + name + ", gender=" + gender + ", birthDate=" + birthDate + ", birthPlace="
 				+ birthPlace + ", phone=" + phone + ", address=" + address + ", idCardFileId=" + idCardFileId
-				+ ", passportFileId=" + passportFileId
-				+ ", status=" + status + ", isSyncGmailEnabled=" + isSyncGmailEnabled + ", isNotificationEnabled="
-				+ isNotificationEnabled + ", createdDate=" + createdDate + ", updateDate=" + updateDate 
-				+ ", idCardNo=" + idCardNo+ "]";
-	}	
-    
+				+ ", passportFileId=" + passportFileId + ", status=" + status + ", isSyncGmailEnabled="
+				+ isSyncGmailEnabled + ", isNotificationEnabled=" + isNotificationEnabled + ", idCardNo=" + idCardNo
+				+ ", regSource=" + regSource + ", regChannel=" + regChannel + ", createdDate=" + createdDate
+				+ ", updateDate=" + updateDate + "]";
+	}
+
 }

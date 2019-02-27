@@ -5,21 +5,22 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum RegisterIdSource {
+public enum UserSource {
 	GOOGLE ("google"),
-	EMAIL("email")
+	EMAIL("email"),
+	BATCH_B2B("batch_b2b")
 	;
 	
-	static final Map<String, RegisterIdSource> lookup = new HashMap<>();
+	static final Map<String, UserSource> lookup = new HashMap<>();
 	static {
-		for (RegisterIdSource c:RegisterIdSource.values()){
+		for (UserSource c:UserSource.values()){
 			lookup.put(c.toString(), c);
 		}
 	}
 	
 	private final String stringValue;
 
-    private RegisterIdSource(final String newValue) {
+    private UserSource(final String newValue) {
         stringValue = newValue;
     }
 
@@ -32,8 +33,8 @@ public enum RegisterIdSource {
     	return stringValue;
     }
     
-    public static RegisterIdSource toEnum(String value){
-    	RegisterIdSource result = lookup.get(value);
+    public static UserSource toEnum(String value){
+    	UserSource result = lookup.get(value);
     	if (result != null){
     		return result;
     	}

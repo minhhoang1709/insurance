@@ -47,6 +47,10 @@ public class UserService {
 		return userMapper.updateProfileAndConfigByUserIdSelective(user);
 	}
 	
+	public int updateVerificationInfo(User user){
+		return userMapper.updateVerificationByUserIdSelective(user);
+	}
+	
 	public int updatePassword(String userId, String password){
 		return userMapper.updatePasswordByUserId(userId, DigestUtils.sha1Hex(password));
 	}
@@ -62,6 +66,7 @@ public class UserService {
 	public int insertUser(User user){
 		return userMapper.insertSelective(user);
 	}
+	
 	
 	public UserBeneficiary fetchUserBeneficiaryByUserId(String userId){
 		return userBeneficiaryMapper.selectByUserId(userId);
