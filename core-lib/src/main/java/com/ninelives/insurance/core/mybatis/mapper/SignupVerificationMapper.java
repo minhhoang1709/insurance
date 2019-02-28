@@ -14,16 +14,18 @@ public interface SignupVerificationMapper {
     @Insert({
         "insert into public.signup_verification (email, ",
         "password, verification_code, ",
-        "verification_type, status)",
+        "verification_type, reg_source, ",
+        "reg_channel, status)",
         "values (#{email,jdbcType=VARCHAR}, ",
         "#{password,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, ",
-        "#{verificationType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}) "
+        "#{verificationType,jdbcType=VARCHAR}, #{regSource,jdbcType=VARCHAR}, ",
+        "#{regChannel,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
     })
     int insert(SignupVerification record);
 
     @Select({
         "select",
-        "id, email, password, verification_code, verification_type, status, created_date, ",
+        "id, email, password, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
         "verify_date",
         "from public.signup_verification",
         "where verification_code = #{verificationCode,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}"
@@ -33,7 +35,7 @@ public interface SignupVerificationMapper {
     
     @Select({
         "select",
-        "id, email, password, verification_code, verification_type, status, created_date, ",
+        "id, email, password, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
         "verify_date",
         "from public.signup_verification",
         "where email = #{email,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}"
@@ -43,7 +45,7 @@ public interface SignupVerificationMapper {
     
     @Select({
         "select",
-        "id, email, password, verification_code, verification_type, status, created_date, ",
+        "id, email, password, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
         "verify_date",
         "from public.signup_verification",
         "where email = #{email,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}",
@@ -55,6 +57,7 @@ public interface SignupVerificationMapper {
 			@Param("status") SignupVerificationStatus status,
 			@Param("hour") int hour);
 
-    int updateByPrimaryKeySelective(SignupVerification record);
+    
+    int updateStatusAndVerifiedDateSelectiveByEmailAndCode(SignupVerification record);
 
 }

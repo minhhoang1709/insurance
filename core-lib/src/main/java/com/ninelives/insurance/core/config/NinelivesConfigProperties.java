@@ -105,8 +105,6 @@ public class NinelivesConfigProperties {
 		this.email = email;
 	}
 
-
-
 	public static class Account {
 		@NotEmpty
 		private String googleTokenEndpointUrl;
@@ -116,6 +114,10 @@ public class NinelivesConfigProperties {
 		private List<String> googleIss;
 		
 		private int emailVerificationActiveHours = 24;
+		
+		private String verificationSignKey;
+		private String verificationSuccessUrl = "http://www.9lives.me/sso.html";
+		private String verificationFailUrl = "http://www.9lives.me/error_sso.html";;
 		
 		public String getGoogleTokenEndpointUrl() {
 			return googleTokenEndpointUrl;
@@ -141,6 +143,24 @@ public class NinelivesConfigProperties {
 		public void setEmailVerificationActiveHours(int emailVerificationActiveHours) {
 			this.emailVerificationActiveHours = emailVerificationActiveHours;
 		}
+		public String getVerificationSignKey() {
+			return verificationSignKey;
+		}
+		public void setVerificationSignKey(String verificationSignKey) {
+			this.verificationSignKey = verificationSignKey;
+		}
+		public String getVerificationSuccessUrl() {
+			return verificationSuccessUrl;
+		}
+		public void setVerificationSuccessUrl(String verificationSuccessUrl) {
+			this.verificationSuccessUrl = verificationSuccessUrl;
+		}
+		public String getVerificationFailUrl() {
+			return verificationFailUrl;
+		}
+		public void setVerificationFailUrl(String verificationFailUrl) {
+			this.verificationFailUrl = verificationFailUrl;
+		}
 		
 	}
 	public static class Email {
@@ -148,7 +168,7 @@ public class NinelivesConfigProperties {
 		private String sendgridTemplateForVerification= "";
 		private String sendgridEmailFrom = "noreply@9lives.me";
 		
-		private String signupVerificationLink = "https://www.9lives.me/account/verify?token="; 
+		private String signupVerificationLink = "https://api.9lives.me/email/verify?token="; 
 		
 		public String getSendgridBearerToken() {
 			return sendgridBearerToken;
@@ -174,8 +194,6 @@ public class NinelivesConfigProperties {
 		public void setSignupVerificationLink(String signupVerificationLink) {
 			this.signupVerificationLink = signupVerificationLink;
 		}
-		
-		
 		
 	}
 	public static class Insurance {

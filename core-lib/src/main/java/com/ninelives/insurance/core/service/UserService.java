@@ -25,6 +25,8 @@ import com.ninelives.insurance.ref.FileUseType;
 public class UserService {
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 	
+	public static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = true;
+	
 	@Autowired UserMapper userMapper;
 	@Autowired UserBeneficiaryMapper userBeneficiaryMapper;
 	@Autowired FileUploadService fileUploadService;

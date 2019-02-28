@@ -44,7 +44,14 @@ dependencies {
 
 	//sendgrid
 	compile('com.sendgrid:sendgrid-java:4.3.0')
-
+	
+	//json-web-token
+	//compile('io.jsonwebtoken:jjwt:0.9.1')
+	compile('io.jsonwebtoken:jjwt-api:0.10.5')
+	compile('io.jsonwebtoken:jjwt-jackson:0.10.5')
+	runtime('io.jsonwebtoken:jjwt-impl:0.10.5')
+	
+	
 	//module
 	compile project(':common-lib')
 		

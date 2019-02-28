@@ -43,8 +43,6 @@ import com.ninelives.insurance.util.ValidationUtil;
 public class ApiUserService {
 	private static final Logger logger = LoggerFactory.getLogger(ApiUserService.class);
 	
-	private static final boolean DEFAULT_IS_NOTIFICATION_ENABLED = true;
-	
 	@Autowired UserService userService;
 	@Autowired SignupVerificationService signupVerificationService;
 	@Autowired RedisService redisService;
@@ -101,13 +99,13 @@ public class ApiUserService {
 		}
 		
 		SignupVerification newSignUpVerification = signupVerificationService.signupRequest(registrationDto.getEmail(), 
-				registrationDto.getPassword());
+				registrationDto.getPassword(), UserSource.EMAIL, UserRegisterChannel.ANDROID);
 		
 		RegisterUsersResult registerResult = null;
 		if(newSignUpVerification!=null) {
 			User pendingUser = new User();
 			pendingUser.setEmail(registrationDto.getEmail());
-			pendingUser.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
+			pendingUser.setIsNotificationEnabled(UserService.DEFAULT_IS_NOTIFICATION_ENABLED);
 			pendingUser.setIsSyncGmailEnabled(false);		
 			
 			registerResult = new RegisterUsersResult();
@@ -186,7 +184,7 @@ public class ApiUserService {
 				user.setGoogleUserId(registrationDto.getGoogleId());
 				user.setFcmToken(registrationDto.getFcmToken());
 				user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
-				user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);
+				user.setIsNotificationEnabled(UserService.DEFAULT_IS_NOTIFICATION_ENABLED);
 				user.setStatus(UserStatus.ACTIVE);
 				
 				userService.updateVerificationInfo(user);
@@ -218,7 +216,7 @@ public class ApiUserService {
 			user.setGoogleUserId(registrationDto.getGoogleId());
 			user.setFcmToken(registrationDto.getFcmToken());
 			user.setIsSyncGmailEnabled(registrationDto.getIsSyncGmailEnabled());
-			user.setIsNotificationEnabled(DEFAULT_IS_NOTIFICATION_ENABLED);			
+			user.setIsNotificationEnabled(UserService.DEFAULT_IS_NOTIFICATION_ENABLED);			
 			user.setStatus(UserStatus.ACTIVE);
 
 			userService.insertUser(user);

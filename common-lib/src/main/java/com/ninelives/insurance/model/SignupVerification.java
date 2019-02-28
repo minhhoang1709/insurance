@@ -6,6 +6,8 @@ import java.util.Date;
 
 import com.ninelives.insurance.ref.SignupVerificationStatus;
 import com.ninelives.insurance.ref.SignupVerificationType;
+import com.ninelives.insurance.ref.UserRegisterChannel;
+import com.ninelives.insurance.ref.UserSource;
 
 public class SignupVerification implements Serializable{
 	private static final long serialVersionUID = -1086825150112370110L;
@@ -21,10 +23,14 @@ public class SignupVerification implements Serializable{
     private SignupVerificationType verificationType;
 
     private SignupVerificationStatus status;
+    
+    private UserSource regSource;
+    
+    private UserRegisterChannel regChannel;    
 
     private LocalDateTime createdDate;
 
-    private Date verifyDate;
+    private LocalDateTime verifyDate;
     
     private String verificationToken;
 
@@ -76,6 +82,22 @@ public class SignupVerification implements Serializable{
 		this.status = status;
 	}
 
+	public UserSource getRegSource() {
+		return regSource;
+	}
+
+	public void setRegSource(UserSource regSource) {
+		this.regSource = regSource;
+	}
+
+	public UserRegisterChannel getRegChannel() {
+		return regChannel;
+	}
+
+	public void setRegChannel(UserRegisterChannel regChannel) {
+		this.regChannel = regChannel;
+	}
+
 	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -84,11 +106,11 @@ public class SignupVerification implements Serializable{
         this.createdDate = createdDate;
     }
 
-    public Date getVerifyDate() {
+    public LocalDateTime getVerifyDate() {
         return verifyDate;
     }
 
-    public void setVerifyDate(Date verifyDate) {
+    public void setVerifyDate(LocalDateTime verifyDate) {
         this.verifyDate = verifyDate;
     }
 
@@ -98,6 +120,14 @@ public class SignupVerification implements Serializable{
 
 	public void setVerificationToken(String verificationToken) {
 		this.verificationToken = verificationToken;
+	}
+
+	@Override
+	public String toString() {
+		return "SignupVerification [email=" + email + ", verificationCode=" + verificationCode
+				+ ", verificationType=" + verificationType + ", status=" + status + ", regSource=" + regSource
+				+ ", regChannel=" + regChannel + ", createdDate=" + createdDate + ", verifyDate=" + verifyDate
+				+ ", verificationToken=" + verificationToken + "]";
 	}
     
     
