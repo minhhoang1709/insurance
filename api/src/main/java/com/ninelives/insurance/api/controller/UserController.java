@@ -108,7 +108,6 @@ public class UserController {
 			method=RequestMethod.POST)
 	@ResponseBody
 	public void resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto) throws AppException{		
-		System.out.println("email is "+passwordResetDto);
 		apiUserService.resetPassword(passwordResetDto);
 	}
 }

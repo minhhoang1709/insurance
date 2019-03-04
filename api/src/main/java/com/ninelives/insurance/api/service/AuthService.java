@@ -19,8 +19,10 @@ import com.ninelives.insurance.api.provider.redis.RedisService;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 import com.ninelives.insurance.core.mybatis.mapper.UserLoginMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
+import com.ninelives.insurance.core.service.ResetPasswordService;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserLogin;
+import com.ninelives.insurance.model.UserTempPassword;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Service
@@ -29,6 +31,7 @@ public class AuthService {
 	
 	public static final String AUTH_USER_ID = "authUserId";
 	
+	@Autowired ResetPasswordService resetPasswordService;
 	@Autowired UserMapper userMapper;
 	@Autowired UserLoginMapper loginMapper;
 	@Autowired RedisService redisService;
@@ -51,17 +54,43 @@ public class AuthService {
 			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
 		
+		boolean isSuccessLogin = false;
+		boolean isLoginByTempPassword = false;
 		User user = userMapper.selectByEmail(email);
-		if(user==null || !user.getPassword().equals(DigestUtils.sha1Hex(password))){
-			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
+		if(user==null) {
+			logger.info("Process login result:<{}>, reason:<Not found user>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
 			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
-		}else{
+		}
+//		if(user.getPassword()==null && !user.getHasTempPassword()) {
+//			//user has empty password and has no temp password
+//			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
+//			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");			
+//		}
+		if(user.getPassword()!=null && user.getPassword().equals(DigestUtils.sha1Hex(password))) {
+			isSuccessLogin = true;
+		}else {
+			if(user.getHasTempPassword()) {
+				UserTempPassword tempPassword = resetPasswordService.fetchByUserId(user.getUserId());
+				if(tempPassword!=null 
+						&& resetPasswordService.isValid(tempPassword)
+						&& tempPassword.getPassword().equals(DigestUtils.sha1Hex(password))) {
+					resetPasswordService.applyTempPassword(tempPassword);
+					isSuccessLogin = true;
+					isLoginByTempPassword = true;
+				}
+			}
+		}
+		
+		if(isSuccessLogin) {
 			AuthToken token = generateAuthToken();
 			
 			newLogin = new UserLogin();
 			newLogin.setUserId(user.getUserId());
 			newLogin.setTokenId(token.getTokenId());
 			newLogin.setUser(user);
+			if(isLoginByTempPassword) {
+				newLogin.setRequirePasswordChange(isLoginByTempPassword);
+			}
 			
 			UserLogin login = loginMapper.selectByUserId(user.getUserId());
 			if(login!=null){
@@ -80,7 +109,13 @@ public class AuthService {
 				userMapper.updateFcmTokenByUserId(user.getUserId(), fcmToken);
 			}
 			logger.info("Process login result:<Success>, reason:<>, email:<{}>, userId:<{}>", email, user.getUserId());
+		
+		}else {
+			logger.info("Process login result:<{}>, reason:<Wrong password>, email:<{}>", ErrorCode.ERR2001_LOGIN_FAILURE, email);
+			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
 		}
+
+	
 
 		return newLogin;
 	}

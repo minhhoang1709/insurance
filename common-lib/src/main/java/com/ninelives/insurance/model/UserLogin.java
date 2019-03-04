@@ -8,6 +8,8 @@ public class UserLogin {
     private String userId;
     
     private User user;
+    
+    private Boolean requirePasswordChange;
 
     private LocalDateTime createdDate;
 
@@ -35,6 +37,14 @@ public class UserLogin {
 		this.user = user;
 	}
 
+	public Boolean getRequirePasswordChange() {
+		return requirePasswordChange;
+	}
+
+	public void setRequirePasswordChange(Boolean requirePasswordChange) {
+		this.requirePasswordChange = requirePasswordChange;
+	}
+
 	public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -45,7 +55,8 @@ public class UserLogin {
 
 	@Override
 	public String toString() {
-		return "UserLogin [tokenId=" + tokenId + ", userId=" + userId + ", createdDate=" + createdDate + "]";
+		return "UserLogin [tokenId=" + tokenId + ", userId=" + userId + ", requirePasswordChange="
+				+ requirePasswordChange + ", createdDate=" + createdDate + "]";
 	}
 
 

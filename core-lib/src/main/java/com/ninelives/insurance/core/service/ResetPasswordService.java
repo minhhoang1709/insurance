@@ -1,6 +1,7 @@
 package com.ninelives.insurance.core.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,6 @@ public class ResetPasswordService {
 	@Autowired UserTempPasswordLogMapper tempPasswordLogMapper;
 		
 	public void resetPassword(User user) throws AppException {	
-		System.out.println("reset password for "+user);
-		
 		UserTempPassword tempPassword = new UserTempPassword();
 		tempPassword.setUserId(user.getUserId());
 		tempPassword.setEmail(user.getEmail());
@@ -60,14 +59,57 @@ public class ResetPasswordService {
 
 	}
 	
+	public void applyTempPassword(UserTempPassword tempPassword) {
+		if(!tempPassword.getStatus().equals(UserTempPasswordStatus.APPLIED)) {
+			UserTempPassword updTempPassword = new UserTempPassword();
+			updTempPassword.setUserId(tempPassword.getUserId());
+			updTempPassword.setStatus(UserTempPasswordStatus.APPLIED);
+			updTempPassword.setApplyDate(LocalDateTime.now());
+		
+			tempPasswordMapper.updateByUserIdSelective(updTempPassword);
+			
+			UserTempPasswordLog log = new UserTempPasswordLog();
+			log.setEmail(tempPassword.getEmail());
+			log.setUserId(tempPassword.getUserId());
+			log.setPassword(tempPassword.getPassword());
+			log.setOldStatus(tempPassword.getStatus());
+			log.setNewStatus(updTempPassword.getStatus());
+			
+			tempPasswordLogMapper.insert(log);
+		}		
+	}
+
+	public boolean isValid(UserTempPassword tempPassword) {
+		if(tempPassword.getStatus().equals(UserTempPasswordStatus.APPLIED)) {
+			return true;
+		}
+		if(tempPassword.getStatus().equals(UserTempPasswordStatus.REPLACED)) {
+			return false;
+		}
+		if(!isExpired(tempPassword)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isExpired(UserTempPassword tempPassword) {
+		if(tempPassword.getStatus().equals(UserTempPasswordStatus.EXPIRED)) {
+			return true;
+		}
+		if (tempPassword.getStatus().equals(UserTempPasswordStatus.REGISTERED)
+				&& ChronoUnit.HOURS.between(tempPassword.getRegisterDate(), LocalDateTime.now()) > config.getAccount()
+						.getTemporaryPasswordValidHours()) {
+			return true;
+		}
+		return false;
+	}
 	public void setTempPassword(UserTempPassword tempPassword, boolean isUserHasTempPassword) {
 		if(isUserHasTempPassword) {
 			userTrxService.updateTempPassword(tempPassword);		
 		}else {
 			userTrxService.registerTempPassword(tempPassword);
 		}
-	}
-	
+	}	
 	public UserTempPassword fetchByUserId(String userId) {
 		return tempPasswordMapper.selectByUserId(userId);
 	}
@@ -75,4 +117,6 @@ public class ResetPasswordService {
 	private String generateRandomPassword() {
 		return RandomStringUtil.generate(config.getAccount().getTemporaryPasswordLength(), RANDOM_TYPE.TYPE_1);
 	}
+
+	
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class LoginDto {
 	private String accessToken;
 	private UserDto user;
+	private Boolean requirePasswordChange;
+	
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -17,6 +19,12 @@ public class LoginDto {
 	}
 	public void setUser(UserDto user) {
 		this.user = user;
+	}
+	public Boolean getRequirePasswordChange() {
+		return requirePasswordChange;
+	}
+	public void setRequirePasswordChange(Boolean requirePasswordChange) {
+		this.requirePasswordChange = requirePasswordChange;
 	}
 	
 }

@@ -188,6 +188,7 @@ public class ModelMapperAdapter {
 			dto = new LoginDto();
 			dto.setAccessToken(m.getTokenId());
 			dto.setUser(toDto(m.getUser()));
+			dto.setRequirePasswordChange(m.getRequirePasswordChange());
 		}
 		return dto;
 	}

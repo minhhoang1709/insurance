@@ -1,9 +1,7 @@
 package com.ninelives.insurance.core.mybatis.mapper;
 
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -13,16 +11,16 @@ import com.ninelives.insurance.model.UserTempPassword;
 public interface UserTempPasswordMapper {
 
     @Insert({
-        "insert into public.user_temp_password (user_id, password, ",
+        "insert into public.user_temp_password (user_id, email, password, ",
         "status, register_date) ",
-        "values (#{userId,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, ",
+        "values (#{userId,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, ",
         "#{status,jdbcType=VARCHAR}, #{registerDate,jdbcType=TIMESTAMP}) ",
     })
     int insert(UserTempPassword record);
 
     @Select({
         "select",
-        "user_id, password, status, created_date, register_date, update_date, apply_date, replace_date, ",
+        "user_id, email, password, status, created_date, register_date, update_date, apply_date, replace_date, ",
         "expire_date",
         "from public.user_temp_password",
         "where user_id = #{userId,jdbcType=VARCHAR}"
@@ -42,5 +40,7 @@ public interface UserTempPasswordMapper {
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
     int updateByUserId(UserTempPassword record);
+    
+    int updateByUserIdSelective(UserTempPassword record);
 
 }

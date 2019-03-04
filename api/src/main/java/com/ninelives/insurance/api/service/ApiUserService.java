@@ -398,8 +398,7 @@ public class ApiUserService {
 			UserTempPassword tempPassword = resetPasswordService.fetchByUserId(user.getUserId());
 			//if still within 24 hours
 			if(tempPassword!=null) {
-				if (ChronoUnit.HOURS.between(tempPassword.getRegisterDate(), LocalDateTime.now()) <= config.getAccount()
-						.getTemporaryPasswordValidHours()) {
+				if (!resetPasswordService.isExpired(tempPassword)) {
 					logger.debug("Reset password, error:<last temporary password still unused>, exception:<{}>, email:<{}>",
 							ErrorCode.ERR3303_RESET_PASSWORD_EXISTS, email);
 					throw new AppConflictException(ErrorCode.ERR3303_RESET_PASSWORD_EXISTS,
