@@ -113,11 +113,14 @@ public class NinelivesConfigProperties {
 		@NotEmpty
 		private List<String> googleIss;
 		
-		private int emailVerificationActiveHours = 24;
+		private int emailVerificationValidHours = 24;
 		
 		private String verificationSignKey;
 		private String verificationSuccessUrl = "http://www.9lives.me/sso.html";
-		private String verificationFailUrl = "http://www.9lives.me/error_sso.html";;
+		private String verificationFailUrl = "http://www.9lives.me/error_sso.html";
+		
+		private int temporaryPasswordLength = 8;
+		private int temporaryPasswordValidHours = 24;
 		
 		public String getGoogleTokenEndpointUrl() {
 			return googleTokenEndpointUrl;
@@ -136,12 +139,18 @@ public class NinelivesConfigProperties {
 		}
 		public void setGoogleIss(List<String> googleIss) {
 			this.googleIss = googleIss;
+		}	
+		public int getEmailVerificationValidHours() {
+			return emailVerificationValidHours;
 		}
-		public int getEmailVerificationActiveHours() {
-			return emailVerificationActiveHours;
+		public void setEmailVerificationValidHours(int emailVerificationValidHours) {
+			this.emailVerificationValidHours = emailVerificationValidHours;
 		}
-		public void setEmailVerificationActiveHours(int emailVerificationActiveHours) {
-			this.emailVerificationActiveHours = emailVerificationActiveHours;
+		public int getTemporaryPasswordValidHours() {
+			return temporaryPasswordValidHours;
+		}
+		public void setTemporaryPasswordValidHours(int temporaryPasswordValidHours) {
+			this.temporaryPasswordValidHours = temporaryPasswordValidHours;
 		}
 		public String getVerificationSignKey() {
 			return verificationSignKey;
@@ -161,14 +170,21 @@ public class NinelivesConfigProperties {
 		public void setVerificationFailUrl(String verificationFailUrl) {
 			this.verificationFailUrl = verificationFailUrl;
 		}
+		public int getTemporaryPasswordLength() {
+			return temporaryPasswordLength;
+		}
+		public void setTemporaryPasswordLength(int temporaryPasswordLength) {
+			this.temporaryPasswordLength = temporaryPasswordLength;
+		}
 		
 	}
 	public static class Email {
 		private String sendgridBearerToken = "";
 		private String sendgridTemplateForVerification= "";
+		private String sendgridTemplateForPasswordReset= "";
 		private String sendgridEmailFrom = "noreply@9lives.me";
 		
-		private String signupVerificationLink = "https://api.9lives.me/email/verify?token="; 
+		private String signupVerificationLink = "https://api.9lives.me/email/verify?token=";
 		
 		public String getSendgridBearerToken() {
 			return sendgridBearerToken;
@@ -181,6 +197,12 @@ public class NinelivesConfigProperties {
 		}
 		public void setSendgridTemplateForVerification(String sendgridTemplateForVerification) {
 			this.sendgridTemplateForVerification = sendgridTemplateForVerification;
+		}		
+		public String getSendgridTemplateForPasswordReset() {
+			return sendgridTemplateForPasswordReset;
+		}
+		public void setSendgridTemplateForPasswordReset(String sendgridTemplateForPasswordReset) {
+			this.sendgridTemplateForPasswordReset = sendgridTemplateForPasswordReset;
 		}
 		public String getSendgridEmailFrom() {
 			return sendgridEmailFrom;

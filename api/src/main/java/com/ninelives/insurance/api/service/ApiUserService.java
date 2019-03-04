@@ -2,6 +2,7 @@ package com.ninelives.insurance.api.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -15,22 +16,27 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
+import com.ninelives.insurance.api.dto.ChangePasswordDto;
+import com.ninelives.insurance.api.dto.PasswordResetDto;
 import com.ninelives.insurance.api.dto.RegistrationDto;
 import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.provider.account.AccountProvider;
 import com.ninelives.insurance.api.provider.redis.RedisService;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppConflictException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.service.NotificationService;
+import com.ninelives.insurance.core.service.ResetPasswordService;
 import com.ninelives.insurance.core.service.SignupVerificationService;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.model.SignupVerification;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.model.UserTempPassword;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.UserSource;
@@ -43,8 +49,11 @@ import com.ninelives.insurance.util.ValidationUtil;
 public class ApiUserService {
 	private static final Logger logger = LoggerFactory.getLogger(ApiUserService.class);
 	
+	@Autowired NinelivesConfigProperties config;
+	
 	@Autowired UserService userService;
 	@Autowired SignupVerificationService signupVerificationService;
+	@Autowired ResetPasswordService resetPasswordService;
 	@Autowired RedisService redisService;
 	@Autowired AccountProvider accountProvider;
 	@Autowired ModelMapperAdapter modelMapperAdapter;
@@ -69,8 +78,6 @@ public class ApiUserService {
 		else {
 			return registerUserByGoogleAccount(registrationDto);
 		}
-				
-		
 	}
 	/**
 	 *	 
@@ -125,7 +132,6 @@ public class ApiUserService {
 	private RegisterUsersResult registerUserByGoogleAccount(RegistrationDto registrationDto) throws AppException {
 		
 		/**
-		 * v verify google login valid, if valid then continue, otherwise return login failure with error code google login not valid
 		 * TODO: get access token and refresh token incase the isSyncGmailEnabled is true
 		 */
 		logger.info("Start register by google-id, registration:<{}>", registrationDto);
@@ -360,4 +366,83 @@ public class ApiUserService {
 		}
 		return result;
 	}
+	
+	public void resetPassword(PasswordResetDto passwordResetDto) throws AppException {		
+		logger.info("Start password reset, passwordResetDto:<{}>", passwordResetDto);
+		
+		if(passwordResetDto == null || StringUtils.isEmpty(passwordResetDto.getEmail())) {
+			logger.error("Reset passsword, email:<{}>, result:<error null parameter>, error:<{}>", "null",
+					ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND);
+			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Alamat email tidak ditemukan");
+		}
+		
+		String email = passwordResetDto.getEmail();
+		
+		User user = userService.fetchByEmail(email);
+		
+		if(user==null) {
+			logger.error("Reset passsword, email:<{}>, result:<error user not found>, error:<{}>", email,
+					ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND);
+			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Alamat email tidak ditemukan");
+		}
+		
+		if(!user.getVerifySource().equals(UserSource.EMAIL)) {
+			//only support Email based only
+			logger.error("Reset passsword, email:<{}>, result:<error user is not from email>, error:<{}>", email,
+					ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED);
+			throw new AppNotFoundException(ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED, "Alamat email tidak ditemukan");
+		}
+		
+		if(user.getHasTempPassword()) {
+			//user has temp password set, check the existing temp password
+			UserTempPassword tempPassword = resetPasswordService.fetchByUserId(user.getUserId());
+			//if still within 24 hours
+			if(tempPassword!=null) {
+				if (ChronoUnit.HOURS.between(tempPassword.getRegisterDate(), LocalDateTime.now()) <= config.getAccount()
+						.getTemporaryPasswordValidHours()) {
+					logger.debug("Reset password, error:<last temporary password still unused>, exception:<{}>, email:<{}>",
+							ErrorCode.ERR3303_RESET_PASSWORD_EXISTS, email);
+					throw new AppConflictException(ErrorCode.ERR3303_RESET_PASSWORD_EXISTS,
+							"Kami telah mengirimkan email untuk pembaruan kata kunci. Silakan periksa kembali kotak masuk email Anda.");
+				}
+			}
+			user.setTempPassword(tempPassword);			
+		}
+	
+		resetPasswordService.resetPassword(user);
+	}
+	
+//	public void resetPassword(String email) throws AppException {
+//		User user = userService.fetchByEmail(email);
+//		
+//		if(user==null) {
+//			logger.error("Reset passsword, email:<{}>, result:<error user not found>, error:<{}>", email,
+//					ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND);
+//			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Alamat email tidak ditemukan");
+//		}
+//		
+//		if(!user.getVerifySource().equals(UserSource.EMAIL)) {
+//			//only support Email based only
+//			logger.error("Reset passsword, email:<{}>, result:<error user is not from email>, error:<{}>", email,
+//					ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED);
+//			throw new AppNotFoundException(ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED, "Alamat email tidak ditemukan");
+//		}
+//		
+//		if(user.getHasTempPassword()) {
+//			//user has temp password set, check the existing temp password
+//			UserTempPassword tempPassword = resetPasswordService.fetchByUserId(user.getUserId());
+//			//if still within 24 hours
+//			if(tempPassword!=null) {
+//				if (ChronoUnit.HOURS.between(tempPassword.getRegisterDate(), LocalDateTime.now()) <= config.getAccount()
+//						.getTemporaryPasswordValidHours()) {
+//					logger.debug("Reset password, error:<last temporary password still unused>, exception:<{}>, email:<{}>",
+//							ErrorCode.ERR3303_RESET_PASSWORD_EXISTS, email);
+//					throw new AppConflictException(ErrorCode.ERR3303_RESET_PASSWORD_EXISTS,
+//							"Kami telah mengirimkan email untuk pembaruan kata kunci. Silakan periksa kembali kotak masuk email Anda.");
+//				}
+//			}
+//		}
+//	
+//		resetPasswordService.resetPassword(user);
+//	}
 }

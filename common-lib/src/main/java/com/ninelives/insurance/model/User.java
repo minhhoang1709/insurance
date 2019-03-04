@@ -62,7 +62,11 @@ public class User implements Serializable{
     private UserSource verifySource;
     
     private Boolean isEmailVerified;
-
+    
+    private Boolean hasTempPassword;
+    
+    private UserTempPassword tempPassword;
+    
     private LocalDateTime createdDate;
 
     private LocalDateTime updateDate;
@@ -291,6 +295,22 @@ public class User implements Serializable{
 
 	public void setRegChannel(UserRegisterChannel regChannel) {
 		this.regChannel = regChannel;
+	}
+
+	public Boolean getHasTempPassword() {
+		return hasTempPassword;
+	}
+
+	public void setHasTempPassword(Boolean hasTempPassword) {
+		this.hasTempPassword = hasTempPassword;
+	}
+
+	public UserTempPassword getTempPassword() {
+		return tempPassword;
+	}
+
+	public void setTempPassword(UserTempPassword tempPassword) {
+		this.tempPassword = tempPassword;
 	}
 
 	@Override

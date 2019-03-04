@@ -2,13 +2,19 @@ package com.ninelives.insurance.api.dto;
 
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Email;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.UserSource;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegistrationDto {
 	UserSource source;	
-	@Size(max=255) String email;
+	
+	@Size(max=255)
+	@Email
+	String email;
+	
 	String deviceId;
 	String googleId;
 	String googleName;

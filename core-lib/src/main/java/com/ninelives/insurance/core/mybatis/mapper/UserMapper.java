@@ -1,6 +1,5 @@
 package com.ninelives.insurance.core.mybatis.mapper;
 
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -16,7 +15,7 @@ public interface UserMapper {
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
         "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no, ",
-        "reg_channel, reg_source, verify_source, verify_date, is_email_verified ",
+        "reg_channel, reg_source, verify_source, verify_date, is_email_verified, has_temp_password ",
         "from public.users",
     	"where email=#{email,jdbcType=VARCHAR} "
 		})
@@ -27,7 +26,7 @@ public interface UserMapper {
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
         "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no, ",
-        "reg_channel, reg_source, verify_source, verify_date, is_email_verified ",
+        "reg_channel, reg_source, verify_source, verify_date, is_email_verified, has_temp_password ",
         "from public.users",
     	"where id_card_no=#{idCardNumber,jdbcType=VARCHAR} and email is null"
 		})
@@ -39,7 +38,7 @@ public interface UserMapper {
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
         "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no, ",
-        "reg_channel, reg_source, verify_source, verify_date, is_email_verified ",
+        "reg_channel, reg_source, verify_source, verify_date, is_email_verified, has_temp_password ",
         "from public.users",
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
@@ -105,6 +104,14 @@ public interface UserMapper {
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
     int updatePasswordByUserId(@Param("userId")String userId, @Param("password") String password);
+    
+    @Update({
+        "update public.users",
+        "set has_temp_password = #{hasTempPassword,jdbcType=BIT},",
+          "update_date = now() ",
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
+    int updateHasTempPasswordByUserId(@Param("userId")String userId, @Param("hasTempPassword") Boolean hasTempPassword);
     
     int insertSelective(User record);
 

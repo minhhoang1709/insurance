@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Email;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.Gender;
@@ -16,6 +18,7 @@ public class UserDto {
 	
     private String userId;
 
+    @Email
     private String email;
 
     @Size(max=255)

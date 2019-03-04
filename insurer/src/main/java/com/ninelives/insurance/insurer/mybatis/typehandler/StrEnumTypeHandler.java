@@ -27,11 +27,12 @@ import com.ninelives.insurance.ref.UserFileStatus;
 import com.ninelives.insurance.ref.UserRegisterChannel;
 import com.ninelives.insurance.ref.UserSource;
 import com.ninelives.insurance.ref.UserStatus;
+import com.ninelives.insurance.ref.UserTempPasswordStatus;
 
 @MappedTypes({ Gender.class, PeriodUnit.class, PolicyStatus.class, UserStatus.class, FileUseType.class,
 		UserFileStatus.class, BeneficiaryRelationship.class, PaymentStatus.class, PaymentChargeStatus.class,
 		CoverageCategoryType.class, FamilyRelationship.class, ClaimDocUsageType.class, OrderDocUsageType.class,
-		SignupVerificationType.class, UserSource.class, UserRegisterChannel.class })
+		SignupVerificationType.class, UserSource.class, UserRegisterChannel.class, UserTempPasswordStatus.class })
 public class StrEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 	private Class<E> type;
 

@@ -69,7 +69,6 @@ public class UserService {
 		return userMapper.insertSelective(user);
 	}
 	
-	
 	public UserBeneficiary fetchUserBeneficiaryByUserId(String userId){
 		return userBeneficiaryMapper.selectByUserId(userId);
 	}
@@ -80,6 +79,10 @@ public class UserService {
 	
 	public int updateUserBeneficiaryFromOrder(UserBeneficiary userBeneficiary) {
 		return userBeneficiaryMapper.updateByUserBeneficiaryId(userBeneficiary);
+	}
+	
+	public int updateHasTempPassword(String userId, Boolean hasTempPassword) {
+		return userMapper.updateHasTempPasswordByUserId(userId, hasTempPassword);
 	}
 	
 	public boolean isPasswordEquals(User user, String password){

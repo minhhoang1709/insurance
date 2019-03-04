@@ -39,7 +39,8 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 				"/api/products",
 				"/payment/*",
 				"/error",
-				"/email/*");
+				"/email/*",
+				"/api/users/passwordReset");
 	}
 	
 	@PostConstruct

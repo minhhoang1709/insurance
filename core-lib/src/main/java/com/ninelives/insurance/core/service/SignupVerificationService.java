@@ -66,7 +66,7 @@ public class SignupVerificationService {
 	public SignupVerification fetchActiveSignupVerificationByEmailAndType(String email,
 			SignupVerificationType verificationType) {
 		SignupVerification verification = signupVerificationMapper.selectByVerificationEmailAndTypeAndStatusAndPeriodInHour(email,
-				verificationType, SignupVerificationStatus.ACTIVE, config.getAccount().getEmailVerificationActiveHours());
+				verificationType, SignupVerificationStatus.ACTIVE, config.getAccount().getEmailVerificationValidHours());
 		return verification;
 	}
 
