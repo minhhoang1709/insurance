@@ -23,4 +23,10 @@ public class UserTrxService {
 		tempPasswordMapper.updateByUserId(tempPassword);
 		userMapper.updateHasTempPasswordByUserId(tempPassword.getUserId(), true);
 	}
+	
+	@Transactional
+	public void updatePasswordAndTempPasswordStatus(UserTempPassword tempPassword, String newPassword) {
+		tempPasswordMapper.updateByUserIdSelective(tempPassword);
+		userMapper.updatePasswordAndHasTempPasswordByUserId(tempPassword.getUserId(), newPassword, false);
+	}
 }

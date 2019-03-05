@@ -410,6 +410,31 @@ public class ApiUserService {
 	
 		resetPasswordService.resetPassword(user);
 	}
+	public void updatePassword(String authUserId, ChangePasswordDto changePasswordDto) throws AppException {
+		logger.info("Start password update, user:<{}>", authUserId);
+		
+		if(changePasswordDto == null || StringUtils.isEmpty(changePasswordDto.getPassword())) {
+			logger.error("Update passsword, userId:<{}>, result:<error null parameter>, error:<{}>", authUserId,
+					ErrorCode.ERR3401_UPDATE_PASSWORD_INVALID);
+			throw new AppBadRequestException(ErrorCode.ERR3401_UPDATE_PASSWORD_INVALID, "Masukan kata kunci");
+		}
+		
+		User user = userService.fetchByUserId(authUserId);
+		
+		if(user==null) {
+			logger.error("Reset passsword, userId:<{}>, result:<error user not found>, error:<{}>", authUserId,
+					ErrorCode.ERR3402_UPDATE_PASSWORD_USER_NOT_FOUND);
+			throw new AppNotFoundException(ErrorCode.ERR3402_UPDATE_PASSWORD_USER_NOT_FOUND, "User tidak ditemukan");
+		}
+		
+		if(user.getHasTempPassword()) {
+			resetPasswordService.replaceTempPassword(user, changePasswordDto.getPassword());
+		}else {
+			logger.error("Reset passsword, userId:<{}>, result:<error temp password not found>, error:<{}>", authUserId,
+					ErrorCode.ERR3403_UPDATE_PASSWORD_TEMP_NOT_FOUND);
+			throw new AppBadRequestException(ErrorCode.ERR3403_UPDATE_PASSWORD_TEMP_NOT_FOUND, "Tidak didukung");
+		}
+	}
 	
 //	public void resetPassword(String email) throws AppException {
 //		User user = userService.fetchByEmail(email);

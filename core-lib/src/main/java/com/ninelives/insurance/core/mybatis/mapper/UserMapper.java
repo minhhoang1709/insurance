@@ -113,6 +113,15 @@ public interface UserMapper {
     })
     int updateHasTempPasswordByUserId(@Param("userId")String userId, @Param("hasTempPassword") Boolean hasTempPassword);
     
+    @Update({
+        "update public.users",
+        "set password = #{password,jdbcType=VARCHAR},",
+          "has_temp_password = #{hasTempPassword,jdbcType=BIT},",
+          "update_date = now() ",
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
+    int updatePasswordAndHasTempPasswordByUserId(@Param("userId")String userId, @Param("password") String password, @Param("hasTempPassword") Boolean hasTempPassword);
+    
     int insertSelective(User record);
 
 	int updateProfileAndConfigByUserIdSelective(User record);

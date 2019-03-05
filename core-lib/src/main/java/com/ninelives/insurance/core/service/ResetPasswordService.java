@@ -29,6 +29,29 @@ public class ResetPasswordService {
 	@Autowired UserTempPasswordMapper tempPasswordMapper;
 	@Autowired UserTempPasswordLogMapper tempPasswordLogMapper;
 		
+	public void replaceTempPassword(User user, String newPassword) {
+		UserTempPassword tempPassword = fetchByUserId(user.getUserId());
+		
+		if(tempPassword != null) {
+			UserTempPassword updTempPassword = new UserTempPassword();
+			updTempPassword.setUserId(tempPassword.getUserId());
+			updTempPassword.setStatus(UserTempPasswordStatus.REPLACED);
+			updTempPassword.setReplaceDate(LocalDateTime.now());
+
+			userTrxService.updatePasswordAndTempPasswordStatus(updTempPassword, DigestUtils.sha1Hex(newPassword));
+					
+			UserTempPasswordLog log = new UserTempPasswordLog();
+			log.setEmail(tempPassword.getEmail());
+			log.setUserId(tempPassword.getUserId());
+			log.setPassword(tempPassword.getPassword());
+			log.setOldStatus(tempPassword.getStatus());
+			log.setNewStatus(updTempPassword.getStatus());
+			
+			tempPasswordLogMapper.insert(log);
+		}
+
+	}
+
 	public void resetPassword(User user) throws AppException {	
 		UserTempPassword tempPassword = new UserTempPassword();
 		tempPassword.setUserId(user.getUserId());
@@ -118,5 +141,6 @@ public class ResetPasswordService {
 		return RandomStringUtil.generate(config.getAccount().getTemporaryPasswordLength(), RANDOM_TYPE.TYPE_1);
 	}
 
+	
 	
 }

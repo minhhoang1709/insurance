@@ -3,6 +3,7 @@ package com.ninelives.insurance.api.controller;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import com.ninelives.insurance.api.dto.UserDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.service.ApiUserService;
+import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.ref.ErrorCode;
 
@@ -60,6 +62,8 @@ public class UserController {
 	public UserDto updateUsers(@RequestAttribute("authUserId") String authUserId, @PathVariable("userId") String userId,
 			@RequestBody @Valid UserDto userDto) throws AppException {
 
+		checkUserIdFromPath(userId, authUserId);
+		
 		UserDto result = apiUserService.updateUser(authUserId, userDto);
 		
 		return result;
@@ -78,36 +82,46 @@ public class UserController {
 	@RequestMapping(value="/users/{userId}/idCardFiles",
 			method=RequestMethod.PUT)
 	@ResponseBody
-	public UserFileDto updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, 
+	public UserFileDto updateIdCardFile (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId,
 			@RequestParam("file") MultipartFile file) throws AppException{
 
+		checkUserIdFromPath(userId, authUserId);
+		
 		return apiUserService.updateIdCardFile(authUserId, file); 
 	}
 	
 	@RequestMapping(value="/users/{userId}/passportFiles",
 			method=RequestMethod.PUT)
 	@ResponseBody
-	public UserFileDto updatePassportFile (@RequestAttribute ("authUserId") String authUserId, 
+	public UserFileDto updatePassportFile (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId,
 			@RequestParam("file") MultipartFile file) throws AppException{
 
+		checkUserIdFromPath(userId, authUserId);
+		
 		return apiUserService.updatePassportFile(authUserId, file); 
 	}
 	
-//	@RequestMapping(value="/users/{userId}/password",
-//			method=RequestMethod.POST)
-//	@ResponseBody
-//	public void updatePassword( @RequestAttribute ("authUserId") String authUserId, @RequestBody ChangePasswordDto changePasswordDto) throws AppException{		
-//		
-//		if (changePasswordDto.getReset()!=null && changePasswordDto.getReset()) {
-//			apiUserService.resetPassword(authUserId, changePasswordDto);
-//		}else {
-//			//update password
-//		}
-//	}
+	@RequestMapping(value="/users/{userId}/password",
+			method= {RequestMethod.POST, RequestMethod.PUT})
+	@ResponseBody
+	public void updatePassword(@RequestAttribute("authUserId") String authUserId, @PathVariable("userId") String userId,
+			@RequestBody ChangePasswordDto changePasswordDto) throws AppException {		
+		
+		checkUserIdFromPath(userId, authUserId);
+		
+		apiUserService.updatePassword(authUserId, changePasswordDto);		
+	}
+	
 	@RequestMapping(value="/users/passwordReset",
 			method=RequestMethod.POST)
 	@ResponseBody
 	public void resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto) throws AppException{		
 		apiUserService.resetPassword(passwordResetDto);
+	}
+	
+	private void checkUserIdFromPath(String userId, String authUserId) throws AppBadRequestException {
+		if(!StringUtils.equals(userId, authUserId)){
+			throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR, "Invalid userId");
+		}
 	}
 }
