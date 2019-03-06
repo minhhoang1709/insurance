@@ -1,8 +1,12 @@
+plugins {
+	id "com.gorylenko.gradle-git-properties" version "1.5.1"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
 group = 'com.ninelives'
-version = '0.0.8'
+version = '3.0.0'
 sourceCompatibility = 1.8
 
 repositories {
