@@ -1,21 +1,12 @@
-// buildscript {
-//	ext {
-//		springBootVersion = '1.5.8.RELEASE'
-//	}
-//	repositories {
-//		mavenCentral()
-//	}
-//	dependencies {
-//		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-//	}
-//}
+plugins {
+	id "com.gorylenko.gradle-git-properties" version "1.5.1"
+}
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
-//apply plugin: 'org.springframework.boot'
 
 group = 'com.ninelives'
-version = '0.0.8'
+version = '3.0.0'
 sourceCompatibility = 1.8
 
 repositories {
