@@ -2,7 +2,6 @@ package com.ninelives.insurance.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import com.ninelives.insurance.ref.SignupVerificationStatus;
 import com.ninelives.insurance.ref.SignupVerificationType;
@@ -18,6 +17,8 @@ public class SignupVerification implements Serializable{
 
     private String password;
 
+    private String fcmToken;
+    
     private String verificationCode;
 
     private SignupVerificationType verificationType;
@@ -32,7 +33,7 @@ public class SignupVerification implements Serializable{
 
     private LocalDateTime verifyDate;
     
-    private String verificationToken;
+    private String verificationToken; //transient
 
     public Long getId() {
         return id;
@@ -58,7 +59,15 @@ public class SignupVerification implements Serializable{
         this.password = password;
     }
 
-    public String getVerificationCode() {
+    public String getFcmToken() {
+		return fcmToken;
+	}
+
+	public void setFcmToken(String fcmToken) {
+		this.fcmToken = fcmToken;
+	}
+
+	public String getVerificationCode() {
         return verificationCode;
     }
 

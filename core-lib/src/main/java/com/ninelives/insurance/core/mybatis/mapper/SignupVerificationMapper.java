@@ -13,11 +13,11 @@ import com.ninelives.insurance.ref.SignupVerificationType;
 public interface SignupVerificationMapper {
     @Insert({
         "insert into public.signup_verification (email, ",
-        "password, verification_code, ",
+        "password, fcm_token, verification_code, ",
         "verification_type, reg_source, ",
         "reg_channel, status)",
         "values (#{email,jdbcType=VARCHAR}, ",
-        "#{password,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, ",
+        "#{password,jdbcType=VARCHAR}, #{fcmToken,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, ",
         "#{verificationType,jdbcType=VARCHAR}, #{regSource,jdbcType=VARCHAR}, ",
         "#{regChannel,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
     })
@@ -25,7 +25,7 @@ public interface SignupVerificationMapper {
 
     @Select({
         "select",
-        "id, email, password, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
+        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
         "verify_date",
         "from public.signup_verification",
         "where verification_code = #{verificationCode,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}"
@@ -35,17 +35,17 @@ public interface SignupVerificationMapper {
     
     @Select({
         "select",
-        "id, email, password, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
+        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
         "verify_date",
         "from public.signup_verification",
         "where email = #{email,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}"
     })
-    List<SignupVerification> selectByVerificationEmailAndType(@Param("email") String email, 
+    List<SignupVerification> selectByEmailAndType(@Param("email") String email, 
     		@Param("verificationType") SignupVerificationType verificationType);
     
     @Select({
         "select",
-        "id, email, password, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
+        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
         "verify_date",
         "from public.signup_verification",
         "where email = #{email,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}",

@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="fcm_token" jdbcType="VARCHAR" property="fcmToken" />
     <result column="verification_code" jdbcType="VARCHAR" property="verificationCode" />
     <result column="verification_type" jdbcType="VARCHAR" property="verificationType" />
     <result column="status" jdbcType="VARCHAR" property="status" />

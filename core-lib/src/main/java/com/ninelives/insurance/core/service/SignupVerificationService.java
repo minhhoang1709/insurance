@@ -60,7 +60,7 @@ public class SignupVerificationService {
 	}
 	
 	public List<SignupVerification> fetchSignupVerificationByEmailAndType(String email, SignupVerificationType verificationType) {
-		return signupVerificationMapper.selectByVerificationEmailAndType(email, verificationType);
+		return signupVerificationMapper.selectByEmailAndType(email, verificationType);
 	}
 	
 	public SignupVerification fetchActiveSignupVerificationByEmailAndType(String email,
@@ -70,12 +70,13 @@ public class SignupVerificationService {
 		return verification;
 	}
 
-	public SignupVerification signupRequest(String email, String password, UserSource regSource, UserRegisterChannel regChannel) throws AppException{
+	public SignupVerification signupRequest(String email, String password, String fcmToken, UserSource regSource, UserRegisterChannel regChannel) throws AppException{
 		String code = "email"+"-"+UUID.randomUUID().toString();
 		
 		SignupVerification signupVerification = new SignupVerification();
 		signupVerification.setEmail(email);
 		signupVerification.setPassword(DigestUtils.sha1Hex(password));
+		signupVerification.setFcmToken(fcmToken);
 		signupVerification.setVerificationCode(code);
 		signupVerification.setVerificationType(SignupVerificationType.EMAIL_LINK);
 		signupVerification.setRegSource(regSource);

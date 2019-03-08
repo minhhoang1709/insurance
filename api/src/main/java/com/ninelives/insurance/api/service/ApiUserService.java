@@ -106,7 +106,7 @@ public class ApiUserService {
 		}
 		
 		SignupVerification newSignUpVerification = signupVerificationService.signupRequest(registrationDto.getEmail(), 
-				registrationDto.getPassword(), UserSource.EMAIL, UserRegisterChannel.ANDROID);
+				registrationDto.getPassword(), registrationDto.getFcmToken(), UserSource.EMAIL, UserRegisterChannel.ANDROID);
 		
 		RegisterUsersResult registerResult = null;
 		if(newSignUpVerification!=null) {
