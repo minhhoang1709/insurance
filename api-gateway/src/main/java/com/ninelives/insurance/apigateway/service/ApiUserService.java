@@ -17,6 +17,8 @@ import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.model.BatchFileUpload;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.ref.Gender;
+import com.ninelives.insurance.ref.UserRegisterChannel;
+import com.ninelives.insurance.ref.UserSource;
 import com.ninelives.insurance.ref.UserStatus;
 
 
@@ -70,6 +72,8 @@ public class ApiUserService {
 			user.setBirthPlace(batchFileUpload.getTempatLahir());
 			user.setGender(Gender.toEnum(batchFileUpload.getJenisKelamin()));
 			user.setPhone(batchFileUpload.getNoTelpon());
+			user.setRegChannel(UserRegisterChannel.BATCH);
+			user.setRegSource(UserSource.BATCH_B2B);
 			userService.insertUser(user);
 
 			isNew = true;
