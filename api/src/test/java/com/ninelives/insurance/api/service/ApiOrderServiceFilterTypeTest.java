@@ -28,7 +28,7 @@ public class ApiOrderServiceFilterTypeTest {
 		filterType = orderService.getFetchOrderFilterType(statusExpired);
 		assertEquals(OrderDtoFilterStatus.EXPIRED, filterType);
 		
-		String[] statusUnpaid = {"SUBMITTED", "OFFEREXPIRED", "INPAYMENT", "PAID"};
+		String[] statusUnpaid = {"SUBMITTED", "OVERDUE", "INPAYMENT", "PAID"};
 		filterType = orderService.getFetchOrderFilterType(statusUnpaid);
 		assertEquals(OrderDtoFilterStatus.UNPAID, filterType);
 		
