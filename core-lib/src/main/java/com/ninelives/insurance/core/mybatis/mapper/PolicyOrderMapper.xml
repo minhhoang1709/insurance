@@ -218,7 +218,7 @@
     		<include refid="Base_Column_List"/>
     	from public.policy_order as a
     	where a.user_id=#{userId,jdbcType=VARCHAR}
-    		and a.status='APPROVED'
+    		and a.status in ('APPROVED','ACTIVE')
     		and current_date between a.policy_start_date and a.policy_end_date
     		<if test="isHide != null">
 	        	and a.is_hide = #{isHide,jdbcType=BIT}
@@ -265,7 +265,7 @@
 	    	and (
 		    	( a.status='APPROVED' and current_date &gt; a.policy_end_date )
 		    	or
-		    	( a.status='TERMINATED')
+		    	( a.status in ('TERMINATED','EXPIRED') )
 	    	)
 	    	<if test="isHide != null">
 	        	and a.is_hide = #{isHide,jdbcType=BIT}
@@ -287,7 +287,7 @@
     		<include refid="Base_Column_List"/>
     	from public.policy_order as a
     	where a.user_id=#{userId,jdbcType=VARCHAR}
-	    	and a.status in ('SUBMITTED','INPAYMENT','PAID')
+	    	and a.status in ('SUBMITTED','INPAYMENT','OVERDUE','PAID')
 	    	<if test="isHide != null">
 	        	and a.is_hide = #{isHide,jdbcType=BIT}
 	      	</if>	
