@@ -91,7 +91,7 @@ public class ApiUserService {
 			logger.error("Register by email, error:<User already registered>, exception:<{}>, registerDto:<{}>",
 					ErrorCode.ERR3101_REGISTER_EMAIL_USER_EXISTS, registrationDto);
 			throw new AppConflictException(ErrorCode.ERR3101_REGISTER_EMAIL_USER_EXISTS,
-					"Alamat email sudah terdaftar.");
+					"Maaf email ini sudah terdaftar.");
 		}
 		
 		SignupVerification signUpVerification = signupVerificationService
@@ -102,7 +102,7 @@ public class ApiUserService {
 			logger.debug("Register by email, error:<last verification still unconfirmed>, exception:<{}>, registerDto:<{}>",
 					ErrorCode.ERR3102_REGISTER_EMAIL_VERIFICATION_ACTIVE, registrationDto);
 			throw new AppConflictException(ErrorCode.ERR3102_REGISTER_EMAIL_VERIFICATION_ACTIVE,
-					"Kami telah mengirimkan email konfirmasi. Silakan periksa kembali kotak masuk email Anda.");
+					"Maaf, kami sudah mengirimkan email verifikasi sebelum nya, silahkan cek email Anda.");
 		}
 		
 		SignupVerification newSignUpVerification = signupVerificationService.signupRequest(registrationDto.getEmail(), 
@@ -169,7 +169,7 @@ public class ApiUserService {
 					isNew = false;					
 				} else {
 					logger.error("Register with error:<{}>, registration:<{}>", ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, registrationDto);
-					throw new AppConflictException(ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, "Email anda sudah terdaftar, silahkan login kembali menggunakan email"); 
+					throw new AppConflictException(ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, "Maaf akun gmail ini sudah terdaftar, silahkan login menggunakan email anda"); 
 				}				
 			}else {				
 				if (StringUtils.isEmpty(registrationDto.getGoogleId()) || StringUtils.isEmpty(registrationDto.getPassword())) {
@@ -373,7 +373,7 @@ public class ApiUserService {
 		if(passwordResetDto == null || StringUtils.isEmpty(passwordResetDto.getEmail())) {
 			logger.error("Reset passsword, email:<{}>, result:<error null parameter>, error:<{}>", "null",
 					ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND);
-			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Alamat email tidak ditemukan");
+			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Maaf email ini tidak terdaftar");
 		}
 		
 		String email = passwordResetDto.getEmail();
@@ -383,14 +383,15 @@ public class ApiUserService {
 		if(user==null) {
 			logger.error("Reset passsword, email:<{}>, result:<error user not found>, error:<{}>", email,
 					ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND);
-			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Alamat email tidak ditemukan");
+			throw new AppNotFoundException(ErrorCode.ERR3301_RESET_PASSWORD_USER_NOT_FOUND, "Maaf email ini tidak terdaftar");
 		}
 		
 		if(!user.getVerifySource().equals(UserSource.EMAIL)) {
 			//only support Email based only
 			logger.error("Reset passsword, email:<{}>, result:<error user is not from email>, error:<{}>", email,
 					ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED);
-			throw new AppNotFoundException(ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED, "Alamat email tidak ditemukan");
+			throw new AppNotFoundException(ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED,
+					"Maaf, silahkan verifikasi email Anda terlebih dahulu sebelum menggunakan fitur lupa kata sandi");
 		}
 		
 		if(user.getHasTempPassword()) {
@@ -402,7 +403,7 @@ public class ApiUserService {
 					logger.debug("Reset password, error:<last temporary password still unused>, exception:<{}>, email:<{}>",
 							ErrorCode.ERR3303_RESET_PASSWORD_EXISTS, email);
 					throw new AppConflictException(ErrorCode.ERR3303_RESET_PASSWORD_EXISTS,
-							"Kami telah mengirimkan email untuk pembaruan kata kunci. Silakan periksa kembali kotak masuk email Anda.");
+							"Maaf, kami sudah mengirimkan email password baru Anda sebelumnya, silahkan cek email Anda.");
 				}
 			}
 			user.setTempPassword(tempPassword);			
