@@ -30,7 +30,11 @@ public class ResetPasswordService {
 	@Autowired UserTempPasswordLogMapper tempPasswordLogMapper;
 		
 	public void replaceTempPassword(User user, String newPassword) {
-		UserTempPassword tempPassword = fetchByUserId(user.getUserId());
+		UserTempPassword tempPassword = user.getTempPassword();
+		
+		if(tempPassword==null) {
+			tempPassword = fetchByUserId(user.getUserId());
+		}
 		
 		if(tempPassword != null) {
 			UserTempPassword updTempPassword = new UserTempPassword();
@@ -39,20 +43,28 @@ public class ResetPasswordService {
 			updTempPassword.setReplaceDate(LocalDateTime.now());
 
 			userTrxService.updatePasswordAndTempPasswordStatus(updTempPassword, DigestUtils.sha1Hex(newPassword));
-					
-			UserTempPasswordLog log = new UserTempPasswordLog();
-			log.setEmail(tempPassword.getEmail());
-			log.setUserId(tempPassword.getUserId());
-			log.setPassword(tempPassword.getPassword());
-			log.setOldStatus(tempPassword.getStatus());
-			log.setNewStatus(updTempPassword.getStatus());
 			
-			tempPasswordLogMapper.insert(log);
+			log(tempPassword, updTempPassword);
+					
+//			UserTempPasswordLog log = new UserTempPasswordLog();
+//			log.setEmail(tempPassword.getEmail());
+//			log.setUserId(tempPassword.getUserId());
+//			log.setPassword(tempPassword.getPassword());
+//			log.setOldStatus(tempPassword.getStatus());
+//			log.setNewStatus(updTempPassword.getStatus());
+//			
+//			tempPasswordLogMapper.insert(log);
 		}
 
 	}
 
 	public void resetPassword(User user) throws AppException {	
+		UserTempPassword oldTempPassword = user.getTempPassword();
+		
+		if(oldTempPassword==null) {
+			oldTempPassword = fetchByUserId(user.getUserId());
+		}
+		
 		UserTempPassword tempPassword = new UserTempPassword();
 		tempPassword.setUserId(user.getUserId());
 		tempPassword.setEmail(user.getEmail());
@@ -64,21 +76,23 @@ public class ResetPasswordService {
 		//send email
 		emailService.sendPasswordResetEmail(tempPassword);
 		
-		setTempPassword(tempPassword, user.getHasTempPassword());
+		saveTempPassword(tempPassword, oldTempPassword!=null);
 		
-		UserTempPasswordStatus oldStatus = null;
-		if(user.getHasTempPassword() && user.getTempPassword()!=null) {
-			oldStatus = user.getTempPassword().getStatus();
-		}
+//		UserTempPasswordStatus oldStatus = null;
+//		if(user.getHasTempPassword() && user.getTempPassword()!=null) {
+//			oldStatus = user.getTempPassword().getStatus();
+//		}
 		
-		UserTempPasswordLog log = new UserTempPasswordLog();
-		log.setEmail(user.getEmail());
-		log.setUserId(user.getUserId());
-		log.setPassword(tempPassword.getPassword());
-		log.setOldStatus(oldStatus);
-		log.setNewStatus(tempPassword.getStatus());
+		log(oldTempPassword, tempPassword);
 		
-		tempPasswordLogMapper.insert(log);
+//		UserTempPasswordLog log = new UserTempPasswordLog();
+//		log.setEmail(user.getEmail());
+//		log.setUserId(user.getUserId());
+//		log.setPassword(tempPassword.getPassword());
+//		log.setOldStatus(oldStatus);
+//		log.setNewStatus(tempPassword.getStatus());
+//		
+//		tempPasswordLogMapper.insert(log);
 
 	}
 	
@@ -91,17 +105,41 @@ public class ResetPasswordService {
 		
 			tempPasswordMapper.updateByUserIdSelective(updTempPassword);
 			
-			UserTempPasswordLog log = new UserTempPasswordLog();
-			log.setEmail(tempPassword.getEmail());
-			log.setUserId(tempPassword.getUserId());
-			log.setPassword(tempPassword.getPassword());
-			log.setOldStatus(tempPassword.getStatus());
-			log.setNewStatus(updTempPassword.getStatus());
+			log(tempPassword, updTempPassword);
 			
-			tempPasswordLogMapper.insert(log);
+//			UserTempPasswordLog log = new UserTempPasswordLog();
+//			log.setEmail(tempPassword.getEmail());
+//			log.setUserId(tempPassword.getUserId());
+//			log.setPassword(tempPassword.getPassword());
+//			log.setOldStatus(tempPassword.getStatus());
+//			log.setNewStatus(updTempPassword.getStatus());
+//			
+//			tempPasswordLogMapper.insert(log);
 		}		
 	}
-
+	
+	private int log(UserTempPasswordStatus oldStatus, UserTempPassword newTempPassword) {		
+		UserTempPasswordLog log = new UserTempPasswordLog();
+		log.setEmail(newTempPassword.getEmail());
+		log.setUserId(newTempPassword.getUserId());
+		log.setPassword(newTempPassword.getPassword());
+		log.setOldStatus(oldStatus);
+		log.setNewStatus(newTempPassword.getStatus());
+		
+		return tempPasswordLogMapper.insert(log);
+	}
+	
+	private int log(UserTempPassword oldTempPassword, UserTempPassword newTempPassword) {
+		UserTempPasswordLog log = new UserTempPasswordLog();
+		log.setEmail(newTempPassword.getEmail()!=null?newTempPassword.getEmail():oldTempPassword.getEmail());
+		log.setUserId(newTempPassword.getUserId()!=null?newTempPassword.getUserId():oldTempPassword.getUserId());
+		log.setPassword(newTempPassword.getPassword()!=null?newTempPassword.getPassword():oldTempPassword.getPassword());
+		log.setOldStatus(oldTempPassword==null?null:oldTempPassword.getStatus());
+		log.setNewStatus(newTempPassword.getStatus());
+		
+		return tempPasswordLogMapper.insert(log);
+	}
+	
 	public boolean isValid(UserTempPassword tempPassword) {
 		if(tempPassword.getStatus().equals(UserTempPasswordStatus.APPLIED)) {
 			return true;
@@ -126,8 +164,8 @@ public class ResetPasswordService {
 		}
 		return false;
 	}
-	public void setTempPassword(UserTempPassword tempPassword, boolean isUserHasTempPassword) {
-		if(isUserHasTempPassword) {
+	public void saveTempPassword(UserTempPassword tempPassword, boolean isOldTempPasswordExists) {
+		if(isOldTempPasswordExists) {
 			userTrxService.updateTempPassword(tempPassword);		
 		}else {
 			userTrxService.registerTempPassword(tempPassword);

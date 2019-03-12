@@ -138,10 +138,6 @@ public class SendGridEmailProvider {
 		templateForPasswordReset = config.getEmail().getSendgridTemplateForPasswordReset();
 		emailFrom = config.getEmail().getSendgridEmailFrom();
 		verificationLink = config.getEmail().getSignupVerificationLink();
-		
-		//test
-		System.out.println(this.toString());
-				
 	}
 
 	@Override

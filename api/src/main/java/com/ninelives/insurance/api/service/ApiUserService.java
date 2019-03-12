@@ -102,7 +102,7 @@ public class ApiUserService {
 			logger.debug("Register by email, error:<last verification still unconfirmed>, exception:<{}>, registerDto:<{}>",
 					ErrorCode.ERR3102_REGISTER_EMAIL_VERIFICATION_ACTIVE, registrationDto);
 			throw new AppConflictException(ErrorCode.ERR3102_REGISTER_EMAIL_VERIFICATION_ACTIVE,
-					"Maaf, kami sudah mengirimkan email verifikasi sebelum nya, silahkan cek email Anda.");
+					"Maaf, kami sudah mengirimkan email verifikasi sebelumnya, silakan cek email Anda.");
 		}
 		
 		SignupVerification newSignUpVerification = signupVerificationService.signupRequest(registrationDto.getEmail(), 
@@ -169,7 +169,7 @@ public class ApiUserService {
 					isNew = false;					
 				} else {
 					logger.error("Register with error:<{}>, registration:<{}>", ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, registrationDto);
-					throw new AppConflictException(ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, "Maaf akun gmail ini sudah terdaftar, silahkan login menggunakan email anda"); 
+					throw new AppConflictException(ErrorCode.ERR3004_REGISTER_GOOGLE_USER_EXISTS, "Maaf akun gmail ini sudah terdaftar, silakan login menggunakan email anda"); 
 				}				
 			}else {				
 				if (StringUtils.isEmpty(registrationDto.getGoogleId()) || StringUtils.isEmpty(registrationDto.getPassword())) {
@@ -391,7 +391,7 @@ public class ApiUserService {
 			logger.error("Reset passsword, email:<{}>, result:<error user is not from email>, error:<{}>", email,
 					ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED);
 			throw new AppNotFoundException(ErrorCode.ERR3302_RESET_PASSWORD_SOURCE_NOT_SUPPORTED,
-					"Maaf, silahkan verifikasi email Anda terlebih dahulu sebelum menggunakan fitur lupa kata sandi");
+					"Maaf, silakan verifikasi email Anda terlebih dahulu sebelum menggunakan fitur lupa kata sandi");
 		}
 		
 		if(user.getHasTempPassword()) {
@@ -403,7 +403,7 @@ public class ApiUserService {
 					logger.debug("Reset password, error:<last temporary password still unused>, exception:<{}>, email:<{}>",
 							ErrorCode.ERR3303_RESET_PASSWORD_EXISTS, email);
 					throw new AppConflictException(ErrorCode.ERR3303_RESET_PASSWORD_EXISTS,
-							"Maaf, kami sudah mengirimkan email password baru Anda sebelumnya, silahkan cek email Anda.");
+							"Maaf, kami sudah mengirimkan email password baru Anda sebelumnya, silakan cek email Anda.");
 				}
 			}
 			user.setTempPassword(tempPassword);			
