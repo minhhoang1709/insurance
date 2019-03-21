@@ -97,29 +97,6 @@ public class ApiOrderService {
 	
 	@Autowired FluentProducerTemplate producerTemplate;
 	
-//	@Value("${ninelives.order.policy-startdate-period:366}")
-//	int policyStartDatePeriod;
-//	
-//	@Value("${ninelives.order.policy-duedate-period:30}")
-//	int policyDueDatePeriod;
-//	
-//	@Value("${ninelives.order.policy-conflict-period-limit:3}")
-//	int policyConflictPeriodLimit;
-	
-//	@Value("${ninelives.order.policy-title}")
-//	String policyTitle;
-//	
-//	@Value("${ninelives.order.policy-imgUrl}")
-//	String policyImgUrl;
-//	
-//	@Value("${ninelives.order.filter-limit:100}")
-//	int defaultOrdersFilterLimit;
-//	
-//	@Value("${ninelives.order.filter-max-limit:100}")
-//	int maxOrdersFilterLimit;
-//	
-//	@Value("${ninelives.order.filter-offset:0}")
-//	int defaultOrdersFilterOffset;
 	
 	public PolicyOrderBeneficiaryDto updateBeneficiary(String authUserId, String orderId,
 			PolicyOrderBeneficiaryDto beneficiary) throws AppException {

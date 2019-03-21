@@ -502,6 +502,11 @@ public class NinelivesConfigProperties {
 	    private int policyStartDatePeriod = 365;
 	    
 	    /**
+		 * Allowed policy-start-date for Travel insurance should not more than specified period
+		 */
+	    private int travelMaxPolicyStartDatePeriod = 31;
+	    
+	       /**
 		 * Payment should be made within specified period (inclusive)
 		 */
 	    private int policyDueDatePeriod = 30;
@@ -520,12 +525,7 @@ public class NinelivesConfigProperties {
 		 * Allowed policy-start-date for Travel insurance should not less than specified period
 		 */
 	    private int travelMinPolicyStartDatePeriod = 2;
-	    
-	    /**
-		 * Allowed policy-start-date for Travel insurance should not more than specified period
-		 */
-	    private int travelMaxPolicyStartDatePeriod = 31;
-	    
+	   
 	    private int minimumAge = 17;
 	    private int maximumAge = 60;
 	    
