@@ -27,22 +27,9 @@ import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 @ComponentScan({"com.ninelives.insurance.core.service, com.ninelives.insurance.core.trx, com.ninelives.insurance.core.provider"})
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
-			
-	@Autowired AuthInterceptor authInterceptor;
+		
 	@Autowired DataSource dataSource;
 		
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor).excludePathPatterns(
-				"/api/login",
-				"/api/configs",
-				"/api/products",
-				"/payment/*",
-				"/error",
-				"/email/*",
-				"/api/users/passwordReset");
-	}
-	
 	@PostConstruct
 	public void configInfo() {
 		logger.info("Auto configuration, Datasource is <{}>", dataSource);
