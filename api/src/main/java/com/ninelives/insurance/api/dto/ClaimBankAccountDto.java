@@ -46,4 +46,10 @@ public class ClaimBankAccountDto {
 	public void setBankSwiftCode(String bankSwiftCode) {
 		this.bankSwiftCode = bankSwiftCode;
 	}
+	@Override
+	public String toString() {
+		return "ClaimBankAccountDto [name=" + name + ", account=" + account + ", bankName=" + bankName
+				+ ", bankSwiftCode=" + bankSwiftCode + "]";
+	}
+	
 }

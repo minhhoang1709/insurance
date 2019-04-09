@@ -46,5 +46,11 @@ public class ClaimDetailAccidentAddressDto{
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	@Override
+	public String toString() {
+		return "ClaimDetailAccidentAddressDto [country=" + country + ", province=" + province + ", city=" + city
+				+ ", address=" + address + "]";
+	}
     
 }

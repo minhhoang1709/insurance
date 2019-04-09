@@ -20,5 +20,9 @@ public class ClaimCoverageDto {
 	public void setStatus(ClaimCoverageStatus status) {
 		this.status = status;
 	}
+	@Override
+	public String toString() {
+		return "ClaimCoverageDto [coverage=" + coverage + ", status=" + status + "]";
+	}
 	
 }

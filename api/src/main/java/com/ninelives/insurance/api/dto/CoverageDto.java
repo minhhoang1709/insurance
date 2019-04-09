@@ -136,5 +136,10 @@ public class CoverageDto {
 	public void setCoverageOption(CoverageOptionDto coverageOption) {
 		this.coverageOption = coverageOption;
 	}
+
+	@Override
+	public String toString() {
+		return "CoverageDto [coverageId=" + coverageId + ", name=" + name + "]";
+	}
 	
 }
