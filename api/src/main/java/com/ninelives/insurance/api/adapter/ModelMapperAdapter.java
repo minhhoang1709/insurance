@@ -10,7 +10,9 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ninelives.insurance.api.dto.AccidentClaimDto;
@@ -39,6 +41,7 @@ import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.api.dto.UserNotificationDto;
 import com.ninelives.insurance.api.dto.VoucherDto;
 import com.ninelives.insurance.api.util.DateTimeFormatUtil;
+import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -77,6 +80,7 @@ public class ModelMapperAdapter {
 //	@Value("${ninelives.order.policy-title}")
 //	String policyTitle;
 	
+	@Autowired private TranslationService translationService;
 		
 	public PolicyOrderFamilyDto toDto(PolicyOrderFamily m){
 		PolicyOrderFamilyDto dto = null;
@@ -118,11 +122,16 @@ public class ModelMapperAdapter {
 	}
 	
 	public CoverageOptionDto toDto(CoverageOption m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	
+	public CoverageOptionDto toDto(CoverageOption m, String languageCode){
 		CoverageOptionDto dto = null;
 		if(m!=null){
 			dto = new CoverageOptionDto();
 			dto.setCoverageOptionId(m.getId());
-			dto.setCoverageOptionName(m.getCoverageOptionName());
+			dto.setCoverageOptionName(translationService.translate(m.getCoverageOptionNameTranslationId(), languageCode,
+					m.getCoverageOptionName()));
 			dto.setCoverageOptionGroupId(m.getCoverageOptionGroupId());
 		}
 		return dto;
@@ -335,12 +344,15 @@ public class ModelMapperAdapter {
 		return dto;
 	}
 	public CoverageCategoryDto toDto(CoverageCategory m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	public CoverageCategoryDto toDto(CoverageCategory m, String languageCode){
 		CoverageCategoryDto dto = null;
 		if(m!=null){
 			dto = new CoverageCategoryDto();
 			dto.setCoverageCategoryId(m.getCoverageCategoryId());
-			dto.setName(m.getName());
-			dto.setRecommendation(m.getRecommendation());
+			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
+			dto.setRecommendation(translationService.translate(m.getRecommendationTranslationId(), languageCode, m.getRecommendation()));
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
 			dto.setType(m.getType());			
 		}
@@ -471,25 +483,31 @@ public class ModelMapperAdapter {
 		return dto;
 	}
 	public ProductDto toDto(Product m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	public ProductDto toDto(Product m, String languageCode){
 		ProductDto dto = null;
 		if(m!=null){
 			dto = new ProductDto();
-			dto.setProductId(m.getProductId());			
-			dto.setName(m.getName());
+			dto.setProductId(m.getProductId());		
+			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
 			dto.setPremi(m.getPremi());
 			dto.setFamilyPremi(m.getFamilyPremi());
-			dto.setPeriod(toDto(m.getPeriod()));
-			dto.setCoverage(toDto(m.getCoverage()));
+			dto.setPeriod(toDto(m.getPeriod(), languageCode));
+			dto.setCoverage(toDto(m.getCoverage(), languageCode));
 		}
 		return dto;
 	}
 	public CoverageDto toDto(Coverage m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	public CoverageDto toDto(Coverage m, String languageCode){
 		CoverageDto dto = null;
 		if(m!=null){
 			dto = new CoverageDto();
 			dto.setCoverageId(m.getCoverageId());
-			dto.setName(m.getName());
-			dto.setRecommendation(m.getRecommendation());
+			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
+			dto.setRecommendation(translationService.translate(m.getRecommendationTranslationId(), languageCode, m.getRecommendation()));
 			dto.setIsRecommended(m.getIsRecommended());
 			dto.setIsIntroRecommended(m.getIsIntroRecommended());
 			dto.setIsLumpSum(m.getIsLumpSum());
@@ -517,11 +535,16 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
+	
 	public PeriodDto toDto(Period m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	
+	public PeriodDto toDto(Period m, String languageCode){
 		PeriodDto dto = null;
 		if(m!=null){
 			dto = new PeriodDto();
-			dto.setName(m.getName());
+			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
 			dto.setPeriodId(m.getPeriodId());
 			dto.setUnit(m.getUnit());
 			dto.setValue(m.getValue());

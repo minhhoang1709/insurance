@@ -14,5 +14,6 @@ public interface ProductMapper {
 	Product selectByProductId(@Param("productId") String productId);
 	List<Product> select();
 	List<Product> selectByTypeNormalAndStatusActive();	
+	List<Product> selectByTypeNormalAndStatusActiveAndLocale(@Param("countryCode") String countryCode);
 	//List<Product> selectByProductIds(@Param("productIds") Set<String> productIds);	
 }

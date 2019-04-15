@@ -6,6 +6,7 @@
     <result column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
     <result column="period_id" jdbcType="VARCHAR" property="periodId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
     <result column="premi" jdbcType="INTEGER" property="premi" />
     <result column="family_premi" jdbcType="INTEGER" property="familyPremi" />
@@ -19,6 +20,7 @@
   <resultMap id="PeriodResultMap" type="com.ninelives.insurance.model.Period">
     <id column="period_period_id" jdbcType="VARCHAR" property="periodId" />
     <result column="period_name" jdbcType="VARCHAR" property="name" />
+    <result column="period_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     <result column="period_value" jdbcType="INTEGER" property="value" />
     <result column="period_unit" jdbcType="VARCHAR" property="unit" />
     <result column="period_start_value" jdbcType="INTEGER" property="startValue" />
@@ -28,7 +30,9 @@
     <id column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
     <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     <result column="coverage_name" jdbcType="VARCHAR" property="name" />
+    <result column="coverage_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     <result column="coverage_recommendation" jdbcType="VARCHAR" property="recommendation" />
+    <result column="coverage_recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />    
     <result column="coverage_description" jdbcType="VARCHAR" property="description" />
     <result column="coverage_max_limit" jdbcType="BIGINT" property="maxLimit" />
     <result column="coverage_family_max_limit" jdbcType="BIGINT" property="familyMaxLimit" />
@@ -43,12 +47,15 @@
     <association property="coverageCategory" javaType="com.ninelives.insurance.model.CoverageCategory">
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
+    	<result column="covcat_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
     	<result column="covcat_recommendation" jdbcType="VARCHAR" property="recommendation" />
+    	<result column="covcaterecommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
     </association>
     <association property="coverageOption" javaType="com.ninelives.insurance.model.CoverageOption">
     	<id column="coverage_option_id" jdbcType="VARCHAR" property="id" />
     	<result column="coverage_option_name" jdbcType="VARCHAR" property="coverageOptionName" />
+    	<result column="coverage_option_name_translation_id" jdbcType="INTEGER" property="coverageOptionNameTranslationId" />
     	<result column="coverage_option_group_id" jdbcType="VARCHAR" property="coverageOptionGroupId" />
     	<association property="coverageOptionGroup" javaType="com.ninelives.insurance.model.CoverageOptionGroup">
     		<id column="coverage_option_group_id" jdbcType="VARCHAR" property="id" />
@@ -73,21 +80,28 @@
   </resultMap>
   
   <sql id="NestedProductColumnList">
-  	a.product_id, a.coverage_id, a.period_id, a.name, a.premi, a.family_premi, a.premi as base_premi, a.status, a.product_type, a.created_date, a.update_date,
-	b.period_id as period_period_id, b.name as period_name, b.value as period_value, b.unit as period_unit,
-	b.start_value as period_start_value, b.end_value as period_end_value,
-	c.coverage_id as coverage_id, c.coverage_category_id, c.name as coverage_name, c.recommendation as coverage_recommendation, 
+  	a.product_id, a.coverage_id, a.period_id, a.name, a.name_translation_id,
+  	a.premi, a.family_premi, a.premi as base_premi, a.status, a.product_type, a.created_date, a.update_date,
+	b.period_id as period_period_id, b.name as period_name, b.name_translation_id as period_name_translation_id,
+	b.value as period_value, b.unit as period_unit,	b.start_value as period_start_value, b.end_value as period_end_value,
+	c.coverage_id as coverage_id, c.coverage_category_id, 
+	c.name as coverage_name, c.name_translation_id as coverage_name_translation_id, 
+	c.recommendation as coverage_recommendation, c.recommendation_translation_id as coverage_recommendation_translation_id,
 	c.description as coverage_description, c.max_limit as coverage_max_limit, c.family_max_limit as coverage_family_max_limit, 
 	c.has_beneficiary as coverage_has_beneficiary,
-	c.is_recommended as coverage_is_recommended, c.is_intro_recommended as coverage_is_intro_recommended, c.is_lump_sum as coverage_is_lump_sum, 
+	c.is_recommended as coverage_is_recommended, c.is_intro_recommended as coverage_is_intro_recommended, 
+	c.is_lump_sum as coverage_is_lump_sum, 
 	c.provider_code as coverage_provider_code, c.status as coverage_status, c.display_rank as coverage_display_rank,
-	d.coverage_category_id as covcat_coverage_category_id, d.name as covcat_name, d.type as covcat_type,
-	d.recommendation as covcat_recommendation,
+	d.coverage_category_id as covcat_coverage_category_id, 
+	d.name as covcat_name, d.name_translation_id as covcat_name_translation_id, 
+	d.type as covcat_type,
+	d.recommendation as covcat_recommendation, d.recommendation_translation_id as covcat_recommendation_translation_id,
 	e.coverage_claim_doc_type_id, e.is_mandatory,
 	f.claim_doc_type_id, f.name as claim_doc_type_name, f.usage_type as claim_doc_type_usage_type,
 	i.coverage_order_doc_type_id, i.order_doc_type_id,
 	j.order_doc_type_id as orderdoctype_order_doc_type_id, j.name as orderdoctype_name, j.usage_type as orderdoctype_usage_type, j.display_rank as orderdoctype_display_rank,
-	g.coverage_option_name, g.coverage_option_group_id,
+	g.coverage_option_name, g.coverage_option_name_translation_id, 
+	g.coverage_option_group_id,
 	h.coverage_option_group_name
   </sql>
   
@@ -96,6 +110,7 @@
   	inner join public.period b on b.period_id=a.period_id
   	inner join public.coverage c on c.coverage_id=a.coverage_id
   	inner join public.coverage_category d on d.coverage_category_id=c.coverage_category_id
+  	inner join public.app_country country on d.country_id=country.id
   	left outer join public.coverage_claim_doc_type e on e.coverage_id=c.coverage_id
   	left outer join public.claim_doc_type f on f.claim_doc_type_id=e.claim_doc_type_id
   	left outer join public.coverage_order_doc_type i on i.coverage_id=c.coverage_id
@@ -110,6 +125,17 @@
   	from
   		<include refid="NestedProductTableJoinList"/>
   	where a.status='A' and a.product_type='NORMAL'
+  	order by a.product_id
+  </select>
+  
+  <select id="selectByTypeNormalAndStatusActiveAndLocale" resultMap="NestedProductResultMap">
+  	select
+  		<include refid="NestedProductColumnList"/>
+  	from
+  		<include refid="NestedProductTableJoinList"/>
+  	where a.status='A' 
+  		and a.product_type='NORMAL' 
+  		and country.code=#{countryCode,jdbcType=VARCHAR}
   	order by a.product_id
   </select>
   

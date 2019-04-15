@@ -6,6 +6,8 @@ public class CoverageOption {
     private String id;
 
     private String coverageOptionName;
+    
+    private Integer coverageOptionNameTranslationId;
 
     private String coverageOptionGroupId;
     
@@ -62,4 +64,13 @@ public class CoverageOption {
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	public Integer getCoverageOptionNameTranslationId() {
+		return coverageOptionNameTranslationId;
+	}
+
+	public void setCoverageOptionNameTranslationId(Integer coverageOptionNameTranslationId) {
+		this.coverageOptionNameTranslationId = coverageOptionNameTranslationId;
+	}
+    
 }

@@ -892,29 +892,29 @@ public class ApiOrderService {
 				
 		return voucher;
 	}
-	private void sendSuccessNotification(String userId, String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){
-		if(policyOrder!=null && policyOrder.getCoverageCategory()!=null){
-			if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
-					&& !policyOrder.getPolicyStartDate().isAfter(today) 
-					&& !policyOrder.getPolicyEndDate().isBefore(today)){
-				CoverageCategory covCat = policyOrder.getCoverageCategory();
-				
-				if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(receiverFcmToken)){
-					FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
-					notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",
-							new Object[] { covCat.getName() }, Locale.ROOT));
-					notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body",
-							new Object[] { covCat.getName() }, Locale.ROOT));
-					try {
-						notificationService.sendFcmNotification(userId, receiverFcmToken, notifMessage,
-								FcmNotifAction.order, policyOrder.getOrderId());
-					} catch (Exception e) {
-						logger.error("Failed to send message notif for register order", e);
-					}
-				}	
-			}
-		}
-	}
+//	private void sendSuccessNotification(String userId, String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){
+//		if(policyOrder!=null && policyOrder.getCoverageCategory()!=null){
+//			if(policyOrder.getStatus().equals(PolicyStatus.APPROVED)
+//					&& !policyOrder.getPolicyStartDate().isAfter(today) 
+//					&& !policyOrder.getPolicyEndDate().isBefore(today)){
+//				CoverageCategory covCat = policyOrder.getCoverageCategory();
+//				
+//				if(covCat!=null  && !StringUtils.isEmpty(covCat.getName()) && !StringUtils.isEmpty(receiverFcmToken)){
+//					FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
+//					notifMessage.setTitle(messageSource.getMessage("message.notification.order.invite.active.title",
+//							new Object[] { covCat.getName() }, Locale.ROOT));
+//					notifMessage.setBody(messageSource.getMessage("message.notification.order.invite.active.body",
+//							new Object[] { covCat.getName() }, Locale.ROOT));
+//					try {
+//						notificationService.sendFcmNotification(userId, receiverFcmToken, notifMessage,
+//								FcmNotifAction.order, policyOrder.getOrderId());
+//					} catch (Exception e) {
+//						logger.error("Failed to send message notif for register order", e);
+//					}
+//				}	
+//			}
+//		}
+//	}
 
 	private void asyncRegisterOrderForInviter(final PolicyOrder policyOrder){
 		logger.debug("Async register order for inviter with order <{}>", policyOrder);

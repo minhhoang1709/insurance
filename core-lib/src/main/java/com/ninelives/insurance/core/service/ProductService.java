@@ -53,10 +53,13 @@ public class ProductService {
 	public ClaimDocType fetchClaimDocTypeByClaimDocTypeId(String claimDocTypeId){
 		return claimDocTypeMapper.selectByClaimDocTypeId(claimDocTypeId);
 	}
-
 	
 	public List<Product> fetchProductsWithTypeNormalAndStatusActive(){
 		return productMapper.selectByTypeNormalAndStatusActive();
+	}
+	
+	public List<Product> fetchProductsWithTypeNormalAndStatusActive(String countryCode){
+		return productMapper.selectByTypeNormalAndStatusActiveAndLocale(countryCode);
 	}
 	
 	public List<Coverage> fetchCoveragesWithStatusActive(){

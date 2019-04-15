@@ -1,6 +1,7 @@
 package com.ninelives.insurance.api.controller;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ public class ProductController {
 	@RequestMapping(value="/products",
 			method=RequestMethod.GET)	
 	@ResponseBody
-	public List<ProductDto> getProducts(){
-		return apiProductService.fetchProductDtosWithTypeNormalAndStatusActive();
+	public List<ProductDto> getProducts(Locale locale){
+		return apiProductService.fetchProductDtosWithTypeNormalAndStatusActive(locale.getCountry(), locale.getLanguage());
 	}
 	
 	@RequestMapping(value="/coverages",

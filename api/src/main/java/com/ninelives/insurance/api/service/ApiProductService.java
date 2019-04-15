@@ -2,6 +2,7 @@ package com.ninelives.insurance.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +26,22 @@ public class ApiProductService {
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	@Autowired ProductService productService;
 	
+//	@Cacheable("ProductDtos")
+//	public List<ProductDto> fetchProductDtosWithTypeNormalAndStatusActive(){
+//		List<Product> products = productService.fetchProductsWithTypeNormalAndStatusActive();
+//		List<ProductDto> dtoList = new ArrayList<>();
+//		for(Product p: products){
+//			dtoList.add(modelMapperAdapter.toDto(p));
+//		}
+//		return dtoList;
+//	}
+	
 	@Cacheable("ProductDtos")
-	public List<ProductDto> fetchProductDtosWithTypeNormalAndStatusActive(){
-		List<Product> products = productService.fetchProductsWithTypeNormalAndStatusActive();
+	public List<ProductDto> fetchProductDtosWithTypeNormalAndStatusActive(String countryCode, String languageCode){
+		List<Product> products = productService.fetchProductsWithTypeNormalAndStatusActive(countryCode);
 		List<ProductDto> dtoList = new ArrayList<>();
 		for(Product p: products){
-			dtoList.add(modelMapperAdapter.toDto(p));
+			dtoList.add(modelMapperAdapter.toDto(p, languageCode));
 		}
 		return dtoList;
 	}
