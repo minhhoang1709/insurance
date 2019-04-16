@@ -20,7 +20,7 @@ public class ApiLocaleResolver extends AbstractLocaleContextResolver {
 	private String localeAttributeName = LOCALE_REQUEST_ATTRIBUTE_NAME;
 	private String timeZoneAttributeName = TIME_ZONE_REQUEST_ATTRIBUTE_NAME;
 	/**
-	 * Create a default FixedLocaleResolver, exposing a configured default
+	 * Create a default ApiLocaleResolver, exposing a configured default
 	 * locale (or the JVM's default locale as fallback).
 	 * @see #setDefaultLocale
 	 * @see #setDefaultTimeZone
@@ -30,7 +30,7 @@ public class ApiLocaleResolver extends AbstractLocaleContextResolver {
 	}
 
 	/**
-	 * Create a FixedLocaleResolver that exposes the given locale.
+	 * Create a ApiLocaleResolver that exposes the given locale.
 	 * @param locale the locale to expose
 	 */
 	public ApiLocaleResolver(Locale locale) {
@@ -38,7 +38,7 @@ public class ApiLocaleResolver extends AbstractLocaleContextResolver {
 	}
 
 	/**
-	 * Create a FixedLocaleResolver that exposes the given locale and time zone.
+	 * Create a ApiLocaleResolver that exposes the given locale and time zone.
 	 * @param locale the locale to expose
 	 * @param timeZone the time zone to expose
 	 */

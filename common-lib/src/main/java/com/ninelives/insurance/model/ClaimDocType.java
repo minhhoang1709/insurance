@@ -11,6 +11,8 @@ public class ClaimDocType implements Serializable{
 	private String claimDocTypeId;
 
     private String name;
+    
+    private Integer nameTranslationId;
 
     private String description;
     
@@ -67,6 +69,14 @@ public class ClaimDocType implements Serializable{
     public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
+
+	public Integer getNameTranslationId() {
+		return nameTranslationId;
+	}
+
+	public void setNameTranslationId(Integer nameTranslationId) {
+		this.nameTranslationId = nameTranslationId;
+	}
 
 	@Override
 	public String toString() {

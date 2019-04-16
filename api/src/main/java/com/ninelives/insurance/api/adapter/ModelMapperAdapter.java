@@ -517,12 +517,12 @@ public class ModelMapperAdapter {
 			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
 				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
 				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){
-					covDocTypeDtos.add(toDto(covDocType));
+					covDocTypeDtos.add(toDto(covDocType,languageCode));
 				}
 				dto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}
-			dto.setCoverageCategory(toDto(m.getCoverageCategory()));
-			dto.setCoverageOption(toDto(m.getCoverageOption()));
+			dto.setCoverageCategory(toDto(m.getCoverageCategory(), languageCode));
+			dto.setCoverageOption(toDto(m.getCoverageOption(), languageCode));
 			
 //			if(!CollectionUtils.isEmpty(m.getClaimDocTypes())){
 //				List<ClaimDocTypeDto> docTypeDtos = new ArrayList<>();
@@ -555,21 +555,29 @@ public class ModelMapperAdapter {
 	}
 	
 	public CoverageClaimDocTypeDto toDto(CoverageClaimDocType m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	
+	public CoverageClaimDocTypeDto toDto(CoverageClaimDocType m, String languageCode){
 		CoverageClaimDocTypeDto dto = null;
 		if(m!=null){
 			dto = new CoverageClaimDocTypeDto();
 			dto.setIsMandatory(m.getIsMandatory());
-			dto.setClaimDocType(toDto(m.getClaimDocType()));
+			dto.setClaimDocType(toDto(m.getClaimDocType(), languageCode));
 		}
 		return dto;
 	}
 	
 	public ClaimDocTypeDto toDto(ClaimDocType m) {
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	
+	public ClaimDocTypeDto toDto(ClaimDocType m, String languageCode) {
 		ClaimDocTypeDto dto = null;
 		if(m!=null){
 			dto = new ClaimDocTypeDto();
 			dto.setClaimDocTypeId(m.getClaimDocTypeId());
-			dto.setName(m.getName());
+			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
 			dto.setUsageType(m.getUsageType());
 		}
 		return dto;

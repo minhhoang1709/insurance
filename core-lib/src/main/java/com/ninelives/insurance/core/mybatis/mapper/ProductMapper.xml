@@ -69,6 +69,7 @@
 	    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType">
 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
+		    <result column="claim_doc_type_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
 		    <result column="claim_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
     	</association>	
     </collection>  
@@ -97,7 +98,8 @@
 	d.type as covcat_type,
 	d.recommendation as covcat_recommendation, d.recommendation_translation_id as covcat_recommendation_translation_id,
 	e.coverage_claim_doc_type_id, e.is_mandatory,
-	f.claim_doc_type_id, f.name as claim_doc_type_name, f.usage_type as claim_doc_type_usage_type,
+	f.claim_doc_type_id, f.name as claim_doc_type_name, f.name_translation_id as claim_doc_type_name_translation_id,
+	f.usage_type as claim_doc_type_usage_type,
 	i.coverage_order_doc_type_id, i.order_doc_type_id,
 	j.order_doc_type_id as orderdoctype_order_doc_type_id, j.name as orderdoctype_name, j.usage_type as orderdoctype_usage_type, j.display_rank as orderdoctype_display_rank,
 	g.coverage_option_name, g.coverage_option_name_translation_id, 
