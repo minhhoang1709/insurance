@@ -15,13 +15,15 @@ import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 import com.ninelives.insurance.api.i18n.ApiLocaleResolver;
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
 import com.ninelives.insurance.api.interceptor.LocaleInterceptor;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 
 @Configuration
-public class NinelivesWebConfig extends WebMvcConfigurerAdapter{	
+public class NinelivesWebConfig extends WebMvcConfigurerAdapter{
+	@Autowired NinelivesConfigProperties config;
+	
 	@Autowired AuthInterceptor authInterceptor;
 	@Autowired LocaleInterceptor localeInterceptor;
 	
-	private String defaultLocaleStr;
 	private String defaultTimeZoneStr;
 	
 	@Override
@@ -40,7 +42,7 @@ public class NinelivesWebConfig extends WebMvcConfigurerAdapter{
 	@Bean
 	public LocaleResolver localeResolver() {
 		ApiLocaleResolver localeResolver = new ApiLocaleResolver();
-		localeResolver.setDefaultLocale(LocaleUtils.toLocale(defaultLocaleStr));
+		localeResolver.setDefaultLocale(LocaleUtils.toLocale(config.getAppLocale().getDefaultLocale()));
 		if(!StringUtils.isEmpty(defaultTimeZoneStr)) {
 			localeResolver.setDefaultTimeZone(TimeZone.getTimeZone(defaultTimeZoneStr));			
 		}

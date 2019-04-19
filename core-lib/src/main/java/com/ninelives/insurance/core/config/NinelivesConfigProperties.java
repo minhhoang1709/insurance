@@ -1,6 +1,9 @@
 package com.ninelives.insurance.core.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -20,6 +23,8 @@ public class NinelivesConfigProperties {
 	
 	@NotEmpty
 	private String helpSelfiePolicyStandardFilePath;
+	
+	private AppLocale appLocale = new AppLocale();
 	
 	private Order order = new Order();
 	private Claim claim = new Claim();
@@ -55,6 +60,13 @@ public class NinelivesConfigProperties {
 	}
 	public void setHelpSelfiePolicyStandardFilePath(String helpSelfiePolicyStandardFilePath) {
 		this.helpSelfiePolicyStandardFilePath = helpSelfiePolicyStandardFilePath;
+	}
+	
+	public AppLocale getAppLocale() {
+		return appLocale;
+	}
+	public void setAppLocale(AppLocale appLocale) {
+		this.appLocale = appLocale;
 	}
 	public Order getOrder() {
 		return order;
@@ -105,6 +117,31 @@ public class NinelivesConfigProperties {
 		this.email = email;
 	}
 
+	public static class AppLocale {
+		private String defaultLocale;
+		private Map<String, String> defaultLocaleByCountry = new HashMap<>();
+		private List<String> supportedLocales = new ArrayList<>();
+		public String getDefaultLocale() {
+			return defaultLocale;
+		}
+		public void setDefaultLocale(String defaultLocale) {
+			this.defaultLocale = defaultLocale;
+		}			
+		public Map<String, String> getDefaultLocaleByCountry() {
+			return defaultLocaleByCountry;
+		}
+		public void setDefaultLocaleByCountry(Map<String, String> defaultLocaleByCountry) {
+			this.defaultLocaleByCountry = defaultLocaleByCountry;
+		}
+		public List<String> getSupportedLocales() {
+			return supportedLocales;
+		}
+		public void setSupportedLocales(List<String> supportedLocales) {
+			this.supportedLocales = supportedLocales;
+		}
+
+	}
+	
 	public static class Account {
 		@NotEmpty
 		private String googleTokenEndpointUrl;
