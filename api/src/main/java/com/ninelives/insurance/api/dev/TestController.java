@@ -57,6 +57,7 @@ import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.VoucherService;
+import com.ninelives.insurance.core.support.pdf.PdfCreator;
 import com.ninelives.insurance.core.util.GsonUtil;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageCategory;
@@ -525,171 +526,51 @@ public class TestController {
 		return apiClaimService.fetchClaims(authUserId, filterDto);
 	}
 	
-//	@RequestMapping(value="/claims",
-//			method=RequestMethod.GET)
-//	@ResponseBody
-//	public List<ClaimDto> getClaims(@RequestAttribute ("authUserId") String authUserId, 
-//			@RequestParam(value="filter",required=false) String filter){
-//		//DateTimeFormatter formatter = new DateTimeFormatter;
-//		
-//		List<ClaimDto> claimDtos = new ArrayList<>();
-//		ClaimDto claimDto1 = new ClaimDto();
-//		claimDto1.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
-//		claimDto1.setClaimDateTime("2017-11-21T15:30:00");
-//		claimDto1.setAccidentDateTime("2017-11-10T15:30:00");
-//		claimDto1.setAccidentSummary("The reason lorem ipsum dollar etsum");
-//		
-//		List<CoverageDto> coverageDtos = new ArrayList<>();
-//		List<ProductDto> productDtos = productService.fetchActiveProductDtos();
-//		for(ProductDto p: productDtos){
-//			if(p.getProductId().equals("P101003103")){
-//				coverageDtos.add(p.getCoverage());
-//			}
-//			if(p.getProductId().equals("P101002103")){
-//				coverageDtos.add(p.getCoverage());
-//			}
-//		}		
-//		claimDto1.setCoverages(coverageDtos);		
-//		
-//		ClaimAccidentAddressDto claimAddress = new ClaimAccidentAddressDto();
-//		claimAddress.setCountry("Indonesia");
-//		claimAddress.setProvince("Jawa Tengah");
-//		claimAddress.setCity("Semarang");
-//		claimAddress.setAddress("Jln. Kertajaya no.19");		
-//		claimDto1.setAccidentAddress(claimAddress);
-//		
-//		ClaimAccountDto account = new ClaimAccountDto();
-//		account.setName("Nama pelanggan");
-//		account.setBankName("BCA");
-//		account.setBankSwiftCode("014");
-//		account.setBankSwitt("CENAIDJA");
-//		account.setAccount("6227182391006");
-//		claimDto1.setClaimAccount(account);
-//		
-//		OrderDto orderDto = orderService.fetchOrderDtoByOrderId("e3c0e93695ef4fd2bbf65f42a45fa207", "ec9dbb13-e4fe-45bf-871b-b503ad2445b0");
-//		
-//		claimDto1.setOrder(orderDto);
-//		
-//		List<ClaimDocumentDto> docs = new ArrayList<>();
-//		
-//		for(ProductDto p: productDtos){
-//			if(p.getProductId().equals("P101003103")){
-//				int i=1;
-//				for(ClaimDocTypeDto docType: p.getCoverage().getClaimDocTypes()){
-//					ClaimDocumentDto claimDocumentDto1 = new ClaimDocumentDto();
-//					
-//					claimDocumentDto1.setClaimDocumentId("123123123"+i);
-//					claimDocumentDto1.setClaimDocType(docType);
-//					UserFileDto userFileDto = new UserFileDto();
-//					userFileDto.setFileId(12321312L+i);
-//					claimDocumentDto1.setFile(userFileDto);
-//					
-//					docs.add(claimDocumentDto1);
-//					i++;
-//				}				
-//			}
-//			if(p.getProductId().equals("P101002103")){
-//				coverageDtos.add(p.getCoverage());
-//			}
-//		}
-//				
-//		//docs.add(claimDocumentDto);		
-//		claimDto1.setClaimDocuments(docs);
-//		claimDto1.setStatus("INREVIEW");
-//		
-//		claimDtos.add(claimDto1);				
-//		
-//		return claimDtos;
-//	}
-//	
-//	@RequestMapping(value="/orders/{orderId}/claims",
-//			method=RequestMethod.POST)
-//	@ResponseBody
-//	public ClaimDto getClaim(@RequestAttribute ("authUserId") String authUserId, 
-//			@RequestBody ClaimDto claimDto,
-//			@PathVariable("orderId") String orderId){
-//		logger.debug("Terima /order/claim POST untuk order {} dan data {}", orderId, claimDto);
-//		if(claimDto!=null){
-//			claimDto.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
-//			claimDto.setStatus("SUBMITTED");
-//		}
-//		return claimDto;
-//		
-//	}
+	@RequestMapping(value="/test/temp/pdfprint",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public String printpdf(){
+		
+		PdfCreator pdfCreator = new PdfCreator("D:\\local\\sts\\9lives\\template\\online_policy_certificate_dav04.pdf",
+				"D:\\local\\sts\\9lives\\template\\arial.ttf");
+		
+		Map<String, String> fieldMap = new HashMap<>();
+		fieldMap.put("buyer_name","Smith");
+		fieldMap.put("buyer_contact_no","12345678");
+		fieldMap.put("policy_number","PA0000021/9Lives/2019");
+		fieldMap.put("date_of_issue","26/03/2019");
+		fieldMap.put("insured_name","Smith");
+		fieldMap.put("insured_idcard","123124214124");
+		fieldMap.put("insured_birthdate","26/03/2019");
+		fieldMap.put("insured_buyer_relation","");
+		fieldMap.put("policy_start_date","26/03/2019");
+		fieldMap.put("policy_end_date","26/03/2020");
+
+		fieldMap.put("coverage_1","Tử vong do tai nạn");
+		fieldMap.put("coverage_2","Thương tật do tai nạn");
+		fieldMap.put("coverage_3","Nằm viện trên 3 ngày do tai nạn (tối đa 2 lần/năm)");
+		fieldMap.put("coverage_4","Chi phí mai táng khi tử vong do tai nạn");
+		fieldMap.put("coverage_5","Trợ cấp thu nhập do tử vong hoặc thương tật vĩnh viễn do tai nạn");
+		fieldMap.put("coverage_6","Điều trị tai nạn tại phòng cấp cứu (tối đa 2 lần/năm)");
+			
+		fieldMap.put("limit_1","40.000.000");
+		fieldMap.put("limit_2","40.000.000");
+		fieldMap.put("limit_3","3.000.000");
+		fieldMap.put("limit_4","4.000.000");
+		fieldMap.put("limit_5","5.000.000");
+		fieldMap.put("limit_6","1.000.000");
+
+		fieldMap.put("premi","12.345");
+		fieldMap.put("period","1 năm");
+		
+		try {
+			pdfCreator.printFieldMap(fieldMap, "D:\\local\\sts\\9lives\\test\\pdfTest.pdf");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "ok";
+	}
 	
-//	@RequestMapping(value="/claims/{claimId}",
-//			method=RequestMethod.GET)
-//	@ResponseBody
-//	public ClaimDto getClaim(@RequestAttribute ("authUserId") String authUserId, 
-//			@PathVariable("claimId") String claimId){
-//		//DateTimeFormatter formatter = new DateTimeFormatter;
-//						
-//		ClaimDto claimDto1 = new ClaimDto();
-//		claimDto1.setClaimId("cb524037-67d6-45ca-8776-3eb39cb0f5fa");
-//		claimDto1.setClaimDateTime("2017-11-21T15:30:00");
-//		claimDto1.setAccidentDateTime("2017-11-10T15:30:00");
-//		claimDto1.setAccidentSummary("The reason lorem ipsum dollar etsum");
-//		
-//		List<CoverageDto> coverageDtos = new ArrayList<>();
-//		List<ProductDto> productDtos = productService.fetchActiveProductDtos();
-//		for(ProductDto p: productDtos){
-//			if(p.getProductId().equals("P101003103")){
-//				coverageDtos.add(p.getCoverage());
-//			}
-//			if(p.getProductId().equals("P101002103")){
-//				coverageDtos.add(p.getCoverage());
-//			}
-//		}		
-//		claimDto1.setCoverages(coverageDtos);		
-//		
-//		ClaimAccidentAddressDto claimAddress = new ClaimAccidentAddressDto();
-//		claimAddress.setCountry("Indonesia");
-//		claimAddress.setProvince("Jawa Tengah");
-//		claimAddress.setCity("Semarang");
-//		claimAddress.setAddress("Jln. Kertajaya no.19");		
-//		claimDto1.setAccidentAddress(claimAddress);
-//		
-//		ClaimAccountDto account = new ClaimAccountDto();
-//		account.setName("Nama pelanggan");
-//		account.setBankName("BCA");
-//		account.setBankSwiftCode("014");
-//		account.setBankSwitt("CENAIDJA");
-//		account.setAccount("6227182391006");
-//		claimDto1.setClaimAccount(account);
-//		
-//		OrderDto orderDto = orderService.fetchOrderDtoByOrderId("e3c0e93695ef4fd2bbf65f42a45fa207", "ec9dbb13-e4fe-45bf-871b-b503ad2445b0");
-//		
-//		claimDto1.setOrder(orderDto);
-//		
-//		List<ClaimDocumentDto> docs = new ArrayList<>();
-//		
-//		for(ProductDto p: productDtos){
-//			if(p.getProductId().equals("P101003103")){
-//				int i=1;
-//				for(ClaimDocTypeDto docType: p.getCoverage().getClaimDocTypes()){
-//					ClaimDocumentDto claimDocumentDto1 = new ClaimDocumentDto();
-//					
-//					claimDocumentDto1.setClaimDocumentId("123123123"+i);
-//					claimDocumentDto1.setClaimDocType(docType);
-//					UserFileDto userFileDto = new UserFileDto();
-//					userFileDto.setFileId(12321312L+i);
-//					claimDocumentDto1.setFile(userFileDto);
-//					
-//					docs.add(claimDocumentDto1);
-//					i++;
-//				}
-//				
-//			}
-//			if(p.getProductId().equals("P101002103")){
-//				coverageDtos.add(p.getCoverage());
-//			}
-//		}
-//				
-//		//docs.add(claimDocumentDto);		
-//		claimDto1.setClaimDocuments(docs);
-//		claimDto1.setStatus("INREVIEW");
-//
-//		
-//		return claimDto1;
-//	}
 }
