@@ -50,7 +50,7 @@
     	<result column="covcat_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
     	<result column="covcat_recommendation" jdbcType="VARCHAR" property="recommendation" />
-    	<result column="covcaterecommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
+    	<result column="covcat_recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
     </association>
     <association property="coverageOption" javaType="com.ninelives.insurance.model.CoverageOption">
     	<id column="coverage_option_id" jdbcType="VARCHAR" property="id" />
