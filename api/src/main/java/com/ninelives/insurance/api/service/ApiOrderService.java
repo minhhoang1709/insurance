@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,7 +45,6 @@ import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.trx.PolicyOrderTrxService;
-import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.CoverageOrderDocType;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
@@ -61,8 +59,6 @@ import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.model.Voucher;
-import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
-import com.ninelives.insurance.provider.notification.fcm.ref.FcmNotifAction;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FamilyRelationship;
@@ -132,7 +128,7 @@ public class ApiOrderService {
 				orderDtos.add(modelMapperAdapter.toDto(po));
 			}
 		}
-		return orderDtos;		
+		return orderDtos;
 	}
 	
 	protected PolicyOrderBeneficiary registerBeneficiary(String userId, String orderId,
@@ -594,6 +590,7 @@ public class ApiOrderService {
 				}				
 				pop.setCoverageHasBeneficiary(p.getCoverage().getHasBeneficiary());
 				pop.setPeriod(p.getPeriod());
+				pop.setProduct(p); //for translation purpose
 				policyOrderProducts.add(pop);
 			}			
 			policyOrder.setPolicyOrderProducts(policyOrderProducts);

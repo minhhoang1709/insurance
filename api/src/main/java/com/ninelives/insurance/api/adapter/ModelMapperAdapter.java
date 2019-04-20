@@ -227,6 +227,9 @@ public class ModelMapperAdapter {
 		return dto;
 	}
 	public OrderDto toDto(PolicyOrder m){
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	public OrderDto toDto(PolicyOrder m, String languageCode){
 		OrderDto dto = null;
 		if(m!=null){
 			dto = new OrderDto();
@@ -244,10 +247,10 @@ public class ModelMapperAdapter {
 			//dto.setTitle(this.policyTitle);
 			//dto.setImgUrl(this.policyImgUrl);
 			
-			PeriodDto periodDto = toDto(m.getPeriod()); 
+			PeriodDto periodDto = toDto(m.getPeriod(), languageCode); 
 			dto.setPeriod(periodDto);
 			
-			dto.setCoverageCategory(toDto(m.getCoverageCategory()));
+			dto.setCoverageCategory(toDto(m.getCoverageCategory(), languageCode));
 			if(dto.getCoverageCategory()!=null){
 				dto.setTitle(dto.getCoverageCategory().getName());
 				dto.setImgUrl(dto.getCoverageCategory().getImageUrl());
@@ -257,9 +260,10 @@ public class ModelMapperAdapter {
 				int rank = 99;
 				List<ProductDto> productDtos = new ArrayList<>();
 				for(PolicyOrderProduct p: m.getPolicyOrderProducts()){
-					productDtos.add(toDto(p, periodDto));					
+					ProductDto productDto = toDto(p, periodDto, languageCode);
+					productDtos.add(productDto);					
 					if(p.getCoverageDisplayRank() < rank){
-						dto.setSubtitle(p.getCoverageName());
+						dto.setSubtitle(productDto.getCoverage().getName());
 						rank = p.getCoverageDisplayRank();
 					}
 				}
@@ -436,33 +440,37 @@ public class ModelMapperAdapter {
 		}
 		return dto;
 	}
+	
 	public ProductDto toDto(PolicyOrderProduct m, PeriodDto periodDto){
+		return toDto(m, periodDto, LocaleContextHolder.getLocale().getLanguage());
+	}
+	public ProductDto toDto(PolicyOrderProduct m, PeriodDto periodDto, String languageCode){
 		ProductDto dto = null;
 		if(m!=null){
 			dto = new ProductDto();
 			dto.setProductId(m.getProductId());
-			dto.setName(StringUtils.defaultIfBlank(m.getProductName(), m.getCoverageName()));
-			dto.setPremi(m.getPremi());			
+			dto.setName(translationService.translate(m.getProduct().getNameTranslationId(), languageCode, m.getProduct().getName()));
+			dto.setPremi(m.getPremi());
 			dto.setPeriod(periodDto);
 			
 			CoverageDto covDto = new CoverageDto();
 			covDto.setCoverageId(m.getCoverageId());
-			covDto.setName(m.getCoverageName());
+			covDto.setName(translationService.translate(m.getProduct().getCoverage().getNameTranslationId(), languageCode, m.getCoverageName()));
 			covDto.setMaxLimit(m.getCoverageMaxLimit());			
 			covDto.setHasBeneficiary(m.getCoverageHasBeneficiary());
 			covDto.setIsLumpSum(m.getIsLumpSum());
-			covDto.setCoverageOption(toDto(m.getCoverageOption()));
-			covDto.setCoverageCategory(toDto(m.getCoverageCategory()));
+			covDto.setCoverageOption(toDto(m.getCoverageOption(), languageCode));
+			covDto.setCoverageCategory(toDto(m.getCoverageCategory(), languageCode));
 			if(!CollectionUtils.isEmpty(m.getCoverageClaimDocTypes())){
 				List<CoverageClaimDocTypeDto> covDocTypeDtos = new ArrayList<>();
 				for(CoverageClaimDocType covDocType: m.getCoverageClaimDocTypes()){
-					covDocTypeDtos.add(toDto(covDocType));
+					covDocTypeDtos.add(toDto(covDocType, languageCode));
 				}
 				covDto.setCoverageClaimDocTypes(covDocTypeDtos);
 			}			
 
 			dto.setCoverage(covDto);
-		}				
+		}
 		return dto;
 	}
 	

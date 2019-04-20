@@ -38,6 +38,9 @@ public class PolicyOrderProduct implements Serializable{
     private Boolean isLumpSum;
     private CoverageOption coverageOption;
     private CoverageCategory coverageCategory;
+    
+    //transient
+    private Product product;   //the latest-uptodate product while the other field is recorded at 'insert' time 
 
     public Long getOrderProductId() {
         return orderProductId;
@@ -173,6 +176,14 @@ public class PolicyOrderProduct implements Serializable{
 
 	public void setCoverageCategory(CoverageCategory coverageCategory) {
 		this.coverageCategory = coverageCategory;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
 	@Override

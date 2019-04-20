@@ -329,6 +329,8 @@ public class OrderService {
 					pop.setIsLumpSum(c.getIsLumpSum());
 					pop.setCoverageOption(c.getCoverageOption());
 					pop.setCoverageCategory(c.getCoverageCategory());
+					
+					pop.setProduct(productService.fetchProductByProductId(pop.getProductId()));
 				}
 				List<PolicyOrderProduct> sortedList = policyOrder.getPolicyOrderProducts().stream().sorted(
 						(o1, o2) -> Integer.compare(o1.getCoverageDisplayRank(), o2.getCoverageDisplayRank()))
