@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -440,7 +441,7 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new ProductDto();
 			dto.setProductId(m.getProductId());
-			dto.setName(m.getCoverageName());
+			dto.setName(StringUtils.defaultIfBlank(m.getProductName(), m.getCoverageName()));
 			dto.setPremi(m.getPremi());			
 			dto.setPeriod(periodDto);
 			

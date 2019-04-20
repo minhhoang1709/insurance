@@ -45,6 +45,7 @@
 	    <result column="order_product_coverage_id" jdbcType="VARCHAR" property="coverageId" />
 	    <result column="order_product_period_id" jdbcType="VARCHAR" property="periodId" />
 	    <result column="order_product_product_id" jdbcType="VARCHAR" property="productId" />
+	    <result column="order_product_product_name" jdbcType="VARCHAR" property="productName" />
 	    <result column="order_product_coverage_name" jdbcType="VARCHAR" property="coverageName" />
 	    <result column="order_product_coverage_max_limit" jdbcType="BIGINT" property="coverageMaxLimit" />
 	    <result column="order_product_coverage_has_beneficiary" jdbcType="BIT" property="coverageHasBeneficiary" />
@@ -116,7 +117,7 @@
    	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.provider_download_url, 
    	a.status, a.is_family, a.is_hide, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
-   	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, 
+   	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, b.product_name as order_product_product_name,
    	b.coverage_max_limit as order_product_coverage_max_limit, 
    	b.coverage_has_beneficiary as order_product_coverage_has_beneficiary, 
    	b.premi as order_product_premi, b.base_premi as order_product_base_premi,

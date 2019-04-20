@@ -16,6 +16,8 @@ public class PolicyOrderProduct implements Serializable{
 
     private String productId;
 
+    private String productName;
+    
     private String coverageName;
 
     private Long coverageMaxLimit;
@@ -77,7 +79,15 @@ public class PolicyOrderProduct implements Serializable{
         this.productId = productId;
     }
 
-    public String getCoverageName() {
+    public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getCoverageName() {
         return coverageName;
     }
 

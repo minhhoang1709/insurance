@@ -574,6 +574,7 @@ public class ApiOrderService {
 				pop.setCoverageId(p.getCoverageId());
 				pop.setPeriodId(p.getPeriodId());
 				pop.setProductId(p.getProductId());
+				pop.setProductName(p.getName());
 				pop.setCoverageName(p.getCoverage().getName());
 				if(isFamily){
 					//pop.setCoverageMaxLimit((long) (p.getCoverage().getMaxLimit() * config.getOrder().getFamilyMultiplier()));
@@ -984,6 +985,7 @@ public class ApiOrderService {
 			inviterPop.setCoverageId(p.getCoverageId());
 			inviterPop.setPeriodId(p.getPeriodId());
 			inviterPop.setProductId(p.getProductId());
+			inviterPop.setProductName(p.getProductName());
 			inviterPop.setCoverageName(p.getCoverageName());
 			inviterPop.setCoverageMaxLimit(p.getCoverageMaxLimit());
 			inviterPop.setBasePremi(p.getBasePremi());
