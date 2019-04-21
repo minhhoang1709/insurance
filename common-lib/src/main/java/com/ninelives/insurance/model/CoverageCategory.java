@@ -30,6 +30,8 @@ public class CoverageCategory implements Serializable{
     private Integer nameTranslationId;
 
     private Integer recommendationTranslationId;
+    
+    private Insurer insurer;
 
     public String getCoverageCategoryId() {
         return coverageCategoryId;
@@ -101,6 +103,14 @@ public class CoverageCategory implements Serializable{
 
 	public void setRecommendationTranslationId(Integer recommendationTranslationId) {
 		this.recommendationTranslationId = recommendationTranslationId;
+	}
+
+	public Insurer getInsurer() {
+		return insurer;
+	}
+
+	public void setInsurer(Insurer insurer) {
+		this.insurer = insurer;
 	}
 
 	@Override

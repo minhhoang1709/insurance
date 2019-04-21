@@ -28,6 +28,10 @@
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
+    	<association property="insurer" javaType="com.ninelives.insurance.model.Insurer">
+    		<id column="insurer_id" jdbcType="INTEGER" property="id" />
+    		<result column="insurer_code" jdbcType="VARCHAR" property="code" />
+    	</association>
     </association>
     <association property="payment" resultMap="PolicyPaymentResultMap" />
     <association property="policyOrderVoucher" javaType="com.ninelives.insurance.model.PolicyOrderVoucher">
@@ -123,6 +127,7 @@
    	b.premi as order_product_premi, b.base_premi as order_product_base_premi,
    	c.period_id as period_period_id, c.name as period_name, c.value as period_value, c.unit as period_unit, c.start_value as period_start_value, c.end_value as period_end_value,
    	e.coverage_category_id as covcat_coverage_category_id, e.name as covcat_name, e.type as covcat_type,
+   	insurer.id as insurer_id, insurer.code as insurer_code,
    	pp.id as payment_id, 
    	pp.start_time as payment_start_time,
    	pp.order_id as payment_order_id, 
@@ -169,6 +174,7 @@
     inner join public.policy_order_product as b on b.order_id=a.order_id
     inner join public.period c on c.period_id=a.period_id
     inner join public.coverage_category e on e.coverage_category_id=a.coverage_category_id
+    inner join public.insurer insurer on insurer.id=e.insurer_id
     left outer join public.policy_payment pp on pp.order_id=a.order_id
     left outer join public.policy_order_voucher pov on pov.order_id=a.order_id and a.has_voucher=true
     left outer join public.policy_order_family pof on pof.order_id=a.order_id and a.is_family=true

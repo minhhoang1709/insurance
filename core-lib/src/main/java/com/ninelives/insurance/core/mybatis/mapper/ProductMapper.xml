@@ -51,6 +51,10 @@
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
     	<result column="covcat_recommendation" jdbcType="VARCHAR" property="recommendation" />
     	<result column="covcat_recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
+    	<association property="insurer" javaType="com.ninelives.insurance.model.Insurer">
+    		<id column="insurer_id" jdbcType="INTEGER" property="id" />
+    		<result column="insurer_code" jdbcType="VARCHAR" property="code" />
+    	</association>
     </association>
     <association property="coverageOption" javaType="com.ninelives.insurance.model.CoverageOption">
     	<id column="coverage_option_id" jdbcType="VARCHAR" property="id" />
@@ -97,6 +101,7 @@
 	d.name as covcat_name, d.name_translation_id as covcat_name_translation_id, 
 	d.type as covcat_type,
 	d.recommendation as covcat_recommendation, d.recommendation_translation_id as covcat_recommendation_translation_id,
+	insurer.id as insurer_id, insurer.code as insurer_code,
 	e.coverage_claim_doc_type_id, e.is_mandatory,
 	f.claim_doc_type_id, f.name as claim_doc_type_name, f.name_translation_id as claim_doc_type_name_translation_id,
 	f.usage_type as claim_doc_type_usage_type,
@@ -112,6 +117,7 @@
   	inner join public.period b on b.period_id=a.period_id
   	inner join public.coverage c on c.coverage_id=a.coverage_id
   	inner join public.coverage_category d on d.coverage_category_id=c.coverage_category_id
+  	inner join public.insurer insurer on insurer.id=d.insurer_id
   	inner join public.app_country country on d.country_id=country.id
   	left outer join public.coverage_claim_doc_type e on e.coverage_id=c.coverage_id
   	left outer join public.claim_doc_type f on f.claim_doc_type_id=e.claim_doc_type_id

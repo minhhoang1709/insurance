@@ -19,6 +19,10 @@
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
+    	<association property="insurer" javaType="com.ninelives.insurance.model.Insurer">
+    		<id column="insurer_id" jdbcType="INTEGER" property="id" />
+    		<result column="insurer_code" jdbcType="VARCHAR" property="code" />
+    	</association>    	
     </association>
     <association property="policyClaimDetail" javaType="com.ninelives.insurance.model.PolicyClaimDetailAccident">
     	<id column="detail_claim_id" jdbcType="VARCHAR" property="claimId" />
@@ -89,6 +93,7 @@
     e.usage_type as claim_doc_type_usage_type,
     f.claim_coverage_id, f.coverage_id, f.status as claim_coverage_status,
     h.coverage_category_id as covcat_coverage_category_id, h.name as covcat_name, h.type as covcat_type,
+    insurer.id as insurer_id, insurer.code as insurer_code,
     pcf.id as policyclaimfamily_id, pcf.sub_id as policyclaimfamily_sub_id, 
     pcf.claim_id as policyclaimfamily_claim_id, pcf.name as policyclaimfamily_name, 
     pcf.relationship as policyclaimfamily_relationship, pcf.birth_date as policyclaimfamily_birth_date, 
@@ -101,6 +106,7 @@
     left join public.claim_doc_type e on e.claim_doc_type_id=d.claim_doc_type_id
     left join public.policy_claim_coverage f on f.claim_id=a.claim_id
     left join public.coverage_category h on h.coverage_category_id=a.coverage_category_id
+    left join public.insurer insurer on insurer.id=h.insurer_id
     left join public.policy_claim_family pcf on pcf.claim_id=a.claim_id and a.has_family=true
   </sql>
   
