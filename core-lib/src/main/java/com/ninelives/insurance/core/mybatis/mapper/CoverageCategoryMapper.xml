@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.core.mybatis.mapper.CoverageCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.CoverageCategory">
+    <id column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="recommendation" jdbcType="VARCHAR" property="recommendation" />
+    <result column="name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
+    <result column="recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
+    <association property="insurer" javaType="com.ninelives.insurance.model.Insurer">
+   		<id column="insurer_id" jdbcType="INTEGER" property="id" />
+   		<result column="insurer_code" jdbcType="VARCHAR" property="code" />
+   	</association>    
+  </resultMap>
+  <select id="selectByCoverageCategoryId" resultMap="BaseResultMap">
+  	select coverage_category_id, name, description, created_date, update_date, type, recommendation, 
+    	insurer.id as insurer_id, insurer.code as insurer_code, name_translation_id, recommendation_translation_id
+    from 
+	    public.coverage_category covcat 
+	    inner join public.insurer insurer on insurer.id=covcat.insurer_id 
+    where coverage_category_id = #{coverageCategoryId,jdbcType=VARCHAR}
+  </select>
+</mapper>

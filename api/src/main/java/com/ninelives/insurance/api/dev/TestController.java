@@ -175,6 +175,14 @@ public class TestController {
 //		return apiClaimService.requiredClaimDocumentDtos(dto, order);
 //	}
 	
+	@RequestMapping(value="/test/fullcoveragecategory/{coverageCategoryId}",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public CoverageCategory getCoverageCategory (@RequestAttribute ("authUserId") String authUserId,
+			@PathVariable("coverageCategoryId") String id){
+		return productService.fetchCoverageCategoryByCoverageCategoryId(id);
+	}
+	
 	@RequestMapping(value="/test/fullclaim/{claimId}",
 			method={ RequestMethod.GET })
 	@ResponseBody
