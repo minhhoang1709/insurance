@@ -1,11 +1,14 @@
 package com.ninelives.insurance.api.dev;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.FluentProducerTemplate;
 import org.slf4j.Logger;
@@ -13,6 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +55,7 @@ import com.ninelives.insurance.core.mybatis.mapper.ProductMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.core.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.core.provider.insurance.InsuranceProviderException;
+import com.ninelives.insurance.core.provider.insurance.OrderConfirmResult;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.core.service.ClaimService;
@@ -117,6 +125,43 @@ public class TestController {
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
+	
+	
+	@RequestMapping(value="/test/orders/{orderId}/policy",
+			method=RequestMethod.GET)	
+	@ResponseBody
+	public ResponseEntity<Resource> downloadPolicy(@RequestAttribute("authUserId") String authUserId,
+			@PathVariable("orderId") String orderId,
+			HttpServletResponse response) throws AppException, StorageException{
+		
+		logger.debug("GET download policy test, userId <{}>, orderId: <{}>", authUserId, orderId);
+		
+		Resource file = storageService.loadAsResource("POLICY/2019/pdfTest-3.pdf");
+		
+//		Resource file = null;
+		
+//		URI uri = URI.create("file:/POLICY/2019/pdfTest-3.pdf");
+//		System.out.println("Uri is "+uri.toString());
+//		System.out.println(String.format("Path is %s and scheme is %s", uri.getPath(), uri.getScheme()));
+//		
+//		if("file".equals(uri.getScheme())){
+//			file = storageService.loadAsResource(uri.getPath());			
+//		}
+//	    
+//		
+		try {
+			System.out.println("File is "+file.getURI().toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"")
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE).body(file);
+				
+	}
+	
 //	@GetMapping("/test/claimdoccheck")
 //	@ResponseBody
 //	public List<ClaimDocumentDto> testClaimDocCheck() throws AppBadRequestException{
@@ -175,7 +220,7 @@ public class TestController {
 		PolicyOrder po = new PolicyOrder();
 		po.setUserId(authUserId);
 		po.setProviderOrderNumber(orderNum);
-		ResponseDto<OrderConfirmResponseDto> result = aswata.orderConfirm(po);
+		OrderConfirmResult result = aswata.orderConfirm(po);
 		
 //		return orderNum;
 		return result.toString();

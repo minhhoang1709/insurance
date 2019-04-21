@@ -14,7 +14,11 @@ import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
 import com.ninelives.insurance.core.provider.insurance.InsuranceProvider;
 import com.ninelives.insurance.core.provider.insurance.InsuranceProviderConnectDisabledException;
 import com.ninelives.insurance.core.provider.insurance.InsuranceProviderException;
+import com.ninelives.insurance.core.provider.insurance.OrderConfirmResult;
+import com.ninelives.insurance.core.provider.insurance.OrderResult;
+import com.ninelives.insurance.core.provider.insurance.PtiInsuranceProvider;
 import com.ninelives.insurance.core.provider.storage.StorageException;
+import com.ninelives.insurance.core.support.pdf.PdfCreator;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
@@ -30,15 +34,16 @@ public class InsuranceService {
 	
 	private boolean isAswataEnabled = true;
 	
+	
 	public void orderPolicy(PolicyOrder order) throws AppInternalServerErrorException{
 		if(isAswataEnabled){
 			try {
-				ResponseDto<OrderResponseDto> result = insuranceProvider.orderPolicy(order);
+				OrderResult result = insuranceProvider.orderPolicy(order);
 				if(result !=null && result.isSuccess()){
-					order.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
-					order.setProviderOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
-					if(result.getResponse().getResponseParam().getDownloadUrl()!=null){
-						order.setProviderDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+					order.setPolicyNumber(result.getPolicyNumber());
+					order.setProviderOrderNumber(result.getProviderOrderNumber());
+					if(order.getProviderDownloadUrl()!=null){
+						order.setProviderDownloadUrl(result.getProviderDownloadUrl());
 					}
 				}else{
 					throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
@@ -51,24 +56,24 @@ public class InsuranceService {
 			} catch (InsuranceProviderException e) {
 				throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
 			}
-		}		
+		}
 	}
 	
 	public void orderConfirm(PolicyOrder order) throws AppInternalServerErrorException{
 		//logger.info("Process order confirm, order:<{}>", order);
 		
 		try {
-			ResponseDto<OrderConfirmResponseDto> result  = insuranceProvider.orderConfirm(order);
+			OrderConfirmResult result  = insuranceProvider.orderConfirm(order);
 			if(result !=null && result.isSuccess()){
-				if(result.getResponse().getResponseParam().getDownloadUrl()!=null){
-					order.setProviderDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+				if(result.getProviderDownloadUrl()!=null){
+					order.setProviderDownloadUrl(result.getProviderDownloadUrl());
 				}
-				if(result.getResponse().getResponseParam().getPolicyNumber()!=null){
-					order.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
+				if(result.getPolicyNumber()!=null){
+					order.setPolicyNumber(result.getPolicyNumber());
 				}
-				if(result.getResponse().getResponseParam().getOrderNumber()!=null){
-					order.setProviderOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
-				}				
+				if(result.getProviderOrderNumber()!=null){
+					order.setProviderOrderNumber(result.getProviderOrderNumber());
+				}
 			}else{
 				throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
 			}	
