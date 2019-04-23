@@ -24,6 +24,7 @@ import com.ninelives.insurance.api.dto.ClaimDocumentExtraDto;
 import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
+import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.ref.ClaimDocUsageType;
@@ -318,6 +319,8 @@ public class ApiClaimServiceValidateMandatoryClaimDocTest {
 		requiredDocList = new ArrayList<>();		
 		
 		claimService = spy(ApiClaimService.class);
-		doReturn(requiredDocList).when(claimService).requiredClaimDocumentDtos(any(AccidentClaimDto.class), any(PolicyOrder.class));		
+		doReturn(requiredDocList).when(claimService).requiredClaimDocumentDtos(any(AccidentClaimDto.class), any(PolicyOrder.class));
+		
+		modelMapperAdapter.setTranslationService(new TranslationService());
 	}
 }

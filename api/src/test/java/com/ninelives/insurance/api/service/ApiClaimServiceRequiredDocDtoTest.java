@@ -25,6 +25,7 @@ import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.service.ClaimService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageClaimDocType;
@@ -1016,6 +1017,8 @@ public class ApiClaimServiceRequiredDocDtoTest {
 		when(claimService.productService.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_CARD)).thenReturn(claimDocTypeFamilyCard);
 		when(claimService.productService.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_ID_CARD)).thenReturn(claimDocTypeFamilyId);
 		when(claimService.productService.fetchClaimDocTypeByClaimDocTypeId(ClaimService.CLAIM_DOC_TYPE_FAMILY_PASSPORT)).thenReturn(claimDocTypeFamilyPassport);
+		
+		modelMapperAdapter.setTranslationService(new TranslationService());
 		
 		claimService.modelMapperAdapter = this.modelMapperAdapter;
 		

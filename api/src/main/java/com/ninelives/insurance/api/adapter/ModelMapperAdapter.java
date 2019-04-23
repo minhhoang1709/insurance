@@ -83,6 +83,15 @@ public class ModelMapperAdapter {
 	
 	@Autowired private TranslationService translationService;
 		
+	
+	public TranslationService getTranslationService() {
+		return translationService;
+	}
+
+	public void setTranslationService(TranslationService translationService) {
+		this.translationService = translationService;
+	}
+
 	public PolicyOrderFamilyDto toDto(PolicyOrderFamily m){
 		PolicyOrderFamilyDto dto = null;
 		if(m!=null){

@@ -22,6 +22,7 @@ import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.CoverageClaimDocType;
@@ -75,7 +76,8 @@ public class ApiClaimServiceRegisterTest {
 		claimService.productService = Mockito.mock(ProductService.class);
 		when(claimService.productService.fetchCoverageByCoverageId("101001")).thenReturn(cov1);
 		claimService.modelMapperAdapter = new ModelMapperAdapter();
-			
+		claimService.modelMapperAdapter.setTranslationService(new TranslationService());
+		
 		AccidentClaimDto claimDto = new AccidentClaimDto();
 		claimDto.setOrder(new OrderDto());
 		claimDto.getOrder().setOrderId(orderId);		
