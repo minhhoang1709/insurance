@@ -1,0 +1,9 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<cache name="CoverageCategory" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="Coverage" maxEntriesLocalHeap="100" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="Product" maxEntriesLocalHeap="500" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="ClaimDocType" maxEntriesLocalHeap="50" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="InviteVoucher" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="AppTranslationText" maxEntriesLocalHeap="1000" timeToLiveSeconds="3600" statistics="false" overflowToDisk="false"></cache>
+</ehcache>

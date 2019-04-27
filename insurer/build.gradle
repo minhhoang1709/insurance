@@ -51,7 +51,8 @@ dependencies {
 	compile('org.apache.httpcomponents:httpclient:4.5.3')
 	
 	//module
-	compile project(':common-lib')		
+	compile project(':common-lib')
+	compile project(':core-lib')		
 	
 	runtime('org.postgresql:postgresql')
 	//providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')

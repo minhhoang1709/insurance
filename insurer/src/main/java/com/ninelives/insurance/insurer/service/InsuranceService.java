@@ -12,7 +12,7 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmRespo
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.ref.PolicyStatus;
 
-@Service
+@Deprecated
 public class InsuranceService {
 	private static final Logger logger = LoggerFactory.getLogger(InsuranceService.class);
 	

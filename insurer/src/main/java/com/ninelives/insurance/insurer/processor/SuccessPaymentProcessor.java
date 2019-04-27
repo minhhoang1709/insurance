@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.insurer.service.InsuranceService;
 import com.ninelives.insurance.model.PolicyOrder;
 
@@ -13,12 +14,12 @@ import com.ninelives.insurance.model.PolicyOrder;
 public class SuccessPaymentProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(SuccessPaymentProcessor.class);
 	
-	@Autowired InsuranceService insuranceService;
+	@Autowired OrderService orderService;
 	
 	public void process(@Body PolicyOrder policyOrder){
 		logger.debug("Receive success payment for insurer <{}>", policyOrder);
 		try {
-			insuranceService.paymentConfirm(policyOrder);
+			orderService.paymentConfirm(policyOrder);
 		} catch (Exception e) {
 			logger.error("error",e);
 		}

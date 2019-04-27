@@ -34,7 +34,7 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmRespo
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.ref.ServiceCode;
 
-@Service
+@Deprecated
 public class AswataInsuranceProvider {
 	private static final Logger logger = LoggerFactory.getLogger(AswataInsuranceProvider.class);
 	

@@ -33,6 +33,7 @@ import com.ninelives.insurance.ref.UserTempPasswordStatus;
 		UserFileStatus.class, BeneficiaryRelationship.class, PaymentStatus.class, PaymentChargeStatus.class,
 		CoverageCategoryType.class, FamilyRelationship.class, ClaimDocUsageType.class, OrderDocUsageType.class,
 		SignupVerificationType.class, UserSource.class, UserRegisterChannel.class, UserTempPasswordStatus.class })
+@Deprecated
 public class StrEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 	private Class<E> type;
 
