@@ -256,7 +256,7 @@ public class NinelivesConfigProperties {
 		
 	}
 	public static class Insurance {
-		private Boolean enableConnection = true;
+		private Boolean aswataEnableConnection = true;
 		
 		@NotEmpty
 		private String aswataClientCode;
@@ -270,11 +270,11 @@ public class NinelivesConfigProperties {
 		private int aswataConnectTimeout = 5000;
 		private int aswataSocketTimeout = 30000;
 				
-		public Boolean getEnableConnection() {
-			return enableConnection;
+		public Boolean getAswataEnableConnection() {
+			return aswataEnableConnection;
 		}
-		public void setEnableConnection(Boolean enableConnection) {
-			this.enableConnection = enableConnection;
+		public void setAswataEnableConnection(Boolean aswataEnableConnection) {
+			this.aswataEnableConnection = aswataEnableConnection;
 		}
 		public String getAswataClientCode() {
 			return aswataClientCode;
