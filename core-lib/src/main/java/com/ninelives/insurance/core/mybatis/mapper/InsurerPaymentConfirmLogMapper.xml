@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.insurer.mybatis.mapper.InsurerPaymentConfirmLogMapper">
+  <resultMap id="BaseResultMap" type="com.ninelives.insurance.model.InsurerPaymentConfirmLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="user_ref_no" jdbcType="VARCHAR" property="userRefNo" />
+    <result column="response_status" jdbcType="INTEGER" property="responseStatus" />
+    <result column="response_code" jdbcType="VARCHAR" property="responseCode" />
+    <result column="provider_request_time" jdbcType="VARCHAR" property="providerRequestTime" />
+    <result column="provider_response_time" jdbcType="VARCHAR" property="providerResponseTime" />
+    <result column="request_time" jdbcType="TIMESTAMP" property="requestTime" />
+    <result column="response_time" jdbcType="TIMESTAMP" property="responseTime" />
+    <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="policy_document" jdbcType="VARCHAR" property="policyDocument" />
+    <result column="download_url" jdbcType="VARCHAR" property="downloadUrl" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, coverage_category_id, service_code, order_id, order_time, user_ref_no, response_status, 
+    response_code, provider_request_time, provider_response_time, request_time, response_time, 
+    policy_number, order_number, policy_document, created_date
+  </sql>
+  <insert id="insertSelective" parameterType="com.ninelives.insurance.model.InsurerPaymentConfirmLog">
+    insert into public.insurer_payment_confirm_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="coverageCategoryId != null">
+        coverage_category_id,
+      </if>
+      <if test="serviceCode != null">
+        service_code,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="orderTime != null">
+        order_time,
+      </if>
+      <if test="userRefNo != null">
+        user_ref_no,
+      </if>
+      <if test="responseStatus != null">
+        response_status,
+      </if>
+      <if test="responseCode != null">
+        response_code,
+      </if>
+      <if test="providerRequestTime != null">
+        provider_request_time,
+      </if>
+      <if test="providerResponseTime != null">
+        provider_response_time,
+      </if>
+      <if test="requestTime != null">
+        request_time,
+      </if>
+      <if test="responseTime != null">
+        response_time,
+      </if>
+      <if test="policyNumber != null">
+        policy_number,
+      </if>
+      <if test="orderNumber != null">
+        order_number,
+      </if>
+      <if test="policyDocument != null">
+        policy_document,
+      </if>
+      <if test="downloadUrl != null">
+        download_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="coverageCategoryId != null">
+        #{coverageCategoryId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCode != null">
+        #{serviceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderTime != null">
+        #{orderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userRefNo != null">
+        #{userRefNo,jdbcType=VARCHAR},
+      </if>
+      <if test="responseStatus != null">
+        #{responseStatus,jdbcType=INTEGER},
+      </if>
+      <if test="responseCode != null">
+        #{responseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="providerRequestTime != null">
+        #{providerRequestTime,jdbcType=VARCHAR},
+      </if>
+      <if test="providerResponseTime != null">
+        #{providerResponseTime,jdbcType=VARCHAR},
+      </if>
+      <if test="requestTime != null">
+        #{requestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="responseTime != null">
+        #{responseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="policyNumber != null">
+        #{policyNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="policyDocument != null">
+        #{policyDocument,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadUrl != null">
+        #{downloadUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert> 
+</mapper>

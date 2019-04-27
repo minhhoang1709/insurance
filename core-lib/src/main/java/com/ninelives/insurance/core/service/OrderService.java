@@ -32,6 +32,8 @@ import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
+import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
+import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
@@ -83,6 +85,44 @@ public class OrderService {
 		}				
 		
 	}
+	
+	public void paymentConfirm(PolicyOrder policyOrder) throws AppException{
+		logger.info("Start process payment confirm, order:<{}>", policyOrder);
+		
+		if(StringUtils.isEmpty(policyOrder.getOrderId())){
+			throw new AppBadRequestException(ErrorCode.ERR4000_ORDER_INVALID, "Pesanan tidak ditemukan");
+		}		
+		try {
+			insuranceService.paymentConfirm(policyOrder);
+			
+			policyOrder.setStatus(PolicyStatus.APPROVED);
+			
+			policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(policyOrder);
+			
+		} catch (AppInternalServerErrorException e) {
+			logger.error("Error order confirm for user:<{}> with order:<{}>, result: exception <{}>",
+					policyOrder, e.getCode());
+			throw e;
+		}
+//		logger.info("Process payment confirm, order:<{}>", policyOrder);
+//		ResponseDto<PaymentConfirmResponseDto>  result = insuranceProvider.paymentConfirm(policyOrder);
+//		if(insuranceProvider.isSuccess(result)){
+//			PolicyOrder updateOrder = new PolicyOrder();
+//			updateOrder.setOrderId(policyOrder.getOrderId());
+//			updateOrder.setStatus(PolicyStatus.APPROVED);
+//			if(result.getResponse().getResponseParam().getDownloadUrl()!=null){
+//				updateOrder.setProviderDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+//			}
+//			if(result.getResponse().getResponseParam().getPolicyNumber()!=null){
+//				updateOrder.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
+//			}
+//			logger.debug("Update order status to approved, order:<{}>", updateOrder);
+//			policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(updateOrder);
+//		}
+//		
+
+	}
+	
 	public boolean isEquals(PolicyOrderBeneficiary pob, UserBeneficiary ub){
 		if(pob.getName()==null){
 			if(ub.getName()!=null){

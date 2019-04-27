@@ -17,6 +17,7 @@ import com.ninelives.insurance.core.provider.insurance.InsuranceProviderExceptio
 import com.ninelives.insurance.core.provider.insurance.InsuranceProviderFactory;
 import com.ninelives.insurance.core.provider.insurance.OrderConfirmResult;
 import com.ninelives.insurance.core.provider.insurance.OrderResult;
+import com.ninelives.insurance.core.provider.insurance.PaymentConfirmResult;
 import com.ninelives.insurance.core.provider.insurance.PtiInsuranceProvider;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.support.pdf.PdfCreator;
@@ -24,8 +25,10 @@ import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
+import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.PolicyStatus;
 
 @Service
 public class InsuranceService {
@@ -102,6 +105,39 @@ public class InsuranceService {
 			throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
 		}
 			
+	}
+	
+	public void paymentConfirm(PolicyOrder order) throws AppInternalServerErrorException{
+		try {
+			InsuranceProvider provider = null;
+			if (order.getCoverageCategory() != null && order.getCoverageCategory().getInsurer() != null) {
+				provider = insuranceProviderFactory
+						.getInsuranceProvider(order.getCoverageCategory().getInsurer().getCode());
+			} else {
+				CoverageCategory cov = productService
+						.fetchCoverageCategoryByCoverageCategoryId(order.getCoverageCategoryId());
+				provider = insuranceProviderFactory.getInsuranceProvider(cov.getInsurer().getCode());
+			}
+			PaymentConfirmResult result  = provider.paymentConfirm(order);
+			if(result !=null && result.isSuccess()){
+				if(result.getProviderDownloadUrl()!=null){
+					order.setProviderDownloadUrl(result.getProviderDownloadUrl());
+				}
+				if(result.getPolicyNumber()!=null){
+					order.setPolicyNumber(result.getPolicyNumber());
+				}
+				if(result.getProviderOrderNumber()!=null){
+					order.setProviderOrderNumber(result.getProviderOrderNumber());
+				}
+			}else{
+				throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
+			}	
+		} catch (InsuranceProviderConnectDisabledException e) {
+			throw new AppInternalServerErrorException(ErrorCode.ERR4203_ORDER_PROVIDER_CONNECT_DISABLED, "Permintaan tidak dapat diproses, terjadi error pada sistem");
+		} catch (InsuranceProviderException e) {			
+			throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
+		}
+		
 	}
 	
 }

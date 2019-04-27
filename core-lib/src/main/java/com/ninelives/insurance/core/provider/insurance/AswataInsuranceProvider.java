@@ -43,6 +43,7 @@ import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.jackson.transformer.UserFileToBase64JsonSerializer;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderConfirmLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerOrderLogMapper;
+import com.ninelives.insurance.core.mybatis.mapper.InsurerPaymentConfirmLogMapper;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.core.service.FileUploadService;
@@ -50,6 +51,7 @@ import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.model.Coverage;
 import com.ninelives.insurance.model.InsurerOrderConfirmLog;
 import com.ninelives.insurance.model.InsurerOrderLog;
+import com.ninelives.insurance.model.InsurerPaymentConfirmLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderFamily;
@@ -59,6 +61,8 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmRequest
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderRequestDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderResponseDto;
+import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmRequestDto;
+import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.ref.PackageType;
 import com.ninelives.insurance.provider.insurance.aswata.ref.ProductCode;
@@ -81,6 +85,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 	
 	@Autowired InsurerOrderLogMapper insurerOrderLogMapper;
 	@Autowired InsurerOrderConfirmLogMapper insurerOrderConfirmLogMapper;
+	@Autowired InsurerPaymentConfirmLogMapper insurerPaymentConfirmLogMapper;
 	
 //	public static final class AswataResultSuccessCondition{
 //		public static final String responseCode="000000";
@@ -130,8 +135,7 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		}
 		return result;
 	}
-	protected ResponseDto<OrderResponseDto> orderPolicyInternal(PolicyOrder order) throws IOException, StorageException, InsuranceProviderException{
-	
+	protected ResponseDto<OrderResponseDto> orderPolicyInternal(PolicyOrder order) throws IOException, StorageException, InsuranceProviderException{	
 		if(!enableConnection){
 			logger.error("Error on orderPolicy with exception <connection is not enabled>");
 			throw new InsuranceProviderConnectDisabledException("Connection is not enabled");
@@ -423,62 +427,97 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		return result;
 	}
 	
-//	@Override
-//	public boolean isSuccess(ResponseDto<OrderResponseDto> responseResult){
-//		if(responseResult!=null && responseResult.getResponse()!=null){
-//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
-//					&& responseResult.getResponse().getResponseCode()!=null
-//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
-//					&& responseResult.getResponse().getResponseParam()!=null
-//					){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//
-//	public boolean isSuccess(ResponseDto<IAswataResponsePayload> responseResult){
-//		if(responseResult!=null && responseResult.getResponse()!=null){
-//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
-//					&& responseResult.getResponse().getResponseCode()!=null
-//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
-//					&& responseResult.getResponse().getResponseParam()!=null
-//					){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
-	
-	public Integer getProviderTravelType(PolicyOrder order){
-		Integer result = null;
-		if(order!=null){
-			if(CoverageCategoryId.TRAVEL_DOMESTIC.equals(order.getCoverageCategoryId())){
-				result = TravelType.TYPE_DOMESTIC;
-			}else if(CoverageCategoryId.TRAVEL_INTERNATIONAL.equals(order.getCoverageCategoryId())){
-				//check if any coverage has option, if they do, use that option, otherwise use international
-				for(PolicyOrderProduct p: order.getPolicyOrderProducts()){
-					Coverage coverage = productService.fetchCoverageByCoverageId(p.getCoverageId());
-					if (coverage.getCoverageOptionId()!=null){
-						if(CoverageOptionId.OPTION_INTERNATIONAL.equals(coverage.getCoverageOptionId())){
-							result = TravelType.TYPE_WORLDWIDE;
-						}else if(CoverageOptionId.OPTION_ASEAN.equals(coverage.getCoverageOptionId())){
-							result = TravelType.TYPE_ASIA;
-						}else if(CoverageOptionId.OPTION_EU_AU_NZ.equals(coverage.getCoverageOptionId())){
-							result = TravelType.TYPE_EU_AUS_NZ;
-						}
-						break;
-					}
-				}
-				
-				if(result == null){
-					//for international coverage without specific destination option, use worldwide
-					result =  TravelType.TYPE_WORLDWIDE;
+	@Override
+	public PaymentConfirmResult paymentConfirm(PolicyOrder order) throws InsuranceProviderException{
+		ResponseDto<PaymentConfirmResponseDto> response = paymentConfirmInternal(order);
+		PaymentConfirmResult result = new PaymentConfirmResult();
+		if(response != null){
+			result.setSuccess(response.isSuccess());
+			if(response.isSuccess()){
+				result.setPolicyNumber(response.getResponse().getResponseParam().getPolicyNumber());
+				result.setProviderOrderNumber(response.getResponse().getResponseParam().getOrderNumber());
+				if(response.getResponse().getResponseParam().getDownloadUrl()!=null){
+					result.setProviderDownloadUrl(response.getResponse().getResponseParam().getDownloadUrl());
 				}
 			}
+		}else{
+			result.setSuccess(false);
 		}
+		return result;		
+	}
+	
+	protected ResponseDto<PaymentConfirmResponseDto> paymentConfirmInternal(PolicyOrder order){
+		LocalDateTime now = LocalDateTime.now();
+		
+		ResponseDto<PaymentConfirmResponseDto> result = new ResponseDto<>();
+		
+		PaymentConfirmRequestDto requestDto = new PaymentConfirmRequestDto();
+		requestDto.setServiceCode(ServiceCode.PAYMENT_CONFIRM);
+		requestDto.setUserRefNo(order.getUserId());
+		requestDto.setClientCode(clientCode);
+		requestDto.setRequestTime(now.format(timeFormatter));
+		
+		requestDto.setRequestParam(new PaymentConfirmRequestDto.RequestParam());
+		requestDto.getRequestParam().setOrderNumber(order.getProviderOrderNumber());
+		requestDto.getRequestParam().setPaymentToken(order.getPayment().getProviderTransactionId());
+		requestDto.getRequestParam().setPaymentAmount(String.valueOf(order.getTotalPremi()));
+		
+		String authCode=requestDto.getServiceCode()+requestDto.getUserRefNo()+requestDto.getRequestTime()+requestDto.getClientCode()+clientKey;		
+		requestDto.setAuthCode(DigestUtils.sha256Hex(authCode));
 				
+		logger.debug("Sending to aswata with request <{}>", requestDto);
+		
+		HttpHeaders restHeader = new HttpHeaders();
+		restHeader.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		restHeader.setContentType(MediaType.APPLICATION_JSON);
+		
+		HttpEntity<PaymentConfirmRequestDto> entity = new HttpEntity<>(requestDto, restHeader);
+		ResponseEntity<PaymentConfirmResponseDto> resp = null;
+		LocalDateTime requestTime = LocalDateTime.now();
+		try{
+			resp  = template.exchange(providerUrl, HttpMethod.POST, entity, PaymentConfirmResponseDto.class);
+			result.setHttpStatus(resp.getStatusCodeValue());
+			result.setResponse(resp.getBody());
+		}catch(HttpClientErrorException e){
+			result.setHttpStatus(e.getStatusCode().value());
+			result.setErrorMessage(e.getMessage());
+			logger.error("Error on send order request to aswata", e);
+		}catch(Exception e){
+			result.setHttpStatus(-1);
+			logger.error("Error on send order request to aswata", e);
+		}
+		LocalDateTime responseTime = LocalDateTime.now();
+		
+		
+		InsurerPaymentConfirmLog insurerLog = new InsurerPaymentConfirmLog();
+		insurerLog.setCoverageCategoryId(order.getCoverageCategoryId());
+		insurerLog.setServiceCode(requestDto.getServiceCode());
+		insurerLog.setOrderId(order.getOrderId());
+		insurerLog.setOrderTime(order.getOrderTime());
+		insurerLog.setUserRefNo(requestDto.getUserRefNo());
+		insurerLog.setProviderRequestTime(requestDto.getRequestTime());
+		insurerLog.setRequestTime(requestTime);
+		insurerLog.setResponseTime(responseTime);
+				
+		if(result!=null){
+			insurerLog.setResponseStatus(result.getHttpStatus());
+			if(result.getResponse()!=null){
+				insurerLog.setResponseCode(result.getResponse().getResponseCode());		
+				insurerLog.setProviderResponseTime(result.getResponse().getResponseTime());
+				if(result.getResponse().getResponseParam()!=null){
+					insurerLog.setPolicyNumber(result.getResponse().getResponseParam().getPolicyNumber());
+					insurerLog.setOrderNumber(result.getResponse().getResponseParam().getOrderNumber());
+					insurerLog.setPolicyDocument(result.getResponse().getResponseParam().getPolicyDocument());
+					insurerLog.setDownloadUrl(result.getResponse().getResponseParam().getDownloadUrl());
+				}
+			}
+		}		
+				
+		insurerPaymentConfirmLogMapper.insertSelective(insurerLog);
+		
+		logger.debug("Receive aswata response with request: <{}>, entity: <{}> and result <{}>", requestDto, resp == null ? null : resp.toString(),
+				result == null ? null : result);	
+		
 		return result;
 	}
 	
@@ -552,5 +591,65 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		}
 		return true;
 	}
+//	@Override
+//	public boolean isSuccess(ResponseDto<OrderResponseDto> responseResult){
+//		if(responseResult!=null && responseResult.getResponse()!=null){
+//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
+//					&& responseResult.getResponse().getResponseCode()!=null
+//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+//					&& responseResult.getResponse().getResponseParam()!=null
+//					){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	public boolean isSuccess(ResponseDto<IAswataResponsePayload> responseResult){
+//		if(responseResult!=null && responseResult.getResponse()!=null){
+//			if(responseResult.getHttpStatus()==AswataResultSuccessCondition.httpStatus
+//					&& responseResult.getResponse().getResponseCode()!=null
+//					&& responseResult.getResponse().getResponseCode().equals(AswataResultSuccessCondition.responseCode)
+//					&& responseResult.getResponse().getResponseParam()!=null
+//					){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+
+	
+	public Integer getProviderTravelType(PolicyOrder order){
+		Integer result = null;
+		if(order!=null){
+			if(CoverageCategoryId.TRAVEL_DOMESTIC.equals(order.getCoverageCategoryId())){
+				result = TravelType.TYPE_DOMESTIC;
+			}else if(CoverageCategoryId.TRAVEL_INTERNATIONAL.equals(order.getCoverageCategoryId())){
+				//check if any coverage has option, if they do, use that option, otherwise use international
+				for(PolicyOrderProduct p: order.getPolicyOrderProducts()){
+					Coverage coverage = productService.fetchCoverageByCoverageId(p.getCoverageId());
+					if (coverage.getCoverageOptionId()!=null){
+						if(CoverageOptionId.OPTION_INTERNATIONAL.equals(coverage.getCoverageOptionId())){
+							result = TravelType.TYPE_WORLDWIDE;
+						}else if(CoverageOptionId.OPTION_ASEAN.equals(coverage.getCoverageOptionId())){
+							result = TravelType.TYPE_ASIA;
+						}else if(CoverageOptionId.OPTION_EU_AU_NZ.equals(coverage.getCoverageOptionId())){
+							result = TravelType.TYPE_EU_AUS_NZ;
+						}
+						break;
+					}
+				}
+				
+				if(result == null){
+					//for international coverage without specific destination option, use worldwide
+					result =  TravelType.TYPE_WORLDWIDE;
+				}
+			}
+		}
+				
+		return result;
+	}
+	
+	
 
 }

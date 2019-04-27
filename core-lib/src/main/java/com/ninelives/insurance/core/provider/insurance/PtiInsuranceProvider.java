@@ -42,6 +42,8 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		this.documentLocale = LocaleUtils.toLocale(DEFAULT_DOCUMENT_LOCALE);
 	}
 	
+	
+	
 	public void generatePolicy(PolicyOrder order){
 		Map<String, String> fieldMap = new HashMap<>();
 
@@ -97,12 +99,20 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 
 	@Override
 	public OrderResult orderPolicy(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException {
-		// TODO Auto-generated method stub
+		//if has voucher and voucher is free then generate policy
 		return null;
 	}
 
 	@Override
 	public OrderConfirmResult orderConfirm(PolicyOrder order) throws InsuranceProviderException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public PaymentConfirmResult paymentConfirm(PolicyOrder order) throws InsuranceProviderException {
 		// TODO Auto-generated method stub
 		return null;
 	}
