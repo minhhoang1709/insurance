@@ -15,23 +15,15 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.pdmodel.interactive.form.PDVariableText;
 
 public class PdfCreator {
-	private static final String DEFAULT_APPREANCE = "0.18039 0.20392 0.21176 rg /F8 7.994 Tf";
 	
 	String templateFilePath;
-	String fontFilePath;
-	String templateFontDefaultAppearance = DEFAULT_APPREANCE;
-	
-	public PdfCreator(String templateFilePath, String fontFilePath){
-		this(templateFilePath, fontFilePath, null);
-	}
-	
-	public PdfCreator(String templateFilePath, String fontFilePath, String templateFontDefaultAppearance){
-		this.templateFilePath=templateFilePath;
-		this.fontFilePath=fontFilePath;
-		if(templateFontDefaultAppearance!=null){
-			this.templateFontDefaultAppearance=templateFontDefaultAppearance;
-		}
+	String templateFontFilePath;
+	String templateFonttAppearance;
 		
+	public PdfCreator(String templateFilePath, String templateFontFilePath, String templateFonttAppearance){
+		this.templateFilePath=templateFilePath;
+		this.templateFontFilePath=templateFontFilePath;
+		this.templateFonttAppearance=templateFonttAppearance;
 	}
 	
 	public void printFieldMap(Map<String, String> fieldMap, String outputFilePath) throws IOException{
@@ -45,12 +37,12 @@ public class PdfCreator {
 		}
 
 		//Set font
-		PDFont formFont = PDType0Font.load(pdf, new FileInputStream(fontFilePath), false);
+		PDFont formFont = PDType0Font.load(pdf, new FileInputStream(templateFontFilePath), false);
 		res.add(formFont);
 		
 		for(PDField field: acroForm.getFields()) {
 			PDVariableText  textField = (PDVariableText) field;
-			textField.setDefaultAppearance(templateFontDefaultAppearance);
+			textField.setDefaultAppearance(templateFonttAppearance);
 		}
 		
         for (Map.Entry<String, String> entry : fieldMap.entrySet()) {

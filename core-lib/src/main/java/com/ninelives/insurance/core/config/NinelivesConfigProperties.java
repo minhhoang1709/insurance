@@ -269,6 +269,12 @@ public class NinelivesConfigProperties {
 		private int aswataPoolTimeout = 5000;
 		private int aswataConnectTimeout = 5000;
 		private int aswataSocketTimeout = 30000;
+		
+		private String ptiPolicyFileDir;
+		private String ptiTemplateFilePath;
+		private String ptiTemplateFontFilePath;
+		private String ptiTemplateFontDefaultAppearance;
+		private int ptiTemplateCoverageMaxCount;		
 				
 		public Boolean getAswataEnableConnection() {
 			return aswataEnableConnection;
@@ -318,6 +324,37 @@ public class NinelivesConfigProperties {
 		public void setAswataSocketTimeout(int aswataSocketTimeout) {
 			this.aswataSocketTimeout = aswataSocketTimeout;
 		}
+		public String getPtiPolicyFileDir() {
+			return ptiPolicyFileDir;
+		}
+		public void setPtiPolicyFileDir(String ptiPolicyFileDir) {
+			this.ptiPolicyFileDir = ptiPolicyFileDir;
+		}
+		public String getPtiTemplateFilePath() {
+			return ptiTemplateFilePath;
+		}
+		public void setPtiTemplateFilePath(String ptiTemplateFilePath) {
+			this.ptiTemplateFilePath = ptiTemplateFilePath;
+		}
+		public String getPtiTemplateFontFilePath() {
+			return ptiTemplateFontFilePath;
+		}
+		public void setPtiTemplateFontFilePath(String ptiTemplateFontFilePath) {
+			this.ptiTemplateFontFilePath = ptiTemplateFontFilePath;
+		}
+		public String getPtiTemplateFontDefaultAppearance() {
+			return ptiTemplateFontDefaultAppearance;
+		}
+		public void setPtiTemplateFontDefaultAppearance(String ptiTemplateFontDefaultAppearance) {
+			this.ptiTemplateFontDefaultAppearance = ptiTemplateFontDefaultAppearance;
+		}
+		public int getPtiTemplateCoverageMaxCount() {
+			return ptiTemplateCoverageMaxCount;
+		}
+		public void setPtiTemplateCoverageMaxCount(int ptiTemplateCoverageMaxCount) {
+			this.ptiTemplateCoverageMaxCount = ptiTemplateCoverageMaxCount;
+		}
+		
 		
 	}
 

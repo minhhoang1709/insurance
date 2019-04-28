@@ -70,6 +70,7 @@ public enum ErrorCode {
 	ERR4201_ORDER_PROVIDER_FAIL("ERR4201"), //fail to submit policy to provider
 	ERR4202_ORDER_PROVIDER_FILE_ERROR("ERR4202"), //fail to read document/file to be sent
 	ERR4203_ORDER_PROVIDER_CONNECT_DISABLED("ERR4203"), //config connect is set to false
+	ERR4203_ORDER_PROVIDER_POLICY_NUMBER("ERR4204"), //fail to generate policy number
 	
 	ERR4301_DOWNLOAD_NO_URL("ERR4301"), //fail to submit policy to provider
 	ERR4302_DOWNLOAD_NOT_ELIGIBLE("ERR4302"), //fail to read document/file to be sent
