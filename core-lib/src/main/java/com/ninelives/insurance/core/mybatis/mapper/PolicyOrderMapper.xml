@@ -196,6 +196,15 @@
     	and a.user_id=#{userId,jdbcType=VARCHAR}
   </select>
   
+  <select id="selectByOrderId" resultMap="NestedPolicyOrderResultMap">
+  	select
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a    	
+    	<include refid="NestedPolicyOrderTableJoinList"/>
+    where a.order_id=#{orderId,jdbcType=VARCHAR}
+  </select>
+  
   <select id="selectByUserId" resultMap="NestedPolicyOrderResultMap">
   	select 
   		<include refid="NestedPolicyOrderColumnList"/>

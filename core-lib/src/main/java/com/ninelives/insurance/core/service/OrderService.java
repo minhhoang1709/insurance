@@ -263,6 +263,12 @@ public class OrderService {
 		return policyOrder;
 	}
 	
+	public PolicyOrder fetchOrderByOrderId(final String orderId){
+		PolicyOrder policyOrder = policyOrderMapper.selectByOrderId(orderId);
+		postRetrieval(policyOrder,LocalDate.now());
+		return policyOrder;
+	}
+	
 	public PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
 		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
 		postRetrieval(policyOrder,LocalDate.now());

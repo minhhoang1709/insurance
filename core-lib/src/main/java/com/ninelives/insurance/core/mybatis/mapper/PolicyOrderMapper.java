@@ -60,6 +60,8 @@ public interface PolicyOrderMapper {
 
 	PolicyOrder selectByUserIdAndOrderId(@Param("userId") String userId, @Param("orderId") String orderId);
 	
+	PolicyOrder selectByOrderId(@Param("orderId") String orderId);
+	
 	List<PolicyOrder> selectByUserId(@Param("userId") String userId, @Param("limit") int limit,
 			@Param("offset") int offset, @Param("isHide") Boolean isHide);
 
