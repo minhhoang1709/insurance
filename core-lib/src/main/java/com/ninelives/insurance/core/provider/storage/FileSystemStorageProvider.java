@@ -29,7 +29,25 @@ public class FileSystemStorageProvider implements StorageProvider {
     public FileSystemStorageProvider(NinelivesConfigProperties config) {
         this.rootLocation = Paths.get(config.getStorage().getLocation());
     }
-
+    
+    @Override
+    public Path prepare(String filename) throws StorageException {
+    	 String filepathstr = StringUtils.cleanPath(filename);
+    	 Path path = load(filepathstr);    	 
+    	 
+		try {
+			if (filepathstr.contains("..")) {
+				// This is a security check
+				throw new StorageException(
+						"Cannot prepare file with relative path outside current directory " + filepathstr);
+			}
+			Files.createDirectories(path.getParent());
+			
+		} catch (IOException e) {
+			throw new StorageException("Failed to prepare file path " + filepathstr, e);
+		}
+		return path;
+    }
     @Override
     public void store(MultipartFile file, UserFile userFile) throws StorageException {
         String filepath = StringUtils.cleanPath(userFile.getFilePath());
@@ -44,6 +62,7 @@ public class FileSystemStorageProvider implements StorageProvider {
                         "Cannot store file with relative path outside current directory "
                                 + filepath);
             }
+            
         	Files.createDirectories(this.rootLocation.resolve(filepath));        	
 
             Files.copy(file.getInputStream(), this.rootLocation.resolve(filepath),

@@ -579,51 +579,51 @@ public class TestController {
 		return apiClaimService.fetchClaims(authUserId, filterDto);
 	}
 	
-	@RequestMapping(value="/test/temp/pdfprint",
-			method={ RequestMethod.GET })
-	@ResponseBody
-	public String printpdf(){
-		
-		PdfCreator pdfCreator = new PdfCreator("D:\\local\\sts\\9lives\\template\\online_policy_certificate_dav04.pdf",
-				"D:\\local\\sts\\9lives\\template\\arial.ttf");
-		
-		Map<String, String> fieldMap = new HashMap<>();
-		fieldMap.put("buyer_name","Smith");
-		fieldMap.put("buyer_contact_no","12345678");
-		fieldMap.put("policy_number","PA0000021/9Lives/2019");
-		fieldMap.put("date_of_issue","26/03/2019");
-		fieldMap.put("insured_name","Smith");
-		fieldMap.put("insured_idcard","123124214124");
-		fieldMap.put("insured_birthdate","26/03/2019");
-		fieldMap.put("insured_buyer_relation","");
-		fieldMap.put("policy_start_date","26/03/2019");
-		fieldMap.put("policy_end_date","26/03/2020");
-
-		fieldMap.put("coverage_1","Tử vong do tai nạn");
-		fieldMap.put("coverage_2","Thương tật do tai nạn");
-		fieldMap.put("coverage_3","Nằm viện trên 3 ngày do tai nạn (tối đa 2 lần/năm)");
-		fieldMap.put("coverage_4","Chi phí mai táng khi tử vong do tai nạn");
-		fieldMap.put("coverage_5","Trợ cấp thu nhập do tử vong hoặc thương tật vĩnh viễn do tai nạn");
-		fieldMap.put("coverage_6","Điều trị tai nạn tại phòng cấp cứu (tối đa 2 lần/năm)");
-			
-		fieldMap.put("limit_1","40.000.000");
-		fieldMap.put("limit_2","40.000.000");
-		fieldMap.put("limit_3","3.000.000");
-		fieldMap.put("limit_4","4.000.000");
-		fieldMap.put("limit_5","5.000.000");
-		fieldMap.put("limit_6","1.000.000");
-
-		fieldMap.put("premi","12.345");
-		fieldMap.put("period","1 năm");
-		
-		try {
-			pdfCreator.printFieldMap(fieldMap, "D:\\local\\sts\\9lives\\test\\pdfTest.pdf");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return "ok";
-	}
+//	@RequestMapping(value="/test/temp/pdfprint",
+//			method={ RequestMethod.GET })
+//	@ResponseBody
+//	public String printpdf(){
+//		
+//		PdfCreator pdfCreator = new PdfCreator("D:\\local\\sts\\9lives\\template\\online_policy_certificate_dav04.pdf",
+//				"D:\\local\\sts\\9lives\\template\\arial.ttf");
+//		
+//		Map<String, String> fieldMap = new HashMap<>();
+//		fieldMap.put("buyer_name","Smith");
+//		fieldMap.put("buyer_contact_no","12345678");
+//		fieldMap.put("policy_number","PA0000021/9Lives/2019");
+//		fieldMap.put("date_of_issue","26/03/2019");
+//		fieldMap.put("insured_name","Smith");
+//		fieldMap.put("insured_idcard","123124214124");
+//		fieldMap.put("insured_birthdate","26/03/2019");
+//		fieldMap.put("insured_buyer_relation","");
+//		fieldMap.put("policy_start_date","26/03/2019");
+//		fieldMap.put("policy_end_date","26/03/2020");
+//
+//		fieldMap.put("coverage_1","Tử vong do tai nạn");
+//		fieldMap.put("coverage_2","Thương tật do tai nạn");
+//		fieldMap.put("coverage_3","Nằm viện trên 3 ngày do tai nạn (tối đa 2 lần/năm)");
+//		fieldMap.put("coverage_4","Chi phí mai táng khi tử vong do tai nạn");
+//		fieldMap.put("coverage_5","Trợ cấp thu nhập do tử vong hoặc thương tật vĩnh viễn do tai nạn");
+//		fieldMap.put("coverage_6","Điều trị tai nạn tại phòng cấp cứu (tối đa 2 lần/năm)");
+//			
+//		fieldMap.put("limit_1","40.000.000");
+//		fieldMap.put("limit_2","40.000.000");
+//		fieldMap.put("limit_3","3.000.000");
+//		fieldMap.put("limit_4","4.000.000");
+//		fieldMap.put("limit_5","5.000.000");
+//		fieldMap.put("limit_6","1.000.000");
+//
+//		fieldMap.put("premi","12.345");
+//		fieldMap.put("period","1 năm");
+//		
+//		try {
+//			pdfCreator.printFieldMap(fieldMap, "D:\\local\\sts\\9lives\\test\\pdfTest.pdf");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return "ok";
+//	}
 	
 }

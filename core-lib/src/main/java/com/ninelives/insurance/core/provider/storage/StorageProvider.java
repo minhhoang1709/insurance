@@ -14,6 +14,8 @@ public interface StorageProvider {
     void store(MultipartFile file, UserFile userFile) throws StorageException;
     
     void move(UserFile userFileSrc, UserFile userFileDst) throws StorageException;
+    
+    Path prepare(String filename) throws StorageException;
 
     //Stream<Path> loadAll();
 

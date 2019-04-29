@@ -24,11 +24,11 @@ public class PtiInsuranceProviderGeneratePolicyTest {
 		PolicyOrder order = new PolicyOrder();
 		order.setCoverageCategory(new CoverageCategory());
 		order.getCoverageCategory().setType(CoverageCategoryType.PA);
-		order.setOrderDate(LocalDate.now());
+		//order.setOrderDate(LocalDate.now());
 		
 		String year = String.valueOf(LocalDate.now().getYear());
 		
-		String result = prod.generatePolicyNumber(order);		
+		String result = prod.generatePolicyNumber(order, LocalDate.now());
 		
 		assertEquals("PA0000213/9Lives/"+year,result);
 	}
