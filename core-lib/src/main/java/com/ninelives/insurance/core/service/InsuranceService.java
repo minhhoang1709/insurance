@@ -55,7 +55,7 @@ public class InsuranceService {
 			if (result != null && result.isSuccess()) {
 				order.setPolicyNumber(result.getPolicyNumber());
 				order.setProviderOrderNumber(result.getProviderOrderNumber());
-				if (order.getProviderDownloadUrl() != null) {
+				if (result.getProviderDownloadUrl() != null) {
 					order.setProviderDownloadUrl(result.getProviderDownloadUrl());
 				}
 			} else {
