@@ -24,4 +24,14 @@ public class SuccessPaymentProcessor {
 			logger.error("error",e);
 		}
 	}
+	
+	public void processByOrderId(@Body String orderId){
+		logger.debug("Receive success payment by orderId <{}>", orderId);		
+		try {
+			PolicyOrder policyOrder = orderService.fetchOrderByOrderId(orderId);
+			orderService.paymentConfirm(policyOrder);
+		} catch (Exception e) {
+			logger.error("error",e);
+		}
+	}
 }

@@ -19,6 +19,7 @@ public class NinelivesInsurerRouteBuilder extends SpringRouteBuilder{
 	@Override
 	public void configure() throws Exception {
 		from(EndPointRef.QUEUE_SUCCESS_PAYMENT_TO_INSURER).bean(successPaymentProcessor,"process");
+		from(EndPointRef.QUEUE_SUCCESS_PAYMENT_TO_INSURER_BY_ORDERID).bean(successPaymentProcessor,"processByOrderId");
 	}
 	
 	

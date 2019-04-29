@@ -227,7 +227,9 @@ public class MidtransPaymentNotificationService {
 						successPaymentOrder.getPayment().setProviderTransactionId(orderUpdate.getPayment().getProviderTransactionId());
 						
 						logger.debug("Send success payment order to insurance provider <{}>", successPaymentOrder);
-						producerTemplate.to(EndPointRef.QUEUE_SUCCESS_PAYMENT_TO_INSURER).withBodyAs(successPaymentOrder,PolicyOrder.class).send();
+						//producerTemplate.to(EndPointRef.QUEUE_SUCCESS_PAYMENT_TO_INSURER).withBodyAs(successPaymentOrder,PolicyOrder.class).send();
+						producerTemplate.to(EndPointRef.QUEUE_SUCCESS_PAYMENT_TO_INSURER_BY_ORDERID).withBodyAs(order.getOrderId(),String.class).send();
+						
 						
 								
 						//update spend total for invite voucher
