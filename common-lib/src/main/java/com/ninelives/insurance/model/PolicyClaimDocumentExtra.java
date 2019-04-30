@@ -1,6 +1,10 @@
 package com.ninelives.insurance.model;
 
-public class PolicyClaimDocumentExtra {
+import java.io.Serializable;
+
+public class PolicyClaimDocumentExtra implements Serializable{
+	private static final long serialVersionUID = 4767079867430627200L;
+	
 	PolicyClaimFamily family;
 
 	public PolicyClaimFamily getFamily() {

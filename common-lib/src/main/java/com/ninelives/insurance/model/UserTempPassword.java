@@ -1,11 +1,14 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.ninelives.insurance.ref.UserTempPasswordStatus;
 
-public class UserTempPassword {
-    private String userId;
+public class UserTempPassword implements Serializable{
+	private static final long serialVersionUID = 5771645486910643273L;
+
+	private String userId;
 
     private String email;
     

@@ -1,6 +1,9 @@
 package com.ninelives.insurance.model;
 
-public class Insurer {
+import java.io.Serializable;
+
+public class Insurer implements Serializable{
+	private static final long serialVersionUID = -7020239016298676425L;
 	private Integer id;
 	private String code;
 	

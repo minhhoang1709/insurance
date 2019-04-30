@@ -8,7 +8,7 @@ import java.util.List;
 import com.ninelives.insurance.ref.PolicyStatus;
 
 public class PolicyOrder implements Serializable{
-	private static final long serialVersionUID = 592941652403498857L;
+	private static final long serialVersionUID = 6041526120240739297L;
 
 	private String orderId;
 

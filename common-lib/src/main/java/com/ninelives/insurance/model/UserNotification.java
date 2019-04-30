@@ -1,9 +1,12 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class UserNotification {
-    private String id;
+public class UserNotification implements Serializable{
+	private static final long serialVersionUID = -1719725721759864171L;
+
+	private String id;
 
     private String userId;
 

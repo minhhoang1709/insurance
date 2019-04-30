@@ -1,13 +1,16 @@
 package com.ninelives.insurance.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.Gender;
 
-public class PolicyClaimFamily {
-    private Long id;
+public class PolicyClaimFamily implements Serializable{
+    private static final long serialVersionUID = 5658745549547801937L;
+
+	private Long id;
 
     private String claimId;
 
