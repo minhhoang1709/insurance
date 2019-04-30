@@ -69,6 +69,7 @@ public class InsuranceService {
 			throw new AppInternalServerErrorException(ErrorCode.ERR4203_ORDER_PROVIDER_CONNECT_DISABLED,
 					"Permintaan tidak dapat diproses, terjadi error pada sistem");
 		} catch (InsuranceProviderException e) {
+			logger.error("Error insurance provider", e);
 			throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL,
 					"Permintaan tidak dapat diproses, terjadi error pada sistem");
 		}
@@ -101,9 +102,13 @@ public class InsuranceService {
 			}	
 		} catch (InsuranceProviderConnectDisabledException e) {
 			throw new AppInternalServerErrorException(ErrorCode.ERR4203_ORDER_PROVIDER_CONNECT_DISABLED, "Permintaan tidak dapat diproses, terjadi error pada sistem");
-		} catch (InsuranceProviderException e) {			
+		} catch (InsuranceProviderException e) {
+			logger.error("Error insurance provider", e);
 			throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
-		}
+		} catch (IOException | StorageException e) {
+			throw new AppInternalServerErrorException(ErrorCode.ERR4202_ORDER_PROVIDER_FILE_ERROR,
+					"Permintaan tidak dapat diproses, terjadi error pada sistem");
+		} 
 			
 	}
 	
@@ -134,9 +139,13 @@ public class InsuranceService {
 			}	
 		} catch (InsuranceProviderConnectDisabledException e) {
 			throw new AppInternalServerErrorException(ErrorCode.ERR4203_ORDER_PROVIDER_CONNECT_DISABLED, "Permintaan tidak dapat diproses, terjadi error pada sistem");
-		} catch (InsuranceProviderException e) {			
+		} catch (InsuranceProviderException e) {
+			logger.error("Error insurance provider", e);
 			throw new AppInternalServerErrorException(ErrorCode.ERR4201_ORDER_PROVIDER_FAIL, "Permintaan tidak dapat diproses, terjadi error pada sistem");
-		}
+		} catch (IOException | StorageException e) {
+			throw new AppInternalServerErrorException(ErrorCode.ERR4202_ORDER_PROVIDER_FILE_ERROR,
+					"Permintaan tidak dapat diproses, terjadi error pada sistem");
+		} 
 		
 	}
 	

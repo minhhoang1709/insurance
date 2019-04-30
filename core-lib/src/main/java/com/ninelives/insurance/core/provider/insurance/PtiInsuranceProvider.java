@@ -128,15 +128,33 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 	public OrderResult orderPolicy(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException {
 		//if has voucher and voucher is free then generate policy-
 		OrderResult result = new OrderResult();
-		InsurerPolicyFile policyFile = null;
-		if(order.getPolicyOrderVoucher()!=null && order.getTotalPremi()==0) {
-			if(order.getPolicyOrderVoucher().getVoucher().getVoucherType().equals(VoucherType.INVITE)
-					|| order.getPolicyOrderVoucher().getVoucher().getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)) {
-				policyFile = generatePolicy(order);
-				
-			}
-		}
 		
+		if (order.getPolicyOrderVoucher() != null && order.getTotalPremi() == 0
+				&& (order.getPolicyOrderVoucher().getVoucher().getVoucherType().equals(VoucherType.INVITE)
+						|| order.getPolicyOrderVoucher().getVoucher().getVoucherType()
+								.equals(VoucherType.FREE_PROMO_NEW_USER))) {
+			InsurerPolicyFile policyFile = generatePolicy(order);
+			
+			if (policyFile != null) {
+				result.setSuccess(true);
+				result.setPolicyNumber(policyFile.getPolicyNumber());
+				result.setProviderDownloadUrl(policyFile.getFilePath());
+			} else {
+				result.setSuccess(false);
+			}
+
+		}else { //do nothing on order policy since the policy is generated on payment/order confirm for non free
+			result.setSuccess(true);			
+		}
+	
+		return result;
+	}
+
+	@Override
+	public OrderConfirmResult orderConfirm(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException {
+		OrderConfirmResult result = new OrderConfirmResult();
+		InsurerPolicyFile policyFile = generatePolicy(order);
+
 		if(policyFile!=null) {
 			result.setSuccess(true);
 			result.setPolicyNumber(policyFile.getPolicyNumber());
@@ -144,20 +162,23 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		}else {
 			result.setSuccess(false);
 		}
-
 		return result;
 	}
 
 	@Override
-	public OrderConfirmResult orderConfirm(PolicyOrder order) throws InsuranceProviderException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public PaymentConfirmResult paymentConfirm(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException {
+		PaymentConfirmResult result = new PaymentConfirmResult();
+		InsurerPolicyFile policyFile = generatePolicy(order);
 
-	@Override
-	public PaymentConfirmResult paymentConfirm(PolicyOrder order) throws InsuranceProviderException {
-		// TODO Auto-generated method stub
-		return null;
+		if(policyFile!=null) {
+			result.setSuccess(true);
+			result.setPolicyNumber(policyFile.getPolicyNumber());
+			result.setProviderDownloadUrl(policyFile.getFilePath());
+		}else {
+			result.setSuccess(false);
+		}
+		
+		return result;
 	}
 	
 	private String policyFilePath(String orderId, String coverageCategoryId, LocalDate issuedDate){

@@ -11,8 +11,8 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 
 public interface InsuranceProvider {
 	public OrderResult orderPolicy(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException;
-	public OrderConfirmResult orderConfirm(PolicyOrder order) throws InsuranceProviderException;
-	public PaymentConfirmResult paymentConfirm(PolicyOrder order) throws InsuranceProviderException;
+	public OrderConfirmResult orderConfirm(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException;
+	public PaymentConfirmResult paymentConfirm(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException;
 	//public void generatePolicy(PolicyOrder order) throws InsuranceProviderException;
 	//public boolean isSuccess(ResponseDto<IAswataResponsePayload> result);
 	//public boolean isSuccess(ResponseDto<OrderConfirmResponseDto> result);

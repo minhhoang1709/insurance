@@ -30,6 +30,7 @@ import com.ninelives.insurance.model.PolicyOrderBeneficiary;
 import com.ninelives.insurance.model.PolicyOrderCoverage;
 import com.ninelives.insurance.model.PolicyOrderDocument;
 import com.ninelives.insurance.model.PolicyOrderProduct;
+import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
 import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
@@ -82,7 +83,7 @@ public class OrderService {
 			logger.error("Error order confirm for user:<{}> with order:<{}>, result: exception <{}>",
 					policyOrder, e.getCode());
 			throw e;
-		}				
+		}
 		
 	}
 	
@@ -340,6 +341,10 @@ public class OrderService {
 		return orders;
 	}
 	
+	public PolicyOrderUsers fetchPolicyOrderUsersByOrderId (String orderId) {
+		return policyOrderUserMapper.selectByOrderId(orderId);
+	}
+	
 	
 	public PolicyOrder fetchOrderForDownload(String userId, String orderId) throws AppException{		
 		
@@ -364,6 +369,7 @@ public class OrderService {
 		
 	}
 	
+
 	public void postRetrieval(PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null){
 			mapPolicyOrderStatus(policyOrder, today);

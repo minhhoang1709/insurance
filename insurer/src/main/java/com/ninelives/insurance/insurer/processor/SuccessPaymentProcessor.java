@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.insurer.service.InsuranceService;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.model.PolicyOrderUsers;
 
 @Component
 public class SuccessPaymentProcessor {
@@ -29,6 +30,10 @@ public class SuccessPaymentProcessor {
 		logger.debug("Receive success payment by orderId <{}>", orderId);		
 		try {
 			PolicyOrder policyOrder = orderService.fetchOrderByOrderId(orderId);
+			if(policyOrder.getPolicyOrderUsers()==null) {
+				PolicyOrderUsers pou = orderService.fetchPolicyOrderUsersByOrderId(orderId);
+				policyOrder.setPolicyOrderUsers(pou);
+			}
 			orderService.paymentConfirm(policyOrder);
 		} catch (Exception e) {
 			logger.error("error",e);
