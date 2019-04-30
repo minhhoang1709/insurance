@@ -24,14 +24,15 @@ import com.ninelives.insurance.core.mybatis.mapper.InsurerMapper;
 import com.ninelives.insurance.core.mybatis.mapper.InsurerPolicyFileMapper;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.core.support.pdf.PdfCreator;
 import com.ninelives.insurance.model.InsurerPolicyFile;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
+import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.provider.insurance.pti.ref.PtiCoverageCategory;
 import com.ninelives.insurance.ref.CoverageCategoryType;
-import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.VoucherType;
 
 @Service
@@ -45,6 +46,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 	@Autowired NinelivesConfigProperties config;
 	
 	@Autowired StorageProvider storageProvider;
+	@Autowired ProductService productService;
 	@Autowired TranslationService translationService;
 	@Autowired InsurerMapper insurerMapper;
 	@Autowired InsurerPolicyFileMapper insurerFileMapper;
@@ -55,8 +57,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 	String policyFileDir;
 	String templateFilePath;
 	String templateFontFilePath;
-	String templateFontAppearance = DEFAULT_TEMPLATE_FONT_APPREANCE;
-	
+	String templateFontAppearance = DEFAULT_TEMPLATE_FONT_APPREANCE;	
 	
 	Locale documentLocale;	
 	DateTimeFormatter dateFormatter;
@@ -69,8 +70,9 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		this.numberFormat = NumberFormat.getInstance( LocaleUtils.toLocale(DEFAULT_DOCUMENT_LOCALE) );
 	}
 	
-	private void generatePolicy(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException{
+	private InsurerPolicyFile generatePolicy(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException{
 		InsurerPolicyFile policyFile = policyFile(order);
+		
 		Map<String, String> fieldMap = new HashMap<>();
 
 		if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
@@ -93,7 +95,11 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 
 		int i=1;
 		for(PolicyOrderProduct pop : order.getPolicyOrderProducts()){
-			fieldMap.put("coverage_"+i, translationService.translate(pop.getProduct().getNameTranslationId(), documentLocale.getLanguage(), pop.getProductName()));
+			Product product = pop.getProduct();
+			if(product==null) {
+				product = productService.fetchProductByProductId(pop.getProductId());
+			}
+			fieldMap.put("coverage_"+i, translationService.translate(product.getNameTranslationId(), documentLocale.getLanguage(), product.getName()));
 			fieldMap.put("limit_"+i, numberFormat.format(pop.getCoverageMaxLimit()));
 			i++;
 		}
@@ -114,12 +120,32 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 			logger.error("Error on creating pdf ", e);
 			throw e;
 		}
+		
+		return policyFile;
 	}
 	
 	@Override
 	public OrderResult orderPolicy(PolicyOrder order) throws InsuranceProviderException, IOException, StorageException {
 		//if has voucher and voucher is free then generate policy-
-		return null;
+		OrderResult result = new OrderResult();
+		InsurerPolicyFile policyFile = null;
+		if(order.getPolicyOrderVoucher()!=null && order.getTotalPremi()==0) {
+			if(order.getPolicyOrderVoucher().getVoucher().getVoucherType().equals(VoucherType.INVITE)
+					|| order.getPolicyOrderVoucher().getVoucher().getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)) {
+				policyFile = generatePolicy(order);
+				
+			}
+		}
+		
+		if(policyFile!=null) {
+			result.setSuccess(true);
+			result.setPolicyNumber(policyFile.getPolicyNumber());
+			result.setProviderDownloadUrl(policyFile.getFilePath());
+		}else {
+			result.setSuccess(false);
+		}
+
+		return result;
 	}
 
 	@Override
@@ -192,8 +218,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 			throw new InsuranceProviderException("System error, fail to generate policy number");
 		}
 		
-		return String.format("%s%07d/%s/%s", ptiCoverageCategory, sequenceNum, "9Lives", ptiPolicyYear); 
-				
+		return String.format("%s%07d/%s/%s", ptiCoverageCategory, sequenceNum, "9Lives", ptiPolicyYear);
 	}
 
 	public PdfCreator getPdfCreator() {
