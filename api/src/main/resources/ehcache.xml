@@ -12,4 +12,5 @@
 	<cache name="InviteVoucherDto" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="InviteVoucher" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="AppTranslationText" maxEntriesLocalHeap="1000" timeToLiveSeconds="3600" statistics="false" overflowToDisk="false"></cache>
+	<cache name="VoucherById" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 </ehcache>

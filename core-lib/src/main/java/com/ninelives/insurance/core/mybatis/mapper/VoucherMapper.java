@@ -9,6 +9,7 @@ import com.ninelives.insurance.model.Voucher;
 
 @Mapper
 public interface VoucherMapper {
+	Voucher selectById(@Param("voucherId") Integer voucherId);
 	Voucher selectByCode(@Param("code") String code);
 	Voucher selectByInviteCode(@Param("code") String code);
 	

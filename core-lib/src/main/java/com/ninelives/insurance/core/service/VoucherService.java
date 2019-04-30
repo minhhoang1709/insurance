@@ -30,11 +30,13 @@ public class VoucherService {
 		}
 		return voucher;
 	}
-	
+	@Cacheable("VoucherById")
+	public Voucher fetchVoucherbyId(int voucherId) {
+		return voucherMapper.selectById(voucherId);
+	}
 	public Voucher fetchVoucherForInviteByUserId(String userId){
 		return voucherMapper.selectVoucherForInviteByUserId(userId);
-	}
-	
+	}	
 	public Voucher fetchVoucherByCode(String code) throws AppNotFoundException{
 		return fetchVoucherByCode(code, null, true);
 	}

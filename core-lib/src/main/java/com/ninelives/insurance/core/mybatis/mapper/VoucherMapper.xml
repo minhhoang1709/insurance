@@ -35,6 +35,7 @@
   <resultMap id="CorporateClientResultMap" type="com.ninelives.insurance.model.CorporateClient">
   	<id column="corporate_client_id" jdbcType="VARCHAR" property="corporateClientId" />
     <result column="corporate_client_name" jdbcType="VARCHAR" property="corporateClientName" />
+    <result column="corporate_client_phone_number" jdbcType="VARCHAR" property="corporateClientPhoneNumber" />
     <result column="corporate_client_provider" jdbcType="VARCHAR" property="corporateClientProvider" />
     <result column="corporate_client_provider_id" jdbcType="VARCHAR" property="corporateClientProviderId" />
   </resultMap>
@@ -56,11 +57,24 @@
 	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
 	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt,
 	    vop.product_id, vop.premi,
-	    cc.corporate_client_provider_id, cc.corporate_client_provider,cc.corporate_client_name
+	    cc.corporate_client_provider_id, cc.corporate_client_provider,cc.corporate_client_name, cc.corporate_client_phone_number
   	from public.voucher vo 
   		inner join public.voucher_product vop on vop.voucher_id=vo.id
   		left outer join public.corporate_client cc on vo.corporate_client_id is not null and cc.corporate_client_id=vo.corporate_client_id  		
   	where vo.code = #{code,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="selectById" resultMap="NestedVoucherResultMap">
+  	select
+  		vo.id, vo.code, vo.title, vo.subtitle, vo.policy_start_date, vo.policy_end_date, vo.use_start_date, 
+	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
+	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt,
+	    vop.product_id, vop.premi,
+	    cc.corporate_client_provider_id, cc.corporate_client_provider,cc.corporate_client_name, cc.corporate_client_phone_number
+  	from public.voucher vo 
+  		inner join public.voucher_product vop on vop.voucher_id=vo.id
+  		left outer join public.corporate_client cc on vo.corporate_client_id is not null and cc.corporate_client_id=vo.corporate_client_id  		
+  	where vo.id = #{voucherId,jdbcType=INTEGER} 
   </select>
   
   <select id="selectByInviteCode" resultMap="NestedVoucherResultMap">

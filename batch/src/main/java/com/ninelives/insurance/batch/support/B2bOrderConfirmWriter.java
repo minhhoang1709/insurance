@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 
 import com.ninelives.insurance.batch.model.B2bOrderConfirmData;
+import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.model.PolicyOrder;
+import com.ninelives.insurance.model.PolicyOrderUsers;
+import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PolicyStatus;
 
 public class B2bOrderConfirmWriter implements ItemWriter<B2bOrderConfirmData> {
@@ -22,16 +25,16 @@ public class B2bOrderConfirmWriter implements ItemWriter<B2bOrderConfirmData> {
 	
 	@Override
 	public void write(List<? extends B2bOrderConfirmData> items) throws Exception{
-		for (B2bOrderConfirmData item: items){
-			PolicyOrder order = orderService.fetchOrderByOrderId(item.getUserId(), item.getOrderId());
-			
-			//logger.debug("Processing for item:<{}>, order:<{}>", item, order);
-			
-			if(PolicyStatus.PAID.equals(order.getStatus())){
-				logger.debug("Processing for item:<{}>, order:<{}>", item, order);
-				orderService.orderConfirm(order);
-			}else{
-				logger.debug("Skip processing, status not PAID, for item:<{}>, order:<{}>", item, order);
+		for (B2bOrderConfirmData item: items){			
+			try {
+				logger.debug("Processing for item:<{}>", item);
+				orderService.orderConfirm(item.getOrderId());				
+			} catch (AppException e) {
+				if(ErrorCode.ERR4501_ORDERCONFIRM_INVALID_ORDER_STATUS.equals(e.getCode())) {
+					logger.debug("Skip processing, status not PAID, for item:<{}>", item);
+				}else {
+					throw e;
+				}
 			}
 		}
 	}

@@ -33,6 +33,7 @@ import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.PolicyOrderUsers;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserBeneficiary;
+import com.ninelives.insurance.model.Voucher;
 import com.ninelives.insurance.provider.insurance.aswata.dto.PaymentConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.ref.CoverageCategoryId;
@@ -40,6 +41,7 @@ import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
+import com.ninelives.insurance.ref.VoucherType;
 
 @Service
 public class OrderService {
@@ -50,6 +52,7 @@ public class OrderService {
 	@Autowired NinelivesConfigProperties config;
 	
 	@Autowired ProductService productService;
+	@Autowired VoucherService voucherService;
 	@Autowired InsuranceService insuranceService;
 	@Autowired FileUploadService fileUploadService;
 	@Autowired PolicyOrderMapper policyOrderMapper;
@@ -66,7 +69,34 @@ public class OrderService {
 	@Value("${ninelives.order.filter-offset:0}")
 	int defaultOrdersFilterOffset;
 	
-	public void orderConfirm(PolicyOrder policyOrder) throws AppException{
+	public PolicyOrder orderConfirm(String orderId) throws AppException{
+		logger.info("Start process order confirm, orderId:<{}>", orderId);
+		
+		PolicyOrder policyOrder = fetchOrderByOrderId(orderId);
+		
+		if(policyOrder == null || !PolicyStatus.PAID.equals(policyOrder.getStatus())) {
+			throw new AppException(ErrorCode.ERR4501_ORDERCONFIRM_INVALID_ORDER_STATUS,"Order not exists or status is not paid");
+		}
+		
+		if(policyOrder.getPolicyOrderUsers()==null) {
+			PolicyOrderUsers pou = fetchPolicyOrderUsersByOrderId(policyOrder.getOrderId());
+			policyOrder.setPolicyOrderUsers(pou);
+		}
+		if(policyOrder.getHasVoucher()) {
+			if(VoucherType.B2B.equals(policyOrder.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
+				if(policyOrder.getPolicyOrderVoucher().getVoucher().getCorporateClient()==null) {
+					Voucher voucher = voucherService.fetchVoucherbyId(policyOrder.getPolicyOrderVoucher().getVoucher().getId());
+					policyOrder.getPolicyOrderVoucher().setVoucher(voucher);
+				}
+			}
+		}
+		
+		orderConfirm(policyOrder);
+		
+		return policyOrder;
+	}
+	
+	protected void orderConfirm(PolicyOrder policyOrder) throws AppException{
 		logger.info("Start process order confirm, order:<{}>", policyOrder);
 		
 		if(StringUtils.isEmpty(policyOrder.getOrderId())){
