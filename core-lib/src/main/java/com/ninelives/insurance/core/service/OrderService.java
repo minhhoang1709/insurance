@@ -117,6 +117,20 @@ public class OrderService {
 		
 	}
 	
+	public PolicyOrder paymentConfirm (String orderId) throws AppException{
+		logger.info("Start process payment confirm, orderId:<{}>", orderId);
+		
+		PolicyOrder policyOrder = fetchOrderByOrderId(orderId);
+		if(policyOrder.getPolicyOrderUsers()==null) {
+			PolicyOrderUsers pou = fetchPolicyOrderUsersByOrderId(orderId);
+			policyOrder.setPolicyOrderUsers(pou);
+		}
+		
+		paymentConfirm(policyOrder);
+		
+		return policyOrder;
+	}
+	
 	public void paymentConfirm(PolicyOrder policyOrder) throws AppException{
 		logger.info("Start process payment confirm, order:<{}>", policyOrder);
 		

@@ -28,13 +28,8 @@ public class SuccessPaymentProcessor {
 	
 	public void processByOrderId(@Body String orderId){
 		logger.debug("Receive success payment by orderId <{}>", orderId);		
-		try {
-			PolicyOrder policyOrder = orderService.fetchOrderByOrderId(orderId);
-			if(policyOrder.getPolicyOrderUsers()==null) {
-				PolicyOrderUsers pou = orderService.fetchPolicyOrderUsersByOrderId(orderId);
-				policyOrder.setPolicyOrderUsers(pou);
-			}
-			orderService.paymentConfirm(policyOrder);
+		try {			
+			orderService.paymentConfirm(orderId);
 		} catch (Exception e) {
 			logger.error("error",e);
 		}
