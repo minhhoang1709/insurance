@@ -368,6 +368,7 @@ public class ModelMapperAdapter {
 			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
 			dto.setRecommendation(translationService.translate(m.getRecommendationTranslationId(), languageCode, m.getRecommendation()));
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
+			dto.setRecommendationImageUrl(this.coverageImgUrlPath+"recomend"+m.getCoverageCategoryId()+".jpg");
 			dto.setType(m.getType());			
 		}
 		return dto;

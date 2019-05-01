@@ -11,6 +11,8 @@ public class CoverageCategoryDto {
     
     private String imageUrl;
     
+    private String recommendationImageUrl;
+    
     private CoverageCategoryType type;
 
 	public String getCoverageCategoryId() {
@@ -43,6 +45,14 @@ public class CoverageCategoryDto {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+	
+	public String getRecommendationImageUrl() {
+		return recommendationImageUrl;
+	}
+
+	public void setRecommendationImageUrl(String recommendationImageUrl) {
+		this.recommendationImageUrl = recommendationImageUrl;
 	}
 
 	public CoverageCategoryType getType() {
