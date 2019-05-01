@@ -263,7 +263,7 @@ public class TestController {
 		po.setUserId(authUserId);
 		po.setProviderOrderNumber(orderNum);
 		
-		orderService.orderConfirm(po);
+		orderService.orderConfirm(authUserId, orderId);
 		
 		return po.toString();
 	}

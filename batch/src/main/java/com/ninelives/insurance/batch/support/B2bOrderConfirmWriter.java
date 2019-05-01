@@ -28,7 +28,7 @@ public class B2bOrderConfirmWriter implements ItemWriter<B2bOrderConfirmData> {
 		for (B2bOrderConfirmData item: items){			
 			try {
 				logger.debug("Processing for item:<{}>", item);
-				orderService.orderConfirm(item.getOrderId());				
+				orderService.orderConfirm(item.getUserId(), item.getOrderId());				
 			} catch (AppException e) {
 				if(ErrorCode.ERR4501_ORDERCONFIRM_INVALID_ORDER_STATUS.equals(e.getCode())) {
 					logger.debug("Skip processing, status not PAID, for item:<{}>", item);

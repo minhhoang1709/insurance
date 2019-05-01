@@ -69,10 +69,10 @@ public class OrderService {
 	@Value("${ninelives.order.filter-offset:0}")
 	int defaultOrdersFilterOffset;
 	
-	public PolicyOrder orderConfirm(String orderId) throws AppException{
-		logger.info("Start process order confirm, orderId:<{}>", orderId);
+	public PolicyOrder orderConfirm(String userId, String orderId) throws AppException{
+		logger.info("Start process order confirm, userId:<{}>, orderId:<{}>", orderId);
 		
-		PolicyOrder policyOrder = fetchOrderByOrderId(orderId);
+		PolicyOrder policyOrder = fetchOrderByOrderId(userId, orderId);
 		
 		if(policyOrder == null || !PolicyStatus.PAID.equals(policyOrder.getStatus())) {
 			throw new AppException(ErrorCode.ERR4501_ORDERCONFIRM_INVALID_ORDER_STATUS,"Order not exists or status is not paid");
