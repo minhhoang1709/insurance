@@ -7,7 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -27,6 +31,12 @@ import com.ninelives.insurance.api.model.RegisterUsersResult;
 import com.ninelives.insurance.api.service.ApiUserService;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
+import com.ninelives.insurance.core.provider.storage.StorageException;
+import com.ninelives.insurance.core.provider.storage.StorageProvider;
+import com.ninelives.insurance.core.service.UserService;
+import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
@@ -35,6 +45,8 @@ public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired ApiUserService apiUserService;
+	@Autowired UserService userService;
+	@Autowired StorageProvider storageService;
 	
 	@RequestMapping(value="/users",
 			method=RequestMethod.POST)
@@ -99,6 +111,38 @@ public class UserController {
 		checkUserIdFromPath(userId, authUserId);
 		
 		return apiUserService.updatePassportFile(authUserId, file); 
+	}
+	
+	@RequestMapping(value="/users/{userId}/photoFiles",
+			method=RequestMethod.PUT)
+	@ResponseBody
+	public UserFileDto updatePhotoFile (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId,
+			@RequestParam("file") MultipartFile file) throws AppException{
+
+		checkUserIdFromPath(userId, authUserId);
+		
+		return apiUserService.updatePhotoFile(authUserId, file); 
+	}
+	
+	@RequestMapping(value="/users/{userId}/photoFiles",
+			method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Resource>  downloadPhotoFile (@RequestAttribute ("authUserId") String authUserId, @PathVariable("userId") String userId) throws AppException{
+
+		checkUserIdFromPath(userId, authUserId);
+		
+		UserFile userFile = userService.fetchPhotoFile(userId);
+		
+		try {
+			Resource file = storageService.loadAsResource(userFile.getFilePath());
+			
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + userFile.getFileId() + "\"")
+					.header(HttpHeaders.CONTENT_TYPE, userFile.getContentType()).body(file);
+		} catch (StorageException e) {
+			logger.error("Error on download photo", e);
+			throw new AppInternalServerErrorException(ErrorCode.ERR1002_STORAGE_ERROR, "Maaf permintaan Anda belum dapat dilayani, terjadi kesalahan pada sistem");
+		}		 
 	}
 	
 	@RequestMapping(value="/users/{userId}/password",

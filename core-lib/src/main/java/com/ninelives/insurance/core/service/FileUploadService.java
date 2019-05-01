@@ -111,6 +111,10 @@ public class FileUploadService {
 //		return userFileMapper.countByUserIdAndFileIdsAndStatus(userId, fileIds, status);
 //	}
 	
+	public UserFile selectUserFileForPhotoByUserId(String userId){
+		return userFileMapper.selectForPhotoByUserId(userId);
+	}
+	
 	private void setFilePath(UserFile userFile, String fileExtension){
 		String directory = generateFileDirectoryPath(userFile.getUploadDate(), userFile.getUserId(), userFile.getFileUseType()).toString();
 		//String extension = FilenameUtils.getExtension(file.getOriginalFilename());

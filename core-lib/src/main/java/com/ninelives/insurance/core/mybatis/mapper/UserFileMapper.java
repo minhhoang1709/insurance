@@ -38,6 +38,15 @@ public interface UserFileMapper {
         "where file_id = #{fileId,jdbcType=BIGINT}"
     })    
     UserFile selectByPrimaryKey(Long fileId);
+    
+    @Select({
+        "select",
+        "a.file_id, a.user_id, a.file_use_type, a.file_path, a.status, a.file_size, a.content_type, ",
+        "a.upload_date, a.create_date, a.update_date",
+        "from public.user_file a, public.users b",
+        "where a.file_id=b.photo_file_id and b.user_id = #{userId,jdbcType=VARCHAR}"
+    })    
+    UserFile selectForPhotoByUserId(String userId);
 
     @Update({
         "update public.user_file",

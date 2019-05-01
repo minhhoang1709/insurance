@@ -15,6 +15,7 @@ public enum ErrorCode {
 	ERR2003_USER_NOT_FOUND("ERR2003"),
 	ERR2004_USER_EMPTY("ERR2004"), //Submitted profile info is empty
 	ERR2005_USER_PROFILE_INVALID("ERR2005"), //Submitted profile info is empty
+	ERR2006_USER_FILE_NOT_FOUND("ERR2006"), //User file (photo, id, passport, etc) not found
 	
 	ERR3001_REGISTER_GOOGLE_FAIL("ERR3001"),
 	ERR3002_REGISTER_PASSWORD_CONFLICT("ERR3002"),

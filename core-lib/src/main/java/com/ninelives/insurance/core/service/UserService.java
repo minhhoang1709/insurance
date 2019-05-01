@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.mybatis.mapper.UserBeneficiaryMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.model.User;
@@ -92,10 +93,10 @@ public class UserService {
 			return false;
 		}
 	}
-	
+		
 	public UserFile updatePassportFile(String userId, MultipartFile file) throws AppException {
 		if(file==null){
-			logger.debug("Update idcard for user {} with empty file", userId);
+			logger.debug("Update passport for user {} with empty file", userId);
 			throw new AppBadRequestException(ErrorCode.ERR6001_UPLOAD_EMPTY, "Permintaan tidak dapat diproses, periksa kembali berkas yang akan Anda unggah");
 		}
 		logger.info("Update idcard for user {} with content-type {} and size {}", userId, file.getContentType(), file.getSize());
@@ -121,7 +122,27 @@ public class UserService {
 		return userFile;
 	}
 	
-	
+	public UserFile updatePhotoFile(String userId, MultipartFile file) throws AppException {
+		if(file==null){
+			logger.debug("Update photo for user {} with empty file", userId);
+			throw new AppBadRequestException(ErrorCode.ERR6001_UPLOAD_EMPTY, "Permintaan tidak dapat diproses, periksa kembali berkas yang akan Anda unggah");
+		}
+		logger.info("Update photo for user {} with content-type {} and size {}", userId, file.getContentType(), file.getSize());
+		
+		UserFile userFile =  fileUploadService.save(userId, file, FileUseType.PHOTO);
+		if(userFile!=null && userFile.getFileId()!=null){
+			userMapper.updatePhotoFileIdByUserId(userId, userFile.getFileId());
+		}
+		return userFile;
+	}
+
+	public UserFile fetchPhotoFile(String userId) throws AppNotFoundException{
+		UserFile userFile =  fileUploadService.selectUserFileForPhotoByUserId(userId);
+		if(userFile == null){
+			throw new AppNotFoundException(ErrorCode.ERR2006_USER_FILE_NOT_FOUND, "User file not found");
+		}
+		return userFile;
+	}
 	public Boolean isUserProfileComplete(User user){
 		boolean result = true;
 		if(user == null 

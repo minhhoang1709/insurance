@@ -45,6 +45,8 @@ public class UserDto {
     private UserFileDto idCardFile;
     
     private UserFileDto passportFile;
+    
+    private UserFileDto photoFile;
 
 	public String getUserId() {
 		return userId;
@@ -140,6 +142,14 @@ public class UserDto {
 
 	public void setPassportFile(UserFileDto passportFile) {
 		this.passportFile = passportFile;
+	}
+
+	public UserFileDto getPhotoFile() {
+		return photoFile;
+	}
+
+	public void setPhotoFile(UserFileDto photoFile) {
+		this.photoFile = photoFile;
 	}
 
 	@Override

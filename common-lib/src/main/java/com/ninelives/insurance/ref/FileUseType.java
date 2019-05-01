@@ -10,7 +10,8 @@ public enum FileUseType {
 	CLAIM("CLA"), //CLAIM
 	TEMP("TMP"), //TEMP
 	PASSPORT("PAS"), //PASSPORT
-	ORDER("ORD") //Order Document (e.g. selfie photo)
+	ORDER("ORD"), //Order Document (e.g. selfie photo)
+	PHOTO("PHO") //Profile picture
 	;
 	
 	static final Map<String, FileUseType> lookup = new HashMap<>();

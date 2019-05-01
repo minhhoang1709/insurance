@@ -13,7 +13,7 @@ public interface UserMapper {
     @Select({
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
-        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, ",
+        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, photo_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no, ",
         "reg_channel, reg_source, verify_source, verify_date, is_email_verified, has_temp_password ",
         "from public.users",
@@ -24,7 +24,7 @@ public interface UserMapper {
     @Select({
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
-        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, ",
+        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, photo_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no, ",
         "reg_channel, reg_source, verify_source, verify_date, is_email_verified, has_temp_password ",
         "from public.users",
@@ -36,7 +36,7 @@ public interface UserMapper {
     @Select({
         "select",
         "user_id, password, email, google_refresh_token, google_auth_code, google_access_token, ",
-        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, ",
+        "fcm_token, name, gender, birth_date, birth_place, phone, address, id_card_file_id, passport_file_id, photo_file_id, ",
         "status, created_date, update_date, google_user_id, is_sync_gmail_enabled, is_notification_enabled, id_card_no, ",
         "reg_channel, reg_source, verify_source, verify_date, is_email_verified, has_temp_password ",
         "from public.users",
@@ -96,7 +96,15 @@ public interface UserMapper {
         "where user_id = #{userId,jdbcType=VARCHAR}"
     })
     int updatePassportFileIdByUserId(@Param("userId")String userId, @Param("fileId") Long fileId);
-    
+
+    @Update({
+        "update public.users",
+        "set photo_file_id = #{fileId,jdbcType=BIGINT},",
+          "update_date = now() ",
+        "where user_id = #{userId,jdbcType=VARCHAR}"
+    })
+    int updatePhotoFileIdByUserId(@Param("userId")String userId, @Param("fileId") Long fileId);
+        
     @Update({
         "update public.users",
         "set password = #{password,jdbcType=VARCHAR},",

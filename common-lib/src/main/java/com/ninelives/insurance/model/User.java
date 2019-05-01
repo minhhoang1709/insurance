@@ -46,6 +46,8 @@ public class User implements Serializable{
     private Long idCardFileId;
     
     private Long passportFileId;
+    
+    private Long photoFileId;
 
     private UserStatus status;
 
@@ -199,6 +201,14 @@ public class User implements Serializable{
 
 	public void setPassportFileId(Long passportFileId) {
 		this.passportFileId = passportFileId;
+	}
+	
+	public Long getPhotoFileId() {
+		return photoFileId;
+	}
+
+	public void setPhotoFileId(Long photoFileId) {
+		this.photoFileId = photoFileId;
 	}
 
 	public UserStatus getStatus() {

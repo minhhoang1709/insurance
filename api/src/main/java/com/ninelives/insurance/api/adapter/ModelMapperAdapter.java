@@ -224,6 +224,7 @@ public class ModelMapperAdapter {
 			dto.setGender(m.getGender());
 			dto.setIdCardFile(toUserFileDto((m.getIdCardFileId())));
 			dto.setPassportFile(toUserFileDto((m.getPassportFileId())));
+			dto.setPhotoFile(toUserFileDto(m.getPhotoFileId()));
 			dto.setPhone(m.getPhone());
 			dto.setAddress(m.getAddress());
 			
