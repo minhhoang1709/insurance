@@ -1135,5 +1135,19 @@ public class ApiOrderService {
 		}
 		
 	}
+	
+	public OrderDto getOrderDtoByOrderId(final String orderId, final String userId){
+		PolicyOrder policyOrder = orderService.getOrderByOrderId(orderId, userId);
+		return modelMapperAdapter.toDto(policyOrder);
+	}
+	
+	public PolicyOrder getPolicyOrderByOrderId(final String orderId, final String userId){
+		PolicyOrder policyOrder = orderService.getOrderByOrderId(orderId, userId);
+		return policyOrder;
+	}
+	
+	public void updatePolicyOrderId2c2p(PolicyOrder policyOrder){
+		orderService.updatePolicyOrderId2c2p(policyOrder);
+	}
 
 }

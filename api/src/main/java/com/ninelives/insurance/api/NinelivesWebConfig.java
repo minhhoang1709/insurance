@@ -35,7 +35,8 @@ public class NinelivesWebConfig extends WebMvcConfigurerAdapter{
 				"/payment/*",
 				"/error",
 				"/email/*",
-				"/api/users/passwordReset");
+				"/api/users/passwordReset",
+				"/api/resultPayment/2c2p");
 		registry.addInterceptor(localeInterceptor);
 	}
 	

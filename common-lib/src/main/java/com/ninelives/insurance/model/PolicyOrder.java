@@ -11,6 +11,8 @@ public class PolicyOrder implements Serializable{
 	private static final long serialVersionUID = 6041526120240739297L;
 
 	private String orderId;
+	
+	private String orderIdMap;
 
     private LocalDate orderDate;
 	
@@ -313,17 +315,26 @@ public class PolicyOrder implements Serializable{
 
 	@Override
 	public String toString() {
-		return "PolicyOrder [orderId=" + orderId + ", orderDate=" + orderDate + ", orderTime=" + orderTime + ", userId="
-				+ userId + ", coverageCategoryId=" + coverageCategoryId + ", hasBeneficiary=" + hasBeneficiary
-				+ ", periodId=" + periodId + ", policyNumber=" + policyNumber + ", policyStartDate=" + policyStartDate
-				+ ", policyEndDate=" + policyEndDate + ", basePremi=" + basePremi + ", totalPremi=" + totalPremi
-				+ ", productCount=" + productCount + ", hasVoucher=" + hasVoucher + ", providerOrderNumber="
-				+ providerOrderNumber + ", providerDownloadUrl=" + providerDownloadUrl + ", status=" + status
-				+ ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", updateDate=" + updateDate
-				+ ", coverageCategory=" + coverageCategory + ", policyOrderUsers=" + policyOrderUsers
-				+ ", policyOrderProducts=" + policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary
-				+ ", policyOrderFamilies=" + policyOrderFamilies + ", period=" + period + ", payment=" + payment
-				+ ", policyOrderVoucher=" + policyOrderVoucher + ", policyOrderDocuments=" + policyOrderDocuments + "]";
+		return "PolicyOrder [orderId=" + orderId + ", orderIdMap=" + orderIdMap + ", orderDate=" + orderDate
+				+ ", orderTime=" + orderTime + ", userId=" + userId + ", coverageCategoryId=" + coverageCategoryId
+				+ ", hasBeneficiary=" + hasBeneficiary + ", periodId=" + periodId + ", policyNumber=" + policyNumber
+				+ ", policyStartDate=" + policyStartDate + ", policyEndDate=" + policyEndDate + ", basePremi="
+				+ basePremi + ", totalPremi=" + totalPremi + ", productCount=" + productCount + ", hasVoucher="
+				+ hasVoucher + ", providerOrderNumber=" + providerOrderNumber + ", providerDownloadUrl="
+				+ providerDownloadUrl + ", status=" + status + ", isFamily=" + isFamily + ", isHide=" + isHide
+				+ ", createdDate=" + createdDate + ", updateDate=" + updateDate + ", coverageCategory="
+				+ coverageCategory + ", policyOrderUsers=" + policyOrderUsers + ", policyOrderProducts="
+				+ policyOrderProducts + ", policyOrderBeneficiary=" + policyOrderBeneficiary + ", policyOrderFamilies="
+				+ policyOrderFamilies + ", period=" + period + ", payment=" + payment + ", policyOrderVoucher="
+				+ policyOrderVoucher + ", policyOrderDocuments=" + policyOrderDocuments + "]";
+	}
+
+	public String getOrderIdMap() {
+		return orderIdMap;
+	}
+
+	public void setOrderIdMap(String orderIdMap) {
+		this.orderIdMap = orderIdMap;
 	}
 
 	

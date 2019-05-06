@@ -254,6 +254,7 @@ public class ModelMapperAdapter {
 			dto.setStatus(m.getStatus());
 			dto.setIsFamily(m.getIsFamily());
 			dto.setCreatedDate(m.getCreatedDate());
+			dto.setOrderIdMap(m.getOrderIdMap());
 			//dto.setTitle(this.policyTitle);
 			//dto.setImgUrl(this.policyImgUrl);
 			

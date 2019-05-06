@@ -483,4 +483,15 @@ public class OrderService {
 		}		
 	}
 	
+	public PolicyOrder getOrderByOrderId(String orderId, String userId) {
+		PolicyOrder policyOrder = policyOrderMapper.selectByOrderIdAndUserId(orderId, userId);
+		return policyOrder;
+
+	}
+	
+	public void updatePolicyOrderId2c2p(PolicyOrder policyOrder){
+		policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(policyOrder);
+	}
+	
+	
 }

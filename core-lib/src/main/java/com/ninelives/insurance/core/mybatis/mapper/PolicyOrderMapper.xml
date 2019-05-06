@@ -383,6 +383,9 @@
       <if test="providerDownloadUrl != null">
         provider_download_url = #{providerDownloadUrl,jdbcType=VARCHAR},
       </if>
+      <if test="orderIdMap != null">
+        order_id_map = #{orderIdMap,jdbcType=VARCHAR},
+      </if>
       <if test="updateDate != null">
       	update_date= #{updateDate,jdbcType=DATE},
       </if>

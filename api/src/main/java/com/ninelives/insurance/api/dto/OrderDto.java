@@ -12,6 +12,8 @@ import com.ninelives.insurance.ref.PolicyStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDto {
 	private String orderId;
+	
+	private String orderIdMap;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime orderDate;
@@ -238,14 +240,22 @@ public class OrderDto {
 
 	@Override
 	public String toString() {
-		return "OrderDto [orderId=" + orderId + ", orderDate=" + orderDate + ", title=" + title + ", subtitle="
-				+ subtitle + ", imgUrl=" + imgUrl + ", policyNumber=" + policyNumber + ", policyStartDate="
-				+ policyStartDate + ", policyEndDate=" + policyEndDate + ", totalPremi=" + totalPremi
-				+ ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount + ", status=" + status
-				+ ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", products=" + products
+		return "OrderDto [orderId=" + orderId + ", orderIdMap=" + orderIdMap + ", orderDate=" + orderDate + ", title="
+				+ title + ", subtitle=" + subtitle + ", imgUrl=" + imgUrl + ", policyNumber=" + policyNumber
+				+ ", policyStartDate=" + policyStartDate + ", policyEndDate=" + policyEndDate + ", totalPremi="
+				+ totalPremi + ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount + ", status="
+				+ status + ", isFamily=" + isFamily + ", createdDate=" + createdDate + ", products=" + products
 				+ ", coverageCategory=" + coverageCategory + ", period=" + period + ", user=" + user + ", voucher="
 				+ voucher + ", payment=" + payment + ", families=" + families + ", orderDocuments=" + orderDocuments
 				+ "]";
+	}
+
+	public String getOrderIdMap() {
+		return orderIdMap;
+	}
+
+	public void setOrderIdMap(String orderIdMap) {
+		this.orderIdMap = orderIdMap;
 	}
 
     

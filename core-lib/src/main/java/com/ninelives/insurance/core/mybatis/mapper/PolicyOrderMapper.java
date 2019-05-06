@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.ninelives.insurance.model.PolicyOrder;
@@ -91,4 +92,14 @@ public interface PolicyOrderMapper {
 		"where order_id=#{orderId,jdbcType=VARCHAR}" 
 	})
 	int updateIsHideByOrderId(PolicyOrder record);
+
+	@Select({
+     "select",
+      "order_id, order_id_map, order_date, user_id, policy_number, policy_start_date, policy_end_date, ",
+      "period_id, total_premi, has_beneficiary, product_count, status, created_date, update_date",
+      "from public.policy_order",
+      "where order_id = #{orderId,jdbcType=VARCHAR}",
+      "and user_id = #{userId,jdbcType=VARCHAR}"
+	})
+	PolicyOrder selectByOrderIdAndUserId(@Param ("orderId") String orderId,@Param ("userId") String userId);
 }
