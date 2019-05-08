@@ -315,7 +315,7 @@ public class OrderService {
 	}
 	
 	public PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
-		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
+		PolicyOrder policyOrder = policyOrderMapper.selectByOrderIdAndUserId(userId, orderId);
 		postRetrieval(policyOrder,LocalDate.now());
 		return policyOrder;
 	}
