@@ -2,6 +2,7 @@ package com.ninelives.insurance.payment.mybatis.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.ninelives.insurance.model.PolicyOrder;
@@ -18,5 +19,9 @@ public interface PolicyOrderMapper {
         "where order_id = #{orderId,jdbcType=VARCHAR}"
     })
 	int updateStatusByOrderId(PolicyOrder order);
+	
+	
+	PolicyOrder selectByOrderIdMap(@Param ("orderIdMap") String orderIdMap);
+	
 	
 }

@@ -97,5 +97,14 @@
     	<include refid="NestedPolicyOrderTableJoinList"/>
     where a.order_id=#{orderId,jdbcType=VARCHAR}    	
   </select>
+  
+   <select id="selectByOrderIdMap" resultMap="NestedPolicyOrderResultMap">
+  	select
+  		<include refid="NestedPolicyOrderColumnList"/>
+    from
+    	public.policy_order as a    	
+    	<include refid="NestedPolicyOrderTableJoinList"/>
+    where a.order_id_map=#{orderIdMap,jdbcType=VARCHAR}    	
+  </select>
 
 </mapper>
