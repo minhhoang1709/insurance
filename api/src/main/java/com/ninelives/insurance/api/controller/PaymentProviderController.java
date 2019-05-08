@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,29 +61,6 @@ public class PaymentProviderController {
 			HttpServletResponse response,
 			Model model ) throws AppException{
 		
-		JSONObject obj = new JSONObject();
-		try {
-			obj.put("request_timestamp", request.getParameter("request_timestamp"));
-			obj.put("merchant_id", request.getParameter("merchant_id"));
-			obj.put("currency", request.getParameter("currency"));
-			obj.put("order_id", request.getParameter("order_id"));
-			obj.put("amount", request.getParameter("amount"));
-			obj.put("invoice_no", request.getParameter("invoice_no"));
-			obj.put("transaction_ref", request.getParameter("transaction_ref"));
-			obj.put("approval_code", request.getParameter("approval_code"));
-			obj.put("eci", request.getParameter("eci"));
-			obj.put("transaction_datetime", request.getParameter("transaction_datetime"));
-			obj.put("payment_channel", request.getParameter("payment_channel"));
-			obj.put("payment_status", request.getParameter("payment_status"));
-			obj.put("channel_response_code", request.getParameter("channel_response_code"));
-			obj.put("channel_response_desc", request.getParameter("channel_response_desc"));
-			obj.put("masked_pan", request.getParameter("masked_pan"));
-			obj.put("payment_scheme", request.getParameter("payment_scheme"));
-			obj.put("hash_value", request.getParameter("hash_value"));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		String baseString = request.getParameter("version")+request.getParameter("request_timestamp")+
 				request.getParameter("merchant_id")+request.getParameter("order_id")+
@@ -108,7 +83,6 @@ public class PaymentProviderController {
 		String hash_value = request.getParameter("hash_value");
 		
 		if(Payment2c2pUtil.checkSignature(key,hash_value,baseString)){
-			model.addAttribute("responsePayment", obj );
 			StringBuffer sbHtml = new StringBuffer();
 			sbHtml.append("<html>");
 			sbHtml.append("<head>");
@@ -160,7 +134,6 @@ public class PaymentProviderController {
 					}
 					else{
 						orderId = String.valueOf(System.currentTimeMillis()/1000L);
-						
 						PolicyOrder policyOrder = apiOrderService.getPolicyOrderByOrderId(order_Id, authUserId);
 						policyOrder.setOrderIdMap(orderId);
 						apiOrderService.updatePolicyOrderId2c2p(policyOrder);
@@ -173,6 +146,8 @@ public class PaymentProviderController {
 			String paymentDescription = "9Lives Payment Premi"; //
 			String valueToDigest =version + merchantId + paymentDescription + orderId +
 					currency + amount + resultUrl1 + resultUrl2;
+			
+			logger.info("value to digest : "+valueToDigest);
 			
 			Map<String, String> sPara = new HashMap<String, String>();
 			sPara.put("version", version);
@@ -230,6 +205,8 @@ public class PaymentProviderController {
 	        sbHtml.append("<script>document.forms['paysubmit'].submit();</script></div>");
 
 		}
+		
+		logger.info("Html request : "+sbHtml.toString());
 		
 		return sbHtml.toString();
 	

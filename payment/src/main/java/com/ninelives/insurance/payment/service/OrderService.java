@@ -36,6 +36,12 @@ public class OrderService {
 	}
 	
 	
+	public PolicyOrder fetchOrderByOrderIdMap(final String orderIdMap){
+		PolicyOrder policyOrder = policyOrderMapper.selectByOrderIdMap(orderIdMap);
+		postRetrieval(policyOrder,LocalDate.now());
+		return policyOrder;
+	}
+	
 	protected void postRetrieval(PolicyOrder policyOrder, LocalDate today){
 		if(policyOrder!=null){
 			mapPolicyOrderStatus(policyOrder,today);

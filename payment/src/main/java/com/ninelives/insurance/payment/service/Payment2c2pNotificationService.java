@@ -56,13 +56,13 @@ public class Payment2c2pNotificationService {
 		LocalDateTime now = LocalDateTime.now();
 		logger.info("Start process notification notif:<{}> ", request);
 		
-		String orderId = request.getParameter("order_id");
+		String orderIdMap = request.getParameter("order_id");
 		String statusCode =  String.valueOf(response.getStatus());
 		String channelResponseCode = request.getParameter("channel_response_code");
 		String paymentType = getPaymentType(request.getParameter("payment_channel"));
 		String transactionStatus = getPaymentStatusResponseDescription(request.getParameter("payment_status"));
 	    
-		if(request==null || StringUtils.isEmpty(orderId)){
+		if(request==null || StringUtils.isEmpty(orderIdMap)){
 			logger.error("Receive empty ResponsePayment 2c2p");
 			throw new PaymentNotificationBadRequestException(ErrorCode.ERR8200_PAYMENT_NOTIF_GENERIC_ERROR, "Receive invalid data");
 		}
@@ -92,30 +92,30 @@ public class Payment2c2pNotificationService {
 			throw new PaymentNotificationNotAuthorizedException(ErrorCode.ERR8201_PAYMENT_NOTIF_SIGNATURE_INVALID, "Signature doesnot match");
 		}
 		
-		final PolicyOrder order = orderService.fetchOrderByOrderId(orderId);		
+		final PolicyOrder order = orderService.fetchOrderByOrderIdMap(orderIdMap);		
 		//logger.debug("order is <{}>", order);
 		
-		if(order==null||order.getPayment()==null){
+		if(order==null){
 			logger.error("Error process notification notif:<{}> with exception: order not found", request);
 			throw new PaymentNotificationBadRequestException(ErrorCode.ERR8202_PAYMENT_NOTIF_ORDER_NOT_FOUND, "Order or payment not found");
 		}
 
 
 		PaymentNotificationLog notifLog = new PaymentNotificationLog();
-		//notifLog.setTransactionId(request.getTransactionId());
+		notifLog.setTransactionId(request.getParameter("transaction_ref"));
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); 
 		LocalDateTime transactionDateTime = LocalDateTime.parse(request.getParameter("transaction_datetime"), formatter);
 		notifLog.setTransactionTime(transactionDateTime);
 		
-		notifLog.setTransactionStatus(request.getParameter("payment_status"));
+		notifLog.setTransactionStatus(transactionStatus);
 		notifLog.setStatusCode(statusCode);
 		notifLog.setStatusMessage("2c2p payment notification");
-		notifLog.setOrderId(orderId);
+		notifLog.setOrderId(order.getOrderId());
 		//notifLog.setPaymentSeq(request.getPaymentSeq());
 		notifLog.setPaymentType(paymentType);
 		//notifLog.setPaymentCode(request.getPaymentCode());
-		notifLog.setGrossAmount(request.getParameter("amount"));
+		notifLog.setGrossAmount(getAmountString(request.getParameter("amount")));
 		//notifLog.setFraudStatus(request.getFraudStatus());
 		//notifLog.setOtherProperties(request.hasUnknowProperties()?request.getOther().toString():"");
 		
@@ -254,6 +254,13 @@ public class Payment2c2pNotificationService {
 	}
 	
 	
+	private String getAmountString(String amount) {
+		String rValue="";
+		int rAmount = Integer.parseInt(amount);
+		rValue = String.valueOf(rAmount);
+		return rValue;
+	}
+
 	public static boolean checkSignature( final String queryKey, 
 			final String subject, String baseString ){ 
 		boolean rValue=false;
