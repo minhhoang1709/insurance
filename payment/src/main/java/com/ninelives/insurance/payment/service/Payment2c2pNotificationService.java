@@ -93,7 +93,7 @@ public class Payment2c2pNotificationService {
 		}
 		
 		final PolicyOrder order = orderService.fetchOrderByOrderIdMap(orderIdMap);		
-		//logger.debug("order is <{}>", order);
+		logger.debug("order is <{}>", order.toString());
 		
 		if(order==null){
 			logger.error("Error process notification notif:<{}> with exception: order not found", request);
@@ -112,20 +112,15 @@ public class Payment2c2pNotificationService {
 		notifLog.setStatusCode(statusCode);
 		notifLog.setStatusMessage("2c2p payment notification");
 		notifLog.setOrderId(order.getOrderId());
-		//notifLog.setPaymentSeq(request.getPaymentSeq());
 		notifLog.setPaymentType(paymentType);
-		//notifLog.setPaymentCode(request.getPaymentCode());
 		notifLog.setGrossAmount(getAmountString(request.getParameter("amount")));
-		//notifLog.setFraudStatus(request.getFraudStatus());
-		//notifLog.setOtherProperties(request.hasUnknowProperties()?request.getOther().toString():"");
 		
-
+		
 		PolicyOrder orderUpdate = new PolicyOrder();
 		orderUpdate.setOrderId(order.getOrderId());
 		orderUpdate.setPayment(new PolicyPayment());
 		orderUpdate.getPayment().setOrderId(order.getOrderId());
 		orderUpdate.getPayment().setId(order.getPayment().getId());
-		//orderUpdate.getPayment().setNotifPaymentSeq(request.getPaymentSeq());
 		orderUpdate.getPayment().setPaymentType(paymentType);
 		orderUpdate.getPayment().setProviderStatusCode(statusCode);
 		orderUpdate.getPayment().setProviderTransactionId(request.getParameter("transaction_ref"));
@@ -138,15 +133,7 @@ public class Payment2c2pNotificationService {
 				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error duplicate notif", request, order.getPayment());
 				notifLog.setProcessingStatus(PaymentNotificationProcessStatus.DUPLICATE);
 				isValidForProcessing = false;
-			}else if(order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)){
-				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error success but receive another notif", request, order.getPayment());
-				notifLog.setProcessingStatus(PaymentNotificationProcessStatus.OUT_OF_ORDER);
-				isValidForProcessing = false;
 			}
-		}else if(order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)){
-			logger.info("Process notification notif:<{}> with retrieved payment <{}> result: error success but receive another notif", request, order.getPayment());
-			notifLog.setProcessingStatus(PaymentNotificationProcessStatus.OUT_OF_ORDER);
-			isValidForProcessing = false;
 		}				
 
 		//(capture, settlement, pending, cancel, expired) + (deny)
