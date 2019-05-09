@@ -175,12 +175,22 @@ public class TestController {
 //		return apiClaimService.requiredClaimDocumentDtos(dto, order);
 //	}
 	
+
 	@RequestMapping(value="/test/fullcoveragecategory/{coverageCategoryId}",
 			method={ RequestMethod.GET })
 	@ResponseBody
 	public CoverageCategory getCoverageCategory (@RequestAttribute ("authUserId") String authUserId,
 			@PathVariable("coverageCategoryId") String id){
 		return productService.fetchCoverageCategoryByCoverageCategoryId(id);
+	}
+	
+	@RequestMapping(value="/test/fullorderforinviter",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public List<PolicyOrder> getOrderForInviterPolicyStartDate(@RequestAttribute ("authUserId") String authUserId,
+			@RequestParam("coverageId") List<String> coverageIds
+			){
+		return policyOrderMapper.selectForInviterPolicyStartDateByCoverage(authUserId, coverageIds);
 	}
 	
 	@RequestMapping(value="/test/fullclaim/{claimId}",
@@ -599,12 +609,12 @@ public class TestController {
 //		fieldMap.put("policy_start_date","26/03/2019");
 //		fieldMap.put("policy_end_date","26/03/2020");
 //
-//		fieldMap.put("coverage_1","Tử vong do tai nạn");
-//		fieldMap.put("coverage_2","Thương tật do tai nạn");
-//		fieldMap.put("coverage_3","Nằm viện trên 3 ngày do tai nạn (tối đa 2 lần/năm)");
-//		fieldMap.put("coverage_4","Chi phí mai táng khi tử vong do tai nạn");
-//		fieldMap.put("coverage_5","Trợ cấp thu nhập do tử vong hoặc thương tật vĩnh viễn do tai nạn");
-//		fieldMap.put("coverage_6","Điều trị tai nạn tại phòng cấp cứu (tối đa 2 lần/năm)");
+//		fieldMap.put("coverage_1","Tá»­ vong do tai náº¡n");
+//		fieldMap.put("coverage_2","ThÆ°Æ¡ng táº­t do tai náº¡n");
+//		fieldMap.put("coverage_3","Náº±m viá»‡n trÃªn 3 ngÃ y do tai náº¡n (tá»‘i Ä‘a 2 láº§n/nÄƒm)");
+//		fieldMap.put("coverage_4","Chi phÃ­ mai tÃ¡ng khi tá»­ vong do tai náº¡n");
+//		fieldMap.put("coverage_5","Trá»£ cáº¥p thu nháº­p do tá»­ vong hoáº·c thÆ°Æ¡ng táº­t vÄ©nh viá»…n do tai náº¡n");
+//		fieldMap.put("coverage_6","Ä�iá»�u trá»‹ tai náº¡n táº¡i phÃ²ng cáº¥p cá»©u (tá»‘i Ä‘a 2 láº§n/nÄƒm)");
 //			
 //		fieldMap.put("limit_1","40.000.000");
 //		fieldMap.put("limit_2","40.000.000");
@@ -614,7 +624,7 @@ public class TestController {
 //		fieldMap.put("limit_6","1.000.000");
 //
 //		fieldMap.put("premi","12.345");
-//		fieldMap.put("period","1 năm");
+//		fieldMap.put("period","1 nÄƒm");
 //		
 //		try {
 //			pdfCreator.printFieldMap(fieldMap, "D:\\local\\sts\\9lives\\test\\pdfTest.pdf");

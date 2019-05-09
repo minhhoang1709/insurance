@@ -5,4 +5,5 @@ public class PackageType {
 	public static final String TYPE_PA_B2B = "PA_9LIVES_B2B";
 	public static final String TYPE_TRAVEL = "TRAVEL_9LIVES";
 	public static final String TYPE_SELFIE = "PA_9LIVES_SELFIE";
+	public static final String TYPE_SELFIE_B2B = "PA_9LIVES_SELFIE_B2B";
 }

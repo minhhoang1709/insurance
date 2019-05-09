@@ -206,6 +206,16 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 				}
 			}			
 			
+			if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
+					&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {
+				requestDto.getRequestParam().setPackageType(PackageType.TYPE_SELFIE_B2B);
+				if (order.getPolicyOrderVoucher().getVoucher().getCorporateClient() != null 
+						&& !StringUtils.isEmpty(
+						order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId())) {
+					requestDto.getRequestParam().setClientId(
+							order.getPolicyOrderVoucher().getVoucher().getCorporateClient().getCorporateClientProviderId());
+				}			
+			}
 		}else{
 			requestDto.getRequestParam().setProductCode(ProductCode.PA);
 			

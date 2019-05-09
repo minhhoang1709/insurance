@@ -41,6 +41,14 @@ public interface PolicyOrderMapper {
 			@Param ("dueOrderDate") LocalDate dueOrderDate,
 			@Param ("coverageIds") List<String> coverageIds);
 	
+	List<PolicyOrder> selectForInviterPolicyStartDateByCoverage(@Param ("userId")String userId, 
+			@Param ("coverageIds") List<String> coverageIds);
+	
+	@Deprecated
+	LocalDate selectMaxPolicyEndDateByCoverage(@Param ("userId") String userId, 
+			@Param ("policyEndDate") LocalDate policyEndDate,
+			@Param ("coverageIds") List<String> coverageIds);
+	
 	@Insert({
         "insert into public.policy_order (order_id, order_date, order_time, ",
         "user_id, coverage_category_id, ",
@@ -79,10 +87,6 @@ public interface PolicyOrderMapper {
 			@Param("offset") int offset, @Param("isHide") Boolean isHide);
 	
 	PolicyOrder selectWithBeneficiaryByUserIdAndOrderId(@Param("userId") String userId, @Param("orderId") String orderId);
-	
-	LocalDate selectMaxPolicyEndDateByCoverage(@Param ("userId") String userId, 
-			@Param ("policyEndDate") LocalDate policyEndDate,
-			@Param ("coverageIds") List<String> coverageIds);
 	
 	int updateStatusAndProviderResponseByOrderIdSelective(PolicyOrder record);
 	
