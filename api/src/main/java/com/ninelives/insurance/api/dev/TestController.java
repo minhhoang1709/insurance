@@ -129,6 +129,15 @@ public class TestController {
 //		return apiClaimService.requiredClaimDocumentDtos(dto, order);
 //	}
 	
+	@RequestMapping(value="/test/fullorderforinviter",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public List<PolicyOrder> getOrderForInviterPolicyStartDate(@RequestAttribute ("authUserId") String authUserId,
+			@RequestParam("coverageId") List<String> coverageIds
+			){
+		return policyOrderMapper.selectForInviterPolicyStartDateByCoverage(authUserId, coverageIds);
+	}
+	
 	@RequestMapping(value="/test/fullclaim/{claimId}",
 			method={ RequestMethod.GET })
 	@ResponseBody

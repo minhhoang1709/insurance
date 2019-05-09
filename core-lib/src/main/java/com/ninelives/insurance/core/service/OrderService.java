@@ -3,8 +3,10 @@ package com.ninelives.insurance.core.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -115,7 +117,44 @@ public class OrderService {
 		
 		return true;
 	}
+	/**
+	 * By selecting all order with conflicted coverage, keep list of order that is not terminated/expired/overdue.
+	 * Return max(policy_end_date from list of order)+1 as a starting policy start date for inviter.
+	 * 
+	 * If inviter has no 'active' order, return today+1 as a starting policy start date for inviter.
+	 * 
+	 * @param userId
+	 * @param coverageIds
+	 * @return
+	 */
+	public LocalDate resolveInviterPolicyStartDate(String userId, List<String> coverageIds, LocalDate today) {
+		List<PolicyOrder> orders = policyOrderMapper.selectForInviterPolicyStartDateByCoverage(userId, coverageIds);
+		
+		LocalDate maxPolicyEndDate = today;
+		
+		if(orders!=null && orders.size()>0) {
+			for(PolicyOrder po: orders){
+				mapPolicyOrderStatus(po, today);
+			}
 			
+			Optional<PolicyOrder> policyMaxEndDate = orders.stream()
+					.filter( order -> (order.getStatus().equals(PolicyStatus.SUBMITTED)
+							||order.getStatus().equals(PolicyStatus.INPAYMENT)
+							||order.getStatus().equals(PolicyStatus.PAID)
+							||order.getStatus().equals(PolicyStatus.APPROVED)
+							||order.getStatus().equals(PolicyStatus.ACTIVE)))
+					.max(Comparator.comparing(PolicyOrder::getPolicyEndDate));
+ 
+			if(policyMaxEndDate.isPresent()){
+				maxPolicyEndDate = policyMaxEndDate.get().getPolicyEndDate().plusDays(1);
+			}
+		}
+		
+		return maxPolicyEndDate;
+		
+	}
+	
+	@Deprecated
 	public LocalDate fetchMaxPolicyEndDateByCoverage(String userId, LocalDate policyEndDate,
 			List<String> coverageIds){
 		return policyOrderMapper.selectMaxPolicyEndDateByCoverage(userId, policyEndDate, coverageIds);

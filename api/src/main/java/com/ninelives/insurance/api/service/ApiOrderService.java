@@ -1002,13 +1002,14 @@ public class ApiOrderService {
 		inviterPolicy.setPolicyOrderVoucher(inviterVoucher);
 		
 		//get start date and end date			
-		LocalDate maxExistingPolicyEndDate = orderService.fetchMaxPolicyEndDateByCoverage(inviterUser.getUserId(), today, coverageIds);
-		LocalDate inviterPolicyStartDate = null;
-		if(maxExistingPolicyEndDate==null){
-			inviterPolicyStartDate = today;
-		}else{
-			inviterPolicyStartDate = maxExistingPolicyEndDate.plusDays(1);
-		}
+//		LocalDate maxExistingPolicyEndDate = orderService.fetchMaxPolicyEndDateByCoverage(inviterUser.getUserId(), today, coverageIds);
+//		LocalDate inviterPolicyStartDate = null;
+//		if(maxExistingPolicyEndDate==null){
+//			inviterPolicyStartDate = today;
+//		}else{
+//			inviterPolicyStartDate = maxExistingPolicyEndDate.plusDays(1);
+//		}
+		LocalDate inviterPolicyStartDate = orderService.resolveInviterPolicyStartDate(inviterUser.getUserId(), coverageIds, today);
 		LocalDate inviterPolicyEndDate = orderService.calculatePolicyEndDate(inviterPolicyStartDate, policyOrder.getPeriod());
 		
 		inviterPolicy.setPolicyStartDate(inviterPolicyStartDate);

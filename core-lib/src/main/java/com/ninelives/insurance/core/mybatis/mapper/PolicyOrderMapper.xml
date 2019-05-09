@@ -352,6 +352,18 @@
          </foreach>
   </select>
   
+  <select id="selectForInviterPolicyStartDateByCoverage" resultMap="NestedPolicyOrderResultMap">
+  	select a.order_id, a.order_date, a.policy_start_date, a.policy_end_date, a.status,
+  		b.coverage_id as order_product_coverage_id
+  	from public.policy_order as a, public.policy_order_product as b 
+  	where a.user_id=#{userId,jdbcType=VARCHAR}
+  	     and b.order_id=a.order_id
+  	     and b.coverage_id in
+  		 <foreach item="item" index="index" collection="coverageIds"
+      		open="(" separator="," close=")">#{item}
+         </foreach>
+  </select>
+  
   <update id="updateStatusAndProviderResponseByOrderIdSelective" parameterType="com.ninelives.insurance.model.PolicyOrder">
     update public.policy_order
     <set>
