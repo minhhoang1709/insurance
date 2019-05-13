@@ -175,6 +175,9 @@ public class PaymentProviderController {
 				policyPaymentMapper.updateChargeResponseById(payment);
 			}
 		
+		}else{
+			throw new AppBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
+					"Permintaan tidak dapat diproses, already paid");
 		}
 			
 		String amount = Payment2c2pUtil.zeroPad(11,String.valueOf(order.getTotalPremi()));
