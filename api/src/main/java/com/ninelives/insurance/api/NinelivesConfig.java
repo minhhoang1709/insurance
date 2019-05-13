@@ -42,20 +42,7 @@ public class NinelivesConfig extends WebMvcConfigurerAdapter{
 		return new NinelivesConfigProperties();
 	}
 	
-	/*
-	 * For debugging on development
-	 */
-	@Bean
-	@Profile("dev")
-	public CommonsRequestLoggingFilter requestLoggingFilter() {
-	    CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
-	    loggingFilter.setIncludeClientInfo(true);
-	    loggingFilter.setIncludeQueryString(true);
-	    loggingFilter.setIncludePayload(true);
-	    loggingFilter.setMaxPayloadLength(10000);
-	    return loggingFilter;
-	}
-	
+
 //	@Bean
 //	public Jackson2ObjectMapperBuilderCustomizer addUserFileToBase64JsonSerializer() {		
 //		return builder -> {
