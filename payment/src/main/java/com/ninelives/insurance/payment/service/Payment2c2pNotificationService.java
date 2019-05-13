@@ -143,6 +143,7 @@ public class Payment2c2pNotificationService {
 			if(isPaymentSuccess){
 				orderUpdate.getPayment().setStatus(PaymentStatus.SUCCESS);
 				orderUpdate.getPayment().setNotifSuccessTime(now);
+				orderUpdate.getPayment().setPaymentProviderCode("2c2p");
 				orderUpdate.setStatus(PolicyStatus.PAID);
 				logger.info("Process notification notif:<{}> with retrieved payment <{}> result: success", request, order.getPayment());
 			}else if(transactionStatus.equals("Pending")){			

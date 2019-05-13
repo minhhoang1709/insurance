@@ -47,7 +47,9 @@ public class PolicyPayment implements Serializable{
     private PaymentStatus status;
 
     private LocalDateTime updateDate;
-
+    
+    private String paymentProviderCode;
+    
     public String getId() {
         return id;
     }
@@ -229,7 +231,16 @@ public class PolicyPayment implements Serializable{
 				+ (notifFailedTime != null ? "notifFailedTime=" + notifFailedTime + ", " : "")
 				+ (notifExpiredTime != null ? "notifExpiredTime=" + notifExpiredTime + ", " : "")
 				+ (status != null ? "status=" + status + ", " : "")
-				+ (updateDate != null ? "updateDate=" + updateDate : "") + "]";
+				+ (updateDate != null ? "updateDate=" + updateDate : "")
+				+ (paymentProviderCode != null ? "paymentProviderCode=" + paymentProviderCode : "")+ "]";
+	}
+
+	public String getPaymentProviderCode() {
+		return paymentProviderCode;
+	}
+
+	public void setPaymentProviderCode(String paymentProviderCode) {
+		this.paymentProviderCode = paymentProviderCode;
 	}
     
 }
