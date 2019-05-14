@@ -1,7 +1,10 @@
 package com.ninelives.insurance.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ninelives.insurance.ref.CoverageCategoryType;
+import com.ninelives.insurance.ref.InsurerCode;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CoverageCategoryDto {
 	private String coverageCategoryId;
 
@@ -12,6 +15,8 @@ public class CoverageCategoryDto {
     private String imageUrl;
     
     private String recommendationImageUrl;
+    
+    private InsurerCode providerCode;
     
     private CoverageCategoryType type;
 
@@ -62,7 +67,13 @@ public class CoverageCategoryDto {
 	public void setType(CoverageCategoryType type) {
 		this.type = type;
 	}
-    
-	
+
+	public InsurerCode getProviderCode() {
+		return providerCode;
+	}
+
+	public void setProviderCode(InsurerCode providerCode) {
+		this.providerCode = providerCode;
+	}
     
 }
