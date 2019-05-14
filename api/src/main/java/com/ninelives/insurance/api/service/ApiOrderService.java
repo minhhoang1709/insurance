@@ -45,6 +45,7 @@ import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.trx.PolicyOrderTrxService;
+import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.CoverageOrderDocType;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
@@ -287,6 +288,7 @@ public class ApiOrderService {
 		//logger.debug("products is not empty? empty is {}, and the products <{}> and the size is {}",products.isEmpty(),products, products.size());
 		String periodId = products.get(0).getPeriodId();
 		String coverageCategoryId = products.get(0).getCoverage().getCoverageCategoryId();
+		CoverageCategory coverageCategory = productService.fetchCoverageCategoryByCoverageCategoryId(coverageCategoryId);
 				
 		if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
 				coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
@@ -401,7 +403,7 @@ public class ApiOrderService {
 			
 			final User existingUser = userService.fetchByUserId(userId);
 
-			boolean isExistingUserProfileCompleteForOrder = orderService.isUserProfileCompleteForOrder(existingUser);
+			boolean isExistingUserProfileCompleteForOrder = orderService.isUserProfileCompleteForOrder(existingUser, coverageCategory);
 			
 			//if it is international travel, then check for passport
 			if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)){
@@ -480,7 +482,7 @@ public class ApiOrderService {
 				newUserProfile.setAddress(submitOrderDto.getUser().getAddress());
 				newUserProfile.setPhone(modifiedPhone);
 				
-				if(!orderService.isUserProfileCompleteForOrder(newUserProfile)){
+				if(!orderService.isUserProfileCompleteForOrder(newUserProfile, coverageCategory)){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId, submitOrderDto);
 					throw new AppBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
 							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan.");

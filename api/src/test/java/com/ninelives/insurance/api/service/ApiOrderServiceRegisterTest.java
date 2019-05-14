@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -25,15 +26,19 @@ import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.core.trx.PolicyOrderTrxService;
 import com.ninelives.insurance.model.Coverage;
+import com.ninelives.insurance.model.CoverageCategory;
+import com.ninelives.insurance.model.Insurer;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.Gender;
+import com.ninelives.insurance.ref.InsurerCode;
 import com.ninelives.insurance.ref.PeriodUnit;
 
 @RunWith(SpringRunner.class)
 public class ApiOrderServiceRegisterTest {
+	CoverageCategory covCat;
 	
 	@Test(expected=AppException.class)
 	public void testExceptionEmptyParameter() throws AppException{
@@ -288,6 +293,7 @@ public class ApiOrderServiceRegisterTest {
 		
 		service.productService = Mockito.mock(ProductService.class);
 		when(service.productService.fetchProductByProductId(prodId)).thenReturn(prod);
+		when(service.productService.fetchCoverageCategoryByCoverageCategoryId(covCatId)).thenReturn(covCat);
 		
 		service.orderService = Mockito.mock(OrderService.class);
 		when(service.orderService.isPolicyEndDateWithinRange(orderDto.getPolicyStartDate().toLocalDate(),
@@ -336,7 +342,7 @@ public class ApiOrderServiceRegisterTest {
 		user2.setPhone("123");
 		
 		when(service.userService.fetchByUserId(user2.getUserId())).thenReturn(user2);
-		when(service.orderService.isUserProfileCompleteForOrder(user2)).thenReturn(true);
+		when(service.orderService.isUserProfileCompleteForOrder(user2, covCat)).thenReturn(true);
 		
 		exp = null;
 		try{ 
@@ -346,5 +352,10 @@ public class ApiOrderServiceRegisterTest {
 		}
 		assertNull(exp);
 	}
-		
+	@Before
+	public void before() {
+		covCat = new CoverageCategory();
+		covCat.setInsurer(new Insurer());
+		covCat.getInsurer().setCode(InsurerCode.ASWATA);
+	}
 }

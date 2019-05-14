@@ -36,6 +36,7 @@ import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.trx.PolicyOrderTrxService;
+import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
@@ -122,6 +123,8 @@ public class ApiOrderService {
 	
 		String periodId = products.get(0).getPeriodId();
 		String coverageCategoryId = products.get(0).getCoverage().getCoverageCategoryId();
+		CoverageCategory coverageCategory = productService.fetchCoverageCategoryByCoverageCategoryId(coverageCategoryId);
+		
 		int calculatedTotalPremi = 0;
 		int calculatedTotalBasePremi = 0;
 		boolean hasBeneficiary = false;
@@ -172,7 +175,7 @@ public class ApiOrderService {
 		boolean isAddressInfoUpdated = false;
 		
 		final User existingUser = userService.fetchByUserId(userId);
-		boolean isExistingUserProfileCompleteForOrder = orderService.isUserProfileCompleteForOrder(existingUser);
+		boolean isExistingUserProfileCompleteForOrder = orderService.isUserProfileCompleteForOrder(existingUser, coverageCategory);
 		
 		//verify age
 		LocalDate birthDate = existingUser.getBirthDate();
@@ -225,7 +228,7 @@ public class ApiOrderService {
 				newUserProfile.setAddress(registerResult.getUserDto().getAddress());
 				newUserProfile.setPhone(modifiedPhone);
 				
-				if(!orderService.isUserProfileCompleteForOrder(newUserProfile)){
+				if(!orderService.isUserProfileCompleteForOrder(newUserProfile, coverageCategory)){
 					logger.debug("Process order for {} with order {} with result: incomplete users profile", userId);
 					throw new AppBadRequestException(ErrorCode.ERR4010_ORDER_PROFILE_INVALID,
 							"Permintaan tidak dapat diproses, lengkapi data pribadi Anda untuk melanjutkan pemesanan.");

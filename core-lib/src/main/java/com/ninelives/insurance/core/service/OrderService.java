@@ -26,6 +26,7 @@ import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderProductMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderUsersMapper;
 import com.ninelives.insurance.model.Coverage;
+import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderBeneficiary;
@@ -41,6 +42,7 @@ import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.FileUseType;
+import com.ninelives.insurance.ref.InsurerCode;
 import com.ninelives.insurance.ref.PeriodUnit;
 import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.VoucherType;
@@ -286,18 +288,22 @@ public class OrderService {
 		return false;
 	}
 
-	public Boolean isUserProfileCompleteForOrder(User user){
-		boolean result = true;
+	public Boolean isUserProfileCompleteForOrder(User user, CoverageCategory covCat){
 		if(user == null 
 				|| StringUtils.isEmpty(user.getName()) 
 				|| user.getGender()==null
-				|| user.getBirthDate()==null
-				|| StringUtils.isEmpty(user.getBirthPlace())
+				|| user.getBirthDate()==null				
 				|| StringUtils.isEmpty(user.getPhone())		
 				){
-			result = false;
+			return false;
 		}
-		return result;
+		
+		if(covCat.getInsurer().getCode().equals(InsurerCode.ASWATA)
+				&& StringUtils.isEmpty(user.getBirthPlace())) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public Boolean hasPaidOrder(String userId){
