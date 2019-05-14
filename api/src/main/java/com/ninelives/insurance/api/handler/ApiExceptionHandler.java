@@ -5,6 +5,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,12 +26,17 @@ import com.ninelives.insurance.ref.ErrorCode;;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
+	private static final String MESSAGE_PREFIX = "message.error.";
+	
+	@Autowired MessageSource messageSource;
 	
 	@ExceptionHandler(AppNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public Map<String, ErrorDto> handleUserNotFoundException(HttpServletRequest request, Exception ex){
-		ErrorDto errorDto = new ErrorDto(HttpStatus.NOT_FOUND.value(), ((AppException) ex).getCode(), ex.getMessage());
+		ErrorCode errorCode = ((AppException) ex).getCode();
+		ErrorDto errorDto = new ErrorDto(HttpStatus.NOT_FOUND.value(), errorCode, messageSource.getMessage(
+				MESSAGE_PREFIX + errorCode, null, ex.getMessage(), LocaleContextHolder.getLocale()));
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
@@ -39,7 +47,9 @@ public class ApiExceptionHandler {
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ResponseBody
 	public Map<String, ErrorDto> handleNotAuthorizedException(HttpServletRequest request, Exception ex){
-		ErrorDto errorDto = new ErrorDto(HttpStatus.UNAUTHORIZED.value(), ((AppException) ex).getCode(), ex.getMessage());
+		ErrorCode errorCode = ((AppException) ex).getCode();
+		ErrorDto errorDto = new ErrorDto(HttpStatus.UNAUTHORIZED.value(), errorCode, messageSource.getMessage(
+				MESSAGE_PREFIX + errorCode, null, ex.getMessage(), LocaleContextHolder.getLocale()));
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
@@ -50,7 +60,9 @@ public class ApiExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public Map<String, ErrorDto> handleBadRequestException(HttpServletRequest request, Exception ex){
-		ErrorDto errorDto = new ErrorDto(HttpStatus.BAD_REQUEST.value(), ((AppException) ex).getCode(), ex.getMessage());
+		ErrorCode errorCode = ((AppException) ex).getCode();
+		ErrorDto errorDto = new ErrorDto(HttpStatus.BAD_REQUEST.value(), errorCode, messageSource.getMessage(
+				MESSAGE_PREFIX + errorCode, null, ex.getMessage(), LocaleContextHolder.getLocale()));
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
@@ -61,7 +73,9 @@ public class ApiExceptionHandler {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
 	public Map<String, ErrorDto> handleInternalServerErrorException(HttpServletRequest request, Exception ex){
-		ErrorDto errorDto = new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), ((AppException) ex).getCode(), ex.getMessage());
+		ErrorCode errorCode = ((AppException) ex).getCode();
+		ErrorDto errorDto = new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorCode, messageSource.getMessage(
+				MESSAGE_PREFIX + errorCode, null, ex.getMessage(), LocaleContextHolder.getLocale()));
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
@@ -75,7 +89,9 @@ public class ApiExceptionHandler {
 	@ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
 	@ResponseBody
 	public Map<String, ErrorDto> handleUpgradeRequiredException(HttpServletRequest request, Exception ex){
-		ErrorDto errorDto = new ErrorDto(HttpStatus.UPGRADE_REQUIRED.value(), ((AppException) ex).getCode(), ex.getMessage());
+		ErrorCode errorCode = ((AppException) ex).getCode();
+		ErrorDto errorDto = new ErrorDto(HttpStatus.UPGRADE_REQUIRED.value(), errorCode, messageSource.getMessage(
+				MESSAGE_PREFIX + errorCode, null, ex.getMessage(), LocaleContextHolder.getLocale()));
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
@@ -86,7 +102,9 @@ public class ApiExceptionHandler {
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ResponseBody
 	public Map<String, ErrorDto> handleConflictException(HttpServletRequest request, Exception ex){
-		ErrorDto errorDto = new ErrorDto(HttpStatus.CONFLICT.value(), ((AppException) ex).getCode(), ex.getMessage());
+		ErrorCode errorCode = ((AppException) ex).getCode();
+		ErrorDto errorDto = new ErrorDto(HttpStatus.CONFLICT.value(), errorCode, messageSource.getMessage(
+				MESSAGE_PREFIX + errorCode, null, ex.getMessage(), LocaleContextHolder.getLocale()));		
 		Map<String, ErrorDto> errorDtoResp = new HashMap<>();
 		errorDtoResp.put("error", errorDto);
 		
