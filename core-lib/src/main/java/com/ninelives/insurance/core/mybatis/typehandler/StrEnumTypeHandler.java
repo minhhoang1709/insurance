@@ -17,6 +17,7 @@ import com.ninelives.insurance.ref.CoverageCategoryType;
 import com.ninelives.insurance.ref.FamilyRelationship;
 import com.ninelives.insurance.ref.FileUseType;
 import com.ninelives.insurance.ref.Gender;
+import com.ninelives.insurance.ref.InsurerCode;
 import com.ninelives.insurance.ref.OrderDocUsageType;
 import com.ninelives.insurance.ref.PaymentChargeStatus;
 import com.ninelives.insurance.ref.PaymentStatus;
@@ -32,7 +33,8 @@ import com.ninelives.insurance.ref.UserTempPasswordStatus;
 @MappedTypes({ Gender.class, PeriodUnit.class, PolicyStatus.class, UserStatus.class, FileUseType.class,
 		UserFileStatus.class, BeneficiaryRelationship.class, PaymentStatus.class, PaymentChargeStatus.class,
 		CoverageCategoryType.class, FamilyRelationship.class, ClaimDocUsageType.class, OrderDocUsageType.class,
-		SignupVerificationType.class, UserSource.class, UserRegisterChannel.class, UserTempPasswordStatus.class })
+		SignupVerificationType.class, UserSource.class, UserRegisterChannel.class, UserTempPasswordStatus.class,
+		InsurerCode.class})
 public class StrEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 	private Class<E> type;
 
