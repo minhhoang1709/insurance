@@ -39,7 +39,7 @@ public class LocaleInterceptor extends HandlerInterceptorAdapter {
 			throws ServletException {
 
 		String localeStr = request.getHeader(getHeaderName());
-		logger.debug("hore, dapet string "+localeStr);
+		//logger.debug("hore, dapet string "+localeStr);
 		if (localeStr != null) {
 			LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
 			if (localeResolver == null) {
@@ -59,9 +59,9 @@ public class LocaleInterceptor extends HandlerInterceptorAdapter {
 				logger.debug("Ignoring invalid locale value [" + localeStr + "]: " + ex.getMessage());				
 			}
 		}
-		//test
-		logger.debug("hore, locale-resolver is: "+RequestContextUtils.getLocaleResolver(request).toString());
-		logger.debug("hore, locale is: "+RequestContextUtils.getLocale(request));
+		//
+		//logger.debug("hore, locale-resolver is: "+RequestContextUtils.getLocaleResolver(request).toString());
+		//logger.debug("hore, locale is: "+RequestContextUtils.getLocale(request));
 		//--
 		return true;
 	}

@@ -23,10 +23,14 @@ public class LocaleService {
 	private Map<String, Locale> localeByCountries;
 	
 	
+	public Locale defaultLocaleByCountry(String country) {
+		return localeByCountries.get(country);
+	}
+	
 	public Locale supportedLocale(String localeStr){
 		Locale locale = supportedLocales.get(localeStr);
 		if(locale == null){ //if supported language is not found, use the default language based on the country
-			locale = localeByCountries.get(parseLocaleValue(localeStr).getCountry());
+			locale = defaultLocaleByCountry(parseLocaleValue(localeStr).getCountry());
 		}
 		return locale;
 	}

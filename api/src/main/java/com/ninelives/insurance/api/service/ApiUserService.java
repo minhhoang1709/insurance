@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,7 @@ import com.ninelives.insurance.core.exception.AppConflictException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 import com.ninelives.insurance.core.exception.AppNotFoundException;
+import com.ninelives.insurance.core.service.LocaleService;
 import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.ResetPasswordService;
 import com.ninelives.insurance.core.service.SignupVerificationService;
@@ -51,6 +53,7 @@ public class ApiUserService {
 	
 	@Autowired NinelivesConfigProperties config;
 	
+	@Autowired LocaleService localeService;
 	@Autowired UserService userService;
 	@Autowired SignupVerificationService signupVerificationService;
 	@Autowired ResetPasswordService resetPasswordService;
@@ -137,7 +140,8 @@ public class ApiUserService {
 		logger.info("Start register by google-id, registration:<{}>", registrationDto);
 		
 		//verify google login
-		String verifyEmail = accountProvider.verifyEmail(registrationDto);
+		String verifyEmail = accountProvider.verifyEmail(registrationDto);		
+		
 		if(verifyEmail==null || !verifyEmail.equals(registrationDto.getGoogleEmail())){
 			logger.error("Register, registration:<{}>, error:<Fail to verify email>, exception:<{}>, email:<{}>",
 					registrationDto, ErrorCode.ERR3001_REGISTER_GOOGLE_FAIL, verifyEmail);
@@ -240,8 +244,10 @@ public class ApiUserService {
 		
 		if(isNew && !StringUtils.isEmpty(registrationDto.getFcmToken())){
 			FcmNotifMessageDto.Notification notifMessage = new FcmNotifMessageDto.Notification();
-			notifMessage.setTitle(messageSource.getMessage("message.notification.welcome.title", null, Locale.ROOT));
-			notifMessage.setBody(messageSource.getMessage("message.notification.welcome.body", new Object[]{"9Lives"}, Locale.ROOT));
+			notifMessage.setTitle(messageSource.getMessage("message.notification.welcome.title", null,
+					localeService.defaultLocaleByCountry(LocaleContextHolder.getLocale().getCountry())));
+			notifMessage.setBody(messageSource.getMessage("message.notification.welcome.body", new Object[]{"9Lives"}, 
+					localeService.defaultLocaleByCountry(LocaleContextHolder.getLocale().getCountry())));
 			
 			try {
 				notificationService.sendFcmNotification(user.getUserId(), user.getFcmToken(), notifMessage);
