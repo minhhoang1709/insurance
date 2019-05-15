@@ -8,5 +8,7 @@ public class AppConflictException extends AppException {
 	public AppConflictException(ErrorCode code, String message) {
 		super(code, message);
 	}
-
+	public AppConflictException(ErrorCode code, String message, String[] messageParams) {
+		super(code, message, messageParams);
+	}
 }

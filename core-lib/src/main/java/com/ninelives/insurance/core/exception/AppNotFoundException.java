@@ -8,5 +8,8 @@ public class AppNotFoundException extends AppException {
 	public AppNotFoundException(ErrorCode code, String message) {
 		super(code, message);
 	}
-
+	
+	public AppNotFoundException(ErrorCode code, String message, String[] messageParams) {
+		super(code, message, messageParams);
+	}
 }

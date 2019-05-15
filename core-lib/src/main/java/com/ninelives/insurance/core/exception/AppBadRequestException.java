@@ -9,5 +9,8 @@ public class AppBadRequestException extends AppException {
 	public AppBadRequestException(ErrorCode code, String message) {
 		super(code, message);
 	}
-
+	
+	public AppBadRequestException(ErrorCode code, String message, String[] messageParams) {
+		super(code, message, messageParams);
+	}
 }

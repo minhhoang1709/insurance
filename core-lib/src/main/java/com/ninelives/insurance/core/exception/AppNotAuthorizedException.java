@@ -9,6 +9,9 @@ public class AppNotAuthorizedException extends AppException {
 	public AppNotAuthorizedException(ErrorCode code, String message) {
 		super(code, message);
 	}
-
+	
+	public AppNotAuthorizedException(ErrorCode code, String message, String[] messageParams) {
+		super(code, message, messageParams);
+	}
 
 }
