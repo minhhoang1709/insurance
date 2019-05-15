@@ -382,7 +382,7 @@ public class ApiOrderService {
 			if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
 					coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
 				logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
-				throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
+				throw new AppBadRequestException(ErrorCode.ERR4029_ORDER_TRAVEL_PRODUCT_CONFLICT,
 							"Anda sudah membeli jaminan ini untuk periode yang sama. Silahkan atur kembali periode pemakaian jaminan.");
 			}else{
 				logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
@@ -436,18 +436,26 @@ public class ApiOrderService {
 					if(age > config.getOrder().getTravelMaximumAge()||
 							age < config.getOrder().getTravelMinimumAge()){
 						logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
+//						throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+//								"Produk ini hanya tersedia untuk usia " + config.getOrder().getTravelMinimumAge()
+//										+ " sampai " + config.getOrder().getTravelMaximumAge() + " tahun.");
 						throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
-								"Produk ini hanya tersedia untuk usia " + config.getOrder().getTravelMinimumAge()
-										+ " sampai " + config.getOrder().getTravelMaximumAge() + " tahun.");
+								"Produk ini hanya tersedia untuk usia {0} sampai {1} tahun.",
+								new String[] { String.valueOf(config.getOrder().getTravelMinimumAge()), 
+										String.valueOf(config.getOrder().getTravelMaximumAge()) });
 					}
 				}else{
 					long age = ChronoUnit.YEARS.between(birthDate, today);
 					if(age > config.getOrder().getMaximumAge()||
 							age < config.getOrder().getMinimumAge()){
 						logger.debug("Process order for {} with order {} with result: age invalid", userId, submitOrderDto);
+//						throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+//								"Produk ini hanya tersedia untuk usia " + config.getOrder().getMinimumAge() + " sampai "
+//										+ config.getOrder().getMaximumAge() + " tahun.");
 						throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
-								"Produk ini hanya tersedia untuk usia " + config.getOrder().getMinimumAge() + " sampai "
-										+ config.getOrder().getMaximumAge() + " tahun.");
+								"Produk ini hanya tersedia untuk usia {0} sampai {1} tahun.",
+								new String[] { String.valueOf(config.getOrder().getMinimumAge()), 
+										String.valueOf(config.getOrder().getMaximumAge()) });
 					}
 				}
 			}

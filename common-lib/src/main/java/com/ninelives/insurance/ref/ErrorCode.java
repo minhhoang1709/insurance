@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum ErrorCode {
 	ERR1001_GENERIC_ERROR("ERR1001"),
 	ERR1002_STORAGE_ERROR("ERR1002"),
-	ERR1003_UPGRADE_REQUIRED("ERR1002"), //Client needs upgrade
+	ERR1003_UPGRADE_REQUIRED("ERR1003"), //Client needs upgrade
 	
 	ERR2001_LOGIN_FAILURE("ERR2001"),
 	ERR2002_NOT_AUTHORIZED("ERR2002"),
@@ -42,7 +42,7 @@ public enum ErrorCode {
 	ERR4006_ORDER_COVERAGE_MISMATCH("ERR4006"), // only one coverage category is allowed
 	ERR4007_ORDER_STARTDATE_INVALID("ERR4007"), //policy start-date is not valid
 	ERR4008_ORDER_PRODUCT_UNSUPPORTED("ERR4008"), //only day-based product is supported
-	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009"), //only limited number of same coverage can be active at the same time
+	ERR4009_ORDER_PRODUCT_CONFLICT("ERR4009"), //only limited number of same coverage can be active at the same time	
 	ERR4010_ORDER_PROFILE_INVALID("ERR4010"), //empty or incomplete profile
 	ERR4011_ORDER_VOUCHER_NOTFOUND("ERR4011"), //voucher not found, or incase of b2b it might already expired
 	ERR4012_ORDER_VOUCHER_NOTELIGIBLE("ERR4012"), //voucher is not eligible, user has non-paid trx
@@ -62,6 +62,7 @@ public enum ErrorCode {
 	ERR4026_ORDER_TRAVEL_STARTDATE_INVALID("ERR4026"), //policy start-date is not valid for travel
 	ERR4027_ORDER_PROFILE_PHONE_INVALID("ERR4027"),
 	ERR4028_ORDER_DOCUMENT_MANDATORY("ERR4028"), //required order document 
+	ERR4029_ORDER_TRAVEL_PRODUCT_CONFLICT("ERR4029"), //only limited number of same coverage can be active at the same time
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary
