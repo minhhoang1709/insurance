@@ -792,12 +792,21 @@ public class ApiOrderService {
 					|| age > config.getOrder().getFamilyAdultMaximumAge()) {
 				logger.debug("Process order for <{}> with order <{}> with result:<family invalid count>, exception:<{}> ",
 						userId, submitOrderDto, ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID);
+//				throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
+//						"Silakan cek kembali usia keluarga Anda. Kategori anak untuk usia "
+//								+ config.getOrder().getFamilyMinorMinimumAge() + " tahun hingga "
+//								+ config.getOrder().getFamilyMinorMaximumAge() + " tahun. Kategori dewasa untuk usia "
+//								+ config.getOrder().getFamilyAdultMinimumAge() + " tahun hingga "
+//								+ config.getOrder().getFamilyAdultMaximumAge() + " tahun");
+				
 				throw new AppBadRequestException(ErrorCode.ERR4023_ORDER_FAMILY_AGE_INVALID,
-						"Silakan cek kembali usia keluarga Anda. Kategori anak untuk usia "
-								+ config.getOrder().getFamilyMinorMinimumAge() + " tahun hingga "
-								+ config.getOrder().getFamilyMinorMaximumAge() + " tahun. Kategori dewasa untuk usia "
-								+ config.getOrder().getFamilyAdultMinimumAge() + " tahun hingga "
-								+ config.getOrder().getFamilyAdultMaximumAge() + " tahun");
+						"Silakan cek kembali usia keluarga Anda. Kategori anak untuk usia {0} tahun hingga {1} tahun. "
+						+ "Kategori dewasa untuk usia {2} tahun hingga {3} tahun", new String[] {
+								String.valueOf(config.getOrder().getFamilyMinorMinimumAge()),
+								String.valueOf(config.getOrder().getFamilyMinorMaximumAge()),
+								String.valueOf(config.getOrder().getFamilyAdultMinimumAge()),
+								String.valueOf(config.getOrder().getFamilyAdultMaximumAge())
+						});
 			}
 			
 			if(age < config.getOrder().getFamilyAdultMinimumAge()){
