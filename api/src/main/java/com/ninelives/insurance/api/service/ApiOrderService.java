@@ -559,7 +559,7 @@ public class ApiOrderService {
 				policyOrderUser.setBirthDate(existingUser.getBirthDate());
 				policyOrderUser.setBirthPlace(existingUser.getBirthPlace());				
 				if(isAddressInfoUpdated){
-					policyOrderUser.setPhone(submitOrderDto.getUser().getAddress());
+					policyOrderUser.setAddress(submitOrderDto.getUser().getAddress());
 				}else{
 					policyOrderUser.setAddress(existingUser.getAddress());
 				}
