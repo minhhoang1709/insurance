@@ -128,13 +128,6 @@ public class FileBatchUploadController {
 									   try{
 										     RegisterUsersResult registerResult = new RegisterUsersResult();
 										     registerResult = apiUserService.registerUserByWithoutEmailValidation(bfu);
-										     
-										     if(registerResult.getUserDto().getIdCardFile().getFileId()==null){
-													logger.debug("Process order for <{}> with result: id card not found", 
-															registerResult.getUserDto().getUserId());
-													throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
-															"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
-												}	
 										
 										     OrderDto orderDto = new OrderDto();
 										   	 orderDto = apiOrderService.submitOrder(registerResult, voucherCode);

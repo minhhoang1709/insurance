@@ -12,10 +12,12 @@ import org.springframework.util.StringUtils;
 import com.ninelives.insurance.apigateway.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.apigateway.dto.UserDto;
 import com.ninelives.insurance.apigateway.model.RegisterUsersResult;
+import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.model.BatchFileUpload;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.Gender;
 import com.ninelives.insurance.ref.UserRegisterChannel;
 import com.ninelives.insurance.ref.UserSource;
@@ -54,6 +56,12 @@ public class ApiUserService {
 		
 		if(user!=null){
 			isNew = false;
+			if(user.getIdCardFileId()==null){
+					logger.debug("Process order for <{}> with result: id card not found", user.getUserId());
+					throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
+							"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
+			}	
+			
 		}else{
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 			LocalDate ldBirthDate = LocalDate.parse(batchFileUpload.getTanggalLahir(), formatter);
