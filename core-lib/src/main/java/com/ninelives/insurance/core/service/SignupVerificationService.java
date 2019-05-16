@@ -70,7 +70,8 @@ public class SignupVerificationService {
 		return verification;
 	}
 
-	public SignupVerification signupRequest(String email, String password, String fcmToken, UserSource regSource, UserRegisterChannel regChannel) throws AppException{
+	public SignupVerification signupRequest(String email, String password, String fcmToken, UserSource regSource,
+			UserRegisterChannel regChannel, String languageCode) throws AppException {
 		String code = "email"+"-"+UUID.randomUUID().toString();
 		
 		SignupVerification signupVerification = new SignupVerification();
@@ -81,6 +82,7 @@ public class SignupVerificationService {
 		signupVerification.setVerificationType(SignupVerificationType.EMAIL_LINK);
 		signupVerification.setRegSource(regSource);
 		signupVerification.setRegChannel(regChannel);
+		signupVerification.setLanguageCode(languageCode);
 		signupVerification.setStatus(SignupVerificationStatus.ACTIVE);
 
 		signupVerification.setVerificationToken(buildToken(signupVerification)); 

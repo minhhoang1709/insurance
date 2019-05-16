@@ -15,18 +15,18 @@ public interface SignupVerificationMapper {
         "insert into public.signup_verification (email, ",
         "password, fcm_token, verification_code, ",
         "verification_type, reg_source, ",
-        "reg_channel, status)",
+        "reg_channel, language_code, status)",
         "values (#{email,jdbcType=VARCHAR}, ",
         "#{password,jdbcType=VARCHAR}, #{fcmToken,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, ",
         "#{verificationType,jdbcType=VARCHAR}, #{regSource,jdbcType=VARCHAR}, ",
-        "#{regChannel,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
+        "#{regChannel,jdbcType=VARCHAR}, #{languageCode,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})"
     })
     int insert(SignupVerification record);
 
     @Select({
         "select",
-        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
-        "verify_date",
+        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, language_code, status, ",
+        "created_date, verify_date",
         "from public.signup_verification",
         "where verification_code = #{verificationCode,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}"
     })
@@ -35,8 +35,8 @@ public interface SignupVerificationMapper {
     
     @Select({
         "select",
-        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
-        "verify_date",
+        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, language_code, status, ",
+        "created_date, verify_date",
         "from public.signup_verification",
         "where email = #{email,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}"
     })
@@ -45,8 +45,8 @@ public interface SignupVerificationMapper {
     
     @Select({
         "select",
-        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, status, created_date, ",
-        "verify_date",
+        "id, email, password, fcm_token, verification_code, verification_type, reg_source, reg_channel, language_code, status, ",
+        "created_date, verify_date",
         "from public.signup_verification",
         "where email = #{email,jdbcType=VARCHAR} and verification_type=#{verificationType,jdbcType=VARCHAR}",
         "and status=#{status,jdbcType=VARCHAR}",

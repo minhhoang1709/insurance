@@ -109,7 +109,8 @@ public class ApiUserService {
 		}
 		
 		SignupVerification newSignUpVerification = signupVerificationService.signupRequest(registrationDto.getEmail(), 
-				registrationDto.getPassword(), registrationDto.getFcmToken(), UserSource.EMAIL, UserRegisterChannel.ANDROID);
+				registrationDto.getPassword(), registrationDto.getFcmToken(), UserSource.EMAIL, UserRegisterChannel.ANDROID, 
+				LocaleContextHolder.getLocale().getLanguage());
 		
 		RegisterUsersResult registerResult = null;
 		if(newSignUpVerification!=null) {
@@ -419,7 +420,7 @@ public class ApiUserService {
 			user.setTempPassword(tempPassword);			
 		}
 	
-		resetPasswordService.resetPassword(user);
+		resetPasswordService.resetPassword(user, LocaleContextHolder.getLocale());
 	}
 	public void updatePassword(String authUserId, ChangePasswordDto changePasswordDto) throws AppException {
 		logger.info("Start password update, user:<{}>", authUserId);

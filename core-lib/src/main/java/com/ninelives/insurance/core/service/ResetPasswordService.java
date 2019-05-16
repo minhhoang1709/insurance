@@ -2,6 +2,7 @@ package com.ninelives.insurance.core.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class ResetPasswordService {
 
 	}
 
-	public void resetPassword(User user) throws AppException {	
+	public void resetPassword(User user, Locale locale) throws AppException {	
 		UserTempPassword oldTempPassword = user.getTempPassword();
 		
 		if(oldTempPassword==null) {
@@ -74,7 +75,7 @@ public class ResetPasswordService {
 		tempPassword.setRegisterDate(LocalDateTime.now());
 		
 		//send email
-		emailService.sendPasswordResetEmail(tempPassword);
+		emailService.sendPasswordResetEmail(tempPassword, locale);
 		
 		saveTempPassword(tempPassword, oldTempPassword!=null);
 		

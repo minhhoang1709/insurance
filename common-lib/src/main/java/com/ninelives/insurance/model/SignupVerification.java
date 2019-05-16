@@ -27,7 +27,9 @@ public class SignupVerification implements Serializable{
     
     private UserSource regSource;
     
-    private UserRegisterChannel regChannel;    
+    private UserRegisterChannel regChannel;
+    
+    private String languageCode;
 
     private LocalDateTime createdDate;
 
@@ -105,6 +107,14 @@ public class SignupVerification implements Serializable{
 
 	public void setRegChannel(UserRegisterChannel regChannel) {
 		this.regChannel = regChannel;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
 	}
 
 	public LocalDateTime getCreatedDate() {

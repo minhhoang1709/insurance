@@ -11,6 +11,7 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="reg_source" jdbcType="VARCHAR" property="regSource" />
     <result column="reg_channel" jdbcType="VARCHAR" property="regChannel" />
+    <result column="language_code" jdbcType="VARCHAR" property="languageCode" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="verify_date" jdbcType="TIMESTAMP" property="verifyDate" />
   </resultMap>

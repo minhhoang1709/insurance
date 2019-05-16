@@ -1,6 +1,8 @@
 package com.ninelives.insurance.core.provider.email;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -34,8 +36,8 @@ public class SendGridEmailProvider {
 	@Autowired EmailLogMapper emailLogMapper;
 	
 	String bearerToken;
-	String templateForVerification;
-	String templateForPasswordReset;
+	Map<String, String> templateForVerification;
+	Map<String, String> templateForPasswordReset;
 	String emailFrom;
 	
 	String verificationLink;
@@ -43,7 +45,7 @@ public class SendGridEmailProvider {
 	public void sendConfirmationEmail(SignupVerification signupVerification) throws EmailProviderException{
 		Mail mail = new Mail();
 		mail.setFrom(new Email(emailFrom));
-		mail.setTemplateId(templateForVerification);
+		mail.setTemplateId(templateForVerification.get(signupVerification.getLanguageCode()));
 
 		Personalization pern = new Personalization();
 		pern.addDynamicTemplateData("verificationLink",
@@ -86,10 +88,10 @@ public class SendGridEmailProvider {
 		
 	}
 	
-	public void sendPasswordResetEmail(UserTempPassword tempPassword) throws EmailProviderException{
+	public void sendPasswordResetEmail(UserTempPassword tempPassword, Locale locale) throws EmailProviderException{
 		Mail mail = new Mail();
 		mail.setFrom(new Email(emailFrom));
-		mail.setTemplateId(templateForPasswordReset);
+		mail.setTemplateId(templateForPasswordReset.get(locale.getLanguage()));
 
 		Personalization pern = new Personalization();
 		pern.addDynamicTemplateData("temporaryPassword", tempPassword.getClearTextPassword());

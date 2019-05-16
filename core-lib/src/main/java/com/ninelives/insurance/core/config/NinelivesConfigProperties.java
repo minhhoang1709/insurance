@@ -217,8 +217,8 @@ public class NinelivesConfigProperties {
 	}
 	public static class Email {
 		private String sendgridBearerToken = "";
-		private String sendgridTemplateForVerification= "";
-		private String sendgridTemplateForPasswordReset= "";
+		private Map<String, String> sendgridTemplateForVerification = new HashMap<>();
+		private Map<String, String> sendgridTemplateForPasswordReset = new HashMap<>();
 		private String sendgridEmailFrom = "noreply@9lives.me";
 		
 		private String signupVerificationLink = "https://api.9lives.me/email/verify?token=";
@@ -229,16 +229,16 @@ public class NinelivesConfigProperties {
 		public void setSendgridBearerToken(String sendgridBearerToken) {
 			this.sendgridBearerToken = sendgridBearerToken;
 		}
-		public String getSendgridTemplateForVerification() {
+		public Map<String, String> getSendgridTemplateForVerification() {
 			return sendgridTemplateForVerification;
 		}
-		public void setSendgridTemplateForVerification(String sendgridTemplateForVerification) {
+		public void setSendgridTemplateForVerification(Map<String, String> sendgridTemplateForVerification) {
 			this.sendgridTemplateForVerification = sendgridTemplateForVerification;
-		}		
-		public String getSendgridTemplateForPasswordReset() {
+		}
+		public Map<String, String> getSendgridTemplateForPasswordReset() {
 			return sendgridTemplateForPasswordReset;
 		}
-		public void setSendgridTemplateForPasswordReset(String sendgridTemplateForPasswordReset) {
+		public void setSendgridTemplateForPasswordReset(Map<String, String> sendgridTemplateForPasswordReset) {
 			this.sendgridTemplateForPasswordReset = sendgridTemplateForPasswordReset;
 		}
 		public String getSendgridEmailFrom() {

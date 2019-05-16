@@ -1,5 +1,7 @@
 package com.ninelives.insurance.core.service;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +26,9 @@ public class EmailService {
 		}
 	}
 	
-	public void sendPasswordResetEmail(UserTempPassword tempPassword) throws AppInternalServerErrorException{
+	public void sendPasswordResetEmail(UserTempPassword tempPassword, Locale locale) throws AppInternalServerErrorException{
 		try {
-			emailProvider.sendPasswordResetEmail(tempPassword);
+			emailProvider.sendPasswordResetEmail(tempPassword, locale);
 		} catch (EmailProviderException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
