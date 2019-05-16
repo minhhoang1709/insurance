@@ -48,8 +48,8 @@ public class SendGridEmailProvider {
 		mail.setTemplateId(templateForVerification.get(signupVerification.getLanguageCode()));
 
 		Personalization pern = new Personalization();
-		pern.addDynamicTemplateData("verificationLink",
-				config.getEmail().getSignupVerificationLink() + signupVerification.getVerificationToken());
+		pern.addDynamicTemplateData("verificationLink", String.format(config.getEmail().getSignupVerificationLink(),
+				signupVerification.getVerificationToken(), signupVerification.getLanguageCode()));
 		pern.addTo(new Email(signupVerification.getEmail()));
 
 		mail.addPersonalization(pern);

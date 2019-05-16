@@ -221,7 +221,7 @@ public class NinelivesConfigProperties {
 		private Map<String, String> sendgridTemplateForPasswordReset = new HashMap<>();
 		private String sendgridEmailFrom = "noreply@9lives.me";
 		
-		private String signupVerificationLink = "https://api.9lives.me/email/verify?token=";
+		private String signupVerificationLink = "https://api.9lives.me/email/verify?token=%s&lang=%s";
 		
 		public String getSendgridBearerToken() {
 			return sendgridBearerToken;
