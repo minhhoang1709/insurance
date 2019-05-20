@@ -93,7 +93,12 @@ public class FileBatchUploadController {
 			        	//br.readLine(); 
 			        	String lineToUpload=null;
 			        	while ((lineToUpload = br.readLine()) != null){
-			        
+			        		
+			        		String lastChar = lineToUpload.substring(lineToUpload.length()-1);
+			        		if(lastChar.equals(",")){
+			        			lineToUpload = lineToUpload+null;
+			        		}
+			        		
 			        		if(batchFileUploadValidation.validateFormatRow(lineToUpload)){
 			        			lineNum++;
 		        				HashMap<String, String> validationLine = validationRow(lineNum,lineToUpload);
@@ -239,15 +244,19 @@ public class FileBatchUploadController {
 		if(!batchFileUploadValidation.validateNumeric(column[5].trim())){
 			hm.put("ER006","Invalid Phone Number");
 		}
-		if(column[6].trim().length()!=16){
+		
+		if(column[6].trim()!=null && !column[6].isEmpty()){
+			if(column[6].trim().length()!=16){
 				hm.put("ER007","Invalid KTP Number");	
 			
-		}
-		else{
-			if(!batchFileUploadValidation.validateNumeric(column[6].trim())){
-				hm.put("ER007","Invalid KTP Number");	
+			}
+			else{
+				if(!batchFileUploadValidation.validateNumeric(column[6].trim())){
+					hm.put("ER007","Invalid KTP Number");	
+				}
 			}
 		}
+		
 		
 		if(!hm.isEmpty()){
 			rValue=hm;
