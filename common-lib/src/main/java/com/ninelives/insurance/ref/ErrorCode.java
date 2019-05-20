@@ -63,6 +63,8 @@ public enum ErrorCode {
 	ERR4027_ORDER_PROFILE_PHONE_INVALID("ERR4027"),
 	ERR4028_ORDER_DOCUMENT_MANDATORY("ERR4028"), //required order document 
 	ERR4029_ORDER_TRAVEL_PRODUCT_CONFLICT("ERR4029"), //only limited number of same coverage can be active at the same time
+	ERR4030_ORDER_PRODUCT_SINGLE_CONFLICT("ERR4030"), //separate error code (since custom message) if the limit is 1
+	ERR4031_ORDER_TRAVEL_PRODUCT_SINGLE_CONFLICT("ERR4031"), //separate error code (since custom message) if the limit is 1
 	
 	ERR4101_BENEFICIARY_INVALID("ERR4101"), //empty or invalid beneficiary data
 	ERR4102_BENEFICIARY_EXISTS("ERR4102"), //cannot insert another beneficiary
