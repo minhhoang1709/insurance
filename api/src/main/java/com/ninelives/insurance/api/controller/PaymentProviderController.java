@@ -116,7 +116,10 @@ public class PaymentProviderController {
 			sbHtml.append("<body>");
 			sbHtml.append("<h2>Payment Status : "+request.getParameter("payment_status")+"</h2>");
 			sbHtml.append("Order Id : "+request.getParameter("order_id")+"<p>");
-			sbHtml.append("<button class=\"button\" style=\"vertical-align:middle\"><span>Finish </span></button>");
+			
+			//String resultPay = request.getParameter("payment_status")=="0000"?"fail":"ok";
+			
+			sbHtml.append("<button onclick=\"location.href='/api/orders/"+request.getParameter("order_id")+"/payfinish'\"  class=\"button\" style=\"vertical-align:middle\"><span>Finish</span></button>");
 			sbHtml.append("</body>");
 			sbHtml.append("</html>");
 			
@@ -127,6 +130,20 @@ public class PaymentProviderController {
 		return "resultpaymentfail";
 	
 	}
+	
+	
+	
+	@RequestMapping(value="/orders/{orderId}/payfinish",method=RequestMethod.GET)
+	@ResponseBody
+	public String finish(
+			@PathVariable("orderId") String orderId,
+			Model model ) throws AppException{
+		
+		return "ok";
+		
+	
+	}
+	
 	
 	
 	@RequestMapping(value="/orders/{orderId}/pay",method={RequestMethod.GET})	
@@ -225,7 +242,7 @@ public class PaymentProviderController {
           "border-top: 16px solid #3498db;"+
           "width: 120px;"+
           "height: 120px;"+
-          "-webkit-animation: spin 2s linear infinite; /* Safari */"+
+          "-webkit-animation: spin 2s linear infinite; /* Safari */ "+
           "animation: spin 2s linear infinite;"+
         "}"+
         "@-webkit-keyframes spin {"+
