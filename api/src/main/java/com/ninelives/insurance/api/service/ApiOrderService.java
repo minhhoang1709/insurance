@@ -353,7 +353,13 @@ public class ApiOrderService {
 			if(calculatedTotalPremi < config.getOrder().getMinimumPayment()){
 				logger.debug("Process order for {} with order {} with result: exception minimum payment", userId, submitOrderDto);
 				throw new AppBadRequestException(ErrorCode.ERR4019_ORDER_PAYMENT_MINIMUM,
-							"Jumlah minimum transaksi adalah Rp. 5.000.");
+						"Jumlah minimum transaksi adalah Rp. {0}.",
+						new String[] { String.valueOf(config.getOrder().getMinimumPayment()) });
+				
+//				throw new AppBadRequestException(ErrorCode.ERR4018_ORDER_PROFILE_AGE_INVALID,
+//						"Produk ini hanya tersedia untuk usia {0} sampai {1} tahun.",
+//						new String[] { String.valueOf(config.getOrder().getTravelMinimumAge()), 
+//								String.valueOf(config.getOrder().getTravelMaximumAge()) });
 			}
 		}
 		
@@ -382,12 +388,24 @@ public class ApiOrderService {
 			if(coverageCategoryId.equals(CoverageCategoryId.TRAVEL_INTERNATIONAL)||
 					coverageCategoryId.equals(CoverageCategoryId.TRAVEL_DOMESTIC)){
 				logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
-				throw new AppBadRequestException(ErrorCode.ERR4029_ORDER_TRAVEL_PRODUCT_CONFLICT,
-							"Anda sudah membeli jaminan ini untuk periode yang sama. Silahkan atur kembali periode pemakaian jaminan.");
+				if(config.getOrder().getTravelPolicyConflictPeriodLimit()>1){
+					throw new AppBadRequestException(ErrorCode.ERR4029_ORDER_TRAVEL_PRODUCT_CONFLICT,
+							"Anda membeli jaminan yang sama lebih dari {0} kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.",
+							new String[] { String.valueOf(config.getOrder().getTravelPolicyConflictPeriodLimit()) });					
+				}else{
+					throw new AppBadRequestException(ErrorCode.ERR4031_ORDER_TRAVEL_PRODUCT_SINGLE_CONFLICT,
+							"Anda sudah membeli jaminan ini untuk periode yang sama. Silahkan atur kembali periode pemakaian jaminan.");					
+				}
 			}else{
 				logger.debug("Process order for {} with order {} with result: exception conflict coverage", userId, submitOrderDto);
-				throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
-							"Anda membeli jaminan yang sama lebih dari 3 kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.");
+				if(config.getOrder().getPolicyConflictPeriodLimit()>1){
+					throw new AppBadRequestException(ErrorCode.ERR4009_ORDER_PRODUCT_CONFLICT,
+							"Anda membeli jaminan yang sama lebih dari {0} kali untuk periode yang sama. Silakan atur kembali periode pemakaian jaminan.",
+							new String[] { String.valueOf(config.getOrder().getPolicyConflictPeriodLimit()) });
+				}else{
+					throw new AppBadRequestException(ErrorCode.ERR4030_ORDER_PRODUCT_SINGLE_CONFLICT,
+							"Anda sudah membeli jaminan ini untuk periode yang sama. Silahkan atur kembali periode pemakaian jaminan.");					
+				}
 				
 			}
 		}
