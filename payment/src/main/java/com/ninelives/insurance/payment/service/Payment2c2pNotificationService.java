@@ -24,6 +24,7 @@ import com.ninelives.insurance.payment.exception.PaymentNotificationException;
 import com.ninelives.insurance.payment.exception.PaymentNotificationNotAuthorizedException;
 import com.ninelives.insurance.payment.mybatis.mapper.PaymentNotificationLogMapper;
 import com.ninelives.insurance.payment.service.trx.PaymentNotificationServiceTrx;
+import com.ninelives.insurance.provider.payment.midtrans.dto.Payment2c2pNotificationDto;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.PaymentNotificationProcessStatus;
 import com.ninelives.insurance.ref.PaymentStatus;
@@ -52,6 +53,7 @@ public class Payment2c2pNotificationService {
 	
 	}
 	
+	@SuppressWarnings("unused")
 	public void processNotification(HttpServletRequest request, HttpServletResponse response) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
 		logger.info("Start process notification notif:<{}> ", request);
@@ -107,13 +109,15 @@ public class Payment2c2pNotificationService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); 
 		LocalDateTime transactionDateTime = LocalDateTime.parse(request.getParameter("transaction_datetime"), formatter);
 		notifLog.setTransactionTime(transactionDateTime);
-		
 		notifLog.setTransactionStatus(transactionStatus);
 		notifLog.setStatusCode(statusCode);
 		notifLog.setStatusMessage("2c2p payment notification");
 		notifLog.setOrderId(order.getOrderId());
 		notifLog.setPaymentType(paymentType);
 		notifLog.setGrossAmount(getAmountString(request.getParameter("amount")));
+		
+		Payment2c2pNotificationDto payment2c2pNotificationDto = requestToPayment2c2pNotificationDto(request);
+		notifLog.setOtherProperties(payment2c2pNotificationDto.toString());
 		
 		
 		PolicyOrder orderUpdate = new PolicyOrder();
@@ -126,7 +130,7 @@ public class Payment2c2pNotificationService {
 		orderUpdate.getPayment().setProviderTransactionId(request.getParameter("transaction_ref"));
 		orderUpdate.getPayment().setProviderTransactionStatus(transactionStatus);
 		orderUpdate.getPayment().setProviderTransactionTime(transactionDateTime);		
-
+		
 		boolean isValidForProcessing = true;
 		if(channelResponseCode.equals("9020")){
 			if(order.getPayment().getProviderTransactionStatus()!=null && order.getPayment().getProviderTransactionStatus().equals(transactionStatus)){
@@ -242,6 +246,47 @@ public class Payment2c2pNotificationService {
 	}
 	
 	
+	private Payment2c2pNotificationDto requestToPayment2c2pNotificationDto(
+			HttpServletRequest request) {
+		Payment2c2pNotificationDto rValue =  new Payment2c2pNotificationDto();
+			rValue.setVersion(request.getParameter("version"));
+			rValue.setRequestTimestamp(request.getParameter("request_timestamp"));
+			rValue.setMerchantId(request.getParameter("merchant_id"));
+			rValue.setOrderId(request.getParameter("order_id"));
+			rValue.setInvoiceNo(request.getParameter("invoice_no"));
+			rValue.setCurrency(request.getParameter("currency"));
+			rValue.setAmount(request.getParameter("amount"));
+			rValue.setTransactionRef(request.getParameter("transaction_ref"));
+			rValue.setApprovalCode(request.getParameter("approval_code"));
+			rValue.setEci(request.getParameter("eci"));
+			rValue.setTransactionDatetime(request.getParameter("transaction_datetime"));
+			rValue.setPaymentChannel(request.getParameter("payment_channel"));
+			rValue.setPaymentStatus(request.getParameter("payment_status"));
+			rValue.setChannelResponseCode(request.getParameter("channel_response_code"));
+			rValue.setChannelResponseDesc(request.getParameter("channel_response_desc"));
+			rValue.setMaskedPan(request.getParameter("masked_pan"));
+			rValue.setStoredCardUniqueId(request.getParameter("stored_card_unique_id"));
+			rValue.setBackendInvoice(request.getParameter("backend_invoice"));
+			rValue.setPaidChannel(request.getParameter("paid_channel"));
+			rValue.setPaidAgent(request.getParameter("paid_agent"));
+			rValue.setRecurringUniqueId(request.getParameter("recurring_unique_id"));
+			rValue.setUserDefined1(request.getParameter("user_defined_1"));
+			rValue.setUserDefined2(request.getParameter("user_defined_2"));
+			rValue.setUserDefined3(request.getParameter("user_defined_3"));
+			rValue.setUserDefined4(request.getParameter("user_defined_4"));
+			rValue.setUserDefined5(request.getParameter("user_defined_5"));
+			rValue.setBrowserInfo(request.getParameter("browser_info"));
+			rValue.setIppPeriod(request.getParameter("ippPeriod"));
+			rValue.setIppInterestRate(request.getParameter("ippInterestRate"));
+			rValue.setIppInterestType(request.getParameter("ippInterestType"));
+			rValue.setIppMerchantAbsorbRate(request.getParameter("ippMerchantAbsorbRate"));
+			rValue.setPaymentScheme(request.getParameter("payment_scheme"));
+			rValue.setProcessBy(request.getParameter("process_by"));
+			rValue.setHashValue(request.getParameter("hash_value"));
+		
+		return rValue;
+	}
+
 	private String getAmountString(String amount) {
 		String rValue="";
 		int rAmount = Integer.parseInt(amount);
