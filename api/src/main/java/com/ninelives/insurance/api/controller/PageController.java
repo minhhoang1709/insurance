@@ -25,4 +25,12 @@ public class PageController {
 		//System.out.println("forward to " +"forward:/html/privacy_"+locale+".html");
 		return "forward:/html/privacy_"+locale+".html";
 	}
+	
+	@RequestMapping(value="/faq",
+			method=RequestMethod.GET)	
+	public String pageFaq() {
+		String locale = LocaleContextHolder.getLocale().toString();
+		//System.out.println("forward to " +"forward:/html/privacy_"+locale+".html");
+		return "forward:/html/faq_"+locale+".html";
+	}
 }
