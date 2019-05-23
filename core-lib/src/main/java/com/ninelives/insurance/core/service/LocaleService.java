@@ -21,17 +21,45 @@ public class LocaleService {
 	private AppLocale localeConfig;
 	private Map<String, Locale> supportedLocales;
 	private Map<String, Locale> localeByCountries;
-	
+	private Locale defaultLocale;
 	
 	public Locale defaultLocaleByCountry(String country) {
 		return localeByCountries.get(country);
 	}
 	
+	public Locale getDefaultLocale(){
+		return defaultLocale;
+	}
+	
+	/**
+	 * Return null if supported locale is not found
+	 *  
+	 * @param localeStr
+	 * @return
+	 */
 	public Locale supportedLocale(String localeStr){
 		Locale locale = supportedLocales.get(localeStr);
 		if(locale == null){ //if supported language is not found, use the default language based on the country
 			locale = defaultLocaleByCountry(parseLocaleValue(localeStr).getCountry());
 		}
+		return locale;
+	}
+	
+	/**
+	 * Return default locale if supported locale is not found
+	 *  
+	 * @param localeStr
+	 * @return
+	 */
+	public Locale supportedLocale(String localeStr, Locale defaultIfNotFound){
+		Locale locale = supportedLocales.get(localeStr);
+		if(locale == null){ //if supported language is not found, use the default language based on the country
+			locale = defaultLocaleByCountry(parseLocaleValue(localeStr).getCountry());
+			if(locale == null){
+				locale = defaultIfNotFound;
+			}
+		}
+		
 		return locale;
 	}
 
@@ -58,5 +86,7 @@ public class LocaleService {
 			localeByCountries.put(k, supportedLocales.get(v));
 			//logger.debug("hore, country {} has local {}",k,v);
 		});
+		
+		defaultLocale = LocaleUtils.toLocale(config.getAppLocale().getDefaultLocale());
 	}
 }
