@@ -83,67 +83,39 @@ public class PaymentProviderController {
 			HttpServletResponse response,
 			Model model ) throws AppException{
 		
-		
-		String baseString = request.getParameter("version")+request.getParameter("request_timestamp")+
-				request.getParameter("merchant_id")+request.getParameter("order_id")+
-				request.getParameter("invoice_no")+
-				request.getParameter("currency")+request.getParameter("amount")+
-				request.getParameter("transaction_ref")+request.getParameter("approval_code")+
-				request.getParameter("eci")+request.getParameter("transaction_datetime")+
-				request.getParameter("payment_channel")+request.getParameter("payment_status")+
-				request.getParameter("channel_response_code")+request.getParameter("channel_response_desc")+
-				request.getParameter("masked_pan")+request.getParameter("stored_card_unique_id")+
-				request.getParameter("backend_invoice")+request.getParameter("paid_channel")+
-				request.getParameter("paid_agent")+request.getParameter("recurring_unique_id")+
-				request.getParameter("user_defined_1")+request.getParameter("user_defined_2")+
-				request.getParameter("user_defined_3")+request.getParameter("user_defined_4")+
-				request.getParameter("user_defined_5")+request.getParameter("browser_info")+
-				request.getParameter("ippPeriod")+request.getParameter("ippInterestType")+
-				request.getParameter("ippInterestRate")+request.getParameter("ippMerchantAbsorbRate")+
-				request.getParameter("payment_scheme")+request.getParameter("process_by");
-		
+		String baseString = Payment2c2pUtil.getBaseString(request); 
 		String hash_value = request.getParameter("hash_value");
+		String resultPay = Payment2c2pUtil.getPaymentStatusResponseDescription(request.getParameter("payment_status"));
+		String orderId2c2p = request.getParameter("order_id");
+		String contextPath = request.getContextPath();
 		
 		if(Payment2c2pUtil.checkSignature(key,hash_value,baseString)){
-			StringBuffer sbHtml = new StringBuffer();
-			sbHtml.append("<html>");
-			sbHtml.append("<head>");
-			sbHtml.append("<title>payment2c2p</title>");
-			sbHtml.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
-			sbHtml.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-			sbHtml.append(Payment2c2pUtil.getButtonHtml());
-			sbHtml.append("</head>");
-			sbHtml.append("<body>");
-			sbHtml.append("<h2>Payment Status : "+request.getParameter("payment_status")+"</h2>");
-			sbHtml.append("Order Id : "+request.getParameter("order_id")+"<p>");
-			
-			//String resultPay = request.getParameter("payment_status")=="0000"?"fail":"ok";
-			
-			sbHtml.append("<button onclick=\"location.href='/api/orders/"+request.getParameter("order_id")+"/payfinish'\"  class=\"button\" style=\"vertical-align:middle\"><span>Finish</span></button>");
-			sbHtml.append("</body>");
-			sbHtml.append("</html>");
-			
-			return sbHtml.toString();
+			if(resultPay.equals("success")){
+				String successPage = Payment2c2pUtil.getSuccessPage(orderId2c2p,contextPath);
+				return successPage;
+			}else{
+				String failedPage = Payment2c2pUtil.getFailedPage(orderId2c2p,contextPath,resultPay);
+				return failedPage;
+			}
 		}
 		
-		model.addAttribute("messageError", "Invalid Hash Value" );
-		return "resultpaymentfail";
-	
+		String invalidHashPage = Payment2c2pUtil.getInvalidHashPage(orderId2c2p,contextPath);
+		return invalidHashPage;
+		
 	}
-	
 	
 	
 	@RequestMapping(value="/orders/{orderId}/payfinish",method=RequestMethod.GET)
 	@ResponseBody
 	public String finish(
 			@PathVariable("orderId") String orderId,
+			@RequestParam(value="result",required=false) String result,
 			Model model ) throws AppException{
 		
-		return "ok";
+		return "";
 		
 	
 	}
-	
 	
 	
 	@RequestMapping(value="/orders/{orderId}/pay",method={RequestMethod.GET})	
@@ -162,8 +134,6 @@ public class PaymentProviderController {
 			throw new AppBadRequestException(ErrorCode.ERR2002_NOT_AUTHORIZED, "Authentication code not valid");
 		}
 			
-		
-		
 		logger.debug("GET PolicyOrder userid is {} with orderid {}", sessionData.getUserId(), order_Id);
 		StringBuffer sbHtml = new StringBuffer();
 		LocalDateTime now = LocalDateTime.now();
@@ -242,7 +212,7 @@ public class PaymentProviderController {
           "border-top: 16px solid #3498db;"+
           "width: 120px;"+
           "height: 120px;"+
-          "-webkit-animation: spin 2s linear infinite; /* Safari */ "+
+          "-webkit-animation: spin 2s linear infinite; /* Safari *//* "+
           "animation: spin 2s linear infinite;"+
         "}"+
         "@-webkit-keyframes spin {"+
@@ -336,8 +306,16 @@ public class PaymentProviderController {
 			}
 		
 		}else{
-			throw new AppBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
-					"Permintaan tidak dapat diproses, already paid");
+			if(order.getStatus().name().equals("OVERDUE")){
+				throw new AppBadRequestException(ErrorCode.ERR7011_CLAIM_EXPIRED_ORDER,
+						"Permintaan tidak dapat diproses, order expired");
+			}
+			else{
+				throw new AppBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
+						"Permintaan tidak dapat diproses, already paid");
+			}
+			
+			
 		}
 			
 		String amount = Payment2c2pUtil.zeroPad(11,String.valueOf(order.getTotalPremi()));
