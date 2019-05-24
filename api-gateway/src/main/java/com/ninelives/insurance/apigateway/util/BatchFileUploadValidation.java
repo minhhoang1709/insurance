@@ -90,7 +90,7 @@ public class BatchFileUploadValidation {
 
 	public static boolean validateFormatRow(String lineToUpload) {
 		boolean rValue=true;
-		String[] col=lineToUpload.split(",");
+		String[] col=lineToUpload.split(",",-1);
 		if(col.length!=7){
 			rValue=false;
 		}

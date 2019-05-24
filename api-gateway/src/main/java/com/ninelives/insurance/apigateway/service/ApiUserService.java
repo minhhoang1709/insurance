@@ -56,13 +56,19 @@ public class ApiUserService {
 		
 		if(user!=null){
 			isNew = false;
-			if(user.getIdCardFileId()==null){
-					logger.debug("Process order for <{}> with result: id card not found", user.getUserId());
+			if(user.getIdCardFileId()==null && StringUtils.isEmpty(user.getIdCardNo())){
+					logger.debug("Process order for <{}> with result: id card no and id card file not found", user.getUserId());
 					throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
-							"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
+							"Permintaan tidak dapat diproses, KTP dan ID Card file tidak ditemukan.");
 			}	
 			
 		}else{
+			if(StringUtils.isEmpty(batchFileUpload.getKtpNumber())) {
+				logger.debug("Process order for batch no <{}> with result: id card not found", batchFileUpload.getBatchNumber());
+				throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
+						"Permintaan tidak dapat diproses, unggah KTP Anda untuk melanjutkan pemesanan.");
+			}
+			
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 			LocalDate ldBirthDate = LocalDate.parse(batchFileUpload.getTanggalLahir(), formatter);
 

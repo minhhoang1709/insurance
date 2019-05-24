@@ -94,10 +94,10 @@ public class FileBatchUploadController {
 			        	String lineToUpload=null;
 			        	while ((lineToUpload = br.readLine()) != null){
 			        		
-			        		String lastChar = lineToUpload.substring(lineToUpload.length()-1);
-			        		if(lastChar.equals(",")){
-			        			lineToUpload = lineToUpload+null;
-			        		}
+//			        		String lastChar = lineToUpload.substring(lineToUpload.length()-1);
+//			        		if(lastChar.equals(",")){
+//			        			lineToUpload = lineToUpload+null;
+//			        		}
 			        		
 			        		if(batchFileUploadValidation.validateFormatRow(lineToUpload)){
 			        			lineNum++;
@@ -109,7 +109,7 @@ public class FileBatchUploadController {
 				        			fileUploadService.save(lineToUpload,  
 		        							batchNumber,validationLine, userName );
 			        			}catch(Exception e){
-			        				logger.info(e.getMessage());
+			        				logger.info("Exception on processing row <{}> with message <{}>", lineNum, e.getMessage());
 			        			}finally {
 			        				continue;
 			        			}
@@ -206,7 +206,7 @@ public class FileBatchUploadController {
 	@SuppressWarnings("static-access")
 	private HashMap<String, String> validationRow(int lineNum, String lineToUpload) {
 		HashMap<String, String> rValue=null;
-		String[] column = lineToUpload.split(",");
+		String[] column = lineToUpload.split(",",-1);
 		HashMap<String, String> hm = new HashMap<String, String>();
 		
 		if(column[0].trim().length()>0){
@@ -245,7 +245,7 @@ public class FileBatchUploadController {
 			hm.put("ER006","Invalid Phone Number");
 		}
 		
-		if(column[6].trim()!=null && !column[6].isEmpty()){
+		if(column[6]!=null && !column[6].isEmpty()){
 			if(column[6].trim().length()!=16){
 				hm.put("ER007","Invalid KTP Number");	
 			

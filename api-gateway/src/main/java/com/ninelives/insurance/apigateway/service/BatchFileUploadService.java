@@ -58,7 +58,7 @@ public class BatchFileUploadService {
 				isValidate="1";
 			}
 		    
-			String[] column = record.split(",");
+			String[] column = record.split(",", -1);
 				batchFileUpload.setBatchNumber(batchNumber);
 				batchFileUpload.setEmail(column[0]);
 				batchFileUpload.setNama(column[1]);
