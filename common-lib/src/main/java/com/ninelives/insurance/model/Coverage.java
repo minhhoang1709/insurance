@@ -49,10 +49,6 @@ public class Coverage implements Serializable{
     
     private CoverageOption coverageOption;
     
-    private Integer nameTranslationId;
-
-    private Integer recommendationTranslationId;
-
     public String getCoverageId() {
         return coverageId;
     }
@@ -219,22 +215,6 @@ public class Coverage implements Serializable{
 
 	public void setCoverageOption(CoverageOption coverageOption) {
 		this.coverageOption = coverageOption;
-	}
-
-	public Integer getNameTranslationId() {
-		return nameTranslationId;
-	}
-
-	public void setNameTranslationId(Integer nameTranslationId) {
-		this.nameTranslationId = nameTranslationId;
-	}
-
-	public Integer getRecommendationTranslationId() {
-		return recommendationTranslationId;
-	}
-
-	public void setRecommendationTranslationId(Integer recommendationTranslationId) {
-		this.recommendationTranslationId = recommendationTranslationId;
 	}
 
 	@Override

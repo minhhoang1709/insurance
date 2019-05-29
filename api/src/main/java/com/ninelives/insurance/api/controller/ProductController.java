@@ -30,12 +30,12 @@ public class ProductController {
 		return apiProductService.fetchProductDtosWithTypeNormalAndStatusActive(locale.getCountry(), locale.getLanguage());
 	}
 	
-	@RequestMapping(value="/coverages",
-			method=RequestMethod.GET)	
-	@ResponseBody
-	public List<CoverageDto> getCoverages(){
-		return apiProductService.fetchCoverageDtosWithStatusActive();
-	}
+//	@RequestMapping(value="/coverages",
+//			method=RequestMethod.GET)	
+//	@ResponseBody
+//	public List<CoverageDto> getCoverages(){
+//		return apiProductService.fetchCoverageDtosWithStatusActive();
+//	}
 	
 //	@RequestMapping(value="/periods",
 //			method=RequestMethod.GET)	

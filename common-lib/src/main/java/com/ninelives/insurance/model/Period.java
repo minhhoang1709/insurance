@@ -12,8 +12,6 @@ public class Period implements Serializable{
 
     private String name;
     
-    private Integer nameTranslationId;
-
     private Integer value;
     
     private Integer startValue;
@@ -43,14 +41,6 @@ public class Period implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-
-    public Integer getNameTranslationId() {
-		return nameTranslationId;
-	}
-
-	public void setNameTranslationId(Integer nameTranslationId) {
-		this.nameTranslationId = nameTranslationId;
-	}
 
 	public Integer getValue() {
         return value;

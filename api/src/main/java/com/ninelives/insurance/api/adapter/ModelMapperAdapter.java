@@ -140,8 +140,7 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new CoverageOptionDto();
 			dto.setCoverageOptionId(m.getId());
-			dto.setCoverageOptionName(translationService.translate(m.getCoverageOptionNameTranslationId(), languageCode,
-					m.getCoverageOptionName()));
+			dto.setCoverageOptionName(translationService.translateDefaultIfEmpty(m, languageCode).getCoverageOptionName());
 			dto.setCoverageOptionGroupId(m.getCoverageOptionGroupId());
 		}
 		return dto;
@@ -362,13 +361,13 @@ public class ModelMapperAdapter {
 	public CoverageCategoryDto toDto(CoverageCategory m){
 		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
 	}
-	public CoverageCategoryDto toDto(CoverageCategory m, String languageCode){
+	public CoverageCategoryDto toDto(CoverageCategory m, String languageCode){		
 		CoverageCategoryDto dto = null;
-		if(m!=null){
+		if(m!=null){			
 			dto = new CoverageCategoryDto();
 			dto.setCoverageCategoryId(m.getCoverageCategoryId());
-			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
-			dto.setRecommendation(translationService.translate(m.getRecommendationTranslationId(), languageCode, m.getRecommendation()));
+			dto.setName(translationService.translateDefaultIfEmpty(m, languageCode).getName());
+			dto.setRecommendation(translationService.translateDefaultIfEmpty(m, languageCode).getRecommendation());
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
 			dto.setRecommendationImageUrl(this.coverageImgUrlPath+"recommend"+m.getCoverageCategoryId()+".jpg");
 			dto.setType(m.getType());
@@ -464,13 +463,13 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new ProductDto();
 			dto.setProductId(m.getProductId());
-			dto.setName(translationService.translate(m.getProduct().getNameTranslationId(), languageCode, m.getProduct().getName()));
+			dto.setName(translationService.translateDefaultIfEmpty(m.getProduct(), languageCode).getName());
 			dto.setPremi(m.getPremi());
 			dto.setPeriod(periodDto);
 			
 			CoverageDto covDto = new CoverageDto();
 			covDto.setCoverageId(m.getCoverageId());
-			covDto.setName(translationService.translate(m.getProduct().getCoverage().getNameTranslationId(), languageCode, m.getCoverageName()));
+			covDto.setName(translationService.translateDefaultIfEmpty(m.getProduct().getCoverage(), languageCode).getName());			
 			covDto.setMaxLimit(m.getCoverageMaxLimit());			
 			covDto.setHasBeneficiary(m.getCoverageHasBeneficiary());
 			covDto.setIsLumpSum(m.getIsLumpSum());
@@ -514,7 +513,7 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new ProductDto();
 			dto.setProductId(m.getProductId());		
-			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
+			dto.setName(translationService.translateDefaultIfEmpty(m, languageCode).getName());
 			dto.setPremi(m.getPremi());
 			dto.setFamilyPremi(m.getFamilyPremi());
 			dto.setPeriod(toDto(m.getPeriod(), languageCode));
@@ -530,8 +529,8 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new CoverageDto();
 			dto.setCoverageId(m.getCoverageId());
-			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
-			dto.setRecommendation(translationService.translate(m.getRecommendationTranslationId(), languageCode, m.getRecommendation()));
+			dto.setName(translationService.translateDefaultIfEmpty(m, languageCode).getName());
+			dto.setRecommendation(translationService.translateDefaultIfEmpty(m, languageCode).getRecommendation());
 			dto.setIsRecommended(m.getIsRecommended());
 			dto.setIsIntroRecommended(m.getIsIntroRecommended());
 			dto.setIsLumpSum(m.getIsLumpSum());
@@ -568,7 +567,7 @@ public class ModelMapperAdapter {
 		PeriodDto dto = null;
 		if(m!=null){
 			dto = new PeriodDto();
-			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
+			dto.setName(translationService.translateDefaultIfEmpty(m, languageCode).getName());
 			dto.setPeriodId(m.getPeriodId());
 			dto.setUnit(m.getUnit());
 			dto.setValue(m.getValue());
@@ -601,7 +600,7 @@ public class ModelMapperAdapter {
 		if(m!=null){
 			dto = new ClaimDocTypeDto();
 			dto.setClaimDocTypeId(m.getClaimDocTypeId());
-			dto.setName(translationService.translate(m.getNameTranslationId(), languageCode, m.getName()));
+			dto.setName(translationService.translateDefaultIfEmpty(m, languageCode).getName());
 			dto.setUsageType(m.getUsageType());
 		}
 		return dto;

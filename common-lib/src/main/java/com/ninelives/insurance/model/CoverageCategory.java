@@ -27,10 +27,6 @@ public class CoverageCategory implements Serializable{
     
     private String recommendation;
     
-    private Integer nameTranslationId;
-
-    private Integer recommendationTranslationId;
-    
     private Insurer insurer;
 
     public String getCoverageCategoryId() {
@@ -87,22 +83,6 @@ public class CoverageCategory implements Serializable{
 
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
-	}
-
-	public Integer getNameTranslationId() {
-		return nameTranslationId;
-	}
-
-	public void setNameTranslationId(Integer nameTranslationId) {
-		this.nameTranslationId = nameTranslationId;
-	}
-
-	public Integer getRecommendationTranslationId() {
-		return recommendationTranslationId;
-	}
-
-	public void setRecommendationTranslationId(Integer recommendationTranslationId) {
-		this.recommendationTranslationId = recommendationTranslationId;
 	}
 
 	public Insurer getInsurer() {

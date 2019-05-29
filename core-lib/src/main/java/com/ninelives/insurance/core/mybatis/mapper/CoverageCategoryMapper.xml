@@ -9,8 +9,6 @@
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="recommendation" jdbcType="VARCHAR" property="recommendation" />
-    <result column="name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
-    <result column="recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
     <association property="insurer" javaType="com.ninelives.insurance.model.Insurer">
    		<id column="insurer_id" jdbcType="INTEGER" property="id" />
    		<result column="insurer_code" jdbcType="VARCHAR" property="code" />
@@ -18,7 +16,7 @@
   </resultMap>
   <select id="selectByCoverageCategoryId" resultMap="BaseResultMap">
   	select coverage_category_id, name, description, created_date, update_date, type, recommendation, 
-    	insurer.id as insurer_id, insurer.code as insurer_code, name_translation_id, recommendation_translation_id
+    	insurer.id as insurer_id, insurer.code as insurer_code
     from 
 	    public.coverage_category covcat 
 	    inner join public.insurer insurer on insurer.id=covcat.insurer_id 

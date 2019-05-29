@@ -66,7 +66,6 @@
 	    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType">
 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
-		    <result column="claim_doc_type_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
 		    <result column="claim_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
 	    </association>
     </collection>
@@ -89,8 +88,7 @@
     c.claim_id as account_claim_id, c.account_name, c.account_bank_name, c.account_bank_swift_code, c.account_bank_swift, 
     c.account_number,
     d.claim_document_id, d.claim_doc_type_id, d.file_id as claim_file_id, d.extra as claim_doc_extra,
-    e.claim_doc_type_id, e.name as claim_doc_type_name, e.name_translation_id as claim_doc_type_name_translation_id, 
-    e.usage_type as claim_doc_type_usage_type,
+    e.claim_doc_type_id, e.name as claim_doc_type_name, e.usage_type as claim_doc_type_usage_type,
     f.claim_coverage_id, f.coverage_id, f.status as claim_coverage_status,
     h.coverage_category_id as covcat_coverage_category_id, h.name as covcat_name, h.type as covcat_type,
     insurer.id as insurer_id, insurer.code as insurer_code,

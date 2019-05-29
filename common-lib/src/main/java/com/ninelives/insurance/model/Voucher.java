@@ -15,15 +15,9 @@ public class Voucher implements Serializable{
 
     private String title;
     
-    private Integer titleTranslationId;
-
     private String subtitle;
 
-    private Integer subtitleTranslationId;
-
     private String description;
-
-    private Integer descriptionTranslationId;
 
     private LocalDate policyStartDate;
 
@@ -276,30 +270,6 @@ public class Voucher implements Serializable{
 	public void setApproveCnt(Integer approveCnt) {
 		this.approveCnt = approveCnt;
 	}		
-
-	public Integer getTitleTranslationId() {
-		return titleTranslationId;
-	}
-
-	public void setTitleTranslationId(Integer titleTranslationId) {
-		this.titleTranslationId = titleTranslationId;
-	}
-
-	public Integer getSubtitleTranslationId() {
-		return subtitleTranslationId;
-	}
-
-	public void setSubtitleTranslationId(Integer subtitleTranslationId) {
-		this.subtitleTranslationId = subtitleTranslationId;
-	}
-
-	public Integer getDescriptionTranslationId() {
-		return descriptionTranslationId;
-	}
-
-	public void setDescriptionTranslationId(Integer descriptionTranslationId) {
-		this.descriptionTranslationId = descriptionTranslationId;
-	}
 
 	@Override
 	public String toString() {

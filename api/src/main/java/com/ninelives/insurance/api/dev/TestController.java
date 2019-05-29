@@ -52,6 +52,7 @@ import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyClaimDocumentMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyOrderMapper;
 import com.ninelives.insurance.core.mybatis.mapper.ProductMapper;
+import com.ninelives.insurance.core.mybatis.mapper.TranslateMapper;
 import com.ninelives.insurance.core.mybatis.mapper.UserMapper;
 import com.ninelives.insurance.core.provider.insurance.AswataInsuranceProvider;
 import com.ninelives.insurance.core.provider.insurance.InsuranceProviderException;
@@ -64,6 +65,7 @@ import com.ninelives.insurance.core.service.InsuranceService;
 import com.ninelives.insurance.core.service.NotificationService;
 import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
+import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.core.service.VoucherService;
 import com.ninelives.insurance.core.support.pdf.PdfCreator;
 import com.ninelives.insurance.core.util.GsonUtil;
@@ -79,6 +81,8 @@ import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
 import com.ninelives.insurance.model.UserFile;
 import com.ninelives.insurance.model.Voucher;
+import com.ninelives.insurance.model.tlt.CoverageCategoryTlt;
+import com.ninelives.insurance.model.tlt.CoverageTlt;
 import com.ninelives.insurance.provider.insurance.aswata.dto.OrderConfirmResponseDto;
 import com.ninelives.insurance.provider.insurance.aswata.dto.ResponseDto;
 import com.ninelives.insurance.provider.notification.fcm.dto.FcmNotifMessageDto;
@@ -119,13 +123,36 @@ public class TestController {
 	
 	@Autowired FluentProducerTemplate producerTemplate;
 	
+	@Autowired TranslateMapper translateMapper;
+	@Autowired TranslationService translateService;
+	
 	@Value("${ninelives.order.list-limmit:50}")
 	int defaultFilterLimit;
 	
 	@Value("${ninelives.order.list-offset:0}")
 	int defaultFilterOffset;
 	
+	@RequestMapping(value="/test/fulltranslatecoverage/{id}/{languageCode}",
+			method={ RequestMethod.GET })
+	@ResponseBody
+	public CoverageTlt getTranslateCoverage (@RequestAttribute ("authUserId") String authUserId,
+			@PathVariable("id") String id,
+			@PathVariable("languageCode") String languageCode){
+		return translateMapper.selectCoverageTltByIdAndLanguageCode(id, languageCode);
+	}
 	
+//	@RequestMapping(value="/test/fulltranslatecovcat/{id}/{languageCode}",
+//			method={ RequestMethod.GET })
+//	@ResponseBody
+//	public CoverageCategoryTlt getTranslateCoverageCategory (@RequestAttribute ("authUserId") String authUserId,
+//			@PathVariable("id") String id,
+//			@PathVariable("languageCode") String languageCode){
+//		CoverageCategory covCat = new CoverageCategory();
+//		covCat.setCoverageCategoryId(id);
+//		covCat.setName("default name");
+//		covCat.setRecommendation("default recommendation");
+//		return translateService.translate(covCat, languageCode);
+//	}
 	
 	@RequestMapping(value="/test/orders/{orderId}/policy",
 			method=RequestMethod.GET)	

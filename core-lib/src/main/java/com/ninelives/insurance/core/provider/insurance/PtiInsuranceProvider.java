@@ -99,7 +99,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 			if(product==null) {
 				product = productService.fetchProductByProductId(pop.getProductId());
 			}
-			fieldMap.put("coverage_"+i, translationService.translate(product.getNameTranslationId(), documentLocale.getLanguage(), product.getName()));
+			fieldMap.put("coverage_"+i, translationService.translateDefaultIfEmpty(product, documentLocale.getLanguage()).getName());
 			fieldMap.put("limit_"+i, numberFormat.format(pop.getCoverageMaxLimit()));
 			i++;
 		}
@@ -109,7 +109,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		}
 		
 		fieldMap.put("premi", numberFormat.format(order.getTotalPremi()));
-		fieldMap.put("period",translationService.translate(order.getPeriod().getNameTranslationId(), documentLocale.getLanguage(), order.getPeriod().getName()));
+		fieldMap.put("period", translationService.translateDefaultIfEmpty(order.getPeriod(), documentLocale.getLanguage()).getName());
 		
 		insurerFileMapper.insert(policyFile);
 		

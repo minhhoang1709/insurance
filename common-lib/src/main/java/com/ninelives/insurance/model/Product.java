@@ -16,8 +16,6 @@ public class Product implements Serializable{
     private String periodId;
 
     private String name;
-    
-    private Integer nameTranslationId;
 
     private Integer premi;
     
@@ -139,14 +137,6 @@ public class Product implements Serializable{
 
 	public void setCoverage(Coverage coverage) {
 		this.coverage = coverage;
-	}
-
-	public Integer getNameTranslationId() {
-		return nameTranslationId;
-	}
-
-	public void setNameTranslationId(Integer nameTranslationId) {
-		this.nameTranslationId = nameTranslationId;
 	}
 
 	@Override

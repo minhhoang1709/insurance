@@ -5,9 +5,7 @@
     <id column="coverage_id" jdbcType="VARCHAR" property="coverageId" />
     <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     <result column="recommendation" jdbcType="VARCHAR" property="recommendation" />
-    <result column="recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="max_limit" jdbcType="BIGINT" property="maxLimit" />
     <result column="family_max_limit" jdbcType="BIGINT" property="familyMaxLimit" />
@@ -22,10 +20,8 @@
     <association property="coverageCategory" javaType="com.ninelives.insurance.model.CoverageCategory">
     	<id column="covcat_coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
     	<result column="covcat_name" jdbcType="VARCHAR" property="name" />
-    	<result column="covcat_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
     	<result column="covcat_type" jdbcType="VARCHAR" property="type" />
     	<result column="covcat_recommendation" jdbcType="VARCHAR" property="recommendation" />
-    	<result column="covcat_recommendation_translation_id" jdbcType="INTEGER" property="recommendationTranslationId" />
     	<association property="insurer" javaType="com.ninelives.insurance.model.Insurer">
     		<id column="insurer_id" jdbcType="INTEGER" property="id" />
     		<result column="insurer_code" jdbcType="VARCHAR" property="code" />
@@ -34,7 +30,6 @@
     <association property="coverageOption" javaType="com.ninelives.insurance.model.CoverageOption">
     	<id column="coverage_option_id" jdbcType="VARCHAR" property="id" />
     	<result column="coverage_option_name" jdbcType="VARCHAR" property="coverageOptionName" />
-    	<result column="coverage_option_name_translation_id" jdbcType="INTEGER" property="coverageOptionNameTranslationId" />
     	<result column="coverage_option_group_id" jdbcType="VARCHAR" property="coverageOptionGroupId" />
     	<association property="coverageOptionGroup" javaType="com.ninelives.insurance.model.CoverageOptionGroup">
     		<id column="coverage_option_group_id" jdbcType="VARCHAR" property="id" />
@@ -48,7 +43,6 @@
 	    <association property="claimDocType" javaType="com.ninelives.insurance.model.ClaimDocType">
 	    	<id column="claim_doc_type_id" jdbcType="VARCHAR" property="claimDocTypeId" />
 		    <result column="claim_doc_type_name" jdbcType="VARCHAR" property="name" />
-		    <result column="claim_doc_type_name_translation_id" jdbcType="INTEGER" property="nameTranslationId" />
 		    <result column="claim_doc_type_usage_type" jdbcType="VARCHAR" property="usageType" />
     	</association>	
     </collection>
@@ -60,16 +54,16 @@
   </resultMap>
   
   <sql id="NestedCoverageColumnList">
-	a.coverage_id, a.coverage_category_id, a.name, a.name_translation_id, a.recommendation, a.recommendation_translation_id, a.description, a.max_limit, a.family_max_limit, 
+	a.coverage_id, a.coverage_category_id, a.name, a.recommendation, a.description, a.max_limit, a.family_max_limit, 
 	a.has_beneficiary, a.status, a.display_rank, a.is_recommended, a.is_intro_recommended, a.is_lump_sum, a.provider_code, a.coverage_option_id,
-	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name, b.name_translation_id as covcat_name_translation_id, b.type as covcat_type,
-	b.recommendation as covcat_recommendation, b.recommendation_translation_id as covcat_recommendation_translation_id,
+	b.coverage_category_id as covcat_coverage_category_id, b.name as covcat_name, b.type as covcat_type,
+	b.recommendation as covcat_recommendation,
 	insurer.id as insurer_id, insurer.code as insurer_code,
 	c.coverage_claim_doc_type_id, c.is_mandatory,
-	d.claim_doc_type_id, d.name as claim_doc_type_name, d.name_translation_id as claim_doc_type_name_translation_id, d.usage_type as claim_doc_type_usage_type,
+	d.claim_doc_type_id, d.name as claim_doc_type_name, d.usage_type as claim_doc_type_usage_type,
 	g.coverage_order_doc_type_id, g.order_doc_type_id,
 	h.order_doc_type_id as orderdoctype_order_doc_type_id, h.name as orderdoctype_name, h.usage_type as orderdoctype_usage_type, h.display_rank as orderdoctype_display_rank,
-	e.coverage_option_name, e.coverage_option_name_translation_id, e.coverage_option_group_id,
+	e.coverage_option_name, e.coverage_option_group_id,
 	f.coverage_option_group_name 
   </sql>
   
