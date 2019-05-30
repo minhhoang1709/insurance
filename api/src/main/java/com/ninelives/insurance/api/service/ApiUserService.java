@@ -370,7 +370,6 @@ public class ApiUserService {
 				|| StringUtils.isEmpty(user.getName()) 
 				|| user.getGender()==null
 				|| user.getBirthDate()==null
-				|| StringUtils.isEmpty(user.getBirthPlace())
 				|| StringUtils.isEmpty(user.getPhone())
 				){
 			result = false;
