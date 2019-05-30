@@ -39,7 +39,15 @@ public class TranslationService {
 //		}
 //		return result;
 //	}
-	
+	public TranslateMapper getTranslateMapper() {
+		return translateMapper;
+	}
+
+	public void setTranslateMapper(TranslateMapper translateMapper) {
+		this.translateMapper = translateMapper;
+	}
+
+
 	@Cacheable(value="CoverageCategoryTlt", key="{#obj.coverageCategoryId, #languageCode}")
 	public CoverageCategoryTlt translateDefaultIfEmpty(CoverageCategory obj, String languageCode) {
 		CoverageCategoryTlt objTranslate = translateMapper
@@ -53,7 +61,7 @@ public class TranslationService {
 		return objTranslate;
 	}
 	
-	@Cacheable(value="CoverageTlt", key="{#obj.coverageId, #languageCode}")
+		@Cacheable(value="CoverageTlt", key="{#obj.coverageId, #languageCode}")
 	public CoverageTlt translateDefaultIfEmpty(Coverage obj, String languageCode) {
 		CoverageTlt objTranslate = translateMapper
 				.selectCoverageTltByIdAndLanguageCode(obj.getCoverageId(), languageCode);

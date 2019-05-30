@@ -15,6 +15,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
@@ -24,6 +25,7 @@ import com.ninelives.insurance.api.dto.ClaimDocumentExtraDto;
 import com.ninelives.insurance.api.dto.PolicyClaimFamilyDto;
 import com.ninelives.insurance.api.dto.UserFileDto;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
+import com.ninelives.insurance.core.mybatis.mapper.TranslateMapper;
 import com.ninelives.insurance.core.service.TranslationService;
 import com.ninelives.insurance.model.ClaimDocType;
 import com.ninelives.insurance.model.PolicyOrder;
@@ -322,5 +324,7 @@ public class ApiClaimServiceValidateMandatoryClaimDocTest {
 		doReturn(requiredDocList).when(claimService).requiredClaimDocumentDtos(any(AccidentClaimDto.class), any(PolicyOrder.class));
 		
 		modelMapperAdapter.setTranslationService(new TranslationService());
+		modelMapperAdapter.getTranslationService().setTranslateMapper(Mockito.mock(TranslateMapper.class));
+	TranslateMapper tsMapper = Mockito.mock(TranslateMapper.class);
 	}
 }
