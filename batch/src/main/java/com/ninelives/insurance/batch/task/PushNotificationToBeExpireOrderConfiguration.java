@@ -32,6 +32,7 @@ import com.ninelives.insurance.batch.support.PushNotificationDataToStringProcess
 import com.ninelives.insurance.batch.support.PushNotificationFcmWriter;
 import com.ninelives.insurance.batch.support.BatchJobListener;
 import com.ninelives.insurance.batch.support.PushNotificationMyBatisReader;
+import com.ninelives.insurance.core.service.LocaleService;
 import com.ninelives.insurance.core.service.NotificationService;
 
 @Configuration
@@ -60,6 +61,9 @@ public class PushNotificationToBeExpireOrderConfiguration {
 	
 	@Autowired 
 	public BatchService batchService;
+	
+	@Autowired
+	public LocaleService localeService;
 	
 	//SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	
@@ -127,7 +131,8 @@ public class PushNotificationToBeExpireOrderConfiguration {
 	@StepScope
 	public PushNotificationFcmWriter step2Writer(@Autowired NotificationService notificationService, 
 			@Autowired MessageSource messageSource) {
-		PushNotificationFcmWriter writer = new PushNotificationFcmWriter(notificationService, messageSource);
+		PushNotificationFcmWriter writer = new PushNotificationFcmWriter(notificationService, messageSource,
+				localeService);
 		return writer;
 	}
 }
