@@ -1,10 +1,21 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<!-- Product -->
 	<cache name="CoverageCategory" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="Coverage" maxEntriesLocalHeap="100" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="Product" maxEntriesLocalHeap="500" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="ClaimDocType" maxEntriesLocalHeap="50" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
 	<cache name="InviteVoucher" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
-	<cache name="AppTranslationText" maxEntriesLocalHeap="1000" timeToLiveSeconds="3600" statistics="false" overflowToDisk="false"></cache>
 	<cache name="VoucherById" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+
+	<!-- Translation: size = product x language -->
+	<cache name="CoverageCategoryTlt" maxEntriesLocalHeap="20" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="PeriodTlt" maxEntriesLocalHeap="30" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="CoverageTlt" maxEntriesLocalHeap="200" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="CoverageOptionTlt" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="ProductTlt" maxEntriesLocalHeap="1000" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="ClaimDocTypeTlt" maxEntriesLocalHeap="100" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="OrderDocTypeTlt" maxEntriesLocalHeap="10" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	<cache name="VoucherTlt" maxEntriesLocalHeap="20" timeToLiveSeconds="3600" statistics="true" overflowToDisk="false"></cache>
+	
 </ehcache>
