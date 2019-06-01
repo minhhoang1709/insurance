@@ -36,6 +36,7 @@ import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.core.service.ProductService;
 import com.ninelives.insurance.core.trx.PolicyClaimTrxService;
 import com.ninelives.insurance.model.Coverage;
+import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.CoverageClaimDocType;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimBankAccount;
@@ -53,6 +54,7 @@ import com.ninelives.insurance.ref.ClaimDocUsageType;
 import com.ninelives.insurance.ref.ClaimStatus;
 import com.ninelives.insurance.ref.CoverageCategoryId;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.InsurerCode;
 import com.ninelives.insurance.ref.PolicyStatus;
 
 @Service
@@ -237,7 +239,7 @@ public class ApiClaimService {
 			throw new AppBadRequestException(ErrorCode.ERR7008_CLAIM_DETAIL_INVALID, "Permintaan tidak dapat diproses, silahkan cek alamat Anda");
 		}
 		
-		if(!isPolicyClaimBankAccountIsValid(claimDto.getClaimBankAccount())){
+		if(!isPolicyClaimBankAccountIsValid(claimDto.getClaimBankAccount(), order.getCoverageCategory())){
 			logger.debug(
 					"Process claim isvalidationonly:<{}>, userId:<{}>, claim:<{}>, result:<error bank info>, exception:<{}>",
 					isValidateOnly, userId, claimDto, ErrorCode.ERR7009_CLAIM_BANK_ACCOUNT_INVALID);
@@ -401,16 +403,22 @@ public class ApiClaimService {
 		return requiredClaimDocumentDtos(claimDto, order);
 		
 	}
-	private boolean isPolicyClaimBankAccountIsValid(ClaimBankAccountDto cba) {
+	private boolean isPolicyClaimBankAccountIsValid(ClaimBankAccountDto cba, CoverageCategory covCat){
 		if(cba == null
 				||StringUtils.isEmpty(cba.getName())
 				||StringUtils.isEmpty(cba.getAccount())
 				||StringUtils.isEmpty(cba.getBankName())
-				||StringUtils.isEmpty(cba.getBankSwiftCode())
 				){
 			return false;
 		}
 		
+		if(covCat!=null && covCat.getInsurer()!=null){
+			if(InsurerCode.ASWATA.equals(covCat.getInsurer().getCode())
+					&& StringUtils.isEmpty(cba.getBankSwiftCode())) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 	protected boolean isPolicyClaimAccidentDetailIsValid(ClaimDetailAccidentAddressDto cd){
