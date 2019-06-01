@@ -21,6 +21,7 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="is_family" jdbcType="BIT" property="isFamily" />
     <result column="is_hide" jdbcType="BIT" property="isHide" />
+    <result column="order_id_map" jdbcType="VARCHAR" property="orderIdMap" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <association property="period" resultMap="PeriodResultMap" />
@@ -113,13 +114,13 @@
   <sql id="Base_Column_List">
     order_id, order_date, order_time, user_id, coverage_category_id, has_beneficiary, period_id, policy_number, 
     policy_start_date, policy_end_date, base_premi, total_premi, product_count, has_voucher, provider_order_number, provider_download_url,
-    status, is_family, is_hide, created_date, update_date
+    status, is_family, is_hide, order_id_map, created_date, update_date
   </sql>
   
   <sql id="NestedPolicyOrderColumnList">
     a.order_id, a.order_date, a.order_time, a.user_id, a.coverage_category_id, a.has_beneficiary, a.period_id, a.policy_number, 
    	a.policy_start_date, a.policy_end_date, a.base_premi, a.total_premi, a.product_count, a.has_voucher, a.provider_order_number, a.provider_download_url, 
-   	a.status, a.is_family, a.is_hide, a.created_date,
+   	a.status, a.is_family, a.is_hide, a.order_id_map, a.created_date,
    	b.order_product_id, b.coverage_id as order_product_coverage_id, b.period_id as order_product_period_id, 
    	b.product_id as order_product_product_id, b.coverage_name as order_product_coverage_name, b.product_name as order_product_product_name,
    	b.coverage_max_limit as order_product_coverage_max_limit, 
@@ -405,72 +406,5 @@
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>	
   
-  <resultMap id="NestedPolicyOrderAndPaymentResultMap" type="com.ninelives.insurance.model.PolicyOrder">
-        <id column="order_id" jdbcType="VARCHAR" property="orderId" />
-    <result column="order_date" jdbcType="DATE" property="orderDate" />
-    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
-    <result column="user_id" jdbcType="VARCHAR" property="userId" />
-    <result column="order_id_map" jdbcType="VARCHAR" property="userId" />
-    <result column="coverage_category_id" jdbcType="VARCHAR" property="coverageCategoryId" />
-    <result column="has_beneficiary" jdbcType="BIT" property="hasBeneficiary" />
-    <result column="period_id" jdbcType="VARCHAR" property="periodId" />
-    <result column="policy_number" jdbcType="VARCHAR" property="policyNumber" />
-    <result column="policy_start_date" jdbcType="DATE" property="policyStartDate" />
-    <result column="policy_end_date" jdbcType="DATE" property="policyEndDate" />
-    <result column="base_premi" jdbcType="INTEGER" property="basePremi" />
-    <result column="total_premi" jdbcType="INTEGER" property="totalPremi" />
-    <result column="product_count" jdbcType="INTEGER" property="productCount" />
-    <result column="has_voucher" jdbcType="BIT" property="hasVoucher" />
-    <result column="provider_order_number" jdbcType="VARCHAR" property="providerOrderNumber" />
-    <result column="provider_download_url" jdbcType="VARCHAR" property="providerDownloadUrl" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <association property="payment" resultMap="PolicyPaymentResultMap" />
-  </resultMap>
-  
-  <select id="selectByOrderIdAndUserId" resultMap="NestedPolicyOrderAndPaymentResultMap">
-  	select
-  	a.order_id,
-	a.order_date,
-	a.order_time,
-	a.user_id,
-	a.order_id_map,
-	a.coverage_category_id,
-	a.has_beneficiary,
-	a.period_id,
-	a.policy_number,
-	a.policy_start_date,
-	a.policy_end_date,
-	a.base_premi,
-	a.total_premi,
-	a.product_count,
-	a.has_voucher,
-	a.provider_order_number,
-	a.provider_download_url,
-	a.status,
-	b.id as payment_id, 
-	b.start_time as payment_start_time,
-	b.order_id as payment_order_id, 
-	b.user_id as payment_user_id, 
-	b.payment_seq as payment_seq, 
-	b.notif_payment_seq as payment_notif_payment_seq, 
-	b.total_amount as payment_total_amount, 
-	b.status as payment_status, 
-	b.payment_type, 
-	b.provider_transaction_id as payment_provider_transaction_id, 
-	b.provider_transaction_status as payment_provider_transaction_status, 
-	b.provider_status_code as payment_provider_status_code, 
-	b.charge_time as payment_charge_time,
-	b.charge_expiry_time as payment_charge_expiry_time, 
-	b.notif_pending_time as payment_notif_pending_time, 
-	b.notif_success_time as payment_notif_success_time, 
-	b.notif_failed_time as payment_notif_failed_time,
-	b.notif_expired_time as payment_notif_expired_time
-    from
-    	policy_order a left join  policy_payment b on a.order_id= b.order_id
-        where a.order_id=#{orderId,jdbcType=VARCHAR}  
-        and a.user_id=#{userId,jdbcType=VARCHAR}  	
-  </select>
-  
-   
-  
+
 </mapper>

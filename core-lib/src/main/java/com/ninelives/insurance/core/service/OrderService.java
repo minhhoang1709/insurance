@@ -360,7 +360,7 @@ public class OrderService {
 	}
 	
 	public PolicyOrder fetchOrderByOrderId(final String userId, final String orderId){
-		PolicyOrder policyOrder = policyOrderMapper.selectByOrderIdAndUserId(userId, orderId);
+		PolicyOrder policyOrder = policyOrderMapper.selectByUserIdAndOrderId(userId, orderId);
 		postRetrieval(policyOrder,LocalDate.now());
 		return policyOrder;
 	}
@@ -526,12 +526,6 @@ public class OrderService {
 				fileUploadService.moveTemp(doc.getUserFile(), FileUseType.ORDER);
 			}
 		}		
-	}
-	
-	public PolicyOrder getOrderByOrderId(String orderId, String userId) {
-		PolicyOrder policyOrder = policyOrderMapper.selectByOrderIdAndUserId(orderId, userId);
-		return policyOrder;
-
 	}
 	
 	public void updatePolicyOrderId2c2p(PolicyOrder policyOrder){

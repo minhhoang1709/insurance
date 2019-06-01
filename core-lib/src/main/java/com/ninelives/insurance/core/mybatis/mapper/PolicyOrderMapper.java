@@ -97,14 +97,4 @@ public interface PolicyOrderMapper {
 	})
 	int updateIsHideByOrderId(PolicyOrder record);
 
-	/*@Select({
-     "select",
-      "order_id, order_id_map, order_date, user_id, policy_number, policy_start_date, policy_end_date, ",
-      "period_id, total_premi, has_beneficiary, product_count, status, created_date, update_date",
-      "from public.policy_order",
-      "where order_id = #{orderId,jdbcType=VARCHAR}",
-      "and user_id = #{userId,jdbcType=VARCHAR}"
-	})*/
-	
-	PolicyOrder selectByOrderIdAndUserId(@Param ("userId") String userId,@Param ("orderId") String orderId);
 }
