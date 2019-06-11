@@ -27,8 +27,8 @@ import com.ninelives.insurance.provider.payment.midtrans.dto.ChargeResponseDto;
 import com.ninelives.insurance.ref.ErrorCode;
 
 @Controller
-public class PaymentController {
-	private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+public class PaymentMidtransController {
+	private static final Logger logger = LoggerFactory.getLogger(PaymentMidtransController.class);
 	
 	@Autowired AuthService authService;
 	@Autowired PaymentService paymentService;
