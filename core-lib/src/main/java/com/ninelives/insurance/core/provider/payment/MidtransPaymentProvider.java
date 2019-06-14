@@ -108,7 +108,7 @@ public class MidtransPaymentProvider implements PaymentProvider{
 	
 	@PostConstruct
 	public void init(){
-		enableConnection = config.getEnableConnection();
+		enableConnection = config.getMidtransEnableConnection();
 		if(enableConnection){
 			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 			cm.setMaxTotal(config.getMidtransConnectionPoolSize());
@@ -141,6 +141,6 @@ public class MidtransPaymentProvider implements PaymentProvider{
 			midtransServerAuthorization = "Basic "
 					+ Base64.getEncoder().encodeToString((config.getMidtransSandboxServerKey() + ":").getBytes());
 		}
-		logger.info("Init PaymentProvider with connect <{}>, environment <{}> and url <{}>", enableConnection, midtransEnvironment, midtransUrl);
+		logger.info("Init Midtrans payment-provider with connect <{}>, environment <{}> and url <{}>", enableConnection, midtransEnvironment, midtransUrl);
 	}
 }

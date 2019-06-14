@@ -7,17 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +26,7 @@ import com.ninelives.insurance.api.model.ApiSessionData;
 import com.ninelives.insurance.api.service.ApiOrderService;
 import com.ninelives.insurance.api.service.AuthService;
 import com.ninelives.insurance.api.util.Payment2c2pUtil;
+import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
@@ -42,39 +42,27 @@ import com.ninelives.insurance.ref.ErrorCode;
 public class Payment2c2pController {
 	private static final Logger logger = LoggerFactory.getLogger(Payment2c2pController.class);
 	
-	@Autowired 
-	ApiOrderService apiOrderService;
+	@Autowired NinelivesConfigProperties config;
 	
-	@Autowired 
-	OrderService orderService;
+	@Autowired ApiOrderService apiOrderService;
 	
-	@Autowired 
-	AuthService authService;
+	@Autowired OrderService orderService;
 	
-	@Autowired 
-	PolicyPaymentMapper policyPaymentMapper;
+	@Autowired AuthService authService;
 	
-	@Autowired 
-	PaymentChargeLogMapper paymentChargeLogMapper;
+	@Autowired PolicyPaymentMapper policyPaymentMapper;
 	
-	@Value("${ninelives.payment.2c2p-merchant-id}")
+	@Autowired PaymentChargeLogMapper paymentChargeLogMapper;
+	
+	private boolean isEnabled = true;
+	
 	private String merchantId;
-	
-	@Value("${ninelives.payment.2c2p-key}")
 	private String key;
-	
-	@Value("${ninelives.payment.2c2p-version}")
 	private String version;
-	
-	@Value("${ninelives.payment.2c2p-resultUrl1}")
 	private String resultUrl1;
-	
-	@Value("${ninelives.payment.2c2p-resultUrl2}")
 	private String resultUrl2;
-	
-	@Value("${ninelives.payment.2c2p-currency}")
-	private String currency;
-	
+	private String currency;	
+	private String paymentUrl;
 	
 	@RequestMapping(value="/resultPayment/2c2p",method=RequestMethod.POST)
 	@ResponseBody
@@ -234,7 +222,7 @@ public class Payment2c2pController {
         sbHtml.append("</script>");
 
         sbHtml.append("<div id=\"payform\"><form id=\"paysubmit\" name=\"paysubmit\" action=\"" 
-        			  + "https://demo2.2c2p.com/2C2PFrontEnd/RedirectV3/payment"+
+        			  + paymentUrl +
         		      "\" method=\"POST"
                       + "\">");
 
@@ -391,4 +379,30 @@ public class Payment2c2pController {
 	}
 	
 	
+	
+	@Override
+	public String toString() {
+		return "Payment2c2pController [isEnabled=" + isEnabled + ", merchantId=" + merchantId + ", key=" + key
+				+ ", version=" + version + ", resultUrl1=" + resultUrl1 + ", resultUrl2=" + resultUrl2 + ", currency="
+				+ currency + ", paymentUrl=" + paymentUrl + "]";
+	}
+
+
+	@PostConstruct
+	public void init(){
+		isEnabled = config.getPayment().getTwoc2pEnable();
+		
+		if(isEnabled) {
+			merchantId = config.getPayment().getTwoc2pMerchantId();
+			key = config.getPayment().getTwoc2pKey();
+			version = config.getPayment().getTwoc2pVersion();
+			resultUrl1 = config.getPayment().getTwoc2pResultUrl1();
+			resultUrl2 = config.getPayment().getTwoc2pResultUrl2();
+			currency = config.getPayment().getTwoc2pCurrency();
+			paymentUrl = config.getPayment().getTwoc2pPaymentUrl();
+		}
+		
+		
+		logger.info("Init 2p2p payment-controller with parameter <{}>", toString());
+	}
 }

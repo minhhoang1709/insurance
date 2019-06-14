@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.ninelives.insurance.provider.payment.midtrans.ref.MidtransDurationUnit;
 
@@ -419,7 +420,8 @@ public class NinelivesConfigProperties {
 		
 	}
 	public static class Payment {
-		private Boolean enableConnection = true;
+		private Boolean midtransEnableConnection = true;
+		private Boolean twoc2pEnable = false;
 		
 		@NotEmpty
 		private String midtransEnvironment;
@@ -439,17 +441,23 @@ public class NinelivesConfigProperties {
 		private int midtransConnectionPoolSize = 16;
 		private int midtransPoolTimeout = 5000;
 		private int midtransConnectTimeout = 5000;
-		private int midtransSocketTimeout = 30000;
-		
+		private int midtransSocketTimeout = 30000;		
 		private int midtransPaymentExpiryDuration = 3;
 		private MidtransDurationUnit midtransPaymentExpiryUnit = MidtransDurationUnit.HOURS;
 		
+		private String twoc2pVersion;
+		private String twoc2pMerchantId;
+		private String twoc2pKey;
+		private String twoc2pCurrency;
+		private String twoc2pResultUrl1;
+		private String twoc2pResultUrl2;
+		private String twoc2pPaymentUrl;
 		
-		public Boolean getEnableConnection() {
-			return enableConnection;
+		public Boolean getMidtransEnableConnection() {
+			return midtransEnableConnection;
 		}
-		public void setEnableConnection(Boolean enableConnection) {
-			this.enableConnection = enableConnection;
+		public void setMidtransEnableConnection(Boolean midtransEnableConnection) {
+			this.midtransEnableConnection = midtransEnableConnection;
 		}
 		public String getMidtransSandboxServerKey() {
 			return midtransSandboxServerKey;
@@ -529,7 +537,55 @@ public class NinelivesConfigProperties {
 		public void setMidtransPaymentExpiryUnit(MidtransDurationUnit midtransPaymentExpiryUnit) {
 			this.midtransPaymentExpiryUnit = midtransPaymentExpiryUnit;
 		}
-	
+		public Boolean getTwoc2pEnable() {
+			return twoc2pEnable;
+		}
+		public void setTwoc2pEnable(Boolean twoc2pEnable) {
+			this.twoc2pEnable = twoc2pEnable;
+		}		
+		public String getTwoc2pVersion() {
+			return twoc2pVersion;
+		}
+		public void setTwoc2pVersion(String twoc2pVersion) {
+			this.twoc2pVersion = twoc2pVersion;
+		}
+		public String getTwoc2pMerchantId() {
+			return twoc2pMerchantId;
+		}
+		public void setTwoc2pMerchantId(String twoc2pMerchantId) {
+			this.twoc2pMerchantId = twoc2pMerchantId;
+		}
+		public String getTwoc2pKey() {
+			return twoc2pKey;
+		}
+		public void setTwoc2pKey(String twoc2pKey) {
+			this.twoc2pKey = twoc2pKey;
+		}
+		public String getTwoc2pCurrency() {
+			return twoc2pCurrency;
+		}
+		public void setTwoc2pCurrency(String twoc2pCurrency) {
+			this.twoc2pCurrency = twoc2pCurrency;
+		}
+		public String getTwoc2pResultUrl1() {
+			return twoc2pResultUrl1;
+		}
+		public void setTwoc2pResultUrl1(String twoc2pResultUrl1) {
+			this.twoc2pResultUrl1 = twoc2pResultUrl1;
+		}
+		public String getTwoc2pResultUrl2() {
+			return twoc2pResultUrl2;
+		}
+		public void setTwoc2pResultUrl2(String twoc2pResultUrl2) {
+			this.twoc2pResultUrl2 = twoc2pResultUrl2;
+		}
+		public String getTwoc2pPaymentUrl() {
+			return twoc2pPaymentUrl;
+		}
+		public void setTwoc2pPaymentUrl(String twoc2pPaymentUrl) {
+			this.twoc2pPaymentUrl = twoc2pPaymentUrl;
+		}
+		
 	}
 
 	public static class Storage {

@@ -12,7 +12,6 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 
 import com.ninelives.insurance.api.i18n.ApiLocaleResolver;
 import com.ninelives.insurance.api.interceptor.AuthInterceptor;
