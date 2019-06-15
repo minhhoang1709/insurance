@@ -36,6 +36,7 @@ import com.ninelives.insurance.core.service.OrderService;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.PolicyStatus;
 
 @Controller
 @RequestMapping("/api")
@@ -132,7 +133,11 @@ public class Payment2c2pController {
 			throw new AppBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
-		
+		if(!PolicyStatus.SUBMITTED.equals(order.getStatus())){
+			logger.debug("Process 2c2p charge for user: <{}>, order-id: <{}>, exception: order not in submitted state <{}>", sessionData.getUserId(), order.getOrderId(), order.getStatus());
+			throw new AppBadRequestException(ErrorCode.ERR8004_CHARGE_ORDER_NOT_VALID,
+					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
+		}
 		String orderIdMap="";
 		if(Payment2c2pUtil.isStatusAllowedReuse(order.getStatus().name())){
 			if(order.getOrderIdMap()!=null){
