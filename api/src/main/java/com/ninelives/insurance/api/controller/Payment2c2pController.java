@@ -1,5 +1,6 @@
 package com.ninelives.insurance.api.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
 import com.ninelives.insurance.core.mybatis.mapper.PaymentChargeLogMapper;
 import com.ninelives.insurance.core.mybatis.mapper.PolicyPaymentMapper;
 import com.ninelives.insurance.core.service.OrderService;
+import com.ninelives.insurance.model.PaymentChargeLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.ref.ErrorCode;
@@ -139,44 +141,48 @@ public class Payment2c2pController {
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
 		String orderIdMap="";
-		if(Payment2c2pUtil.isStatusAllowedReuse(order.getStatus().name())){
-			if(order.getOrderIdMap()!=null){
-				orderIdMap = order.getOrderIdMap();
-			}
-			else{
-				orderIdMap = orderService.generateOrderIdMap();
-				order.setOrderIdMap(orderIdMap);
-				orderService.updateOrderIdMap(order);
-			}
-			
-			PolicyPayment payment = order.getPayment();
-			boolean isFirstPayment = false; 
-			if(payment==null){
-				isFirstPayment = true;
-				payment = new PolicyPayment();
-				payment.setId(generatePolicyPaymentId());
-				payment.setOrderId(order_Id);
-				payment.setUserId(sessionData.getUserId());
-				payment.setStartTime(now);
-				payment.setChargeTime(now);
-				payment.setTotalAmount(order.getTotalPremi());		
-				payment.setPaymentSeq(1);
-			}else{
-				payment.setChargeTime(now);
-				payment.setPaymentSeq(payment.getPaymentSeq()+1);
-			}
-			
-			if(isFirstPayment){
-				policyPaymentMapper.insertForStatusCharge(payment);
-			}else{
-				policyPaymentMapper.updateChargeResponseById(payment);
-			}
-		
-		}else{
-			throw new AppBadRequestException(ErrorCode.ERR8003_CHARGE_ORDER_NOT_FOUND,
-					"Permintaan tidak dapat diproses, already paid");
+		if(order.getOrderIdMap()!=null){
+			orderIdMap = order.getOrderIdMap();
 		}
-			
+		else{
+			orderIdMap = orderService.generateOrderIdMap();
+			order.setOrderIdMap(orderIdMap);
+			orderService.updateOrderIdMap(order);
+		}
+		
+		PolicyPayment payment = order.getPayment();
+		boolean isFirstPayment = false; 
+		if(payment==null){
+			isFirstPayment = true;
+			payment = new PolicyPayment();
+			payment.setId(generatePolicyPaymentId());
+			payment.setOrderId(order_Id);
+			payment.setUserId(sessionData.getUserId());
+			payment.setStartTime(now);
+			payment.setChargeTime(now);
+			payment.setTotalAmount(order.getTotalPremi());		
+			payment.setPaymentSeq(1);
+		}else{
+			payment.setChargeTime(now);
+			payment.setPaymentSeq(payment.getPaymentSeq()+1);
+		}
+		
+		if(isFirstPayment){
+			policyPaymentMapper.insertForStatusCharge(payment);
+		}else{
+			policyPaymentMapper.updateChargeResponseById(payment);
+		}
+		
+		PaymentChargeLog chargeLog = new PaymentChargeLog();
+		chargeLog.setChargeDate(LocalDate.now());
+		chargeLog.setPolicyPaymentId(payment.getId());
+		chargeLog.setPaymentSeq(payment.getPaymentSeq());
+		chargeLog.setOrderId(payment.getOrderId());		
+		chargeLog.setUserId(payment.getUserId());
+		chargeLog.setTotalAmount(payment.getTotalAmount());
+		
+		paymentChargeLogMapper.insert(chargeLog);
+		
 		String amount = Payment2c2pUtil.zeroPad(11,String.valueOf(order.getTotalPremi()));
 		String paymentDescription = "9Lives Payment Premi"; 
 		String valueToDigest =version + merchantId + paymentDescription + orderIdMap +
@@ -239,9 +245,9 @@ public class Payment2c2pController {
 	    sbHtml.append("<input type=\"submit\" value=\"" + "submit" + "\" style=\"display:none;\"></form>");
         sbHtml.append("<script>document.forms['paysubmit'].submit();</script></div>");
 	
-	logger.info("Html request : "+sbHtml.toString());
-	
-	return sbHtml.toString();
+		logger.info("Html request : "+sbHtml.toString());
+		
+		return sbHtml.toString();
 	
 	}
 	
