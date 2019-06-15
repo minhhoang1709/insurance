@@ -38,6 +38,7 @@ import com.ninelives.insurance.model.PaymentChargeLog;
 import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyPayment;
 import com.ninelives.insurance.ref.ErrorCode;
+import com.ninelives.insurance.ref.PaymentStatus;
 import com.ninelives.insurance.ref.PolicyStatus;
 
 @Controller
@@ -162,6 +163,7 @@ public class Payment2c2pController {
 			payment.setChargeTime(now);
 			payment.setTotalAmount(order.getTotalPremi());		
 			payment.setPaymentSeq(1);
+			payment.setStatus(PaymentStatus.CHARGE);
 		}else{
 			payment.setChargeTime(now);
 			payment.setPaymentSeq(payment.getPaymentSeq()+1);
