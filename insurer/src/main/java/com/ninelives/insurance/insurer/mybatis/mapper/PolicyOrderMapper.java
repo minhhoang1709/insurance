@@ -6,7 +6,8 @@ import org.apache.ibatis.annotations.Update;
 
 import com.ninelives.insurance.model.PolicyOrder;
 
-@Mapper
+//@Mapper
+@Deprecated
 public interface PolicyOrderMapper {
 
 //	@Update({
