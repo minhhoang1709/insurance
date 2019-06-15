@@ -97,4 +97,13 @@ public interface PolicyOrderMapper {
 	})
 	int updateIsHideByOrderId(PolicyOrder record);
 
+	@Update({
+		"update public.policy_order ",
+		"set order_id_map=#{orderIdMap,jdbcType=VARCHAR} ",
+		"where order_id=#{orderId,jdbcType=VARCHAR}" 
+	})
+	int updateOrderIdMap(PolicyOrder record);
+	
+    @Select("select nextval('policy_order_id_map_2cp2_seq')")
+	Long selectNextPolicyOrderIdMap2c2p();
 }

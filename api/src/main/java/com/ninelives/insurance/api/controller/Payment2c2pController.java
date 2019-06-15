@@ -44,7 +44,7 @@ public class Payment2c2pController {
 	
 	@Autowired NinelivesConfigProperties config;
 	
-	@Autowired ApiOrderService apiOrderService;
+	//@Autowired ApiOrderService apiOrderService;
 	
 	@Autowired OrderService orderService;
 	
@@ -133,15 +133,15 @@ public class Payment2c2pController {
 					"Permintaan tidak dapat diproses, data pemesanan tidak ditemukan");
 		}
 		
-		String orderId="";
+		String orderIdMap="";
 		if(Payment2c2pUtil.isStatusAllowedReuse(order.getStatus().name())){
 			if(order.getOrderIdMap()!=null){
-				orderId = order.getOrderIdMap();
+				orderIdMap = order.getOrderIdMap();
 			}
 			else{
-				orderId = String.valueOf(System.currentTimeMillis()/1000L);
-				order.setOrderIdMap(orderId);
-				apiOrderService.updatePolicyOrderId2c2p(order);
+				orderIdMap = orderService.generateOrderIdMap();
+				order.setOrderIdMap(orderIdMap);
+				orderService.updateOrderIdMap(order);
 			}
 			
 			PolicyPayment payment = order.getPayment();
@@ -174,7 +174,7 @@ public class Payment2c2pController {
 			
 		String amount = Payment2c2pUtil.zeroPad(11,String.valueOf(order.getTotalPremi()));
 		String paymentDescription = "9Lives Payment Premi"; 
-		String valueToDigest =version + merchantId + paymentDescription + orderId +
+		String valueToDigest =version + merchantId + paymentDescription + orderIdMap +
 				currency + amount + resultUrl1 + resultUrl2;
 		
 		logger.info("value to digest : "+valueToDigest);
@@ -183,7 +183,7 @@ public class Payment2c2pController {
 		sPara.put("version", version);
 		sPara.put("merchant_id", merchantId);
 		sPara.put("payment_description", paymentDescription);
-		sPara.put("order_id", orderId);
+		sPara.put("order_id", orderIdMap);
 		sPara.put("currency", currency);
 		sPara.put("amount", amount);
 		sPara.put("result_url_1", resultUrl1);

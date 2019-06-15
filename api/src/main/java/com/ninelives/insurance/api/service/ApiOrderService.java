@@ -1173,9 +1173,4 @@ public class ApiOrderService {
 		}
 		
 	}
-	
-	public void updatePolicyOrderId2c2p(PolicyOrder policyOrder){
-		orderService.updatePolicyOrderId2c2p(policyOrder);
-	}
-
 }

@@ -513,6 +513,15 @@ public class OrderService {
 		return UUID.randomUUID().toString();
 	}
 
+	/**
+	 * Generate unique id for 2c2p limitation on order-id
+	 * 
+	 * @return
+	 */
+	public String generateOrderIdMap() {
+		return String.valueOf(policyOrderMapper.selectNextPolicyOrderIdMap2c2p());
+	}
+	
 	public int getDefaultOrdersFilterLimit() {
 		return defaultOrdersFilterLimit;
 	}
@@ -528,8 +537,8 @@ public class OrderService {
 		}		
 	}
 	
-	public void updatePolicyOrderId2c2p(PolicyOrder policyOrder){
-		policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(policyOrder);
+	public void updateOrderIdMap(PolicyOrder policyOrder){
+		policyOrderMapper.updateOrderIdMap(policyOrder);
 	}
 	
 	
