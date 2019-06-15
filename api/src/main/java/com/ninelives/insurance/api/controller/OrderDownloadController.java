@@ -84,7 +84,7 @@ public class OrderDownloadController {
 				Resource file = storageService.loadAsResource(order.getProviderDownloadUrl());
 				
 				return ResponseEntity.ok()
-						.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + (order.getPolicyNumber()==null?orderId:order.getPolicyNumber()) + "\"")
+						.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + (order.getPolicyNumber()==null?orderId:order.getPolicyNumber()) + ".pdf\"")
 						.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE).body(file);
 			} catch (StorageException e) {
 				logger.error("Error on download policy", e);
