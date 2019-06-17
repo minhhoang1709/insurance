@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.FluentProducerTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.model.PaymentNotificationLog;
 import com.ninelives.insurance.model.PolicyOrder;
@@ -56,7 +56,7 @@ public class Payment2c2pNotificationService {
 	@SuppressWarnings("unused")
 	public void processNotification(HttpServletRequest request, HttpServletResponse response) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
-		logger.info("Start process notification notif:<{}> ", request);
+		logger.info("Start process notification notif:<{}> ", StringUtils.join(request.getParameterMap()));
 		
 		String orderIdMap = request.getParameter("order_id");
 		String statusCode =  String.valueOf(response.getStatus());
@@ -107,7 +107,17 @@ public class Payment2c2pNotificationService {
 		notifLog.setTransactionId(request.getParameter("transaction_ref"));
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); 
-		LocalDateTime transactionDateTime = LocalDateTime.parse(request.getParameter("transaction_datetime"), formatter);
+		LocalDateTime transactionDateTime = null;
+		if(!StringUtils.isEmpty(request.getParameter("transaction_datetime"))) {
+			try {
+				transactionDateTime = LocalDateTime.parse(request.getParameter("transaction_datetime"), formatter);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+				logger.info("Failed to parse date-time from transaction_datetime <{}>", request.getParameter("transaction_datetime"));
+			}
+		}
+		
 		notifLog.setTransactionTime(transactionDateTime);
 		notifLog.setTransactionStatus(transactionStatus);
 		notifLog.setStatusCode(statusCode);
