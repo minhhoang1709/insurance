@@ -15,7 +15,7 @@ public interface VoucherMapper {
 	
 	@Select({
         "select ",
-        "code, title, subtitle, description ",
+        "id, code, title, subtitle, description ",
         "from public.voucher ",
         "where id = #{id,jdbcType=INTEGER}"
     })
@@ -23,7 +23,7 @@ public interface VoucherMapper {
 	
 	@Select({
         "select ",
-        "uiv.code, v.title, v.subtitle, v.description ",
+        "v.id, uiv.code, v.title, v.subtitle, v.description ",
         "from public.user_invite_voucher uiv, public.voucher v",
         "where uiv.user_id = #{userId,jdbcType=VARCHAR} and v.id=uiv.voucher_id"
     })

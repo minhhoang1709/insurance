@@ -161,6 +161,9 @@ public class ModelMapperAdapter {
 		return dto;
 	}
 	public VoucherDto toDto(Voucher m) {
+		return toDto(m, LocaleContextHolder.getLocale().getLanguage());
+	}
+	public VoucherDto toDto(Voucher m, String languageCode) {
 		VoucherDto dto = null;
 		if(m!=null){
 			dto = new VoucherDto();
@@ -178,9 +181,9 @@ public class ModelMapperAdapter {
 				dto.setProducts(productDtos);
 			}
 			dto.setVoucherType(m.getVoucherType());
-			dto.setTitle(m.getTitle());
-			dto.setSubtitle(m.getSubtitle());
-			dto.setDescription(m.getDescription());
+			dto.setTitle(translationService.translateDefaultIfEmpty(m, languageCode).getTitle());
+			dto.setSubtitle(translationService.translateDefaultIfEmpty(m, languageCode).getSubtitle());
+			dto.setDescription(translationService.translateDefaultIfEmpty(m, languageCode).getDescription());
 			dto.setTotalPremi(m.getTotalPremi());
 		}
 		return dto;

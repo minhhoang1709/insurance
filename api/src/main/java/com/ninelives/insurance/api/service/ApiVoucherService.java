@@ -1,7 +1,6 @@
 package com.ninelives.insurance.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ninelives.insurance.api.adapter.ModelMapperAdapter;
@@ -19,7 +18,7 @@ public class ApiVoucherService {
 		return modelMapperAdapter.toDto(voucherService.fetchVoucherByCode(code));
 	}
 	
-	@Cacheable("InviteVoucherDto")
+	//@Cacheable("InviteVoucherDto")
 	public VoucherDto fetchVoucherDtoForInviteById(int voucherId){
 		return modelMapperAdapter.toDto(voucherService.fetchVoucherForInviteById(voucherId));
 	}
