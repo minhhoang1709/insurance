@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,8 @@ public class Payment2c2pController {
 			HttpServletRequest request, 
 			HttpServletResponse response,
 			Model model ) throws AppException{
+		
+		logger.info("Result 2c2p payment with parameter <{}>", StringUtils.join(request.getParameterMap()));
 		
 		String baseString = Payment2c2pUtil.getBaseString(request); 
 		String hash_value = request.getParameter("hash_value");
