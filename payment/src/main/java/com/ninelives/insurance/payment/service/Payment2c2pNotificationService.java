@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ninelives.insurance.model.PaymentNotificationLog;
 import com.ninelives.insurance.model.PolicyOrder;
@@ -56,7 +57,7 @@ public class Payment2c2pNotificationService {
 	@SuppressWarnings("unused")
 	public void processNotification(HttpServletRequest request, HttpServletResponse response) throws PaymentNotificationException {
 		LocalDateTime now = LocalDateTime.now();
-		logger.info("Start process notification notif:<{}> ", StringUtils.join(request.getParameterMap()));
+		logger.info("Start process notification notif:<{}> ", request);
 		
 		String orderIdMap = request.getParameter("order_id");
 		String statusCode =  String.valueOf(response.getStatus());

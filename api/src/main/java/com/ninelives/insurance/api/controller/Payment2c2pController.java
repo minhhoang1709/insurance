@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -74,9 +75,9 @@ public class Payment2c2pController {
 	public String resultPayment2c2p(
 			HttpServletRequest request, 
 			HttpServletResponse response,
-			Model model ) throws AppException{
+			@RequestBody String postData) throws AppException{
 		
-		logger.info("Result 2c2p payment with parameter <{}>", StringUtils.join(request.getParameterMap()));
+		logger.info("Result 2c2p payment with parameter <{}>", postData);
 		
 		String baseString = Payment2c2pUtil.getBaseString(request); 
 		String hash_value = request.getParameter("hash_value");
