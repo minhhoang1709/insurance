@@ -109,7 +109,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		}
 		
 		fieldMap.put("premi", numberFormat.format(order.getTotalPremi()));
-		fieldMap.put("period", translationService.translateDefaultIfEmpty(order.getPeriod(), documentLocale.getLanguage()).getName());
+		//fieldMap.put("period", translationService.translateDefaultIfEmpty(order.getPeriod(), documentLocale.getLanguage()).getName());
 		
 		insurerFileMapper.insert(policyFile);
 		
