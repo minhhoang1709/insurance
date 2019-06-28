@@ -63,7 +63,7 @@
 	d.claim_doc_type_id, d.name as claim_doc_type_name, d.usage_type as claim_doc_type_usage_type,
 	g.coverage_order_doc_type_id, g.order_doc_type_id,
 	h.order_doc_type_id as orderdoctype_order_doc_type_id, h.name as orderdoctype_name, h.usage_type as orderdoctype_usage_type, h.display_rank as orderdoctype_display_rank,
-	e.coverage_option_name, e.coverage_option_group_id,
+	e.id as coverage_option_id, e.coverage_option_name, e.coverage_option_group_id,
 	f.coverage_option_group_name 
   </sql>
   
