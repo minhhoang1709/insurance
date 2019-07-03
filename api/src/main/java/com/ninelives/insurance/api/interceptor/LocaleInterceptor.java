@@ -61,7 +61,9 @@ public class LocaleInterceptor extends HandlerInterceptorAdapter {
 						"No LocaleResolver found: not in a DispatcherServlet request?");
 			}
 			try {
-				
+				if(localeStr.equals("id_ID")){
+					localeStr = "in_ID";
+				}
 				if(!localeService.isDefaultLocale(localeStr)){
 					Locale locale = localeService.supportedLocale(localeStr);
 					if(locale != null){
