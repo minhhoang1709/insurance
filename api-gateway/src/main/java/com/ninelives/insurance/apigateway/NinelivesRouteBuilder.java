@@ -10,7 +10,7 @@ import com.ninelives.insurance.apigateway.route.DirectEndPointRef;
 import com.ninelives.insurance.apigateway.route.OrderProcessor;
 import com.ninelives.insurance.route.EndPointRef;
 
-@Component
+
 public class NinelivesRouteBuilder extends SpringRouteBuilder {
 
 	@Autowired
