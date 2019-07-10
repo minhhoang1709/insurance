@@ -26,11 +26,19 @@
     <result column="max_use" jdbcType="INTEGER" property="maxUse" />
     <result column="approve_cnt" jdbcType="INTEGER" property="approveCnt" />
     <association property="corporateClient" resultMap="CorporateClientResultMap" />
+     <association property="period" resultMap="PeriodResultMap" />
     <collection property="products" ofType="com.ninelives.insurance.model.Product">
 	    <id column="product_id" jdbcType="VARCHAR" property="productId" />
 	    <result column="premi" jdbcType="INTEGER" property="premi" />
 	</collection>
   </resultMap>
+
+	
+  <resultMap id="PeriodResultMap" type="com.ninelives.insurance.model.Period">
+  	<id column="period_id" jdbcType="VARCHAR" property="periodId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+   </resultMap>
+  	
 
   <resultMap id="CorporateClientResultMap" type="com.ninelives.insurance.model.CorporateClient">
   	<id column="corporate_client_id" jdbcType="VARCHAR" property="corporateClientId" />
@@ -64,6 +72,19 @@
   	where vo.code = #{code,jdbcType=VARCHAR} 
   </select>
   
+  
+  <select id="selectAllVoucherByCorporateClientId" resultMap="NestedVoucherResultMap">
+  select * from
+    	 public.voucher a,
+    	 public.corporate_client b, 
+    	 public.period c
+    	 where 
+    	 a.corporate_client_id=b.corporate_client_id  
+    	 and a.period_id=c.period_id  
+    	 order by a.created_date desc
+  </select>
+  
+  
   <select id="selectById" resultMap="NestedVoucherResultMap">
   	select
   		vo.id, vo.code, vo.title, vo.subtitle, vo.policy_start_date, vo.policy_end_date, vo.use_start_date, 
@@ -87,4 +108,52 @@
   	from public.user_invite_voucher uiv, public.voucher vo, public.voucher_product vop
   	where uiv.code= #{code,jdbcType=VARCHAR} and vo.id = uiv.voucher_id and vop.voucher_id=vo.id
   </select>
+  
+  <update id="updateVoucherSelective" parameterType="com.ninelives.insurance.model.Voucher">
+    update public.voucher
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="subtitle != null">
+        subtitle = #{subtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="policyStartDate != null">
+        policy_start_date = #{policyStartDate,jdbcType=TIMESTAMP},
+      </if>
+       <if test="policyEndDate != null">
+        policy_end_date = #{policyEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useStartDate != null">
+        use_start_date = #{useStartDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useEndDate != null">
+        use_end_date = #{useEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="period != null">
+        period_id = #{period,jdbcType=VARCHAR},
+      </if>
+      <if test="productCount != null">
+        product_count = #{productCount,jdbcType=INTEGER},
+      </if>
+      <if test="basePremi != null">
+        base_premi = #{basePremi,jdbcType=INTEGER},
+      </if>
+      <if test="hasBeneficiary != null">
+        has_beneficiary = #{hasBeneficiary,jdbcType=BOOLEAN},
+      </if>
+       <if test="corporateClientId != null">
+        corporate_client_id = #{corporateClientId,jdbcType=INTEGER},
+      </if>
+      
+      <if test="true">
+        update_date = now()
+      </if>
+     </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
 </mapper>

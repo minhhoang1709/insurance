@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ninelives.insurance.core.mybatis.mapper.CorporateClientMapper">
+  <resultMap id="CorporateClientResultMap" type="com.ninelives.insurance.model.CorporateClient">
+    <id column="corporate_client_id" jdbcType="VARCHAR" property="corporateClientId" />
+    <result column="corporate_client_name" jdbcType="VARCHAR" property="corporateClientName" />
+    <result column="corporate_client_address" jdbcType="VARCHAR" property="corporateClientAddress" />
+    <result column="corporate_client_email" jdbcType="VARCHAR" property="corporateClientEmail" />
+    <result column="corporate_client_provider" jdbcType="VARCHAR" property="corporateClientProvider" />
+    <result column="corporate_client_phone_number" jdbcType="VARCHAR" property="corporateClientPhoneNumber" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="corporate_client_provider_id" jdbcType="VARCHAR" property="corporateClientProviderId" />
+    </resultMap>
+  
+  <sql id="CorporateClientColumnList">
+	corporate_client_id,corporate_client_name, corporate_client_address,
+	corporate_client_email,corporate_client_provider , corporate_client_phone_number, 
+	created_date, update_date,corporate_client_provider_id
+  </sql>
+  
+  <select id="selectAllCorporateClient" resultMap="CorporateClientResultMap">
+  	select
+  		<include refid="CorporateClientColumnList"/>
+    from
+    	 public.corporate_client order by update_date DESC  
+  </select>
+  
+  <update id="updateCorporateClientSelective" parameterType="com.ninelives.insurance.model.CorporateClient">
+    update public.corporate_client
+    <set>
+      <if test="corporateClientName != null">
+        corporate_client_name = #{corporateClientName,jdbcType=VARCHAR},
+      </if>
+      <if test="corporateClientAddress != null">
+        corporate_client_address = #{corporateClientAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="corporateClientPhoneNumber != null">
+        corporate_client_phone_number = #{corporateClientPhoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="corporateClientEmail != null">
+        corporate_client_email = #{corporateClientEmail,jdbcType=VARCHAR},
+      </if>
+       <if test="corporateClientProviderId != null">
+        corporate_client_provider_id = #{corporateClientProviderId,jdbcType=VARCHAR},
+      </if>
+      <if test="true">
+        update_date = now()
+      </if>
+     </set>
+    where corporate_client_id = #{corporateClientId,jdbcType=VARCHAR}
+  </update>
+ 
+</mapper>

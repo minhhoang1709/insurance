@@ -13,8 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.ninelives.insurance.apigateway.interceptor.AuthInterceptor;
 import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 
 @Configuration
@@ -24,8 +26,16 @@ import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 		+ "com.ninelives.insurance.core.trx, com.ninelives.insurance.core.provider"})
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
-			
+	
+	@Autowired AuthInterceptor authInterceptor;
 	@Autowired DataSource dataSource;
+	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(authInterceptor).excludePathPatterns(
+				"/error");
+	}
+
 
 	@PostConstruct
 	public void configInfo() {

@@ -6,8 +6,10 @@ import java.util.Set;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import com.ninelives.insurance.model.PolicyClaim;
+import com.ninelives.insurance.model.PolicyClaimCoverage;
 import com.ninelives.insurance.model.PolicyClaimDetailAccident;
 
 @Mapper
@@ -34,5 +36,17 @@ public interface PolicyClaimMapper {
 			@Param("offset") int offset);
 
 	PolicyClaim<PolicyClaimDetailAccident> selectByUserIdAndClaimId(@Param("userId") String userId, @Param("claimId") String claimId);
+	
+	@Select({
+        "select * ",
+        "from public.policy_claim ",
+        "where claim_id = #{claimId,jdbcType=VARCHAR}"
+    })
+	PolicyClaim selectByClaimId(@Param("claimId") String claimId);
+	
+	int updatePolicyClaimStatus(PolicyClaim policyClaim);
+	
+	int updatePolicyClaimCoverageStatus(PolicyClaimCoverage policyClaimCoverage);
+
 	
 }

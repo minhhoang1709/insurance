@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.ninelives.insurance.model.BatchFileUpload;
@@ -60,7 +61,48 @@ public interface BatchFileUploadMapper {
 	})
 	int updateBatchFileUploadHeaderByBatchNumber(@Param("batchNumber") String batchNumber);
 	
+	
 	@Update({
+        "update public.batch_file_upload ",
+        "set response_message = #{responseMessage,jdbcType=VARCHAR}, ",
+            "error_code = #{errorCode,jdbcType=VARCHAR}, ",
+            "order_id = #{orderId,jdbcType=VARCHAR}, ",
+            "user_id = #{userId,jdbcType=VARCHAR}, ",
+        	"modified_date = now(), ",
+        	"modified_by = 'system' ",
+        "where batch_file_upload_id = #{fileId,jdbcType=BIGINT} ",
+        "and batch_number = #{batchNumber,jdbcType=VARCHAR} "
+    })
+    int updateBatchFileUploadByBatchNumberAndId(@Param("responseMessage") String responseMessage, 
+		@Param("fileId") Long fileId,@Param("batchNumber") String batchNumber,
+		@Param("errorCode") String errorCode, @Param("orderId") String orderId,@Param("userId") String userId);
+
+	
+	@Select({
+		"select count(*) ",
+		"from batch_file_upload a, batch_file_upload_header b ",
+		"where a.batch_number=b.batch_number ",
+		"and a.ktp_number=#{ktpNumber,jdbcType=VARCHAR} ",
+		"and b.voucher_id=#{voucherId,jdbcType=INTEGER} ",
+		"and a.response_message='PAID'"
+    })
+    int selectCountUserPaid(@Param("voucherId") int voucherId, 
+    		@Param("ktpNumber") String ktpNumber);
+	
+	@Select({
+		"select count(*) ",
+		"from batch_file_upload a, batch_file_upload_header b ",
+		"where a.batch_number=b.batch_number ",
+		"and a.email=#{email,jdbcType=VARCHAR} ",
+		"and b.voucher_id=#{voucherId,jdbcType=INTEGER} ",
+		"and a.response_message='PAID'"
+    })
+    int selectCountUserPaidByEmail(@Param("voucherId") int voucherId, 
+    		@Param("email") String email);
+
+
+	
+	/*@Update({
         "update public.batch_file_upload ",
         "set response_message = #{responseMessage,jdbcType=VARCHAR}, ",
             "error_code = #{errorCode,jdbcType=VARCHAR}, ",
@@ -71,7 +113,7 @@ public interface BatchFileUploadMapper {
     })
     int updateBatchFileUploadByBatchNumberAndId(@Param("responseMessage") String responseMessage, 
 		@Param("fileId") Long fileId,@Param("batchNumber") String batchNumber,
-		@Param("errorCode") String errorCode);
+		@Param("errorCode") String errorCode);*/
     
 	
 	List<BatchFileUploadHeader> selectByUploadDate(@Param("uploadDate") String uploadDate);

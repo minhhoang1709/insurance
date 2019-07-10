@@ -14,7 +14,7 @@ public class Voucher implements Serializable{
     private String code;
 
     private String title;
-    
+
     private String subtitle;
 
     private String description;
@@ -40,8 +40,11 @@ public class Voucher implements Serializable{
     private String status;
 
     private VoucherType voucherType;
-        
+    
+    
     private CorporateClient corporateClient;
+    
+    private Integer corporateClientId;
     
     public CorporateClient getCorporateClient() {
 		return corporateClient;
@@ -269,7 +272,7 @@ public class Voucher implements Serializable{
 
 	public void setApproveCnt(Integer approveCnt) {
 		this.approveCnt = approveCnt;
-	}		
+	}
 
 	@Override
 	public String toString() {
@@ -278,10 +281,18 @@ public class Voucher implements Serializable{
 				+ ", useStartDate=" + useStartDate + ", useEndDate=" + useEndDate + ", basePremi=" + basePremi
 				+ ", totalPremi=" + totalPremi + ", hasBeneficiary=" + hasBeneficiary + ", productCount=" + productCount
 				+ ", periodId=" + periodId + ", status=" + status + ", voucherType=" + voucherType
-				+ ", corporateClient=" + corporateClient + ", products=" + products + ", period=" + period
-				+ ", inviterRewardLimit=" + inviterRewardLimit + ", inviterUserId=" + inviterUserId
-				+ ", inviterRewardCount=" + inviterRewardCount + ", createdDate=" + createdDate + ", updateDate="
-				+ updateDate + ", maxUse=" + maxUse + ", approveCnt=" + approveCnt + "]";
+				+ ", corporateClient=" + corporateClient + ", corporateClientId=" + corporateClientId + ", products="
+				+ products + ", period=" + period + ", inviterRewardLimit=" + inviterRewardLimit + ", inviterUserId="
+				+ inviterUserId + ", inviterRewardCount=" + inviterRewardCount + ", createdDate=" + createdDate
+				+ ", updateDate=" + updateDate + ", maxUse=" + maxUse + ", approveCnt=" + approveCnt + "]";
+	}
+
+	public Integer getCorporateClientId() {
+		return corporateClientId;
+	}
+
+	public void setCorporateClientId(Integer corporateClientId) {
+		this.corporateClientId = corporateClientId;
 	}
 
 	/*@Override

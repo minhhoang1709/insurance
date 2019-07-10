@@ -1,7 +1,10 @@
 package com.ninelives.insurance.apigateway.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +14,16 @@ import org.springframework.util.StringUtils;
 
 import com.ninelives.insurance.apigateway.adapter.ModelMapperAdapter;
 import com.ninelives.insurance.apigateway.dto.UserDto;
+import com.ninelives.insurance.apigateway.model.AuthTokenCms;
 import com.ninelives.insurance.apigateway.model.RegisterUsersResult;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
+import com.ninelives.insurance.core.exception.AppNotAuthorizedException;
+import com.ninelives.insurance.core.mybatis.mapper.UserCmsMapper;
 import com.ninelives.insurance.core.service.UserService;
 import com.ninelives.insurance.model.BatchFileUpload;
 import com.ninelives.insurance.model.User;
+import com.ninelives.insurance.model.UserCms;
 import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.Gender;
 import com.ninelives.insurance.ref.UserRegisterChannel;
@@ -36,6 +43,10 @@ public class ApiUserService {
 		
 	@Autowired 
 	ModelMapperAdapter modelMapperAdapter;
+	
+	@Autowired 
+	UserCmsMapper userCmsMapper;
+
 	
 	
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -102,5 +113,37 @@ public class ApiUserService {
 		
 		return registerResult;
 	}	
+	
+	public AuthTokenCms loginCms(String userId, String password) throws AppNotAuthorizedException{		
+		AuthTokenCms token = null;
+		
+		UserCms userCms = userCmsMapper.selectByUserId(userId);
+		if(userCms==null || !userCms.getPassword().equals(DigestUtils.sha1Hex(password))){
+			logger.info("Process login result:<{}>, reason:<Wrong password>, userId:<{}>", 
+					ErrorCode.ERR2001_LOGIN_FAILURE, userId);
+			throw new AppNotAuthorizedException(ErrorCode.ERR2001_LOGIN_FAILURE, "Wrong email or password");
+		
+		}else{
+			token = generateAuthTokenCms();
+			token.setUserCms(userCms);
+			logger.info("Process login result:<Success>, reason:<>, userId:<{}>", userId);
+		}
+
+		return token;
+	}
+	
+	private AuthTokenCms generateAuthTokenCms(){
+		AuthTokenCms token = new AuthTokenCms();
+		token.setTokenId(generateTokenId());
+		token.setCreatedDateTimeStr(LocalDateTime.now().format(formatter));
+		
+		return token;
+	}
+	
+	private String generateTokenId(){
+		return UUID.randomUUID().toString().replace("-", "");
+	}
+
+
 	
 }

@@ -79,6 +79,26 @@ public class ApiOrderService {
 				
 	}
 	
+	public String  validateCodeWithResponseMessage(String voucherCode, Voucher voucher) {
+		
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate today = now.toLocalDate();	
+		
+		String rValue= null;
+		LocalDate limitPolicyStartDate = today.plusDays(config.getOrder().getPolicyStartDatePeriod());
+		
+		if(voucher.getPolicyStartDate().isAfter(limitPolicyStartDate)){
+			rValue = "exception policy start-date exceed limit";
+						
+		}
+		if(voucher.getPolicyStartDate().isBefore(today)){
+			rValue = "exception policy start-date before today";
+		}
+		
+		return rValue;
+	
+	}
+
 
 	protected PolicyOrder registerOrder(RegisterUsersResult registerResult, String voucherCode) 
 			throws AppException{

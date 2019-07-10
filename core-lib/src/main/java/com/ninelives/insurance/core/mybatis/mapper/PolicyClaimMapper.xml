@@ -153,6 +153,34 @@
    	order by a.created_date desc
    </select>
   
+  <update id="updatePolicyClaimStatus" parameterType="com.ninelives.insurance.model.PolicyClaim">
+    update public.policy_claim
+    <set>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="true">
+        update_date = now()
+      </if>
+     </set>
+    where claim_id = #{claimId,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updatePolicyClaimCoverageStatus" parameterType="com.ninelives.insurance.model.PolicyClaimCoverage">
+    update public.policy_claim_coverage
+    <set>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="true">
+        update_date = now()
+      </if>
+     </set>
+    where claim_id = #{claimId,jdbcType=VARCHAR}
+    and coverage_id =  #{coverageId,jdbcType=VARCHAR}
+  </update>
+  
+  
   <select id="selectByUserIdAndStatusSet" resultMap="NestedPolicyClaimResultMap">
   	select 
   		<include refid="NestedPolicyClaimColumnList"/>

@@ -31,6 +31,8 @@ public class BatchFileUploadHeader implements Serializable{
     private Timestamp modifiedDate;
     
     private String modifiedBy; 
+    
+    private int voucherId;
 
 	
 
@@ -144,6 +146,14 @@ public class BatchFileUploadHeader implements Serializable{
 				+ ", rowValid=" + rowValid + ", rowInvalid=" + rowInvalid + ", totalRow=" + totalRow + ", status="
 				+ status + ", uploadBegin=" + uploadBegin + ", uploadEnd=" + uploadEnd + ", createdDate=" + createdDate
 				+ ", createdBy=" + createdBy + ", modifiedDate=" + modifiedDate + ", modifiedBy=" + modifiedBy + "]";
+	}
+
+	public int getVoucherId() {
+		return voucherId;
+	}
+
+	public void setVoucherId(int voucherId) {
+		this.voucherId = voucherId;
 	}
 
 	
