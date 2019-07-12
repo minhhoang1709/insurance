@@ -23,7 +23,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter{
 	
 	private static final String HEADER_AUTHENTICATION = "Authorization";
 	
-	@Value("${token.cms.ninelives}")
+	@Value("${ninelives-apigateway.token.cms}")
 	private String authToken;
 	
 	@Override
