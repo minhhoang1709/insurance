@@ -148,7 +148,8 @@ public interface ReportCmsMapper {
 	List<String> getListTransactionDatePeriodByDate(@Param("start") Date start, @Param("end") Date end);
 
 	@Select({
-		"select * from policy_claim_coverage ",
+		"select claim_coverage_id, claim_id, coverage_id, status, created_date, update_date ",
+		"from policy_claim_coverage ",
 		"where claim_id=#{claimId,jdbcType=VARCHAR} ",
 		"and coverage_id=#{coverageId,jdbcType=VARCHAR}"
 	})
@@ -341,13 +342,19 @@ public interface ReportCmsMapper {
 	List<String> getListInsuranceType();
 
 	@Select({
-		 "select * from ",
-	   	 "public.voucher a,public.corporate_client b, public.period c ",
-	   	 "where a.corporate_client_id=b.corporate_client_id ",  
-	   	 "and a.period_id=c.period_id   " +
-	   	 "and to_char(a.created_date, 'yyyy-MM-dd') >= #{startDate,jdbcType=DATE} ",
-	   	 "and to_char(a.created_date, 'yyyy-MM-dd') <= #{endDate,jdbcType=DATE} ",
-	   	 "order by a.created_date desc"
+		"select a.id, a.code, a.title, a.subtitle, a.description, a.policy_start_date, ", 
+		"a.policy_end_date, a.use_start_date, a.use_end_date, a.base_premi, a.total_premi, a.has_beneficiary, a.product_count, ",
+		"a.period_id, a.status, a.voucher_type, a.created_date, a.update_date, a.inviter_reward_limit, a.max_use, a.approve_cnt, ",
+		"a.corporate_client_id, b.corporate_client_id, b.corporate_client_name, b.corporate_client_address, b.corporate_client_phone_number, ",
+		"b.corporate_client_email, b.corporate_client_provider, b.corporate_client_provider_id, b.created_date, b.created_by, b.update_date, ",
+		"b.update_by, c.period_id, c.name, c.value, c.unit, c.created_date, c.update_date, c.status, c.start_value, c.end_value ",
+		"from ",
+	   	"public.voucher a,public.corporate_client b, public.period c ",
+	   	"where a.corporate_client_id=b.corporate_client_id ",  
+	   	"and a.period_id=c.period_id   " +
+	   	"and to_char(a.created_date, 'yyyy-MM-dd') >= #{startDate,jdbcType=DATE} ",
+	   	"and to_char(a.created_date, 'yyyy-MM-dd') <= #{endDate,jdbcType=DATE} ",
+	   	"order by a.created_date desc"
 	})
     List<Voucher> selectVoucherByDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
 
@@ -358,6 +365,18 @@ public interface ReportCmsMapper {
 		"where a.id=#{voucherId,jdbcType=INTEGER} group by b.product_id,c.name ) as insuranceType"
     })
 	String getInsuranceTypeByVoucherId(@Param("voucherId") Integer integer);
+
+	@Select({
+		"select userB2bCode from ( " +
+		"select c.name, c.gender, a.order_date, a.order_time, a.user_id, c.email, a.order_id, " +
+		"b.voucher_id, b.code, c.phone, c.birth_date, a.status " +
+		"from policy_order a, policy_order_voucher b, users c " +
+		"where a.order_id=b.order_id " +
+		"and a.user_id=c.user_id " +
+		"and a.has_voucher=true " +
+		"and b.voucher_type='B2B' order by a.created_date desc ) as userB2bCode"
+	})
+	List<String> getUserB2bByVoucherCode();
 	
 	
 }

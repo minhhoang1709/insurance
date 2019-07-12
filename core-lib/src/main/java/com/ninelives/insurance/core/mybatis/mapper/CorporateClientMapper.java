@@ -37,7 +37,9 @@ public interface CorporateClientMapper {
 	List<CorporateClient> selectAllCorporateClient();
 
 	@Select({
-        "select * ",
+        "select corporate_client_id, corporate_client_name, corporate_client_address, corporate_client_phone_number ",
+        "corporate_client_email, corporate_client_provider, corporate_client_provider_id, created_date ",
+        "created_by, update_date, update_by ",
         "from public.corporate_client",
         "where corporate_client_id = #{id,jdbcType=INTEGER}"
     })

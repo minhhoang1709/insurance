@@ -38,7 +38,8 @@ public interface PolicyClaimMapper {
 	PolicyClaim<PolicyClaimDetailAccident> selectByUserIdAndClaimId(@Param("userId") String userId, @Param("claimId") String claimId);
 	
 	@Select({
-        "select * ",
+        "select claim_id, order_id, user_id, claim_date, incident_date_time, incident_summary ",
+        "status, created_date, update_date, coverage_category_id ",
         "from public.policy_claim ",
         "where claim_id = #{claimId,jdbcType=VARCHAR}"
     })

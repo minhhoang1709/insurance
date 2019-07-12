@@ -74,7 +74,13 @@
   
   
   <select id="selectAllVoucherByCorporateClientId" resultMap="NestedVoucherResultMap">
-  select * from
+  select a.id, a.code, a.title, a.subtitle, a.description, a.policy_start_date,
+		a.policy_end_date, a.use_start_date, a.use_end_date, a.base_premi, a.total_premi, a.has_beneficiary, a.product_count,
+		a.period_id, a.status, a.voucher_type, a.created_date, a.update_date, a.inviter_reward_limit, a.max_use, a.approve_cnt,
+		a.corporate_client_id, b.corporate_client_id, b.corporate_client_name, b.corporate_client_address, b.corporate_client_phone_number,
+		b.corporate_client_email, b.corporate_client_provider, b.corporate_client_provider_id, b.created_date, b.created_by, b.update_date,
+		b.update_by, c.period_id, c.name, c.value, c.unit, c.created_date, c.update_date, c.status, c.start_value, c.end_value
+  from
     	 public.voucher a,
     	 public.corporate_client b, 
     	 public.period c

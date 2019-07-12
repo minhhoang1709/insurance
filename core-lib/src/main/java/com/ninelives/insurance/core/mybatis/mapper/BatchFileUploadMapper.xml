@@ -20,8 +20,14 @@
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
  </resultMap> 
  
+ <sql id="NestedBatchFileUpload">
+ 	batch_file_upload_id, batch_number, email, nama, jenis_kelamin, tanggal_lahir, tempat_lahir, no_telpon,
+ 	ktp_number, status, response_message, validation, created_date, created_by, modified_date, modified_by
+ </sql>
+ 
  <select id="selectByBatchNumber" resultMap="BaseResultMap">
-  	select *
+  	select 
+  	<include refid="NestedBatchFileUpload"/>
    	from public.batch_file_upload 
    	where batch_number=#{batchNumber,jdbcType=VARCHAR}
     	and validation=#{isValidate,jdbcType=VARCHAR}  	
@@ -44,15 +50,22 @@
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
  </resultMap> 
  
+ <sql id="NestedBatchFileUploadHeader">
+ 	id, batch_number, filename, row_valid, row_invalid, total_row, status, upload_begin,
+ 	upload_end, created_date, created_by, modified_date, modified_by
+ </sql>
+ 
  <select id="selectByUploadDate" resultMap="BaseResultHeaderMap">
-  	select *
+  	select 
+  	<include refid="NestedBatchFileUploadHeader"/>
    	from public.batch_file_upload_header 
    	where 
    	to_char(created_date, 'YYYY-MM-DD')=#{uploadDate,jdbcType=VARCHAR} 
   </select>
  
  <select id="selectResultByBatchNumber" resultMap="BaseResultMap">
-  	select *
+  	select 
+  	<include refid="NestedBatchFileUpload"/>
    	from public.batch_file_upload 
     where batch_number=#{batchNumber,jdbcType=VARCHAR} order by batch_file_upload_id asc 
    	
