@@ -368,7 +368,7 @@ public interface ReportCmsMapper {
 
 	@Select({
 		"select userB2bCode from ( " +
-		"select c.name, c.gender, a.order_date, a.order_time, a.user_id, c.email, a.order_id, " +
+		"select replace(c.name,',',' ') , c.gender, a.order_date, a.order_time, a.user_id, c.email, a.order_id, " +
 		"b.voucher_id, b.code, c.phone, c.birth_date, a.status " +
 		"from policy_order a, policy_order_voucher b, users c " +
 		"where a.order_id=b.order_id " +
@@ -379,4 +379,19 @@ public interface ReportCmsMapper {
 	List<String> getUserB2bByVoucherCode();
 	
 	
+	@Select({
+		"select userB2bCode from ( ",
+		"select replace(c.name,',',' ') , c.gender, a.order_date, a.order_time, a.user_id, ", 
+		"c.email, a.order_id, b.voucher_id, b.code, c.phone, c.birth_date, a.status ", 
+		"from policy_order a, policy_order_voucher b, users c  ",
+		"where a.order_id=b.order_id  ",
+		"and a.user_id=c.user_id  ",
+		"and a.has_voucher=true  ",
+		"and b.voucher_type='B2B'  ",
+		"and to_char(a.order_date, 'yyyy-MM-dd')  >= #{startDate,jdbcType=DATE} ",
+		"and to_char(a.order_date, 'yyyy-MM-dd') <= #{endDate,jdbcType=DATE} ",
+		"order by a.created_date desc )  ",
+		"as userB2bCode"
+	})
+    List<String> getUserB2bByOrderDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
 }

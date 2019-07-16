@@ -30,6 +30,8 @@ import com.ninelives.insurance.apigateway.dto.StringDto;
 import com.ninelives.insurance.apigateway.dto.TransactionReportBenefitPeriodDto;
 import com.ninelives.insurance.apigateway.dto.TransactionReportDatePeriodDto;
 import com.ninelives.insurance.apigateway.dto.TransactionReportInsuranceTypeDto;
+import com.ninelives.insurance.apigateway.dto.UserB2bCodeDto;
+import com.ninelives.insurance.apigateway.dto.UserB2bOrderStatusDto;
 import com.ninelives.insurance.apigateway.dto.UserDetailDto;
 import com.ninelives.insurance.apigateway.dto.UserManagementDto;
 import com.ninelives.insurance.apigateway.dto.VoucherFormDto;
@@ -45,6 +47,7 @@ import com.ninelives.insurance.model.CoverageCategory;
 import com.ninelives.insurance.model.Period;
 import com.ninelives.insurance.model.PolicyClaim;
 import com.ninelives.insurance.model.PolicyClaimCoverage;
+import com.ninelives.insurance.model.PolicyOrder;
 import com.ninelives.insurance.model.PolicyOrderProduct;
 import com.ninelives.insurance.model.Product;
 import com.ninelives.insurance.model.User;
@@ -53,6 +56,7 @@ import com.ninelives.insurance.model.VoucherProduct;
 import com.ninelives.insurance.ref.ClaimCoverageStatus;
 import com.ninelives.insurance.ref.ClaimStatus;
 import com.ninelives.insurance.ref.Gender;
+import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.UserStatus;
 import com.ninelives.insurance.ref.VoucherType;
 
@@ -1499,6 +1503,108 @@ public class ApiCmsService {
 			rValue.setErrMsgs("update user fail");
 		}
 		
+		return rValue;
+	
+	}
+
+
+	public List<UserB2bCodeDto> getListUserB2bByCode() {
+		
+		List<UserB2bCodeDto> dtoList =  new ArrayList<>();
+		
+		List<String> listPromoCode = b2bService.fetchUserB2bByVoucherCode();
+		for (String voucher : listPromoCode) {
+			String orderTime="";
+			String[] voc = voucher.substring(1,voucher.length()-1).split(",");
+			
+			UserB2bCodeDto dto =  new UserB2bCodeDto();
+			dto.setName(voc[0].isEmpty()?"":voc[0].replace("\"",""));
+			dto.setGender(voc[1].isEmpty()?"":voc[1]);
+			dto.setOrderDate(voc[2].isEmpty()?"":voc[2]);
+			
+			if(voc[3].isEmpty()){
+				orderTime =voc[2];  
+			}else{
+				orderTime =voc[3].replace("\"","");
+			}
+			dto.setOrderTime(orderTime);
+			dto.setUserId(voc[4].isEmpty()?"":voc[4]);
+			dto.setEmail(voc[5].isEmpty()?"":voc[5]);
+			dto.setOrderId(voc[6].isEmpty()?"":voc[6]);
+			dto.setVoucherId(voc[7].isEmpty()?"":voc[7]);
+			dto.setVoucherCode(voc[8].isEmpty()?"":voc[8]);
+			dto.setPhone(voc[9].isEmpty()?"":voc[9]);
+			dto.setBirthDate(voc[10].isEmpty()?"":voc[10]);
+			dto.setOrderStatus(voc[11].isEmpty()?"":voc[11]);
+			dtoList.add(dto);
+			
+		}
+		
+		return dtoList;
+	}
+
+
+	public List<UserB2bCodeDto> getListUserB2bByDate(String startDate, String endDate) {
+		List<UserB2bCodeDto> dtoList = new ArrayList<>();
+		String start = dateTimeFormatUtil.getFormatStatDate(startDate);
+		String end = dateTimeFormatUtil.getFormatStatDate(endDate);
+		
+		List<String> listPromoCode = b2bService.fetchUserB2bByOrderDate(start, end);
+		for (String voucher : listPromoCode) {
+			String orderTime="";
+			String[] voc = voucher.substring(1,voucher.length()-1).split(",");
+			
+			UserB2bCodeDto dto =  new UserB2bCodeDto();
+			dto.setName(voc[0].isEmpty()?"":voc[0]);
+			dto.setGender(voc[1].isEmpty()?"":voc[1]);
+			dto.setOrderDate(voc[2].isEmpty()?"":voc[2]);
+			
+			if(voc[3].isEmpty()){
+				orderTime =voc[2];  
+			}else{
+				orderTime =voc[3].replace("\"","");
+			}
+			dto.setOrderTime(orderTime);
+			dto.setUserId(voc[4].isEmpty()?"":voc[4]);
+			dto.setEmail(voc[5].isEmpty()?"":voc[5]);
+			dto.setOrderId(voc[6].isEmpty()?"":voc[6]);
+			dto.setVoucherId(voc[7].isEmpty()?"":voc[7]);
+			dto.setVoucherCode(voc[8].isEmpty()?"":voc[8]);
+			dto.setPhone(voc[9].isEmpty()?"":voc[9]);
+			dto.setBirthDate(voc[10].isEmpty()?"":voc[10]);
+			dto.setOrderStatus(voc[11].isEmpty()?"":voc[11]);
+			dtoList.add(dto);
+			
+		}
+		
+		
+		
+		return dtoList;
+	}
+
+
+	public UserB2bOrderStatusDto updateUserB2bOrderStatus(UserB2bOrderStatusDto userB2bOrderStatusDto) {
+		UserB2bOrderStatusDto rValue = new UserB2bOrderStatusDto();
+
+		String orderId = userB2bOrderStatusDto.getOrderId();
+		String orderStatus = userB2bOrderStatusDto.getOrderStatus();
+		
+		PolicyOrder policyOrder =  orderService.getPolicyOrderByOrderId(orderId);
+		if(policyOrder!=null){
+			if(!policyOrder.getStatus().name().equals(orderStatus)){
+				try {
+					if(orderService.paymentTerminated(policyOrder)==1){
+						rValue.setOrderStatus(orderStatus);
+					}else{
+						rValue.setErrMsgs("update claim status failed");
+					}
+				} catch (AppException e) {
+					rValue.setErrMsgs(e.getMessage());
+				}
+			}
+		}else{
+			rValue.setErrMsgs("update claim status failed, policy order not found");
+		}
 		return rValue;
 	
 	}

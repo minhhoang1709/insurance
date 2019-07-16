@@ -106,4 +106,6 @@ public interface PolicyOrderMapper {
 	
     @Select("select nextval('policy_order_id_map_2cp2_seq')")
 	Long selectNextPolicyOrderIdMap2c2p();
+    
+    PolicyOrder selectPolicyOrderByOrderId(@Param("orderId") String orderId);
 }

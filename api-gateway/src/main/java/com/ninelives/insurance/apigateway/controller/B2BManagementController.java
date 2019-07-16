@@ -19,9 +19,13 @@ import com.ninelives.insurance.apigateway.dto.B2bTransactionData;
 import com.ninelives.insurance.apigateway.dto.B2bTransactionListDto;
 import com.ninelives.insurance.apigateway.dto.B2bTrxListDto;
 import com.ninelives.insurance.apigateway.dto.BaseResponse;
+import com.ninelives.insurance.apigateway.dto.ClaimStatusDto;
 import com.ninelives.insurance.apigateway.dto.CompanyRegisterDto;
 import com.ninelives.insurance.apigateway.dto.CompanyRegisterListDto;
 import com.ninelives.insurance.apigateway.dto.CorporateClientDto;
+import com.ninelives.insurance.apigateway.dto.UserB2bCodeDto;
+import com.ninelives.insurance.apigateway.dto.UserB2bCodeListDto;
+import com.ninelives.insurance.apigateway.dto.UserB2bOrderStatusDto;
 import com.ninelives.insurance.apigateway.dto.VoucherFormDto;
 import com.ninelives.insurance.apigateway.dto.VoucherRegisterDto;
 import com.ninelives.insurance.apigateway.dto.VoucherRegisterListDto;
@@ -277,6 +281,58 @@ public class B2BManagementController extends AbstractWebServiceStatusImpl {
 		return listDto;
 	}
 	
+	@RequestMapping(value="/getListB2bUserbyCode", method=RequestMethod.GET)	
+	@ResponseBody
+	public UserB2bCodeListDto getListB2bUserbyCode(){
+		
+		UserB2bCodeListDto listDto = new UserB2bCodeListDto();
+		List<UserB2bCodeDto> listUserB2bCode = apiCmsService.getListUserB2bByCode();
+		
+		listDto.setiTotalRecords(listUserB2bCode.size());
+		listDto.setiTotalDisplayRecords(11);
+		listDto.setsEcho(0);
+		listDto.setsColumns("");
+		listDto.setAaData(listUserB2bCode);
+		
+		logger.info("list UserB2b by Code : "+ listUserB2bCode.toString());
+		
+		return listDto;
+	}
 	
+	
+	@RequestMapping(value="/getListB2bUserbyDate", method=RequestMethod.GET)	
+	@ResponseBody
+	public UserB2bCodeListDto getListB2bUserbyDate(
+			@RequestParam String startDate,
+			@RequestParam String endDate){
+		
+		UserB2bCodeListDto listDto = new UserB2bCodeListDto();
+		List<UserB2bCodeDto> listUserB2bCode = apiCmsService.getListUserB2bByDate(startDate, endDate);
+		
+		listDto.setiTotalRecords(listUserB2bCode.size());
+		listDto.setiTotalDisplayRecords(11);
+		listDto.setsEcho(0);
+		listDto.setsColumns("");
+		listDto.setAaData(listUserB2bCode);
+		
+		logger.info("list UserB2b by Code : "+ listUserB2bCode.toString());
+		
+		return listDto;
+	}
+	
+	@RequestMapping(value="/updateUserB2bOrderStatus",method=RequestMethod.POST)
+	@ResponseBody
+	public UserB2bOrderStatusDto updateUserB2bOrderStatus(
+			@RequestBody UserB2bOrderStatusDto userB2bOrderStatusDto,
+			HttpServletResponse response, 
+			HttpServletRequest request ) throws AppException{		
+		
+		logger.debug("Update user b2b order status dto:<{}>", userB2bOrderStatusDto.toString());
+		
+		UserB2bOrderStatusDto rValue = apiCmsService.updateUserB2bOrderStatus(userB2bOrderStatusDto);
+		
+		return rValue;
+	
+	}
 	
 }

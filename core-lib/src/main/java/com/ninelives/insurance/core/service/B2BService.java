@@ -346,5 +346,13 @@ public class B2BService {
 	public String getInsuranceTypeByVoucherId(Integer integer) {
 		return reportCmsMapper.getInsuranceTypeByVoucherId(integer);
 	}
+
+	public List<String> fetchUserB2bByVoucherCode() {
+		return reportCmsMapper.getUserB2bByVoucherCode();
+	}
+
+	public List<String> fetchUserB2bByOrderDate(String start, String end) {
+		return reportCmsMapper.getUserB2bByOrderDate(start, end);
+	}
 	
 }

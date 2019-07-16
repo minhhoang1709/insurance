@@ -541,5 +541,21 @@ public class OrderService {
 		policyOrderMapper.updateOrderIdMap(policyOrder);
 	}
 	
+	public int paymentTerminated(PolicyOrder policyOrder) throws AppException{
+		logger.info("Start process payment terminated, order:<{}>", policyOrder);
+		
+		if(StringUtils.isEmpty(policyOrder.getOrderId())){
+			throw new AppBadRequestException(ErrorCode.ERR4000_ORDER_INVALID, "Pesanan tidak ditemukan");
+		}		
+		policyOrder.setStatus(PolicyStatus.TERMINATED);
+		return policyOrderMapper.updateStatusAndProviderResponseByOrderIdSelective(policyOrder);
+
+	}
+	
+	public PolicyOrder getPolicyOrderByOrderId(final String orderId){
+		PolicyOrder policyOrder = policyOrderMapper.selectPolicyOrderByOrderId(orderId);
+		postRetrieval(policyOrder,LocalDate.now());
+		return policyOrder;
+	}
 	
 }
