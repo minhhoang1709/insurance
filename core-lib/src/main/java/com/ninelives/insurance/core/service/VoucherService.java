@@ -3,6 +3,8 @@ package com.ninelives.insurance.core.service;
 import java.time.LocalDate;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,8 @@ import com.ninelives.insurance.ref.ErrorCode;
 import com.ninelives.insurance.ref.VoucherType;
 
 @Service
-public class VoucherService {
+public class VoucherService {	
+	private static final Logger logger = LoggerFactory.getLogger(VoucherService.class);
 	
 	@Autowired ProductService productService;
 	@Autowired OrderService orderService;	
@@ -75,16 +78,16 @@ public class VoucherService {
 					p.setBasePremi(cachedProduct.getPremi());
 					p.setStatus(cachedProduct.getStatus());
 				}
-				if(voucher.getPeriod()==null){
+				if(voucher.getPeriod()==null || voucher.getPeriod().getUnit()==null){
 					voucher.setPeriod(voucher.getProducts().get(0).getPeriod());
 				}
+				
 			}
 			
 			//incase of invite voucher, set the code from parameter since the code is not stored in table voucher
 			if(StringUtils.isEmpty(voucher.getCode())){
 				voucher.setCode(code);
 			}
-			
 			if(voucher.getVoucherType().equals(VoucherType.INVITE)){				
 				voucher.setPolicyStartDate(today);
 				voucher.setPolicyEndDate(orderService.calculatePolicyEndDate(today, voucher.getPeriod()));
