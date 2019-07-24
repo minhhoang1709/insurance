@@ -355,4 +355,8 @@ public class B2BService {
 		return reportCmsMapper.getUserB2bByOrderDate(start, end);
 	}
 	
+	public List<String> fetchB2bOrderConfirm() {
+		return reportCmsMapper.getB2bOrderConfirm();
+	}
+	
 }

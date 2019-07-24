@@ -116,7 +116,7 @@ public interface VoucherMapper {
 	List<String> getListB2BReport();
 	
 	@Select({
-		"select  (a.claim_id, b.name, b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+		"select  (a.claim_id, replace(b.name,',',' '), b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
 		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
 		"e.account_number, f.policy_number) as claimList ",
 		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e, policy_order f ",

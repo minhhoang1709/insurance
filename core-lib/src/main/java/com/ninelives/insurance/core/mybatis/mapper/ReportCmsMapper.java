@@ -28,7 +28,7 @@ public interface ReportCmsMapper {
 	List<String> getListB2BReport();
 	
 	@Select({
-		"select  (a.claim_id, b.name, b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+		"select  (a.claim_id, replace(b.name,',',' ') , b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
 		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
 		"e.account_number) as claimList ",
 		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e ",
@@ -64,7 +64,7 @@ public interface ReportCmsMapper {
 	List<String> getListB2BReportByDate(@Param("start") Date start, @Param("end") Date end);
 	
 	@Select({
-		"select  (a.claim_id, b.name, b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+		"select  (a.claim_id, replace(b.name,',',' '), b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
 		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
 		"e.account_number, f.policy_number) as claimList ",
 		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e, policy_order f ",
@@ -211,7 +211,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -225,7 +225,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -249,7 +249,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -263,7 +263,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -327,7 +327,7 @@ public interface ReportCmsMapper {
 	@Select({
 		"select coverageList from ("
 		+ " select coverage_id, name ", 
-		" from coverage coverage_category_id=#{insuranceTypeid,jdbcType=VARCHAR} order by coverage_id) as coverageList"
+		" from coverage where coverage_category_id=#{insuranceTypeid,jdbcType=VARCHAR} order by coverage_id) as coverageList"
 	})
 	List<String> getListCoverageByInsuranceType(@Param("insuranceTypeid")String insuranceTypeid);
 	
@@ -394,4 +394,30 @@ public interface ReportCmsMapper {
 		"as userB2bCode"
 	})
     List<String> getUserB2bByOrderDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
+	
+	
+	/*@Select({
+		"select b2bOrderConfirm from ( ",
+		"select voucher_code,  ",
+		"count(*) filter (where status='PAID') as order, ",
+		"count(*) filter (where old_status='PAID' and  status='TERMINATED') as terminated, ",
+		"count(*) filter (where old_status='PAID' and  status='APPROVED') as approved ",
+		"from hist_policy_order ",
+		"where voucher_type='B2B' ",
+		"group by voucher_code order by 1) as b2bOrderConfirm"
+    })
+	List<String> getB2bOrderConfirm();*/
+	
+	@Select({
+		"select b2bOrderConfirm from ( ",
+		"select b.code, ",
+		"count(*) filter (where a.status='PAID') as order, ",
+		"count(*) filter (where a.status='TERMINATED') as terminated, ",
+		"count(*) filter (where a.status='APPROVED') as approved ",
+		"from policy_order a, policy_order_voucher b ",
+		"where a.order_id=b.order_id and b.voucher_type='B2B' group by b.code ",
+		") as b2bOrderConfirm"
+    })
+	List<String> getB2bOrderConfirm();
+	
 }

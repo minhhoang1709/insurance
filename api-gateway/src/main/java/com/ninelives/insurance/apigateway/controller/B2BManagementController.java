@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ninelives.insurance.apigateway.dto.B2bOrderConfirmDto;
+import com.ninelives.insurance.apigateway.dto.B2bOrderConfirmListDto;
 import com.ninelives.insurance.apigateway.dto.B2bTransactionData;
 import com.ninelives.insurance.apigateway.dto.B2bTransactionListDto;
 import com.ninelives.insurance.apigateway.dto.B2bTrxListDto;
@@ -333,6 +335,24 @@ public class B2BManagementController extends AbstractWebServiceStatusImpl {
 		
 		return rValue;
 	
+	}
+	
+	@RequestMapping(value="/getB2bOrderConfirm", method=RequestMethod.GET)	
+	@ResponseBody
+	public B2bOrderConfirmListDto getB2bOrderConfirm(){
+		
+		B2bOrderConfirmListDto listDto = new B2bOrderConfirmListDto();
+		List<B2bOrderConfirmDto> listB2bOrderConfirm = apiCmsService.getListB2bOrderConfirm();
+		
+		listDto.setiTotalRecords(listB2bOrderConfirm.size());
+		listDto.setiTotalDisplayRecords(11);
+		listDto.setsEcho(0);
+		listDto.setsColumns("");
+		listDto.setAaData(listB2bOrderConfirm);
+		
+		logger.info("list B2B Order Confirm : "+ listB2bOrderConfirm.toString());
+		
+		return listDto;
 	}
 	
 }
