@@ -41,8 +41,8 @@ public class BatchFileUploadService {
 			return batchFileUploadMapper.selectByBatchNumber(batchNumber,"1");
 	}
 	
-	@SuppressWarnings({ "unused", "finally" })
-	public void save(List<RowFile> validatedRows, String batchNumber, String userName) {
+	
+	public void save(List<RowFile> validatedRows, String batchNumber, String userName) throws AppException{
 		Date date = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 		Timestamp dt = Timestamp.valueOf(dateFormat.format(date));

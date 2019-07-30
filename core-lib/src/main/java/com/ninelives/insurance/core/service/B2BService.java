@@ -139,7 +139,7 @@ public class B2BService {
 	}
 
 	public List<String> getListClaimManagement() {
-		return voucherMapper.getListClaimManagement();
+		return reportCmsMapper.getListClaimManagement();
 	}
 
 	public List<String> getListCoveragesByClaimId(String claimId) {

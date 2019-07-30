@@ -581,7 +581,7 @@ public class ApiCmsService {
 			ClaimManagementDto claimManagementDto = new ClaimManagementDto();
 				String claimId = claim[0].trim();
 				claimManagementDto.setClaimId(claimId);
-				claimManagementDto.setClaimUserName(claim[1]);
+				claimManagementDto.setClaimUserName(claim[1].replace("\"",""));
 				claimManagementDto.setClaimUserEmail(claim[2]);
 				claimManagementDto.setInsuranceType(claim[3].replace("\"",""));
 				claimManagementDto.setClaimStatus(claim[4]);

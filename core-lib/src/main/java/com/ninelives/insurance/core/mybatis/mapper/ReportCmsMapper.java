@@ -27,7 +27,7 @@ public interface ReportCmsMapper {
     })
 	List<String> getListB2BReport();
 	
-	@Select({
+	/*@Select({
 		"select  (a.claim_id, replace(b.name,',',' ') , b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
 		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
 		"e.account_number) as claimList ",
@@ -36,6 +36,20 @@ public interface ReportCmsMapper {
 		"and a.coverage_category_id= c.coverage_category_id ",
 		"and a.claim_id=d.claim_id ",
 		"and a.claim_id=e.claim_id ",
+		"order by a.update_date desc "
+    })
+	List<String> getListClaimManagement();*/
+	
+	@Select({
+		"select  (a.claim_id, replace(b.name,',',' '), b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
+		"e.account_number, f.policy_number) as claimList ",
+		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e, policy_order f ",
+		"where a.user_id=b.user_id ",
+		"and a.coverage_category_id= c.coverage_category_id ",
+		"and a.claim_id=d.claim_id ",
+		"and a.claim_id=e.claim_id ",
+		"and a.order_id=f.order_id ",
 		"order by a.update_date desc "
     })
 	List<String> getListClaimManagement();
@@ -394,19 +408,6 @@ public interface ReportCmsMapper {
 		"as userB2bCode"
 	})
     List<String> getUserB2bByOrderDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
-	
-	
-	/*@Select({
-		"select b2bOrderConfirm from ( ",
-		"select voucher_code,  ",
-		"count(*) filter (where status='PAID') as order, ",
-		"count(*) filter (where old_status='PAID' and  status='TERMINATED') as terminated, ",
-		"count(*) filter (where old_status='PAID' and  status='APPROVED') as approved ",
-		"from hist_policy_order ",
-		"where voucher_type='B2B' ",
-		"group by voucher_code order by 1) as b2bOrderConfirm"
-    })
-	List<String> getB2bOrderConfirm();*/
 	
 	@Select({
 		"select b2bOrderConfirm from ( ",
