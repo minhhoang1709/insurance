@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +80,7 @@ public class ModelMapperAdapter {
 	
 	@Value("${ninelives-api.coverage-img-url-path}")
 	String coverageImgUrlPath;
+	
 	String overdueDurationMessageFormat = OVERDUE_DURATION_MESSAGE_FORMAT;
 	
 	@Autowired MessageSource messageSource;	
@@ -196,13 +196,9 @@ public class ModelMapperAdapter {
 			dto = new PaymentDto();
 			dto.setPaymentChargeDate(m.getChargeTime());
 			dto.setPaymentExpiryDate(m.getChargeExpiryTime());
-			logger.debug("the format is {}", messageSource.getMessage(overdueDurationMessageFormat, null, LocaleContextHolder.getLocale()));
-			try{
-				
-				System.out.println("the format is "+messageSource.getMessage(overdueDurationMessageFormat, null, LocaleContextHolder.getLocale()));
+			try{				
 				dto.setExpiryDuration(DateTimeFormatUtil.timeBetween(LocalDateTime.now(), m.getChargeExpiryTime(),
-						messageSource.getMessage(overdueDurationMessageFormat, null, LocaleContextHolder.getLocale())));
-				
+						messageSource.getMessage(overdueDurationMessageFormat, null, LocaleContextHolder.getLocale())));				
 			}catch(Exception e){
 				logger.error("error convert duration <{}>", m);
 			}			
@@ -380,6 +376,7 @@ public class ModelMapperAdapter {
 			dto.setRecommendation(translationService.translateDefaultIfEmpty(m, languageCode).getRecommendation());
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
 			dto.setRecommendationImageUrl(this.coverageImgUrlPath+"recommend"+m.getCoverageCategoryId()+".jpg");
+			dto.setRecommendationCoverImageUrl(this.coverageImgUrlPath+"recommendCover"+m.getCoverageCategoryId()+".jpg");
 			dto.setType(m.getType());
 			if(m.getInsurer()!=null) {
 				dto.setProviderCode(m.getInsurer().getCode());
