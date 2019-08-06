@@ -376,7 +376,7 @@ public class ModelMapperAdapter {
 			dto.setRecommendation(translationService.translateDefaultIfEmpty(m, languageCode).getRecommendation());
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
 			dto.setRecommendationImageUrl(this.coverageImgUrlPath+"recommend"+m.getCoverageCategoryId()+".jpg");
-			dto.setRecommendationCoverImageUrl(this.coverageImgUrlPath+"recommendCover"+m.getCoverageCategoryId()+".jpg");
+			dto.setRecommendationCoverImageUrl(this.coverageImgUrlPath+"recommendCover"+m.getCoverageCategoryId()+".png");
 			dto.setType(m.getType());
 			if(m.getInsurer()!=null) {
 				dto.setProviderCode(m.getInsurer().getCode());
