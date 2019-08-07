@@ -359,4 +359,19 @@ public class B2BService {
 		return reportCmsMapper.getB2bOrderConfirm();
 	}
 	
+	public String getClaimInfoByClaimId(String claimId) {
+		return reportCmsMapper.getClaimInfoByClaimId(claimId);
+	}
+
+	public List<String> getListClaimCoverageByClaimId(String claimId) {
+		return reportCmsMapper.getListClaimCoverageByClaimId(claimId);
+	}
+	
+	public String getClaimBankAccountByClaimId(String claimId) {
+		return reportCmsMapper.getClaimBankAccountByClaimId(claimId);
+	}
+	
+	public List<String> getListClaimDocumentByClaimId(String claimId) {
+		return reportCmsMapper.getListClaimDocumentByClaimId(claimId);
+	}
 }

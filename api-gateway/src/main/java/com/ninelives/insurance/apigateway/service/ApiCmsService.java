@@ -15,11 +15,15 @@ import com.ninelives.insurance.apigateway.dto.B2bOrderConfirmDto;
 import com.ninelives.insurance.apigateway.dto.B2bReportDto;
 import com.ninelives.insurance.apigateway.dto.B2bTransactionDto;
 import com.ninelives.insurance.apigateway.dto.B2bTransactionListDto;
+import com.ninelives.insurance.apigateway.dto.ClaimBankAccount;
+import com.ninelives.insurance.apigateway.dto.ClaimDocument;
+import com.ninelives.insurance.apigateway.dto.ClaimInfo;
+import com.ninelives.insurance.apigateway.dto.ClaimInfoDetailDto;
 import com.ninelives.insurance.apigateway.dto.ClaimManagementDto;
+import com.ninelives.insurance.apigateway.dto.ClaimSelectedCoverage;
 import com.ninelives.insurance.apigateway.dto.ClaimStatusDto;
 import com.ninelives.insurance.apigateway.dto.CompanyRegisterDto;
 import com.ninelives.insurance.apigateway.dto.CorporateClientDto;
-import com.ninelives.insurance.apigateway.dto.CoveragePolicyClaimDto;
 import com.ninelives.insurance.apigateway.dto.DataProviderAgeDto;
 import com.ninelives.insurance.apigateway.dto.DataProviderGenderDto;
 import com.ninelives.insurance.apigateway.dto.FormObjectDto;
@@ -57,7 +61,6 @@ import com.ninelives.insurance.model.VoucherProduct;
 import com.ninelives.insurance.ref.ClaimCoverageStatus;
 import com.ninelives.insurance.ref.ClaimStatus;
 import com.ninelives.insurance.ref.Gender;
-import com.ninelives.insurance.ref.PolicyStatus;
 import com.ninelives.insurance.ref.UserStatus;
 import com.ninelives.insurance.ref.VoucherType;
 
@@ -1392,7 +1395,7 @@ public class ApiCmsService {
 				 bDate = dateTimeFormatUtil.getFormatDate2(cov[4]);
 			}
 			dto.setBirthDate(bDate);
-			dto.setBirthPlace(cov[5]);
+			dto.setBirthPlace(cov[5].replace("\"",""));
 			dto.setPhone(cov[6]);
 			dto.setAddress(cov[7]==null?"":cov[7].replace("\"",""));
 			dto.setIdCardNumber(cov[8]);
@@ -1655,6 +1658,82 @@ public class ApiCmsService {
 		}
 		
 		return dtoList;
+	}
+
+
+	public ClaimInfoDetailDto getClaimInformationDetailByClaimId(String claimId) {
+		ClaimInfoDetailDto claimInfoDetailDto = new ClaimInfoDetailDto();
+		
+		String claimInfoDt = b2bService.getClaimInfoByClaimId(claimId);
+		if(claimInfoDt!=null){
+			String[] dt = claimInfoDt.replace("|", "#").split("#");
+			ClaimInfo claimInfo = new ClaimInfo();
+			claimInfo.setNineliveClaimId(dt[0]);
+			claimInfo.setNinelivesOrderId(dt[1]);
+			claimInfo.setUserRefNo(dt[2]);
+			claimInfo.setUserEmail(dt[3].equals("*")?"":dt[3].replace("\"",""));
+			claimInfo.setUserName(dt[4].equals("*")?"":dt[4].replace("\"",""));
+			claimInfo.setRequestTime(dt[5].replace("\"",""));
+			claimInfo.setPolicyNumber(dt[6].equals("*")?"":dt[6].replace("\"",""));
+			claimInfo.setPhone(dt[7].equals("*")?"":dt[7].replace("\"",""));
+			claimInfo.setDateOfLoss(dt[8].equals("*")?"":dt[8].replace("\"",""));
+			claimInfo.setLossDescription(dt[9].equals("*")?"":dt[9].replace("\"",""));
+			claimInfo.setLossLocationCity(dt[10].equals("*")?"":dt[10].replace("\"",""));
+			claimInfo.setLossLocationProvince(dt[11].equals("*")?"":dt[11].replace("\"",""));
+			claimInfo.setLossLocationCountry(dt[12].equals("*")?"":dt[12].replace("\"",""));
+			
+			claimInfoDetailDto.setClaimInfo(claimInfo);
+		}
+		
+		List<String> listClaimCoverage = b2bService.getListClaimCoverageByClaimId(claimId);
+		if(listClaimCoverage!=null){
+			List<ClaimSelectedCoverage> listClaimSelectedCoverage = new ArrayList<>();
+			for (String coverage : listClaimCoverage) {
+				String[] dt = coverage.replace("|", "#").split("#");
+				ClaimSelectedCoverage claimSelectedCoverage = new ClaimSelectedCoverage();
+				claimSelectedCoverage.setNineliveCoverageId(dt[0].replace("\"",""));
+				claimSelectedCoverage.setInsuranceCategory(dt[1].replace("\"",""));
+				claimSelectedCoverage.setCoverageName(dt[2].replace("\"",""));
+				claimSelectedCoverage.setAswataCoverageCode(dt[3].replace("\"",""));
+				listClaimSelectedCoverage.add(claimSelectedCoverage);
+			}
+			
+			claimInfoDetailDto.setClaimSelectedCoverage(listClaimSelectedCoverage);
+			
+		}
+		
+		String claimBankAccountDt = b2bService.getClaimBankAccountByClaimId(claimId);
+		if(claimBankAccountDt!=null){
+			String[] dt = claimBankAccountDt.replace("|", "#").split("#");
+			ClaimBankAccount claimBankAccount = new ClaimBankAccount();
+			claimBankAccount.setAccountBankName(dt[0]);
+			claimBankAccount.setAccountBankSwiftCode(dt[1]);
+			claimBankAccount.setAccountName(dt[2]);
+			claimBankAccount.setAccountNumber(dt[3]);	
+			
+			claimInfoDetailDto.setClaimBankAccount(claimBankAccount);
+		}
+		
+		List<String> listClaimDocumentDt = b2bService.getListClaimDocumentByClaimId(claimId);
+		if(listClaimDocumentDt!=null){
+			List<ClaimDocument> listClaimDocument = new ArrayList<>();
+			for (String document : listClaimDocumentDt) {
+				String[] dt = document.replace("|", "#").split("#");
+				ClaimDocument claimDocument = new ClaimDocument();
+				claimDocument.setNinelivesDocumentTypeId(dt[0].replace("\"",""));
+				claimDocument.setDocumentName(dt[1].replace("\"",""));
+				claimDocument.setFilePath(dt[2].replace("\"",""));
+				
+				listClaimDocument.add(claimDocument);
+				
+			}
+			
+			claimInfoDetailDto.setClaimDocument(listClaimDocument);
+			
+		}
+		
+		return claimInfoDetailDto;
+	
 	}
 	
 	

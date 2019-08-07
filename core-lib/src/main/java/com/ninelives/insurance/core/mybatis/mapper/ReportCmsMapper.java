@@ -421,4 +421,66 @@ public interface ReportCmsMapper {
     })
 	List<String> getB2bOrderConfirm();
 	
+	
+	@Select({
+		"select a.claim_id ||'|'|| a.order_id||'|'|| ",
+		"b.user_id||'|'||b.email||'|'||  ",
+		"b.name ||'|'|| ",
+		"a.created_date||'|'||coalesce(c.policy_number,'*')||'|'|| ",
+		"coalesce(b.phone,'*')||'|'||a.incident_date_time||'|'|| ",
+		"coalesce(a.incident_summary,'*')||'|'|| ",
+		"coalesce(d.accident_address_city,'*')||'|'|| ",
+		"coalesce(d.accident_address_province,'*')||'|'|| ",
+		"coalesce(d.accident_address_country,'*') as claimInformation ",
+	    "from policy_claim a, users b, policy_order c, policy_claim_detail_accident d ", 
+	    "where b.user_id=a.user_id and c.order_id=a.order_id and d.claim_id = a.claim_id ",
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR}" 
+    })
+	String getClaimInfoByClaimId(@Param("claimId") String claimId);
+
+	
+	@Select({
+		"select b.coverage_id ||'|'||c.name||'|'||b.name||'|'|| ",
+		"b.provider_code as claimCoverage ",
+		"from policy_claim_coverage a, coverage b, coverage_category c ",
+		"where b.coverage_id=a.coverage_id and c.coverage_category_id=b.coverage_category_id ",
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR}" 
+    })
+	List<String> getListClaimCoverageByClaimId(@Param("claimId") String claimId);
+	
+	@Select({
+		"select coalesce(a.account_bank_name,'*')||'|'|| ", 
+		"coalesce(a.account_bank_swift_code,'*')||'|'|| ",
+		"coalesce(a.account_name,'*')||'|'|| ",
+		"coalesce(a.account_number,'*') as bankAccount ",
+		"from policy_claim_bank_account a ",
+		"where a.claim_id=#{claimId,jdbcType=VARCHAR}" 
+    })
+	String getClaimBankAccountByClaimId(@Param("claimId") String claimId);
+	
+	
+	@Select({
+		"select coalesce(a.claim_doc_type_id,'*')||'|'|| ",
+		"coalesce(c.name,'*')||'|'|| ",
+		"coalesce(b.file_path,'*') as claimDocument ",
+		"from policy_claim_document a, user_file b, claim_doc_type c ", 
+		"where b.file_id = a.file_id and c.claim_doc_type_id=a.claim_doc_type_id ", 
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR} ",
+		"union all ",
+		"select coalesce(b.file_use_type,'*')||'|'|| ",
+		"'Identity Card'||'|'|| ",
+		"coalesce(b.file_path,'*') as claimIdCardDocument ",
+		"from policy_claim a, user_file b  ",
+		"where a.user_id=b.user_id and b.file_use_type='ID' and b.content_type like '%png' ", 
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR} "
+    })
+	List<String> getListClaimDocumentByClaimId(@Param("claimId") String claimId);
+	
+/*	"select coalesce(a.claim_doc_type_id,'*')||'|'|| ",
+	"coalesce(c.name,'*')||'|'|| ",
+	"coalesce(b.file_path,'*') as claimDocument ",
+	"from policy_claim_document a, user_file b, claim_doc_type c ", 
+	"where b.file_id = a.file_id and c.claim_doc_type_id=a.claim_doc_type_id ", 
+	"and a.claim_id=#{claimId,jdbcType=VARCHAR}" */
+	
 }
