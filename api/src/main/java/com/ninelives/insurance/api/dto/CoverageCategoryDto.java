@@ -16,6 +16,8 @@ public class CoverageCategoryDto {
     
     private String recommendationImageUrl;
     
+    private String recommendationCoverImageUrl;
+    
     private InsurerCode providerCode;
     
     private CoverageCategoryType type;
@@ -58,6 +60,14 @@ public class CoverageCategoryDto {
 
 	public void setRecommendationImageUrl(String recommendationImageUrl) {
 		this.recommendationImageUrl = recommendationImageUrl;
+	}
+	
+	public String getRecommendationCoverImageUrl() {
+		return recommendationCoverImageUrl;
+	}
+
+	public void setRecommendationCoverImageUrl(String recommendationCoverImageUrl) {
+		this.recommendationCoverImageUrl = recommendationCoverImageUrl;
 	}
 
 	public CoverageCategoryType getType() {
