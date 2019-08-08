@@ -71,7 +71,7 @@ public class ApiUserService {
 					logger.debug("Process order for <{}> with result: id card no and id card file not found", user.getUserId());
 					throw new AppBadRequestException(ErrorCode.ERR4017_ORDER_IDCARD_NOTFOUND,
 							"Permintaan tidak dapat diproses, KTP dan ID Card file tidak ditemukan.");
-			}	
+			}
 			
 		}else{
 			if(StringUtils.isEmpty(batchFileUpload.getKtpNumber())) {

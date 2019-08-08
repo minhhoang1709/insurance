@@ -55,6 +55,12 @@ public class BatchFileUploadDto {
 		this.code = code;
 	}
 
+	@Override
+	public String toString() {
+		return "BatchFileUploadDto [code=" + code + ", batchNumber=" + batchNumber + ", status=" + status + ", rows="
+				+ rows + ", fileName=" + fileName + "]";
+	}
+
 	
     
     }
