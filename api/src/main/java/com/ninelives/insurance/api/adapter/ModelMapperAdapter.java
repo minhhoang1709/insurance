@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -76,13 +76,15 @@ import com.ninelives.insurance.ref.PolicyStatus;
 public class ModelMapperAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(ModelMapperAdapter.class);
 	
+	private static String OVERDUE_DURATION_MESSAGE_FORMAT = "message-format.order.overdue.duration";
+	
 	@Value("${ninelives-api.coverage-img-url-path}")
 	String coverageImgUrlPath;
-//	@Value("${ninelives.order.policy-title}")
-//	String policyTitle;
 	
-	@Autowired private TranslationService translationService;
-		
+	String overdueDurationMessageFormat = OVERDUE_DURATION_MESSAGE_FORMAT;
+	
+	@Autowired MessageSource messageSource;	
+	@Autowired TranslationService translationService;		
 	
 	public TranslationService getTranslationService() {
 		return translationService;
@@ -194,8 +196,9 @@ public class ModelMapperAdapter {
 			dto = new PaymentDto();
 			dto.setPaymentChargeDate(m.getChargeTime());
 			dto.setPaymentExpiryDate(m.getChargeExpiryTime());
-			try{
-				dto.setExpiryDuration(DateTimeFormatUtil.timeBetween(LocalDateTime.now(),m.getChargeExpiryTime()));
+			try{				
+				dto.setExpiryDuration(DateTimeFormatUtil.timeBetween(LocalDateTime.now(), m.getChargeExpiryTime(),
+						messageSource.getMessage(overdueDurationMessageFormat, null, LocaleContextHolder.getLocale())));				
 			}catch(Exception e){
 				logger.error("error convert duration <{}>", m);
 			}			
@@ -373,6 +376,7 @@ public class ModelMapperAdapter {
 			dto.setRecommendation(translationService.translateDefaultIfEmpty(m, languageCode).getRecommendation());
 			dto.setImageUrl(this.coverageImgUrlPath + "cat" + m.getCoverageCategoryId() + ".jpg");
 			dto.setRecommendationImageUrl(this.coverageImgUrlPath+"recommend"+m.getCoverageCategoryId()+".jpg");
+			dto.setRecommendationCoverImageUrl(this.coverageImgUrlPath+"recommendCover"+m.getCoverageCategoryId()+".png");
 			dto.setType(m.getType());
 			if(m.getInsurer()!=null) {
 				dto.setProviderCode(m.getInsurer().getCode());

@@ -116,20 +116,6 @@ public interface VoucherMapper {
 	List<String> getListB2BReport();
 	
 	@Select({
-		"select  (a.claim_id, b.name, b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
-		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
-		"e.account_number, f.policy_number) as claimList ",
-		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e, policy_order f ",
-		"where a.user_id=b.user_id ",
-		"and a.coverage_category_id= c.coverage_category_id ",
-		"and a.claim_id=d.claim_id ",
-		"and a.claim_id=e.claim_id ",
-		"and a.order_id=f.order_id ",
-		"order by a.update_date desc "
-    })
-	List<String> getListClaimManagement();
-
-	@Select({
 		"select (a.coverage_id, b.name, a.status) as coverageName from policy_claim_coverage a, coverage b ", 
 		"where a.claim_id=#{claimId,jdbcType=VARCHAR} ",
 		"and a.coverage_id=b.coverage_id "

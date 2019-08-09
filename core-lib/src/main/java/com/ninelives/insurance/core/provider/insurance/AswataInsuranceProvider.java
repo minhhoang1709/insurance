@@ -193,18 +193,20 @@ public class AswataInsuranceProvider implements InsuranceProvider{
 		}else if (order.getCoverageCategoryId().equals(CoverageCategoryId.SELFIE)){
 			requestDto.getRequestParam().setProductCode(ProductCode.SELFIE);
 			requestDto.getRequestParam().setPackageType(PackageType.TYPE_SELFIE);
-			
-			for(PolicyOrderDocument orderDoc : order.getPolicyOrderDocuments()) {
-				UserFile docFile = fileUploadService.fetchUserFileById(orderDoc.getFileId());
+			if (order.getPolicyOrderDocuments()!=null) {
+				for(PolicyOrderDocument orderDoc : order.getPolicyOrderDocuments()) {
+					UserFile docFile = fileUploadService.fetchUserFileById(orderDoc.getFileId());
 
-				if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.FRONT_FACE)) {
-					requestDto.getRequestParam().setFacePhotoFront(docFile);
-				}else if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.RIGHT_FACE)) {
-					requestDto.getRequestParam().setFacePhotoRight(docFile);
-				}else if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.LEFT_FACE)) {
-					requestDto.getRequestParam().setFacePhotoLeft(docFile);	
-				}
-			}			
+					if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.FRONT_FACE)) {
+						requestDto.getRequestParam().setFacePhotoFront(docFile);
+					}else if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.RIGHT_FACE)) {
+						requestDto.getRequestParam().setFacePhotoRight(docFile);
+					}else if(orderDoc.getOrderDocTypeId().equals(OrderDocTypeId.Selfie.LEFT_FACE)) {
+						requestDto.getRequestParam().setFacePhotoLeft(docFile);	
+					}
+				}	
+			}
+					
 			
 			if (order.getPolicyOrderVoucher() != null && order.getPolicyOrderVoucher().getVoucher() != null
 					&& VoucherType.B2B.equals(order.getPolicyOrderVoucher().getVoucher().getVoucherType())) {

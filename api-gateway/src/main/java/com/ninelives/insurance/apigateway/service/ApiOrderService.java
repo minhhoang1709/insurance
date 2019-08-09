@@ -84,9 +84,11 @@ public class ApiOrderService {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDate today = now.toLocalDate();	
 		
+		logger.debug("now :<{}>  today:<{}>", now, today);
 		String rValue= null;
 		LocalDate limitPolicyStartDate = today.plusDays(config.getOrder().getPolicyStartDatePeriod());
 		
+		logger.debug("limitPolicyStartDate :<{}>", limitPolicyStartDate);
 		if(voucher.getPolicyStartDate().isAfter(limitPolicyStartDate)){
 			rValue = "exception policy start-date exceed limit";
 						
@@ -503,7 +505,7 @@ public class ApiOrderService {
 					+ "with voucher: <{}>", userId, voucherCode, voucher);
 			
 			//check over limit case
-			if(!voucherService.isUsable(voucher)){
+			/*if(!voucherService.isUsable(voucher)){
 				boolean isUsable = false;
 				
 				if(!isUsable){
@@ -513,7 +515,7 @@ public class ApiOrderService {
 								"Kode ini sudah tidak tersedia.");
 				}
 	
-			}
+			}*/
 			
 		}
 				

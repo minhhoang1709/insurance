@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ninelives.insurance.apigateway.dto.ClaimInfoDetailDto;
 import com.ninelives.insurance.apigateway.dto.ClaimManagementDto;
 import com.ninelives.insurance.apigateway.dto.ClaimManagementListDto;
 import com.ninelives.insurance.apigateway.dto.ClaimStatusDto;
@@ -84,6 +85,19 @@ public class ClaimManagementController extends AbstractWebServiceStatusImpl {
 		return rValue;
 	
 	}
+	
+	@RequestMapping(value="/getClaimInformationDetail", method=RequestMethod.GET)	
+	@ResponseBody
+	public ClaimInfoDetailDto getClaimInfoDetailDto(
+			@RequestParam String claimId){	
+		
+		
+		ClaimInfoDetailDto claimInfoDetailDto = apiCmsService.getClaimInformationDetailByClaimId(claimId);
+		logger.info("claimInfoDetailDto : "+ claimInfoDetailDto.toString());
+		
+		return claimInfoDetailDto;
+	}
+	
 	
 	
 }

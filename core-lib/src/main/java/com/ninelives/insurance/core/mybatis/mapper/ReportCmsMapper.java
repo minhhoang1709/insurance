@@ -27,8 +27,8 @@ public interface ReportCmsMapper {
     })
 	List<String> getListB2BReport();
 	
-	@Select({
-		"select  (a.claim_id, b.name, b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+	/*@Select({
+		"select  (a.claim_id, replace(b.name,',',' ') , b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
 		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
 		"e.account_number) as claimList ",
 		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e ",
@@ -36,6 +36,20 @@ public interface ReportCmsMapper {
 		"and a.coverage_category_id= c.coverage_category_id ",
 		"and a.claim_id=d.claim_id ",
 		"and a.claim_id=e.claim_id ",
+		"order by a.update_date desc "
+    })
+	List<String> getListClaimManagement();*/
+	
+	@Select({
+		"select  (a.claim_id, replace(b.name,',',' '), b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
+		"e.account_number, f.policy_number) as claimList ",
+		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e, policy_order f ",
+		"where a.user_id=b.user_id ",
+		"and a.coverage_category_id= c.coverage_category_id ",
+		"and a.claim_id=d.claim_id ",
+		"and a.claim_id=e.claim_id ",
+		"and a.order_id=f.order_id ",
 		"order by a.update_date desc "
     })
 	List<String> getListClaimManagement();
@@ -64,7 +78,7 @@ public interface ReportCmsMapper {
 	List<String> getListB2BReportByDate(@Param("start") Date start, @Param("end") Date end);
 	
 	@Select({
-		"select  (a.claim_id, b.name, b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
+		"select  (a.claim_id, replace(b.name,',',' '), b.email, c.name, a.status, a.claim_date, a.incident_date_time,a.incident_summary,", 
 		"d.accident_address_country, d.accident_address_city, e.account_name, e.account_bank_name, e.account_bank_swift_code,",
 		"e.account_number, f.policy_number) as claimList ",
 		"from policy_claim a, users b, coverage_category c,policy_claim_detail_accident d,policy_claim_bank_account e, policy_order f ",
@@ -211,7 +225,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -225,7 +239,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -249,7 +263,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -263,7 +277,7 @@ public interface ReportCmsMapper {
 	
 	@Select({
 		"select b2bTrasanction from ",
-		"(select a.order_id, a.order_date, b.email, b.name, c.name, d.name, a.policy_start_date, ",
+		"(select a.order_id, a.order_date, b.email, replace(b.name,',',' '), c.name, d.name, a.policy_start_date, ",
 		" a.policy_end_date, a.total_premi, a.product_count, a.status, a.policy_number,COALESCE( NULLIF(a.provider_download_url,'') , '' ) as providerdownload ",
 		"from policy_order a, users b, coverage_category c, period d, policy_order_voucher e ",
 		"where a.user_id=b.user_id ",
@@ -327,7 +341,7 @@ public interface ReportCmsMapper {
 	@Select({
 		"select coverageList from ("
 		+ " select coverage_id, name ", 
-		" from coverage coverage_category_id=#{insuranceTypeid,jdbcType=VARCHAR} order by coverage_id) as coverageList"
+		" from coverage where coverage_category_id=#{insuranceTypeid,jdbcType=VARCHAR} order by coverage_id) as coverageList"
 	})
 	List<String> getListCoverageByInsuranceType(@Param("insuranceTypeid")String insuranceTypeid);
 	
@@ -394,4 +408,79 @@ public interface ReportCmsMapper {
 		"as userB2bCode"
 	})
     List<String> getUserB2bByOrderDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
+	
+	@Select({
+		"select b2bOrderConfirm from ( ",
+		"select b.code, ",
+		"count(*) filter (where a.status='PAID') as order, ",
+		"count(*) filter (where a.status='TERMINATED') as terminated, ",
+		"count(*) filter (where a.status='APPROVED') as approved ",
+		"from policy_order a, policy_order_voucher b ",
+		"where a.order_id=b.order_id and b.voucher_type='B2B' group by b.code ",
+		") as b2bOrderConfirm"
+    })
+	List<String> getB2bOrderConfirm();
+	
+	
+	@Select({
+		"select a.claim_id ||'|'|| a.order_id||'|'|| ",
+		"b.user_id||'|'||b.email||'|'||  ",
+		"b.name ||'|'|| ",
+		"a.created_date||'|'||coalesce(c.policy_number,'*')||'|'|| ",
+		"coalesce(b.phone,'*')||'|'||a.incident_date_time||'|'|| ",
+		"coalesce(a.incident_summary,'*')||'|'|| ",
+		"coalesce(d.accident_address_city,'*')||'|'|| ",
+		"coalesce(d.accident_address_province,'*')||'|'|| ",
+		"coalesce(d.accident_address_country,'*') as claimInformation ",
+	    "from policy_claim a, users b, policy_order c, policy_claim_detail_accident d ", 
+	    "where b.user_id=a.user_id and c.order_id=a.order_id and d.claim_id = a.claim_id ",
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR}" 
+    })
+	String getClaimInfoByClaimId(@Param("claimId") String claimId);
+
+	
+	@Select({
+		"select b.coverage_id ||'|'||c.name||'|'||b.name||'|'|| ",
+		"b.provider_code as claimCoverage ",
+		"from policy_claim_coverage a, coverage b, coverage_category c ",
+		"where b.coverage_id=a.coverage_id and c.coverage_category_id=b.coverage_category_id ",
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR}" 
+    })
+	List<String> getListClaimCoverageByClaimId(@Param("claimId") String claimId);
+	
+	@Select({
+		"select coalesce(a.account_bank_name,'*')||'|'|| ", 
+		"coalesce(a.account_bank_swift_code,'*')||'|'|| ",
+		"coalesce(a.account_name,'*')||'|'|| ",
+		"coalesce(a.account_number,'*') as bankAccount ",
+		"from policy_claim_bank_account a ",
+		"where a.claim_id=#{claimId,jdbcType=VARCHAR}" 
+    })
+	String getClaimBankAccountByClaimId(@Param("claimId") String claimId);
+	
+	
+	@Select({
+		"select coalesce(a.claim_doc_type_id,'*')||'|'|| ",
+		"coalesce(c.name,'*')||'|'|| ",
+		"coalesce(b.file_path,'*') as claimDocument ",
+		"from policy_claim_document a, user_file b, claim_doc_type c ", 
+		"where b.file_id = a.file_id and c.claim_doc_type_id=a.claim_doc_type_id ", 
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR} ",
+		"union all ",
+		"select coalesce(b.file_use_type,'*')||'|'|| ",
+		"'Identity Card'||'|'|| ",
+		"coalesce(b.file_path,'*') as claimIdCardDocument ",
+		"from policy_claim a, user_file b  ",
+		"where a.user_id=b.user_id and b.file_use_type='ID' and b.content_type like '%png' ", 
+		"and a.claim_id=#{claimId,jdbcType=VARCHAR} "
+    })
+	List<String> getListClaimDocumentByClaimId(@Param("claimId") String claimId);
+	
+/*	"select coalesce(a.claim_doc_type_id,'*')||'|'|| ",
+	"coalesce(c.name,'*')||'|'|| ",
+	"coalesce(b.file_path,'*') as claimDocument ",
+	"from policy_claim_document a, user_file b, claim_doc_type c ", 
+	"where b.file_id = a.file_id and c.claim_doc_type_id=a.claim_doc_type_id ", 
+	"and a.claim_id=#{claimId,jdbcType=VARCHAR}" */
+	
 }

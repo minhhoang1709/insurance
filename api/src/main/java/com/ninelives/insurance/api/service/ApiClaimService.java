@@ -412,21 +412,13 @@ public class ApiClaimService {
 			return false;
 		}
 		
-		if(covCat!=null && covCat.getInsurer()!=null){
-			if(InsurerCode.ASWATA.equals(covCat.getInsurer().getCode())
-					&& StringUtils.isEmpty(cba.getBankSwiftCode())) {
-				return false;
-			}
-		}
-
-		return true;
+	 	return true;
 	}
 	protected boolean isPolicyClaimAccidentDetailIsValid(ClaimDetailAccidentAddressDto cd){
 		if(cd == null
-				|| StringUtils.isEmpty(cd.getAddress())
 				|| StringUtils.isEmpty(cd.getCity())
 				|| StringUtils.isEmpty(cd.getProvince())
-				|| StringUtils.isEmpty(cd.getCountry())){
+				){
 			return false;
 		}
 		

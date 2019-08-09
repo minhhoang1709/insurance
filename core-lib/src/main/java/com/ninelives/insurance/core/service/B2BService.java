@@ -139,7 +139,7 @@ public class B2BService {
 	}
 
 	public List<String> getListClaimManagement() {
-		return voucherMapper.getListClaimManagement();
+		return reportCmsMapper.getListClaimManagement();
 	}
 
 	public List<String> getListCoveragesByClaimId(String claimId) {
@@ -355,4 +355,23 @@ public class B2BService {
 		return reportCmsMapper.getUserB2bByOrderDate(start, end);
 	}
 	
+	public List<String> fetchB2bOrderConfirm() {
+		return reportCmsMapper.getB2bOrderConfirm();
+	}
+	
+	public String getClaimInfoByClaimId(String claimId) {
+		return reportCmsMapper.getClaimInfoByClaimId(claimId);
+	}
+
+	public List<String> getListClaimCoverageByClaimId(String claimId) {
+		return reportCmsMapper.getListClaimCoverageByClaimId(claimId);
+	}
+	
+	public String getClaimBankAccountByClaimId(String claimId) {
+		return reportCmsMapper.getClaimBankAccountByClaimId(claimId);
+	}
+	
+	public List<String> getListClaimDocumentByClaimId(String claimId) {
+		return reportCmsMapper.getListClaimDocumentByClaimId(claimId);
+	}
 }
