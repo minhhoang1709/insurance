@@ -271,11 +271,33 @@ public class NinelivesConfigProperties {
 		private int aswataConnectTimeout = 5000;
 		private int aswataSocketTimeout = 30000;
 		
+		//PTI configurations
+
+		private Boolean ptiEnableConnection = true;
+		
+		@NotEmpty
+		@Value("${ninelives.insurance.pti-url}")
+		private String ptiUrl;
+		
+		@NotEmpty
+		private String ptiSecretCode = "cbf01306c1865742901ff2e184020c60";
+		
+		private int ptiServiceCode = 100;
+		private int ptiConnectionPoolSize = 32;
+		private int ptiPoolTimeout = 5000;
+		private int ptiConnectTimeout = 5000;
+		private int ptiSocketTimeout = 30000;
+		
 		private String ptiPolicyFileDir;
+		
+		@Value("${ninelives.insurance.pti-template-file-path}")
 		private String ptiTemplateFilePath;
+		
+		@Value("${ninelives.insurance.pti-template-font-file-path}")
 		private String ptiTemplateFontFilePath;
+		
 		private String ptiTemplateFontDefaultAppearance;
-		private int ptiTemplateCoverageMaxCount;		
+		private int ptiTemplateCoverageMaxCount = 6;		
 				
 		public Boolean getAswataEnableConnection() {
 			return aswataEnableConnection;
@@ -324,6 +346,54 @@ public class NinelivesConfigProperties {
 		}
 		public void setAswataSocketTimeout(int aswataSocketTimeout) {
 			this.aswataSocketTimeout = aswataSocketTimeout;
+		}
+		public Boolean getPtiEnableConnection() {
+			return ptiEnableConnection;
+		}
+		public void setPtiEnableConnection(Boolean ptiEnableConnection) {
+			this.ptiEnableConnection = ptiEnableConnection;
+		}
+		public String getPtiUrl() {
+			return ptiUrl;
+		}
+		public void setPtiUrl(String ptiUrl) {
+			this.ptiUrl = ptiUrl;
+		}
+		public String getPtiSecretCode() {
+			return ptiSecretCode;
+		}
+		public void setPtiSecretCode(String ptiSecretCode) {
+			this.ptiSecretCode = ptiSecretCode;
+		}
+		public int getPtiServiceCode() {
+			return ptiServiceCode;
+		}
+		public void setPtiServiceCode(int ptiServiceCode) {
+			this.ptiServiceCode = ptiServiceCode;
+		}
+		public int getPtiConnectionPoolSize() {
+			return ptiConnectionPoolSize;
+		}
+		public void setPtiConnectionPoolSize(int ptiConnectionPoolSize) {
+			this.ptiConnectionPoolSize = ptiConnectionPoolSize;
+		}
+		public int getPtiPoolTimeout() {
+			return ptiPoolTimeout;
+		}
+		public void setPtiPoolTimeout(int ptiPoolTimeout) {
+			this.ptiPoolTimeout = ptiPoolTimeout;
+		}
+		public int getPtiConnectTimeout() {
+			return ptiConnectTimeout;
+		}
+		public void setPtiConnectTimeout(int ptiConnectTimeout) {
+			this.ptiConnectTimeout = ptiConnectTimeout;
+		}
+		public int getPtiSocketTimeout() {
+			return ptiSocketTimeout;
+		}
+		public void setPtiSocketTimeout(int ptiSocketTimeout) {
+			this.ptiSocketTimeout = ptiSocketTimeout;
 		}
 		public String getPtiPolicyFileDir() {
 			return ptiPolicyFileDir;

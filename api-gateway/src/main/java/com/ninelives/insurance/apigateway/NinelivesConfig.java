@@ -23,7 +23,7 @@ import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 @EnableConfigurationProperties
 @MapperScan("com.ninelives.insurance.core.mybatis.mapper")
 @ComponentScan({"com.ninelives.insurance.core.service, "
-		+ "com.ninelives.insurance.core.trx, com.ninelives.insurance.core.provider"})
+		+ "com.ninelives.insurance.core.trx, com.ninelives.insurance.core.provider, com.ninelives.insurance.util"})
 public class NinelivesConfig extends WebMvcConfigurerAdapter{
 	private static final Logger logger = LoggerFactory.getLogger(NinelivesConfig.class);
 	

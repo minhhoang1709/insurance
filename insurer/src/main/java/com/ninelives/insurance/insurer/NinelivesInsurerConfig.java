@@ -14,7 +14,7 @@ import com.ninelives.insurance.core.config.NinelivesConfigProperties;
 @Configuration
 @EnableConfigurationProperties
 @MapperScan("com.ninelives.insurance.core.mybatis.mapper")
-@ComponentScan({"com.ninelives.insurance.core.service, com.ninelives.insurance.core.trx, com.ninelives.insurance.core.provider"})
+@ComponentScan({"com.ninelives.insurance.core.service, com.ninelives.insurance.core.trx, com.ninelives.insurance.core.provider, com.ninelives.insurance.util"})
 public class NinelivesInsurerConfig extends WebMvcConfigurerAdapter{
 	@Bean
 	@ConfigurationProperties(prefix="ninelives")
