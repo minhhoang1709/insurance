@@ -59,28 +59,6 @@ public class B2BService {
 	@Autowired
 	CoverageCategoryMapper coverageCategoryMapper;
 	
-	
-	public int insertCorporateClient(CorporateClient corporateClient){
-		return corporateClientMapper.insertSelective(corporateClient);
-	}
-	
-	public CorporateClient selectByCompanyIdAndCorporateId(String companyName, String corporateId){
-		return corporateClientMapper.selectByCompanyIdAndCorporateId(companyName,corporateId);
-	}
-
-	public List<CorporateClient> fetchAllCorporateClient() {
-		return corporateClientMapper.selectAllCorporateClient();
-	}
-
-	public CorporateClient getCorporateClientById(String ccId) {
-		int id = Integer.parseInt(ccId);
-		return corporateClientMapper.selectCorporateClientById(id);
-	}
-
-	public int updateCorporateClient(CorporateClient cc) {
-		return corporateClientMapper.updateCorporateClientSelective(cc);
-	}
-
 	public Voucher selectVoucherByCode(String codeVoucher, String corporateClientId) {
 		int id = Integer.parseInt(corporateClientId);
 		return voucherMapper.selectByCodeAndCorporateCliendId(codeVoucher,id);
@@ -105,7 +83,7 @@ public class B2BService {
 	}
 
 	public int insertVoucherProduct(VoucherProduct voucherProduct) {
-		return voucherMapper.insertVouherProductSelective(voucherProduct);
+		return voucherMapper.insertVoucherProductSelective(voucherProduct);
 		
 	}
 
@@ -332,6 +310,10 @@ public class B2BService {
 
 	public List<String> getListPeriodForForm() {
 		return reportCmsMapper.getListPeriod();
+	}
+	
+	public List<String> getListPeriodByInsuranceType(String insuranceTypeId){
+		return reportCmsMapper.getListPeriodByInsuranceType(insuranceTypeId);
 	}
 
 	public List<String> getListInsuranceTypeForForm() {

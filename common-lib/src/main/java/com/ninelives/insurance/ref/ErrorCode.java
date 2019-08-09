@@ -115,7 +115,8 @@ public enum ErrorCode {
 	
 	ERR9001_VOUCHER_NOT_FOUND("ERR9001"),
 	ERR9002_VOUCHER_EXPIRED("ERR9002"), //voucher expired
-	ERR9003_VOUCHER_OVERUSE("ERR9003") //voucher usage limit exceeded
+	ERR9003_VOUCHER_OVERUSE("ERR9003"), //voucher usage limit exceeded
+	ERR9004_VOUCHER_DUPLICATE("ERR9004") //voucher usage duplicate in one user
 	;
 	
 	static final Map<String, ErrorCode> lookup = new HashMap<>();

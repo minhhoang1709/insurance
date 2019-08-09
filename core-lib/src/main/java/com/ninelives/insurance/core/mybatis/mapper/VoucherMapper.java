@@ -76,7 +76,7 @@ public interface VoucherMapper {
         "#{voucherId,jdbcType=INTEGER}, #{productId,jdbcType=VARCHAR},#{premi,jdbcType=INTEGER},",
         "now(),now())"
     })
-	int insertVouherProductSelective(VoucherProduct voucherProduct);
+	int insertVoucherProductSelective(VoucherProduct voucherProduct);
 
 	
 	@Delete({
@@ -155,7 +155,14 @@ public interface VoucherMapper {
 			@Param("startDate") Date startDate,@Param("endDate") Date endDate);
 
 	List<Voucher> selectVoucherByDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
+	
+	@Select({
+		"select * from public.voucher v where v.created_date >= #{startDate,jdbcType=VARCHAR} and v.created_date <= #{endDate,jdbcType=VARCHAR} and v.voucher_type = 'B2B2C'"
+	})
+	List<Voucher> selectB2B2CVoucherByDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
 
+	
+	List<Voucher> selectB2B2CVoucher();
 
 }
 

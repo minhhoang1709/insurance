@@ -108,4 +108,11 @@ public interface PolicyOrderMapper {
 	Long selectNextPolicyOrderIdMap2c2p();
     
     PolicyOrder selectPolicyOrderByOrderId(@Param("orderId") String orderId);
+    
+    @Select({
+    	"select count(*) from public.policy_order_voucher pov inner join public.policy_order po on pov.order_id = po.order_id ",
+    	"where code=#{code, jdbcType=VARCHAR} and user_id=#{userId, jdbcType=VARCHAR}"
+    })
+    int countPolicyOrderVoucherByUserId(@Param("code") String code, @Param("userId") String userId);
+
 }

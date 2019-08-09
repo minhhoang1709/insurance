@@ -30,6 +30,6 @@ public class VoucherController {
 	public VoucherDto getVoucher(@RequestAttribute ("authUserId") String authUserId,
 			@PathVariable("code") String code) throws AppNotFoundException{
 		
-		return apiVoucherService.fetchVoucherDtoByCode(code);			
+		return apiVoucherService.fetchVoucherDtoByCode(code, authUserId);			
 	}
 }

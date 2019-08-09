@@ -245,6 +245,18 @@ public class CmsReportController extends AbstractWebServiceStatusImpl {
 		return listDto;
 	}
 	
+	@RequestMapping(value="/listPeriodByInsuranceType", method=RequestMethod.GET)	
+	@ResponseBody
+	public FormObjectListDto getListPeriodByInsurancetype(@RequestParam String insuranceTypeId){
+		
+		FormObjectListDto listDto = new FormObjectListDto();
+		List<FormObjectDto> listCoverage = apiB2BService.getListPeriodByInsuranceType(insuranceTypeId);
+		listDto.setListObj(listCoverage);
+		logger.info("listPeriod : "+ listCoverage.toString());
+		System.out.println(listDto);
+		return listDto;
+	}
+	
 	@RequestMapping(value="/listPeriod", method=RequestMethod.GET)	
 	@ResponseBody
 	public FormObjectListDto getListPeriod(){

@@ -651,7 +651,8 @@ public class ApiOrderService {
 				//check if INVITE free voucher, if yes, then mark as APPROVED instead of SUBMITTED
 				if(voucher.getTotalPremi().equals(0)){
 					if(voucher.getVoucherType().equals(VoucherType.INVITE) 
-							||voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)){
+							||voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER)
+							||voucher.getVoucherType().equals(VoucherType.B2B2C)){
 						policyOrder.setStatus(PolicyStatus.APPROVED);
 					}else if(voucher.getVoucherType().equals(VoucherType.B2B )){
 						policyOrder.setStatus(PolicyStatus.PAID);
@@ -685,7 +686,7 @@ public class ApiOrderService {
 						
 			if(voucher!=null){
 				//no need to send, comment out the success notif
-				//sendSuccessNotification(existingUser.getFcmToken(), policyOrder, today);
+				//sendSuccessNotification(existingUser.getFcmToken(), policyOrder, today);,
 				
 				//process for inviter
 				if(voucher.getVoucherType().equals(VoucherType.INVITE) &&
@@ -701,6 +702,11 @@ public class ApiOrderService {
 				//update approve count
 				if(voucher.getVoucherType().equals(VoucherType.FREE_PROMO_NEW_USER) 
 						&& policyOrder.getStatus().equals(PolicyStatus.APPROVED)){
+					voucherService.increaseVoucherApproveCounter(voucher.getId());
+				}
+				
+				if(voucher.getVoucherType().equals(VoucherType.B2B2C)
+						&& policyOrder.getStatus().equals(PolicyStatus.APPROVED)) {
 					voucherService.increaseVoucherApproveCounter(voucher.getId());
 				}
 			}
@@ -867,7 +873,7 @@ public class ApiOrderService {
 		
 		if(userId!=null && submitOrderDto!=null && submitOrderDto.getVoucher()!=null){
 			try {
-				voucher = voucherService.fetchVoucherByCode(submitOrderDto.getVoucher().getCode(), submitOrderDto.getVoucher().getVoucherType(), false);
+				voucher = voucherService.fetchVoucherByCode(submitOrderDto.getVoucher().getCode(), userId, submitOrderDto.getVoucher().getVoucherType(), false);
 			} catch (AppNotFoundException e) {
 				logger.debug("Process order for user: <{}> with order <{}> with result: voucher not found <{}>", 
 						userId,	submitOrderDto, e.getCode());								
@@ -923,8 +929,7 @@ public class ApiOrderService {
 				throw new AppBadRequestException(ErrorCode.ERR4014_ORDER_VOUCHER_DATE_MISMATCH,
 						"Permintaan tidak dapat diproses, tanggal asuransi voucher tidak sesuai dengan pemesanan.");
 			}
-		}
-				
+		}	
 		return voucher;
 	}
 //	private void sendSuccessNotification(String userId, String receiverFcmToken, PolicyOrder policyOrder, LocalDate today){

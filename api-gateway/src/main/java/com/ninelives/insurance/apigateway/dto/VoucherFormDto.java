@@ -21,6 +21,8 @@ public class VoucherFormDto {
 	
 	private String period;
 	
+	private Integer maxUse;
+	
 	private String policyStartDate;
 	
 	private String useEndDate;
@@ -91,6 +93,14 @@ public class VoucherFormDto {
 
 	public void setPeriod(String period) {
 		this.period = period;
+	}
+
+	public Integer getMaxUse() {
+		return maxUse;
+	}
+
+	public void setMaxUse(Integer maxUse) {
+		this.maxUse = maxUse;
 	}
 
 	public String getPolicyStartDate() {

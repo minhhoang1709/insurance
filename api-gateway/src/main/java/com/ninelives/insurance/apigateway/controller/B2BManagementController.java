@@ -46,39 +46,6 @@ public class B2BManagementController extends AbstractWebServiceStatusImpl {
 	
 	@Autowired 
 	ApiCmsService apiCmsService;
-	
-	@RequestMapping(value="/saveCorporateClient", method=RequestMethod.POST)	
-	@ResponseBody
-	public BaseResponse  saveCorporateClient(
-			@RequestBody CorporateClientDto corporateClientDto
-			) throws AppNotAuthorizedException{
-		
-		final BaseResponse response = new BaseResponse();
-		
-		String companyName= corporateClientDto.getCompanyName().trim();
-		String corporateProvId= corporateClientDto.getProviderId().trim();
-		
-		try{
-			CorporateClient corClient = apiCmsService.fetchByCompanyIdAndCorporateId(companyName,
-					corporateProvId);
-			
-			if(corClient==null){
-				apiCmsService.insertCorporateClient(corporateClientDto);
-				
-			}
-			else{
-				response.setErrMsg("Company Already Registered");
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.setErrMsg(e.getMessage());
-			logger.info("****************response saveCorporateClient **********: "+"errMsgs : "+ response.toString());
-			return response;
-		} 
-		
-		return response;
-	}
 
 	
 	@RequestMapping(value="/getCompanyRegisterList", method=RequestMethod.GET)	
@@ -97,22 +64,6 @@ public class B2BManagementController extends AbstractWebServiceStatusImpl {
 		logger.info("listCompanyRegister : "+ listCompanyRegister.toString());
 		
 		return companyRegisterListDto;
-	}	
-	
-	
-	@RequestMapping(value="/updateCorporateClient",method=RequestMethod.POST)
-	@ResponseBody
-	public CompanyRegisterDto updateCompanyClient(
-			@RequestBody CompanyRegisterDto companyRegisterDto,
-			HttpServletResponse response, 
-			HttpServletRequest request ) throws AppException{		
-		
-		logger.debug("Update Company Client dto:<{}>", companyRegisterDto.toString());
-		
-		CompanyRegisterDto rValue = apiCmsService.updateCompanyClient(companyRegisterDto);
-		
-		return rValue;
-	
 	}
 	
 	

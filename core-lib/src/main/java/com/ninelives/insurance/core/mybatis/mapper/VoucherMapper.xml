@@ -37,6 +37,13 @@
   <resultMap id="PeriodResultMap" type="com.ninelives.insurance.model.Period">
   	<id column="period_id" jdbcType="VARCHAR" property="periodId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="value" jdbcType="INTEGER" property="value" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="start_value" jdbcType="INTEGER" property="startValue" />
+    <result column="end_value" jdbcType="INTEGER" property="endValue" />
    </resultMap>
   	
 
@@ -65,10 +72,12 @@
 	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
 	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt,
 	    vop.product_id, vop.premi,
-	    cc.corporate_client_provider_id, cc.corporate_client_provider,cc.corporate_client_name, cc.corporate_client_phone_number
+	    cc.corporate_client_provider_id, cc.corporate_client_provider,cc.corporate_client_name, cc.corporate_client_phone_number,
+	    p.name, p.value, p.unit, p.created_date, p.update_date, p.status, p.start_value, p.end_value
   	from public.voucher vo 
   		inner join public.voucher_product vop on vop.voucher_id=vo.id
-  		left outer join public.corporate_client cc on vo.corporate_client_id is not null and cc.corporate_client_id=vo.corporate_client_id  		
+  		left outer join public.corporate_client cc on vo.corporate_client_id is not null and cc.corporate_client_id=vo.corporate_client_id  
+  		left outer join public.period p on vo.period_id = p.period_id		
   	where vo.code = #{code,jdbcType=VARCHAR} 
   </select>
   
@@ -90,6 +99,24 @@
     	 order by a.created_date desc
   </select>
   
+  <select id="selectB2B2CVoucher" resultMap="NestedVoucherResultMap">
+  select a.id, a.code, a.title, a.subtitle, a.description, a.policy_start_date,
+		a.policy_end_date, a.use_start_date, a.use_end_date, a.base_premi, a.total_premi, a.has_beneficiary, a.product_count,
+		a.period_id, a.status, a.voucher_type, a.created_date, a.update_date, a.inviter_reward_limit, a.max_use, a.approve_cnt,
+		a.corporate_client_id, b.corporate_client_id, b.corporate_client_name, b.corporate_client_address, b.corporate_client_phone_number,
+		b.corporate_client_email, b.corporate_client_provider, b.corporate_client_provider_id, b.created_date, b.created_by, b.update_date,
+		b.update_by, c.period_id, c.name, c.value, c.unit, c.created_date, c.update_date, c.status, c.start_value, c.end_value
+  from
+    	 public.voucher a,
+    	 public.corporate_client b, 
+    	 public.period c
+    	 where 
+    	 a.corporate_client_id=b.corporate_client_id  
+    	 and a.period_id=c.period_id  
+    	 and a.voucher_type = 'B2B2C'
+    	 order by a.created_date desc
+    	 
+  </select>
   
   <select id="selectById" resultMap="NestedVoucherResultMap">
   	select
@@ -110,9 +137,10 @@
 	    vo.use_end_date, vo.base_premi, vo.total_premi, vo.has_beneficiary, vo.product_count, vo.period_id, 
 	    vo.status, vo.voucher_type, vo.inviter_reward_limit, vo.created_date, vo.update_date, vo.max_use, vo.approve_cnt, 
 	    vop.product_id, vop.premi, 
-	    uiv.user_id, uiv.inviter_reward_count
-  	from public.user_invite_voucher uiv, public.voucher vo, public.voucher_product vop
-  	where uiv.code= #{code,jdbcType=VARCHAR} and vo.id = uiv.voucher_id and vop.voucher_id=vo.id
+	    uiv.user_id, uiv.inviter_reward_count, 
+	    p.name, p.value, p.unit, p.created_date, p.update_date, p.status, p.start_value, p.end_value
+  	from public.user_invite_voucher uiv, public.voucher vo, public.voucher_product vop, public.period p
+  	where uiv.code= #{code,jdbcType=VARCHAR} and vo.id = uiv.voucher_id and vop.voucher_id=vo.id and vo.period_id = p.period_id
   </select>
   
   <update id="updateVoucherSelective" parameterType="com.ninelives.insurance.model.Voucher">

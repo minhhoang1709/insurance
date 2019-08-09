@@ -14,8 +14,8 @@ public class ApiVoucherService {
 	@Autowired ModelMapperAdapter modelMapperAdapter;
 	@Autowired VoucherService voucherService;
 
-	public VoucherDto fetchVoucherDtoByCode(String code) throws AppNotFoundException{
-		return modelMapperAdapter.toDto(voucherService.fetchVoucherByCode(code));
+	public VoucherDto fetchVoucherDtoByCode(String code, String authUserId) throws AppNotFoundException{
+		return modelMapperAdapter.toDto(voucherService.fetchVoucherByCode(code, authUserId));
 	}
 	
 	//@Cacheable("InviteVoucherDto")

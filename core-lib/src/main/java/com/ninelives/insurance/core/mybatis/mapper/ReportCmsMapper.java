@@ -341,10 +341,15 @@ public interface ReportCmsMapper {
 	@Select({
 		"select coverageList from ("
 		+ " select coverage_id, name ", 
-		" from coverage where coverage_category_id=#{insuranceTypeid,jdbcType=VARCHAR} order by coverage_id) as coverageList"
+		" from coverage where coverage_category_id=#{insuranceTypeId,jdbcType=VARCHAR} order by coverage_id) as coverageList"
 	})
-	List<String> getListCoverageByInsuranceType(@Param("insuranceTypeid")String insuranceTypeid);
+	List<String> getListCoverageByInsuranceType(@Param("insuranceTypeId")String insuranceTypeId);
 	
+	@Select({
+		"select periodListByInsuranceType from (select distinct p.period_id, pd.name from coverage c inner join product p on c.coverage_id = p.coverage_id inner join period pd on p.period_id = pd.period_id where coverage_category_id = #{insuranceTypeId,jdbcType=VARCHAR} order by period_id) as periodListByInsuranceType"
+	})
+	List<String> getListPeriodByInsuranceType(@Param("insuranceTypeId")String insuranceTypeId);
+
 	@Select({
 		"select periodList from ( select period_id, name from period order by period_id) as periodList"
 	})
@@ -483,4 +488,33 @@ public interface ReportCmsMapper {
 	"where b.file_id = a.file_id and c.claim_doc_type_id=a.claim_doc_type_id ", 
 	"and a.claim_id=#{claimId,jdbcType=VARCHAR}" */
 	
+	@Select({
+		"select userB2b2cCode from ( " +
+		"select replace(c.name,',',' ') , c.gender, a.order_date, a.order_time, a.user_id, c.email, a.order_id, " +
+		"b.voucher_id, b.code, c.phone, c.birth_date, a.status " +
+		"from policy_order a, policy_order_voucher b, users c " +
+		"where a.order_id=b.order_id " +
+		"and a.user_id=c.user_id " +
+		"and a.has_voucher=true " +
+		"and b.voucher_type='B2B2C' order by a.created_date desc ) as userB2b2cCode"
+	})
+	List<String> getUserB2b2cByVoucherCode();
+	
+	@Select({
+		"select userB2b2cCode from ( ",
+		"select replace(c.name,',',' ') , c.gender, a.order_date, a.order_time, a.user_id, ", 
+		"c.email, a.order_id, b.voucher_id, b.code, c.phone, c.birth_date, a.status ", 
+		"from policy_order a, policy_order_voucher b, users c  ",
+		"where a.order_id=b.order_id  ",
+		"and a.user_id=c.user_id  ",
+		"and a.has_voucher=true  ",
+		"and b.voucher_type='B2B2C'  ",
+		"and to_char(a.order_date, 'yyyy-MM-dd')  >= #{startDate,jdbcType=VARCHAR} ",
+		"and to_char(a.order_date, 'yyyy-MM-dd') <= #{endDate,jdbcType=VARCHAR} ",
+		"order by a.created_date desc )  ",
+		"as userB2b2cCode"
+	})
+    List<String> getUserB2b2cByOrderDate(@Param("startDate") String startDate,@Param("endDate") String endDate);
+
+
 }
