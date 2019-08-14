@@ -147,4 +147,12 @@ public class FileUploadService {
 		}
 		return null;
 	}	
+	
+	 public UserFile selectIdtPhotoByOrderId(String orderId){
+         return userFileMapper.selectIdtPhotoByOrderId(orderId);
+     }
+	 
+	 public UserFile selectClaimPhotoByClaimIdAndClaimDocType(String claimId, String claimDocTypeId){
+         return userFileMapper.selectClaimPhotoByClaimIdAndClaimDocType(claimId, claimDocTypeId);
+     }
 }

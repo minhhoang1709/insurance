@@ -25,6 +25,38 @@ public class Sha1EncryptionUtil {
 		}
 		return sha1;
 	}
+	
+	public String sha1Encrypt(String orderId, String secretCode) {
+		String sha1 = "";
+		String input = orderId + "|" + secretCode;
+		try {
+			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+			crypt.reset();
+			crypt.update(input.getBytes("UTF-8"));
+			sha1 = byteToHex(crypt.digest());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return sha1;
+	}
+	
+//	public String sha1Encrypt(String claimId, String claimDocTypeId, String se) {
+//		String sha1 = "";
+//		String input = orderId + "|" + secretCode;
+//		try {
+//			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+//			crypt.reset();
+//			crypt.update(input.getBytes("UTF-8"));
+//			sha1 = byteToHex(crypt.digest());
+//		} catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
+//		return sha1;
+//	}
 
 	private static String byteToHex(final byte[] hash) {
 		Formatter formatter = new Formatter();
@@ -35,4 +67,6 @@ public class Sha1EncryptionUtil {
 		formatter.close();
 		return result;
 	}
+	
+	
 }

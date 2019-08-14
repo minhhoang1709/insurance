@@ -105,6 +105,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 	private UserFileToBase64JsonSerializer userFileToBase64JsonSerializer;
 	private Boolean enableConnection;
 	private String providerUrl;
+	private String imageDownloadUrl;
 	private String secretCode;
 	private int serviceCode;
 	private final String coverageSeparator = "|";
@@ -234,25 +235,14 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		PtiResponseDto result = new PtiResponseDto();
 		PtiOrderRequestDto requestDto = new PtiOrderRequestDto();
 
-//		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
-
-//		Path filepath = storageProvider.load("test/scan-ktp.jpg");
-
-//		String base64IdCard = null;
-//		try {
-//			Resource resource = storageProvider.loadAsResource(userFile);
-//			base64IdCard = Base64.getEncoder().encodeToString((FileUtils.readFileToByteArray(resource.getFile())));
-//			System.out.println(base64IdCard);
-//		} catch (IOException e) {
-//			logger.error("Exception on fetching id card file", e);
-//			throw e;
-//		} catch (StorageException e) {
-//			logger.error("Exception on fetching id card file", e);
-//			throw e;
-//		}
-
-		PtiRequestInfo requestInfo = ptiObjectMapper.toDto(order,
-				Long.toString(order.getPolicyOrderUsers().getIdCardFileId()), policyNumber);
+		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
+		String base64IdCard = null;
+		if(userFile!=null) {
+			
+			base64IdCard = imageDownloadUrl + Base64.getEncoder().encodeToString(order.getOrderId().getBytes());
+		}
+		
+		PtiRequestInfo requestInfo = ptiObjectMapper.toDto(order, base64IdCard, policyNumber);
 		requestDto.setServiceId(serviceCode);
 		String productCode = null;
 		String packageType = null;
@@ -490,6 +480,7 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		pdfCreator = new PdfCreator(templateFilePath, templateFontFilePath, templateFontAppearance);
 
 		providerUrl = config.getInsurance().getPtiUrl();
+		imageDownloadUrl = config.getInsurance().getPtiInsurerUrl();
 		secretCode = config.getInsurance().getPtiSecretCode();
 		serviceCode = config.getInsurance().getPtiServiceCode();
 	}

@@ -81,4 +81,24 @@ public interface UserFileMapper {
         "where file_id = #{fileId,jdbcType=BIGINT}"
     })
 	int updateUseTypeAndPathByFileId(UserFile record);
+	
+	@Select({
+	    "select",
+	    "a.file_id, a.user_id, a.file_use_type, a.file_path, a.status, a.file_size, a.content_type, ",
+	    "a.upload_date, a.create_date, a.update_date",
+	    "from public.user_file a inner join public.policy_order b",
+	    "on a.user_id = b.user_id",
+	    "where b.order_id = #{orderId,jdbcType=VARCHAR} and a.file_use_type = 'IDT'"
+    })    
+    UserFile selectIdtPhotoByOrderId(@Param("orderId") String orderId);
+	
+	@Select({
+	    "select",
+	    "a.file_id, a.user_id, a.file_use_type, a.file_path, a.status, a.file_size, a.content_type, ",
+	    "a.upload_date, a.create_date, a.update_date",
+	    "from public.user_file a inner join public.policy_claim_document b",
+	    "on a.file_id = b.file_id",
+	    "where b.claim_id = #{claimId,jdbcType=VARCHAR} and b.claim_doc_type_id = #{claimDocTypeId,jdbcType=VARCHAR}"
+	    })    
+	UserFile selectClaimPhotoByClaimIdAndClaimDocType(@Param("claimId") String claimId,@Param("claimDocTypeId") String claimDocTypeId);
 }

@@ -279,6 +279,8 @@ public class NinelivesConfigProperties {
 		@Value("${ninelives.insurance.pti-url}")
 		private String ptiUrl;
 		
+		private String ptiInsurerUrl = "localhost:9443/pti/idtFiles/";
+		
 		@NotEmpty
 		private String ptiSecretCode = "cbf01306c1865742901ff2e184020c60";
 		
@@ -358,6 +360,12 @@ public class NinelivesConfigProperties {
 		}
 		public void setPtiUrl(String ptiUrl) {
 			this.ptiUrl = ptiUrl;
+		}
+		public String getPtiInsurerUrl() {
+			return ptiInsurerUrl;
+		}
+		public void setPtiInsurerUrl(String ptiInsurerUrl) {
+			this.ptiInsurerUrl = ptiInsurerUrl;
 		}
 		public String getPtiSecretCode() {
 			return ptiSecretCode;
