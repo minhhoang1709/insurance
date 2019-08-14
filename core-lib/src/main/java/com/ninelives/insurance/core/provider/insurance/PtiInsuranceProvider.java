@@ -7,13 +7,11 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import javax.annotation.PostConstruct;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.http.client.HttpClient;
@@ -24,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -132,7 +129,6 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 	}
 
 	public PtiInsuranceProvider() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private InsurerPolicyFile generatePolicy(PolicyOrder order)
@@ -236,13 +232,13 @@ public class PtiInsuranceProvider implements InsuranceProvider {
 		PtiOrderRequestDto requestDto = new PtiOrderRequestDto();
 
 		UserFile userFile = fileUploadService.fetchUserFileById(order.getPolicyOrderUsers().getIdCardFileId());
-		String base64IdCard = null;
+		String hashString = null;
 		if(userFile!=null) {
 			
-			base64IdCard = imageDownloadUrl + Base64.getEncoder().encodeToString(order.getOrderId().getBytes());
+			hashString = imageDownloadUrl + order.getOrderId() + "/" +sha1EncryptionUtil.sha1Encrypt(order.getOrderId(), secretCode);
 		}
 		
-		PtiRequestInfo requestInfo = ptiObjectMapper.toDto(order, base64IdCard, policyNumber);
+		PtiRequestInfo requestInfo = ptiObjectMapper.toDto(order, hashString, policyNumber);
 		requestDto.setServiceId(serviceCode);
 		String productCode = null;
 		String packageType = null;

@@ -1,6 +1,5 @@
 package com.ninelives.insurance.insurer.controller;
 
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ninelives.insurance.core.exception.AppBadRequestException;
 import com.ninelives.insurance.core.exception.AppException;
 import com.ninelives.insurance.core.exception.AppInternalServerErrorException;
-import com.ninelives.insurance.core.exception.AppNotFoundException;
 import com.ninelives.insurance.core.provider.storage.StorageException;
 import com.ninelives.insurance.core.provider.storage.StorageProvider;
 import com.ninelives.insurance.insurer.service.InsurerPhotoService;
@@ -36,12 +34,14 @@ public class PtiPhotoController {
 	@Autowired
 	Sha1EncryptionUtil sha1EncryptionUtil;
 
-	// public final String secretCode = "cbf01306c1865742901ff2e184020c60";
+	public final String secretCode = "cbf01306c1865742901ff2e184020c60";
 
-	@RequestMapping(value = "/pti/idtFiles/{orderId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/pti/idtFiles/{orderId}/{hashString}", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Resource> downloadIdtPhotoFile(@PathVariable("orderId") String orderId) throws AppException {
+	public ResponseEntity<Resource> downloadIdtPhotoFile(@PathVariable("orderId") String orderId,
+			@PathVariable("hashString") String hashString) throws AppException {
 
+		checkHashString(orderId, hashString);
 		UserFile userFile = insurerPhotoService.fetchIdtPhotoFile(orderId);
 
 		try {
@@ -62,11 +62,13 @@ public class PtiPhotoController {
 	}
 
 	// claim photo files download controller
-	@RequestMapping(value = "/pti/claimFiles/{claimId}/{claimDocTypeId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/pti/claimFiles/{claimId}/{claimDocTypeId}/{hashString}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<Resource> downloadClaimPhotoFiles(@PathVariable("claimId") String claimId,
-			@PathVariable("claimDocTypeId") String claimDocTypeId) throws AppException {
+			@PathVariable("claimDocTypeId") String claimDocTypeId, @PathVariable("hashString") String hashString)
+			throws AppException {
 
+		checkHashString(claimId, claimDocTypeId, hashString);
 		UserFile userFile = insurerPhotoService.fetchClaimPhotoFile(claimId, claimDocTypeId);
 
 		try {
@@ -86,14 +88,18 @@ public class PtiPhotoController {
 		}
 	}
 
-//	private String base64Decode(String input) {
-//		byte[] byteArray = Base64.decodeBase64(input.getBytes());
-//		String decodedString = new String(byteArray);
-//		return decodedString;
-//	}
+	private void checkHashString(String claimId, String claimDocTypeId, String hashString)
+			throws AppBadRequestException {
+		String hashResult = sha1EncryptionUtil.sha1Encrypt(claimId, claimDocTypeId, secretCode);
+		if (!hashResult.equals(hashString)) {
+			throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR, "Invalid hashString");
+		}
+	}
 
-//	private void checkHashString(String claimId, String claimDocTypeId, String hashString) throws AppNotFoundException{
-//		String hashResult = sha1EncryptionUtil.sha1Encrypt(serviceId, secretCode, insuranceType, info)
-//		throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR, "Invalid userId");
-//	}
+	private void checkHashString(String orderId, String hashString) throws AppBadRequestException {
+		String hashResult = sha1EncryptionUtil.sha1Encrypt(orderId, secretCode);
+		if (!hashResult.equals(hashString)) {
+			throw new AppBadRequestException(ErrorCode.ERR1001_GENERIC_ERROR, "Invalid hashString");
+		}
+	}
 }
