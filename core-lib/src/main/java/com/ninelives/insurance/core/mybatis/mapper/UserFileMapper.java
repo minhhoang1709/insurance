@@ -86,9 +86,9 @@ public interface UserFileMapper {
 	    "select",
 	    "a.file_id, a.user_id, a.file_use_type, a.file_path, a.status, a.file_size, a.content_type, ",
 	    "a.upload_date, a.create_date, a.update_date",
-	    "from public.user_file a inner join public.policy_order b",
-	    "on a.user_id = b.user_id",
-	    "where b.order_id = #{orderId,jdbcType=VARCHAR} and a.file_use_type = 'IDT'"
+	    "from public.policy_order_users c inner join public.user_file a",
+	    "on c.id_card_file_id = a.file_id",
+	    "where c.order_id = #{orderId,jdbcType=VARCHAR} and a.file_use_type = 'IDT'"
     })    
     UserFile selectIdtPhotoByOrderId(@Param("orderId") String orderId);
 	

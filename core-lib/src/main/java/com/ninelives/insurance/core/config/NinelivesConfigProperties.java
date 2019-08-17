@@ -276,10 +276,10 @@ public class NinelivesConfigProperties {
 		private Boolean ptiEnableConnection = true;
 		
 		@NotEmpty
-		@Value("${ninelives.insurance.pti-url}")
-		private String ptiUrl;
+//		@Value("${ninelives.insurance.pti-url}")
+		private String ptiUrl = "http://35.197.128.241:8080/import/insert";
 		
-		private String ptiInsurerUrl = "localhost:9443/insurer/pti/idtFiles/";
+		private String ptiInsurerUrl = "https://viet-api-dev.9lives.me/insurer/pti/idtFiles/";
 		
 		@NotEmpty
 		private String ptiSecretCode = "cbf01306c1865742901ff2e184020c60";
